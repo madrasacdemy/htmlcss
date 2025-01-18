@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Interactive Cube Gallery</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            overflow: hidden;
+        }
+
+        .scene {
+            width: 200px;
+            height: 200px;
+            perspective: 600px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(0deg) rotateY(0deg);
+            transition: transform 1s ease-in-out;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+        }
+
+        /* Cube face positions */
+        .front { transform: rotateY(0deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/FF5733'); }
+        .back { transform: rotateY(180deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/33FF57'); }
+        .right { transform: rotateY(90deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/3383FF'); }
+        .left { transform: rotateY(-90deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/FFFF33'); }
+        .top { transform: rotateX(90deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/FF33FF'); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); background-image: url('https://via.placeholder.com/200/33FFFF'); }
+
+        /* Interaction instruction */
+        .instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">Click on the cube to rotate!</div>
+    <div class="scene">
+        <div class="cube" id="cube">
+            <div class="cube-face front"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face bottom"></div>
+        </div>
+    </div>
+
+    <script>
+        const cube = document.getElementById("cube");
+        let xRotation = 0, yRotation = 0;
+
+        document.addEventListener("click", () => {
+            yRotation += 90;
+            cube.style.transform = `rotateX(${xRotation}deg) rotateY(${yRotation}deg)`;
+        });
+    </script>
+</body>
+</html>
