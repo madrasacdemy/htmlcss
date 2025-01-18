@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Glowing Button</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #121212;
+            font-family: Arial, sans-serif;
+        }
+
+        .glow-button {
+            position: relative;
+            display: inline-block;
+            padding: 15px 30px;
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .glow-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border-radius: 10px;
+            z-index: -1;
+            box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.5), 0 0 60px 20px rgba(255, 165, 0, 0.5), 0 0 90px 30px rgba(0, 0, 255, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .glow-button:hover {
+            transform: scale(1.1);
+        }
+
+        .glow-button:hover::after {
+            opacity: 1;
+        }
+
+        .glow-button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes colorChange {
+            0% { box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.5), 0 0 60px 20px rgba(255, 165, 0, 0.5), 0 0 90px 30px rgba(0, 0, 255, 0.5); }
+            50% { box-shadow: 0 0 30px 10px rgba(0, 255, 0, 0.5), 0 0 60px 20px rgba(0, 255, 255, 0.5), 0 0 90px 30px rgba(255, 0, 255, 0.5); }
+            100% { box-shadow: 0 0 30px 10px rgba(255, 0, 0, 0.5), 0 0 60px 20px rgba(255, 165, 0, 0.5), 0 0 90px 30px rgba(0, 0, 255, 0.5); }
+        }
+
+        .glow-button:hover::after {
+            animation: colorChange 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <button class="glow-button">Hover Me!</button>
+</body>
+</html>
