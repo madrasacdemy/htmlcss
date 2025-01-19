@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candle Flame Effect</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: #222;
+    }
+
+    .candle {
+      position: relative;
+      width: 20px;
+      height: 100px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    }
+
+    .wick {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 20px;
+      background: #333;
+      border-radius: 2px;
+    }
+
+    .flame {
+      position: absolute;
+      top: -50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 50px;
+      background: radial-gradient(circle, rgba(255, 200, 0, 1), rgba(255, 100, 0, 0.9), rgba(255, 0, 0, 0.6));
+      border-radius: 50%;
+      animation: flicker 2s infinite ease-in-out;
+    }
+
+    .flame::before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 15px;
+      height: 30px;
+      background: radial-gradient(circle, rgba(255, 240, 0, 1), rgba(255, 150, 0, 0.6), transparent);
+      border-radius: 50%;
+    }
+
+    .flame::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 15px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 1), rgba(255, 200, 0, 0.6), transparent);
+      border-radius: 50%;
+    }
+
+    @keyframes flicker {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: translateX(-48%) scale(1.1);
+        opacity: 0.9;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="candle">
+    <div class="wick"></div>
+    <div class="flame"></div>
+  </div>
+</body>
+</html>
