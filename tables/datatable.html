@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table with 25 Rows</title>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .table-container {
+            width: 100%;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .data-table thead {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px 15px;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .data-table tr:hover {
+            background-color: #ddd;
+        }
+
+        @media (max-width: 600px) {
+            .data-table th,
+            .data-table td {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <table id="example" class="data-table display">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Age</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 25 Rows -->
+                <tr><td>1</td><td>John Doe</td><td>john.doe@example.com</td><td>29</td><td>USA</td></tr>
+                <tr><td>2</td><td>Jane Smith</td><td>jane.smith@example.com</td><td>34</td><td>Canada</td></tr>
+                <tr><td>3</td><td>Chris Johnson</td><td>chris.j@example.com</td><td>41</td><td>UK</td></tr>
+                <tr><td>4</td><td>Emily Davis</td><td>emily.d@example.com</td><td>27</td><td>Australia</td></tr>
+                <tr><td>5</td><td>Michael Brown</td><td>michael.b@example.com</td><td>38</td><td>Germany</td></tr>
+                <tr><td>6</td><td>Sarah Wilson</td><td>sarah.w@example.com</td><td>32</td><td>India</td></tr>
+                <tr><td>7</td><td>David Lee</td><td>david.l@example.com</td><td>25</td><td>South Korea</td></tr>
+                <tr><td>8</td><td>Anna Taylor</td><td>anna.t@example.com</td><td>29</td><td>France</td></tr>
+                <tr><td>9</td><td>James White</td><td>james.w@example.com</td><td>45</td><td>USA</td></tr>
+                <tr><td>10</td><td>Laura Clark</td><td>laura.c@example.com</td><td>36</td><td>Canada</td></tr>
+                <tr><td>11</td><td>Brian Martinez</td><td>brian.m@example.com</td><td>39</td><td>Mexico</td></tr>
+                <tr><td>12</td><td>Susan Anderson</td><td>susan.a@example.com</td><td>28</td><td>Brazil</td></tr>
+                <tr><td>13</td><td>Paul Harris</td><td>paul.h@example.com</td><td>33</td><td>Italy</td></tr>
+                <tr><td>14</td><td>Olivia Garcia</td><td>olivia.g@example.com</td><td>31</td><td>Spain</td></tr>
+                <tr><td>15</td><td>Mark Lewis</td><td>mark.l@example.com</td><td>40</td><td>USA</td></tr>
+                <tr><td>16</td><td>Sophia Young</td><td>sophia.y@example.com</td><td>26</td><td>Japan</td></tr>
+                <tr><td>17</td><td>Luke Walker</td><td>luke.w@example.com</td><td>37</td><td>Netherlands</td></tr>
+                <tr><td>18</td><td>Mia Hall</td><td>mia.h@example.com</td><td>24</td><td>Sweden</td></tr>
+                <tr><td>19</td><td>Matthew Scott</td><td>matthew.s@example.com</td><td>42</td><td>Norway</td></tr>
+                <tr><td>20</td><td>Chloe Allen</td><td>chloe.a@example.com</td><td>30</td><td>USA</td></tr>
+                <tr><td>21</td><td>Daniel King</td><td>daniel.k@example.com</td><td>27</td><td>Australia</td></tr>
+                <tr><td>22</td><td>Ava Baker</td><td>ava.b@example.com</td><td>23</td><td>South Africa</td></tr>
+                <tr><td>23</td><td>Henry Carter</td><td>henry.c@example.com</td><td>35</td><td>New Zealand</td></tr>
+                <tr><td>24</td><td>Grace Adams</td><td>grace.a@example.com</td><td>29</td><td>USA</td></tr>
+                <tr><td>25</td><td>Liam Bell</td><td>liam.b@example.com</td><td>43</td><td>Canada</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                paging: true,          // Enable pagination
+                searching: true,       // Enable search
+                ordering: true,        // Enable column sorting
+                pageLength: 10,        // Default rows per page
+                lengthChange: true,    // Allow user to change page size
+            });
+        });
+    </script>
+</body>
+</html>
