@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hex Color Finding Game</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #2c3e50;
+    }
+
+    #color-display {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px 20px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #3498db;
+      color: white;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    #score {
+      margin-top: 20px;
+      font-size: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Hex Color Finding Game</h1>
+  
+  <div id="color-display"></div>
+  <div class="button-container">
+    <button id="button1"></button>
+    <button id="button2"></button>
+    <button id="button3"></button>
+    <button id="button4"></button>
+  </div>
+  <div id="score">Score: 0</div>
+
+  <script>
+    const colorDisplay = document.getElementById('color-display');
+    const buttons = document.querySelectorAll('button');
+    const scoreDisplay = document.getElementById('score');
+    let score = 0;
+
+    function generateRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function setNewColorGame() {
+      const correctColor = generateRandomColor();
+      colorDisplay.style.backgroundColor = correctColor;
+
+      const correctButton = Math.floor(Math.random() * 4);
+      buttons.forEach((button, index) => {
+        if (index === correctButton) {
+          button.textContent = correctColor;
+        } else {
+          button.textContent = generateRandomColor();
+        }
+      });
+
+      buttons.forEach(button => {
+        button.onclick = () => {
+          if (button.textContent === correctColor) {
+            score++;
+            scoreDisplay.textContent = `Score: ${score}`;
+            alert('Correct! Well done.');
+          } else {
+            if (score > 0) score--;
+            scoreDisplay.textContent = `Score: ${score}`;
+            alert('Wrong! Try again.');
+          }
+          setNewColorGame();
+        };
+      });
+    }
+
+    setNewColorGame();
+  </script>
+
+</body>
+</html>
