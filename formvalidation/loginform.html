@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Strength Validation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .login-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #007BFF;
+        }
+
+        .password-strength {
+            margin-top: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0;
+            background-color: red;
+            transition: width 0.3s ease;
+        }
+
+        .hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .show-password {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .show-password input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <span class="error" id="emailError"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <div class="password-strength">
+                    <div class="strength-bar" id="strengthBar"></div>
+                </div>
+                <div class="hint">Use at least 8 characters, 1 uppercase letter, 1 Number, and 1 special character (@, #, $, etc.)</div>
+                <span class="error" id="passwordError"></span>
+            </div>
+            <div class="show-password">
+                <input type="checkbox" id="showPassword">
+                <label for="showPassword">Show Password</label>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById("password");
+        const showPasswordCheckbox = document.getElementById("showPassword");
+        const strengthBar = document.getElementById("strengthBar");
+
+        // Toggle password visibility
+        showPasswordCheckbox.addEventListener("change", () => {
+            if (showPasswordCheckbox.checked) {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        });
+
+        // Password Strength Validation
+        passwordInput.addEventListener("input", () => {
+            const value = passwordInput.value;
+            const strength = getPasswordStrength(value);
+
+            // Set strength bar width and color based on password strength
+            strengthBar.style.width = `${strength.percentage}%`;
+            strengthBar.style.backgroundColor = strength.color;
+        });
+
+        // Password Strength Helper
+        function getPasswordStrength(password) {
+            let score = 0;
+
+            if (password.length >= 8) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[@$!%*?&#]/.test(password)) score++;
+
+            switch (score) {
+                case 0:
+                case 1:
+                    return { percentage: 25, color: "red" };
+                case 2:
+                    return { percentage: 50, color: "orange" };
+                case 3:
+                    return { percentage: 75, color: "yellow" };
+                case 4:
+                    return { percentage: 100, color: "green" };
+            }
+        }
+    </script>
+
+</body>
+</html>

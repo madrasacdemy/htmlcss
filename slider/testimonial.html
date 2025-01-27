@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonial Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .testimonial-container {
+            width: 80%;
+            max-width: 700px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .testimonials {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .testimonial-item {
+            padding: 40px;
+            text-align: center;
+            flex: 1;
+            min-width: 100%;
+        }
+
+        .testimonial-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-item p {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .testimonial-item h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .testimonial-item span {
+            color: #888;
+            font-size: 16px;
+        }
+
+        .testimonial-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .control-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            font-size: 30px;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .control-btn:focus {
+            outline: none;
+        }
+
+        .control-btn:active {
+            background-color: rgba(0, 0, 0, 0.8);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>What Our Clients Say</h1>
+
+    <div class="testimonial-container">
+        <div class="testimonials">
+            <div class="testimonial-item">
+                <img src="../image/nancy-wigglesworth-business-tutor.jpg" alt="John Doe">
+                <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero."</p>
+                <h3>John Doe</h3>
+                <span>CEO, Company A</span>
+            </div>
+            <div class="testimonial-item">
+                <img src="../image/louise-fitzgerald-business-tutor.jpeg" alt="Jane Smith">
+                <p>"Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet."</p>
+                <h3>Jane Smith</h3>
+                <span>Manager, Company B</span>
+            </div>
+            <div class="testimonial-item">
+                <img src="../image/kate-montague-voice-tutor.jpeg" alt="Mike Johnson">
+                <p>"Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo."</p>
+                <h3>Mike Johnson</h3>
+                <span>Designer, Company C</span>
+            </div>
+        </div>
+
+        <div class="testimonial-controls">
+            <button class="control-btn" id="prevBtn">&#10094;</button>
+            <button class="control-btn" id="nextBtn">&#10095;</button>
+        </div>
+    </div>
+
+    <script>
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const testimonials = document.querySelector('.testimonials');
+        let currentIndex = 0;
+
+        const totalTestimonials = document.querySelectorAll('.testimonial-item').length;
+
+        function updateSlider() {
+            const offset = -currentIndex * 100;
+            testimonials.style.transform = `translateX(${offset}%)`;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex === 0) ? totalTestimonials - 1 : currentIndex - 1;
+            updateSlider();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex === totalTestimonials - 1) ? 0 : currentIndex + 1;
+            updateSlider();
+        });
+    </script>
+
+</body>
+</html>
