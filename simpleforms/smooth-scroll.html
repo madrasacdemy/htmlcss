@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth Scroll & Toggle Visibility</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            background: #333;
+            color: #fff;
+            padding: 1rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #section1 {
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+        #section2 {
+            background: #4caf50;
+        }
+        #content {
+            display: none;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="#section1">Section 1</a>
+        <a href="#section2">Section 2</a>
+    </nav>
+    <section id="section1">
+        <div>
+            <h1>Welcome to Section 1</h1>
+            <button id="toggleBtn">Toggle Content</button>
+            <div id="content">
+                <p>This is some hidden content. Toggle to show or hide!</p>
+            </div>
+        </div>
+    </section>
+    <section id="section2">
+        <h1>This is Section 2</h1>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('nav a').on('click', function (e) {
+                e.preventDefault();
+                const target = $(this).attr('href');
+                $(target).get(0).scrollIntoView({ behavior: 'smooth' });
+            });
+
+            $('#toggleBtn').on('click', function () {
+                $('#content').toggle();
+            });
+        });
+    </script>
+</body>
+</html>
