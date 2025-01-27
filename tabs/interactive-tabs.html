@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled Tab Interface</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f9;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ddd;
+        }
+        .tab {
+            padding: 15px 25px;
+            background-color: #f1f1f1;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px 5px 0 0;
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+            transition: background-color 0.3s, transform 0.2s ease, color 0.3s;
+        }
+        .tab:hover {
+            background-color: #e2e2e2;
+            transform: scale(1.05);
+            color: #4CAF50;
+        }
+        .active {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border-bottom: none;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #555;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .active-content {
+            display: block;
+            opacity: 1;
+        }
+        .tab-content h3 {
+            color: #4CAF50;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .tab-content p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 16px;
+            text-align: justify;
+        }
+        .tab-content ul {
+            list-style-type: disc;
+            margin-left: 20px;
+        }
+        .tab-content ul li {
+            color: #444;
+            font-size: 16px;
+        }
+        .tab-content a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .tab-content a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Interactive Tabbed Interface</h2>
+        <div class="tabs">
+            <div class="tab active" id="tab1">Tab 1</div>
+            <div class="tab" id="tab2">Tab 2</div>
+            <div class="tab" id="tab3">Tab 3</div>
+        </div>
+
+        <div class="tab-content active-content" id="content1">
+            <h3>Content for Tab 1</h3>
+            <p>This is the content for Tab 1. You can add any kind of content here, such as text, images, or even videos!</p>
+            <ul>
+                <li>Item 1: Description of first item.</li>
+                <li>Item 2: More details about the second item.</li>
+                <li>Item 3: An interesting third point.</li>
+            </ul>
+            <p>For more information, visit our <a href="#">website</a>.</p>
+        </div>
+        <div class="tab-content" id="content2">
+            <h3>Content for Tab 2</h3>
+            <p>This is the content for Tab 2. Add different information based on your needs. You can also include interactive elements like forms.</p>
+            <ul>
+                <li>Detail 1: Information about the first detail.</li>
+                <li>Detail 2: Additional content here.</li>
+                <li>Detail 3: More examples and details for Tab 2.</li>
+            </ul>
+        </div>
+        <div class="tab-content" id="content3">
+            <h3>Content for Tab 3</h3>
+            <p>This is the content for Tab 3. You can customize it to display whatever content you want for this tab.</p>
+            <p>Some additional content for this tab can be listed here. The design is consistent across all tabs, with different content styles.</p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Handle tab click
+            $('.tab').click(function() {
+                var tabId = $(this).attr('id'); // Get the clicked tab's id
+                var contentId = '#content' + tabId.charAt(tabId.length - 1); // Match with the content div
+                
+                // Remove active class from all tabs and content
+                $('.tab').removeClass('active');
+                $('.tab-content').removeClass('active-content');
+                
+                // Add active class to the clicked tab and corresponding content
+                $(this).addClass('active');
+                $(contentId).addClass('active-content');
+            });
+        });
+    </script>
+
+</body>
+</html>

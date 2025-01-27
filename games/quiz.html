@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Development Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f9fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            width: 90%;
+            max-width: 600px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .answers {
+            margin-bottom: 20px;
+        }
+
+        .answers button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .answers button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .answers button.correct {
+            background-color: #c8f7c5;
+        }
+
+        .answers button.wrong {
+            background-color: #f7c5c5;
+        }
+
+        .next-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .next-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>Web Development Quiz</h1>
+        <div id="quiz">
+            <div class="question">Question text goes here...</div>
+            <div class="answers"></div>
+            <button class="next-btn" id="nextBtn">Next Question</button>
+        </div>
+        <div class="result" id="result" style="display: none;">Your Score: 0</div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "What does CSS stand for?",
+                answers: [
+                    { text: "Cascading Style Sheets", correct: true },
+                    { text: "Computer Style Sheets", correct: false },
+                    { text: "Creative Style Sheets", correct: false },
+                    { text: "Colorful Style Sheets", correct: false }
+                ]
+            },
+            {
+                question: "Which HTML element is used for the largest heading?",
+                answers: [
+                    { text: "&lt;h1&gt;", correct: true },
+                    { text: "&lt;h6&gt;", correct: false },
+                    { text: "&lt;head&gt;", correct: false },
+                    { text: "&lt;title&gt;", correct: false }
+                ]
+            },
+            {
+                question: "Which JavaScript method is used to write on the browser window?",
+                answers: [
+                    { text: "console.log()", correct: false },
+                    { text: "window.alert()", correct: false },
+                    { text: "document.write()", correct: true },
+                    { text: "innerHTML", correct: false }
+                ]
+            },
+            {
+                question: "What is the correct HTML for creating a hyperlink?",
+                answers: [
+                    { text: "&lt;a href='url'&gt;Link&lt;/a&gt;", correct: true },
+                    { text: "&lt;link&gt;url&lt;/link&gt;", correct: false },
+                    { text: "&lt;a&gt;url&lt;/a&gt;", correct: false },
+                    { text: "&lt;href&gt;url&lt;/href&gt;", correct: false }
+                ]
+            },
+            {
+                question: "Which property is used in CSS to change text color?",
+                answers: [
+                    { text: "font-color", correct: false },
+                    { text: "color", correct: true },
+                    { text: "text-color", correct: false },
+                    { text: "background-color", correct: false }
+                ]
+            }
+        ];
+
+        const questionEl = document.querySelector(".question");
+        const answersEl = document.querySelector(".answers");
+        const nextBtn = document.getElementById("nextBtn");
+        const resultEl = document.getElementById("result");
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function showQuestion() {
+            resetState();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+
+            currentQuestion.answers.forEach(answer => {
+                const button = document.createElement("button");
+                button.textContent = answer.text;
+                button.classList.add("answer-btn");
+                if (answer.correct) {
+                    button.dataset.correct = answer.correct;
+                }
+                button.addEventListener("click", selectAnswer);
+                answersEl.appendChild(button);
+            });
+        }
+
+        function resetState() {
+            while (answersEl.firstChild) {
+                answersEl.removeChild(answersEl.firstChild);
+            }
+            nextBtn.style.display = "none";
+        }
+
+        function selectAnswer(e) {
+            const selectedBtn = e.target;
+            const correct = selectedBtn.dataset.correct === "true";
+
+            if (correct) {
+                score++;
+                selectedBtn.classList.add("correct");
+            } else {
+                selectedBtn.classList.add("wrong");
+            }
+
+            Array.from(answersEl.children).forEach(button => {
+                button.disabled = true;
+                if (button.dataset.correct === "true") {
+                    button.classList.add("correct");
+                }
+            });
+
+            nextBtn.style.display = "block";
+        }
+
+        function showResult() {
+            quiz.style.display = "none";
+            resultEl.style.display = "block";
+            resultEl.textContent = `Your Score: ${score} / ${questions.length}`;
+        }
+
+        nextBtn.addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
