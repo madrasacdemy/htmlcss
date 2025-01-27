@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll to Top Button</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f8ff;
+            height: 2000px;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 50px;
+            background-color: #4CAF50;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: #fff;
+        }
+
+        p {
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .content-section {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+            background-color: #f9f9f9; 
+            border-left: 5px solid #4CAF50;
+        }
+
+        .content-section h2 {
+            font-size: 28px;
+            color: #333;
+        }
+
+        .content-section p {
+            font-size: 16px;
+            color: #777;
+            line-height: 1.6;
+        }
+        
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            padding: 15px;
+            cursor: pointer;
+            display: none;
+            transition: background-color 0.3s ease;
+        }
+
+        #scrollToTopBtn:hover {
+            background-color: #45a049; /* Darker green when hovered */
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Welcome to the Scroll-to-Top Example</h1>
+        <p>Scroll down the page to see the "Scroll to Top" button appear. Click it to quickly return to the top.</p>
+    </div>
+
+    <!-- Added content sections to make the page scrollable -->
+    <div class="content-section">
+        <h2>Content Section 1</h2>
+        <p>This is the first content section. Scroll down to see more content. This helps to demonstrate the scroll behavior and make the scroll-to-top button visible as you move down the page.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Content Section 2</h2>
+        <p>This is the second content section. Keep scrolling to see how the scroll-to-top button behaves. The more content you add, the further you can scroll down, which activates the button.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Content Section 3</h2>
+        <p>This is the third content section. You can add as many sections as you like to make the page longer and demonstrate the scroll-to-top functionality even better.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Content Section 4</h2>
+        <p>This is the first content section. Scroll down to see more content. This helps to demonstrate the scroll behavior and make the scroll-to-top button visible as you move down the page.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Content Section 5</h2>
+        <p>This is the second content section. Keep scrolling to see how the scroll-to-top button behaves. The more content you add, the further you can scroll down, which activates the button.</p>
+    </div>
+
+    <div class="content-section">
+        <h2>Content Section 6</h2>
+        <p>This is the third content section. You can add as many sections as you like to make the page longer and demonstrate the scroll-to-top functionality even better.</p>
+    </div>
+
+    <!-- Scroll-to-Top Button -->
+    <button id="scrollToTopBtn" title="Go to top">&uarr;</button>
+
+    <script>
+        // Get the button
+        var mybutton = document.getElementById("scrollToTopBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        };
+
+        // When the user clicks the button, scroll to the top of the document
+        mybutton.onclick = function() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        };
+    </script>
+
+</body>
+</html>

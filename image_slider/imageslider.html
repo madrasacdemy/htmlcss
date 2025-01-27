@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Continuous Image Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            color: #333;
+        }
+
+        .slider-container {
+            width: 100%;
+            max-width: 930px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #fff;
+            padding: 50px;
+        }
+
+        .slider {
+            display: flex;
+            transition: transform 1s ease-in-out;
+        }
+
+        .slide {
+            flex: 0 0 150px;
+            margin: 0 10px;
+            text-align: center;
+            line-height: 50px;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            padding-top: 20px;
+        }
+
+        .slide img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Our Trusted Brands</h1>
+    <div class="slider-container">
+        <div class="slider" id="slider">
+            <div class="slide"><img src="../image/brand01.png" alt="1"></div>
+            <div class="slide"><img src="../image/brand02.png" alt="2"></div>
+            <div class="slide"><img src="../image/brand03.png" alt="3"></div>
+            <div class="slide"><img src="../image/brand04.png" alt="4"></div>
+            <div class="slide"><img src="../image/brand05.png" alt="5"></div>
+            <div class="slide"><img src="../image/brand06.png" alt="6"></div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('slider');
+        let slides = Array.from(slider.children);
+        let slideWidth = slides[0].offsetWidth + 20; // Include margin
+
+        function moveSlider() {
+            // Move the slider left by one slide's width
+            slider.style.transform = `translateX(-${slideWidth}px)`;
+
+            // After the animation, reorder the slides
+            setTimeout(() => {
+                // Move the first slide to the end
+                slider.appendChild(slides[0]);
+
+                // Reset the transform to the starting position
+                slider.style.transition = 'none';
+                slider.style.transform = 'translateX(0)';
+
+                // Restore the transition and update slides array
+                setTimeout(() => {
+                    slider.style.transition = 'transform 1s ease-in-out';
+                    slides = Array.from(slider.children);
+                }, 50);
+            }, 1000); // Match the duration of the transition
+        }
+
+        // Set an interval for the slider movement
+        setInterval(moveSlider, 3000); // Adjust the time for each slide
+    </script>
+</body>
+</html>
