@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Institute</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        header {
+            background: #222;
+            color: #fff;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            background-image: url('https://via.placeholder.com/1500x500');
+            background-size: cover;
+            background-position: center;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        header p {
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        nav {
+            position: sticky;
+            top: 0;
+            background: #333;
+            padding: 1rem 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 2rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #f9a825;
+            border-bottom: 3px solid #f9a825;
+        }
+
+        /* Responsive nav */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;  /* Stack links vertically */
+                align-items: center;  /* Center the items */
+                display: none; /* Hide the nav items initially */
+                width: 100%;
+            }
+
+            nav ul.active {
+                display: flex; /* Show the nav items when active */
+            }
+
+            nav ul li {
+                margin: 1rem 0;  /* Adjust spacing between items */
+            }
+
+            nav ul li a {
+                font-size: 1.5rem;  /* Increase font size for better readability */
+                padding: 0.8rem;  /* Add padding for easier click/tap */
+            }
+
+            .hamburger-menu {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 20px;
+                width: 25px;
+                cursor: pointer;
+            }
+
+            .hamburger-menu div {
+                background-color: #fff;
+                height: 4px;
+                width: 100%;
+            }
+        }
+
+        section {
+            padding: 5rem 2rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        section h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+
+        section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        footer p {
+            font-size: 1rem;
+        }
+
+        .btn {
+            background: #f9a825;
+            color: #fff;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #c17900;
+            transform: scale(1.05);
+        }
+
+        .course-list li {
+            background: #fff;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            list-style-type: none;
+        }
+
+        .course-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .faculty-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .faculty-member {
+            text-align: center;
+            background: #fff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .faculty-member:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .faculty-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1.5rem;
+        }
+
+        .faculty-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .faculty-member p {
+            color: #777;
+        }
+
+        #about, #faculty, #contact {
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .testimonial-card {
+            background: #fff;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .testimonial-card blockquote {
+            font-size: 1.1rem;
+            color: #555;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-card footer {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Tech Institute</h1>
+        <p>Empowering Minds Through Technology</p>
+    </header>
+
+    <nav>
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <ul id="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#courses">Courses</a></li>
+            <li><a href="#faculty">Faculty</a></li>
+            <li><a href="#testimonials">Testimonials</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <h2>Welcome to Tech Institute</h2>
+        <p>Shape your future with cutting-edge skills and expert mentorship at Tech Institute. Join us on your journey to success in the tech industry.</p>
+        <p>At Tech Institute, we believe in providing students with the tools and knowledge they need to excel in a rapidly evolving world. Whether you are interested in web development, data science, artificial intelligence, or cybersecurity, we have a program tailored to your goals.</p>
+        <a href="#courses" class="btn">Explore Our Courses</a>
+    </section>
+
+    <section id="about">
+        <h2>About Us</h2>
+        <p>Founded in 2005, Tech Institute is a premier educational institution offering top-tier technology programs. Our goal is to provide students with a comprehensive learning experience, preparing them for successful careers in the tech industry.</p>
+        <p>We offer a wide range of degree and certification programs designed to equip our students with the skills they need to succeed in the digital age. From hands-on coding projects to internships, we ensure that our students are ready to meet the demands of the workforce.</p>
+        <p>Our faculty consists of industry experts who are passionate about teaching and committed to your success. Join us and become part of a global network of tech professionals.</p>
+    </section>
+
+    <section id="courses">
+        <h2>Our Courses</h2>
+        <ul class="course-list">
+            <li><strong>Web Development Bootcamp</strong>: Master HTML, CSS, JavaScript, and more to become a full-stack developer.</li>
+            <li><strong>Data Science and Analytics</strong>: Learn to analyze data and extract insights using Python, SQL, and more.</li>
+            <li><strong>Artificial Intelligence and Machine Learning</strong>: Get hands-on experience with AI models and machine learning techniques.</li>
+            <li><strong>Cybersecurity Essentials</strong>: Build skills to protect systems and networks from online threats.</li>
+            <li><strong>Mobile App Development</strong>: Learn to build apps for iOS and Android with popular frameworks like React Native.</li>
+        </ul>
+        <a href="#contact" class="btn">Enroll Now</a>
+    </section>
+
+    <section id="faculty">
+        <h2>Meet Our Faculty</h2>
+        <div class="faculty-list">
+            <div class="faculty-member">
+                <img src="../image/louise-fitzgerald-business-tutor.jpeg" alt="Faculty Member">
+                <h3>Dr. John Doe</h3>
+                <p>AI Specialist & Professor</p>
+            </div>
+            <div class="faculty-member">
+                <img src="../image/louise-fitzgerald-business-tutor.jpeg" alt="Faculty Member">
+                <h3>Jane Smith</h3>
+                <p>Data Science Expert</p>
+            </div>
+            <div class="faculty-member">
+                <img src="../image/louise-fitzgerald-business-tutor.jpeg" alt="Faculty Member">
+                <h3>Mark Johnson</h3>
+                <p>Full-Stack Developer</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials">
+        <h2>What Our Students Say</h2>
+        <div class="testimonial-card">
+            <blockquote>"Tech Institute gave me the tools and knowledge to succeed in web development. The hands-on projects were crucial to my learning."</blockquote>
+            <footer style="color: #ffffff;">- Sarah Lee, Web Developer</footer>
+        </div>
+        <div class="testimonial-card">
+            <blockquote>"The Data Science program helped me transition to a new career as a data analyst. I learned everything I needed to know."</blockquote>
+            <footer style="color: #ffffff;">- Mike Davis, Data Analyst</footer>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <p>We'd love to hear from you. Get in touch for more details or inquiries:</p>
+        <p>Email: info@techinstitute.com</p>
+        <p>Phone: +1 (123) 456-7890</p>
+        <p>Address: 456 Tech Lane, Silicon Valley, USA</p>
+        <a href="mailto:info@techinstitute.com" class="btn">Send Us an Email</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Tech Institute. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            var navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+
+</body>
+</html>
