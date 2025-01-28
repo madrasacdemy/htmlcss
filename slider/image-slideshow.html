@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Image Slideshow</title>
+<style>
+/* General Styling */
+body {
+  font-family: Verdana, sans-serif;
+  margin: 0;
+  background-color: #f4f4f9;
+  color: #333;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 20px;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.slideshow-container {
+  max-width: 800px;
+  position: relative;
+  margin: 40px auto;
+  border: 5px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  overflow: hidden;
+}
+
+/* Slide styling */
+.mySlides {
+  display: none;
+  position: relative;
+}
+
+img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.text {
+  color: #f2f2f2;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px;
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* Navigation buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  padding: 10px 20px;
+  margin-top: -22px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  transition: 0.6s ease;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  user-select: none;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.prev:hover, .next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Dots styling */
+.dot {
+  cursor: pointer;
+  height: 12px;
+  width: 12px;
+  margin: 5px 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* Fading animation */
+.fade {
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+<body>
+
+<h1>Image Slideshow with Captions</h1>
+
+<div class="slideshow-container">
+
+  <div class="mySlides fade">
+    <img src="../image/desktop-wallpaper-lake-mountains-canoe-kayak.jpg" alt="Image 1">
+    <div class="text">Beautiful Lake and Mountains</div>
+  </div>
+
+  <div class="mySlides fade">
+    <img src="../image/two-white-5-petaled-flowers-wallpaper-preview.jpg" alt="Image 2">
+    <div class="text">Stunning White Flowers</div>
+  </div>
+
+  <div class="mySlides fade">
+    <img src="../image/water-sampling-test-analysis.jpg" alt="Image 3">
+    <div class="text">Water Sampling in Nature</div>
+  </div>
+
+  <a class="prev" onclick="plusSlides(-1)">❮</a>
+  <a class="next" onclick="plusSlides(1)">❯</a>
+
+</div>
+
+<div style="margin: 10px auto;">
+  <span class="dot" onclick="currentSlide(1)"></span>
+  <span class="dot" onclick="currentSlide(2)"></span>
+  <span class="dot" onclick="currentSlide(3)"></span>
+</div>
+
+<script>
+let slideIndex = 1;
+showSlides(slideIndex);
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+}
+
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  let i;
+  let slides = document.getElementsByClassName("mySlides");
+  let dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex - 1].style.display = "block";
+  dots[slideIndex - 1].className += " active";
+}
+</script>
+
+</body>
+</html>
