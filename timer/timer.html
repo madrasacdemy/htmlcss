@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <style>
+        /* CSS */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4f6d7a, #7f8c8d); /* Background gradient */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+
+        .timer-container {
+            background-color: rgba(255, 255, 255, 0.9); /* Transparent white background */
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease; /* Smooth transition effect */
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 80%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 18px;
+            border: 2px solid #007bff;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .countdown {
+            margin-top: 20px;
+            font-size: 48px;
+            color: #333;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        /* Media Queries for responsiveness */
+        @media (max-width: 768px) {
+            .timer-container {
+                width: 90%;
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .countdown {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <h1>Countdown Timer</h1>
+        <input type="number" id="minutes" placeholder="Enter minutes" />
+        <button onclick="startCountdown()">Start Countdown</button>
+        <div class="countdown" id="countdown">00:00</div>
+    </div>
+
+    <script>
+        // JavaScript
+        let countdownInterval;
+
+        function startCountdown() {
+            const minutes = parseInt(document.getElementById('minutes').value);
+
+            if (isNaN(minutes) || minutes <= 0) {
+                alert('Please enter a valid number of minutes.');
+                return;
+            }
+
+            const targetTime = new Date().getTime() + minutes * 60 * 1000;
+
+            clearInterval(countdownInterval); // Clear any existing countdown
+            countdownInterval = setInterval(() => {
+                const currentTime = new Date().getTime();
+                const remainingTime = targetTime - currentTime;
+
+                if (remainingTime <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').textContent = 'Time’s up!';
+                    alert('Countdown finished!');
+                    return;
+                }
+
+                const minutesLeft = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsLeft = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                document.getElementById('countdown').textContent = `${String(minutesLeft).padStart(2, '0')}:${String(secondsLeft).padStart(2, '0')}`;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
