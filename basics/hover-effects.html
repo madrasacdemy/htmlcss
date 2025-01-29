@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Hover Effects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .hover-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .hover-button:hover {
+            background: white;
+            color: #3498db;
+            border-color: #3498db;
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+        }
+
+        .image-container {
+            margin-top: 40px;
+        }
+        .hover-image {
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.5s ease, opacity 0.3s ease;
+        }
+        .hover-image:hover {
+            transform: scale(1.1);
+            opacity: 0.8; 
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>CSS Hover Effects</h1>
+
+    <div class="button-container">
+        <button class="hover-button">Hover Me</button>
+    </div>
+
+    <div class="image-container">
+        <img src="../image/communication-skills-training.jpg" alt="Placeholder Image" class="hover-image">
+    </div>
+
+</body>
+</html>
