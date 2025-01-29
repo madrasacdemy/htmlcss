@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery Smooth Scroll Effect</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+        }
+        nav {
+            margin-top: 60px;
+            text-align: center;
+        }
+        nav a {
+            text-decoration: none;
+            margin: 10px;
+            padding: 10px;
+            font-size: 18px;
+            color: #333;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
+        section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #section1 { background: #ffadad; }
+        #section2 { background: #ffd6a5; }
+        #section3 { background: #fdffb6; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>jQuery Smooth Scroll</h1>
+    </header>
+
+    <nav>
+        <a href="#section1">Section 1</a>
+        <a href="#section2">Section 2</a>
+        <a href="#section3">Section 3</a>
+    </nav>
+
+    <section id="section1">Welcome to Section 1</section>
+    <section id="section2">Welcome to Section 2</section>
+    <section id="section3">Welcome to Section 3</section>
+
+    <script>
+        $(document).ready(function(){
+            $("nav a").on("click", function(event){
+                if (this.hash !== "") {
+                    event.preventDefault();
+                    var hash = this.hash;
+
+                    $("html, body").animate({
+                        scrollTop: $(hash).offset().top
+                    }, 800); // Animation duration in milliseconds (800ms)
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
