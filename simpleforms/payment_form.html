@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .payment-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .payment-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group input[type="text"] {
+            font-size: 16px;
+            letter-spacing: 2px;
+        }
+        .form-group input[type="text"].expiry-input {
+            font-size: 16px;
+            text-align: left;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #218838;
+        }
+    </style>
+    <script>
+        function formatCardNumber(input) {
+            let value = input.value.replace(/\D/g, '');
+            value = value.replace(/(\d{4})/g, '$1 ').trim();
+            input.value = value;
+        }
+        function formatCVV(input) {
+            input.value = input.value.replace(/\D/g, '').slice(0, 4);
+        }
+        function formatExpiryDate(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            input.value = value;
+        }
+    </script>
+</head>
+<body>
+    <div class="payment-container">
+        <h2>Payment Form</h2>
+        <form>
+            <div class="form-group">
+                <label for="card-name">Cardholder Name</label>
+                <input type="text" id="card-name" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNumber(this)" required>
+            </div>
+            <div class="form-group">
+                <label for="expiry-date">Expiration Date</label>
+                <input type="text" id="expiry-date" class="expiry-input" placeholder="MM/YY" maxlength="5" oninput="formatExpiryDate(this)" required>
+            </div>
+            <div class="form-group">
+                <label for="cvv">CVV</label>
+                <input type="text" id="cvv" placeholder="123" maxlength="4" oninput="formatCVV(this)" required>
+            </div>
+            <button type="submit" class="btn">Pay Now</button>
+        </form>
+    </div>
+</body>
+</html>
