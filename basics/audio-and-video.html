@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio and Video Example</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            /* width: 90%; */
+            max-width: 900px;
+        }
+        h1 {
+            font-size: 38px;
+            font-weight: 600;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 28px;
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .audio-container, .video-container {
+            margin: 40px 0;
+            background-color: #f1f3f5;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        audio, video {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        audio:hover, video:hover {
+            transform: scale(1.02);
+        }
+        .media-description {
+            color: #6c757d;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .media-container {
+            margin-top: 40px;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 30px;
+            }
+            h2 {
+                font-size: 24px;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Audio and Video Demo</h1>
+
+        <!-- Audio Section -->
+        <div class="audio-container">
+            <h2>Listen to This Song 🎵</h2>
+            <audio controls>
+                <source src="../image/[iSongs.info] 01 - Rise Of Dragon.mp3" type="audio/mp3">
+                Your browser does not support the audio element.
+            </audio>
+            <p class="media-description">Enjoy the music! You can listen to the song here.</p>
+        </div>
+
+        <!-- Video Section -->
+        <div class="video-container">
+            <h2>Watch This Video 🎥</h2>
+            <video controls>
+                <source src="../image/1 Minute Sample Video.mp4" type="video/mp4">
+                Your browser does not support the video element.
+            </video>
+            <p class="media-description">This is a short video sample. Enjoy watching!</p>
+        </div>
+    </div>
+
+</body>
+</html>
