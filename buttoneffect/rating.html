@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>jQuery Star Rating System</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    /* Basic styling for the page */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 50px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    /* Star Rating Container */
+    .star-rating {
+      display: inline-block;
+      font-size: 30px;
+      color: #ccc;
+      cursor: pointer;
+    }
+
+    .star-rating .star {
+      transition: color 0.2s;
+    }
+
+    /* Color when a star is hovered or clicked */
+    .star-rating .star.hover,
+    .star-rating .star.selected {
+      color: #ffcc00;
+    }
+
+    /* Styling for the result text */
+    .rating-result {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Rate This Product</h1>
+
+  <!-- Star Rating System -->
+  <div class="star-rating">
+    <span class="star" data-value="1">★</span>
+    <span class="star" data-value="2">★</span>
+    <span class="star" data-value="3">★</span>
+    <span class="star" data-value="4">★</span>
+    <span class="star" data-value="5">★</span>
+  </div>
+
+  <div class="rating-result">
+    <p>Your Rating: <span id="rating-value">0</span> / 5</p>
+  </div>
+
+  <script>
+    $(document).ready(function() {
+      var ratingValue = 0;
+
+      // Hover effect for the stars
+      $('.star').on('mouseenter', function() {
+        var value = $(this).data('value');
+        resetStars();
+        highlightStars(value);
+      });
+
+      // Reset the stars when hover is removed
+      $('.star').on('mouseleave', function() {
+        resetStars();
+        highlightStars(ratingValue); // Highlight the current rating
+      });
+
+      // Click event to select the rating
+      $('.star').on('click', function() {
+        ratingValue = $(this).data('value');
+        $('#rating-value').text(ratingValue); // Display selected rating
+        resetStars();
+        highlightStars(ratingValue);
+      });
+
+      // Function to highlight stars
+      function highlightStars(value) {
+        $('.star').each(function() {
+          if ($(this).data('value') <= value) {
+            $(this).addClass('hover');
+          }
+        });
+      }
+
+      // Function to reset stars
+      function resetStars() {
+        $('.star').removeClass('hover selected');
+      }
+    });
+  </script>
+
+</body>
+</html>
