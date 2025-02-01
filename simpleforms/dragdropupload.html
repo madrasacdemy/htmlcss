@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Drag & Drop File Upload</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #drop-zone {
+            width: 400px;
+            height: 200px;
+            border: 2px dashed #007bff;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 18px;
+            color: #007bff;
+            border-radius: 10px;
+            transition: 0.3s;
+            margin-bottom: 20px;
+            cursor: pointer;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        #drop-zone:hover, #drop-zone.dragover {
+            background-color: #e9f5ff;
+        }
+        #preview-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 400px;
+        }
+        .preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            padding: 5px;
+        }
+        .preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 3px 6px;
+            border-radius: 50%;
+        }
+        #upload-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+        #upload-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #upload-btn:hover:not(:disabled) {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="drop-zone">Drag & Drop Files Here or Click to Upload</div>
+    <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+    
+    <div id="preview-container"></div>
+    <button id="upload-btn" disabled>Upload Files</button>
+
+    <script>
+        $(document).ready(function () {
+            let dropZone = $("#drop-zone");
+            let fileInput = $("#fileInput");
+            let previewContainer = $("#preview-container");
+            let uploadBtn = $("#upload-btn");
+            let selectedFiles = [];
+
+            dropZone.on("click", function () {
+                fileInput.click();
+            });
+
+            fileInput.on("change", function (event) {
+                handleFiles(event.target.files);
+            });
+
+            dropZone.on("dragover", function (event) {
+                event.preventDefault();
+                dropZone.addClass("dragover");
+            });
+
+            dropZone.on("dragleave", function () {
+                dropZone.removeClass("dragover");
+            });
+
+            dropZone.on("drop", function (event) {
+                event.preventDefault();
+                dropZone.removeClass("dragover");
+                handleFiles(event.originalEvent.dataTransfer.files);
+            });
+
+            function handleFiles(files) {
+                $.each(files, function (i, file) {
+                    if (file.type.startsWith("image/")) {
+                        selectedFiles.push(file);
+
+                        let reader = new FileReader();
+                        reader.onload = function (e) {
+                            let preview = $("<div class='preview'>").append(
+                                $("<img>").attr("src", e.target.result),
+                                $("<button class='remove-btn'>&times;</button>").click(function () {
+                                    let index = selectedFiles.indexOf(file);
+                                    if (index > -1) {
+                                        selectedFiles.splice(index, 1);
+                                    }
+                                    $(this).parent().remove();
+                                    toggleUploadButton();
+                                })
+                            );
+                            previewContainer.append(preview);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                toggleUploadButton();
+            }
+
+            function toggleUploadButton() {
+                uploadBtn.prop("disabled", selectedFiles.length === 0);
+            }
+
+            uploadBtn.on("click", function () {
+                if (selectedFiles.length === 0) return;
+
+                let formData = new FormData();
+                $.each(selectedFiles, function (i, file) {
+                    formData.append("files[]", file);
+                });
+
+                $.ajax({
+                    url: "upload.php",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function () {
+                        alert("Files uploaded successfully!");
+                        previewContainer.empty();
+                        selectedFiles = [];
+                        toggleUploadButton();
+                    },
+                    error: function () {
+                        alert("File upload failed.");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
