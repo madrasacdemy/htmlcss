@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Data Preview</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background-color: #f8f9fa;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
+            margin-top: 50px;
+            width: 80%;
+        }
+
+        .form-container,
+        .preview-container {
+            width: 45%;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 20px;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: border 0.3s;
+        }
+
+        .form-container input[type="text"]:focus,
+        .form-container input[type="email"]:focus,
+        .form-container textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .preview-container h3 {
+            color: #343a40;
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .preview-container p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #495057;
+        }
+
+        .preview-container p span {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        /* Media Query for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-container,
+            .preview-container {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Form Container -->
+        <div class="form-container">
+            <h1>Form Data Preview</h1>
+            <form id="myForm">
+                <input type="text" id="name" placeholder="Enter your name" oninput="previewData()">
+                <input type="email" id="email" placeholder="Enter your email" oninput="previewData()">
+                <textarea id="message" placeholder="Enter your message" oninput="previewData()"></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="preview-container">
+            <h3>Preview:</h3>
+            <p><strong>Name:</strong> <span id="previewName">-</span></p>
+            <p><strong>Email:</strong> <span id="previewEmail">-</span></p>
+            <p><strong>Message:</strong> <span id="previewMessage">-</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Function to preview the form data
+        function previewData() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+
+            document.getElementById('previewName').textContent = name || '-';
+            document.getElementById('previewEmail').textContent = email || '-';
+            document.getElementById('previewMessage').textContent = message || '-';
+        }
+    </script>
+
+</body>
+</html>
