@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner Popup</title>
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+    <style>
+        /* Style for the QR scanner popup */
+        #qr-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #qr-popup.show {
+            display: flex;
+        }
+
+        #qr-popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        #qr-popup.show #qr-popup-content {
+            transform: scale(1);
+        }
+
+        /* Style for QR result */
+        #qr-result {
+            padding: 10px;
+            margin-top: 15px;
+        }
+
+        /* Button style */
+        #close-popup-btn {
+            margin-top: 10px;
+        }
+
+        /* Button to trigger the scanner */
+        #open-scanner-btn {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #open-scanner-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Style for text input */
+        #qr-input {
+            margin-bottom: 15px;
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Text input to display the scanned QR code -->
+    <input type="text" id="qr-input" placeholder="Scanned QR code will appear here" readonly />
+
+    <!-- Button to open the QR scanner popup -->
+    <button id="open-scanner-btn">Scan QR Code</button>
+
+    <!-- QR Scanner Popup -->
+    <div id="qr-popup">
+        <div id="qr-popup-content">
+            <div id="qr-reader" style="width: 500px; height: 500px;"></div>
+            <button id="close-popup-btn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        let html5QrCode;
+
+        // Function to open the QR scanner popup
+        document.getElementById('open-scanner-btn').addEventListener('click', function() {
+            const popup = document.getElementById('qr-popup');
+            popup.style.display = 'flex';
+            setTimeout(() => popup.classList.add('show'), 10);
+
+            // Initialize the QR scanner once the popup is opened
+            html5QrCode = new Html5Qrcode("qr-reader");
+
+            html5QrCode.start(
+                { facingMode: "environment" }, // Use rear camera
+                {
+                    fps: 10, // Frames per second
+                    qrbox: 250, // Size of QR scanning box
+                },
+                onScanSuccess,
+                onScanError
+            ).catch((err) => {
+                console.error("Error starting QR scanner: ", err);
+            });
+        });
+
+        // Function to handle success in QR scanning
+        function onScanSuccess(decodedText, decodedResult) {
+            // Display the scanned QR code text in the input field
+            document.getElementById('qr-input').value = decodedText;
+
+            // Optionally, close the popup after scan
+            const popup = document.getElementById('qr-popup');
+            popup.classList.remove('show');
+            setTimeout(() => popup.style.display = 'none', 300); // Hide after animation
+
+            // Stop the QR scanner and reset for the next scan
+            if (html5QrCode) {
+                html5QrCode.stop().catch(err => console.error("Error stopping QR scanner: ", err));
+            }
+        }
+
+        // Function to handle errors during QR scanning
+        function onScanError(errorMessage) {
+            console.warn(errorMessage);
+        }
+
+        // Close popup and stop the QR scanner
+        document.getElementById('close-popup-btn').addEventListener('click', function() {
+            const popup = document.getElementById('qr-popup');
+            popup.classList.remove('show');
+            setTimeout(() => popup.style.display = 'none', 300); // Hide after animation
+
+            if (html5QrCode) {
+                html5QrCode.stop().catch(err => console.error("Error stopping QR scanner: ", err));
+            }
+
+            // Clear the input field when the popup is closed
+            document.getElementById('qr-input').value = '';
+        });
+    </script>
+
+</body>
+</html>
