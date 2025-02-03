@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Keyframes Animation with Multiple Steps 🔁</title>
+    <style>
+        /* Body styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            margin-top: 300px;
+        }
+
+        /* Heading style */
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* Animation box */
+        .animated-box {
+            width: 100px;
+            height: 100px;
+            background-color: #4CAF50;
+            position: relative;
+            border-radius: 10px;
+        }
+
+        /* Keyframes animation with multiple steps */
+        @keyframes multiStepAnimation {
+            0% {
+                transform: translate(0, 0);
+                background-color: #4CAF50;
+                opacity: 1;
+            }
+            25% {
+                transform: translate(200px, 0);
+                background-color: #FF5722;
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(200px, 200px);
+                background-color: #3F51B5;
+                opacity: 0.6;
+            }
+            75% {
+                transform: translate(0, 200px);
+                background-color: #FF9800;
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(0, 0);
+                background-color: #4CAF50;
+                opacity: 1;
+            }
+        }
+
+        /* Apply animation to the box */
+        .animated-box {
+            animation: multiStepAnimation 5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Heading for the animation -->
+    <h1>CSS Keyframes Animation with Multiple Steps 🔁</h1>
+
+    <!-- Animated box -->
+    <div class="animated-box"></div>
+
+</body>
+</html>
