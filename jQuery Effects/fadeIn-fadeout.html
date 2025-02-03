@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery FadeIn/FadeOut Effects 🎭</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            background-color: #4CAF50;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            margin-left: 100px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>jQuery FadeIn/FadeOut Effects 🎭</h2>
+        <div class="box" id="box1">
+            Fade In / Out Box
+        </div>
+        <button class="button" id="fadeInBtn">Fade In</button>
+        <button class="button" id="fadeOutBtn">Fade Out</button>
+    </div>
+
+    <script>
+        // Wait for the DOM to be fully loaded before executing
+        $(document).ready(function() {
+            // Hide the box initially
+            $("#box1").hide();
+
+            // Fade In button click event
+            $("#fadeInBtn").click(function() {
+                $("#box1").fadeIn(1000); // Fade in with a duration of 1 second
+            });
+
+            // Fade Out button click event
+            $("#fadeOutBtn").click(function() {
+                $("#box1").fadeOut(1000); // Fade out with a duration of 1 second
+            });
+        });
+    </script>
+
+</body>
+</html>
