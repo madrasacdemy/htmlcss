@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced CSS Selectors & Combinators</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .card {
+            background: white;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Descendant Selector */
+        div p {
+            color: red;
+        }
+
+        /* Child Selector */
+        div > p {
+            color: blue;
+        }
+
+        /* Adjacent Sibling Selector */
+        h2 + p {
+            color: green;
+        }
+
+        /* General Sibling Selector */
+        h2 ~ p {
+            color: purple;
+        }
+
+        /* Universal Selector */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Attribute Selectors */
+        a[href] {
+            color: red;
+        }
+
+        a[href="https://example.com"] {
+            font-weight: bold;
+        }
+
+        .button[class~="active"] {
+            background-color: yellow;
+        }
+
+        /* Pseudo-Classes */
+        a:hover {
+            text-decoration: underline;
+        }
+
+        input:focus {
+            border-color: blue;
+        }
+
+        ul li:nth-child(2) {
+            color: green;
+        }
+
+        /* Pseudo-Elements */
+        h2::before {
+            content: ">> ";
+            color: blue;
+        }
+
+        p::after {
+            content: " - End of paragraph";
+            font-style: italic;
+        }
+
+        p::first-letter {
+            font-size: 2em;
+            color: red;
+        }
+
+        p::first-line {
+            font-weight: bold;
+        }
+
+        /* :not() Pseudo-Class */
+        p:not(.highlight) {
+            color: gray;
+        }
+
+        /* :nth-of-type() */
+        p:nth-of-type(even) {
+            background-color: lightgray;
+        }
+
+        /* :nth-child() */
+        div:nth-child(3) {
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>Advanced CSS Selectors & Combinators</h1>
+            <div>
+                <p>This paragraph is targeted by a descendant selector.</p>
+                <p>This is a direct child of the div and is targeted by the child selector.</p>
+            </div>
+
+            <h2>Header 2</h2>
+            <p>This paragraph is adjacent to the h2 and is targeted by the adjacent sibling selector.</p>
+            <p>This paragraph is a general sibling of the h2 and is targeted by the general sibling selector.</p>
+
+            <a href="https://example.com">Click Here</a>
+            <a href="https://anotherlink.com">Another Link</a>
+
+            <ul>
+                <li>Item 1</li>
+                <li>Item 2</li>
+                <li>Item 3</li>
+            </ul>
+
+            <input type="text" placeholder="Focus me!">
+
+            <h2>Some Heading</h2>
+            <p>This is a paragraph that demonstrates pseudo-elements like ::first-letter.</p>
+            <p class="highlight">This paragraph will not be styled gray.</p>
+        </div>
+    </div>
+</body>
+</html>
