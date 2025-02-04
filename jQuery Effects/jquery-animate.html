@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery .animate() Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .box {
+            width: 150px;
+            height: 150px;
+            background: #ff5733;
+            position: relative;
+        }
+
+        button {
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        h2 {
+            color: #fff;
+            margin-top: 20px;
+            font-size: 24px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box"></div>
+    <button id="animateBtn">Animate Box</button>
+    <h2 id="status">Click the button to animate the box!</h2>
+
+    <script>
+        $(document).ready(function() {
+            $('#animateBtn').click(function() {
+                $('.box').animate({
+                    width: '300px',
+                    height: '300px',
+                    opacity: 0.5,
+                    left: '250px'
+                }, 1000, function() {
+                    // Animation complete callback
+                    $(this).css('background', '#2ecc71');
+                    $('#status').text('Animation Complete!');  // Update the heading text
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
