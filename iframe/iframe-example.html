@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iframe Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 50;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-top: 600px;
+        }
+
+        .iframe-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        iframe {
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .iframe-container iframe {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .map-iframe {
+            height: 450px;
+        }
+
+        .video-iframe {
+            height: 315px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Iframe Example</h1>
+
+    <div class="iframe-container">
+        <!-- Basic Website Iframe -->
+        <iframe src="https://www.example.com" width="800" height="450" style="border: 1px solid #ccc;">
+            This browser does not support iframes.
+        </iframe>
+
+        <!-- Google Maps Iframe -->
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d248755.79476727886!2d80.04386400387888!3d13.04780780650009!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265ea4f7d3361%3A0x6e61a70b6863d433!2sChennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1738645583077!5m2!1sen!2sin" 
+        class="map-iframe" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        
+        <!-- YouTube Video Iframe -->
+        <iframe class="video-iframe" src="https://www.youtube.com/embed/uqKq6R_zn9Q?si=HV_Hp6puQCV1cj7I" title="YouTube video player" 
+        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+        referrerpolicy="strict-origin-when-cross-origin" height="700" allowfullscreen></iframe>
+    </div>
+
+</body>
+</html>
