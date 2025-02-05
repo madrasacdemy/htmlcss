@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-Speech Converter</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Text-to-Speech Converter</h2>
+        <textarea id="textInput" placeholder="Enter text here to convert to speech..."></textarea>
+        <br>
+        <button onclick="speakText()">Speak</button>
+
+        <h3>Choose Voice:</h3>
+        <select id="voiceSelect"></select>
+    </div>
+
+    <script>
+        const synth = window.speechSynthesis;
+        const textInput = document.getElementById('textInput');
+        const voiceSelect = document.getElementById('voiceSelect');
+
+        let voices = [];
+
+        // Get all available voices from the browser
+        function populateVoiceList() {
+            voices = synth.getVoices();
+            voiceSelect.innerHTML = '';
+
+            // Filter for Tamil, Hindi, Telugu, and English voices
+            const languages = ['ta-IN', 'hi-IN', 'te-IN', 'en-US', 'en-GB'];
+            const filteredVoices = voices.filter(voice => languages.includes(voice.lang));
+
+            // Fallback: If no voices are available, add English as a default
+            if (filteredVoices.length === 0) {
+                const defaultVoice = voices.find(voice => voice.lang === 'en-US');
+                if (defaultVoice) {
+                    const option = document.createElement('option');
+                    option.textContent = `${defaultVoice.name} (English)`;
+                    option.setAttribute('data-index', voices.indexOf(defaultVoice));
+                    voiceSelect.appendChild(option);
+                }
+            } else {
+                // Add available voices
+                filteredVoices.forEach(voice => {
+                    const option = document.createElement('option');
+                    option.textContent = `${voice.name} (${voice.lang})`;
+                    option.setAttribute('data-index', voices.indexOf(voice));
+                    voiceSelect.appendChild(option);
+                });
+            }
+        }
+
+        // Set up voice options when voices are loaded
+        if (synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = populateVoiceList;
+        }
+
+        // Speak the text
+        function speakText() {
+            const text = textInput.value.trim();
+            if (text !== '') {
+                const utterance = new SpeechSynthesisUtterance(text);
+                const selectedVoice = voices[voiceSelect.selectedIndex];
+                utterance.voice = selectedVoice;
+                utterance.pitch = 1;
+                utterance.rate = 1;
+                synth.speak(utterance);
+            }
+        }
+
+        // Initialize voice selection
+        populateVoiceList();
+    </script>
+
+</body>
+</html>
