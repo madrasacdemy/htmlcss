@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Notes App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .add-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        .notes-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .note {
+            background: #e9ecef;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .edit-btn { background-color: #28a745; color: white; }
+        .delete-btn { background-color: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Notes App</h2>
+        <textarea id="noteInput" placeholder="Write your note here..."></textarea>
+        <button class="add-btn" id="addNote">Add Note</button>
+        <div class="notes-list" id="notesList"></div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            loadNotes();
+
+            $("#addNote").click(function () {
+                let noteText = $("#noteInput").val().trim();
+                if (noteText !== "") {
+                    addNote(noteText);
+                    $("#noteInput").val(""); // Clear input
+                }
+            });
+
+            function addNote(text) {
+                let notes = JSON.parse(localStorage.getItem("notes")) || [];
+                notes.push(text);
+                localStorage.setItem("notes", JSON.stringify(notes));
+                loadNotes();
+            }
+
+            function loadNotes() {
+                let notes = JSON.parse(localStorage.getItem("notes")) || [];
+                $("#notesList").html("");
+                notes.forEach((note, index) => {
+                    $("#notesList").append(`
+                        <div class="note">
+                            <span>${note}</span>
+                            <div>
+                                <button class="edit-btn" onclick="editNote(${index})">Edit</button>
+                                <button class="delete-btn" onclick="deleteNote(${index})">Delete</button>
+                            </div>
+                        </div>
+                    `);
+                });
+            }
+
+            window.editNote = function (index) {
+                let notes = JSON.parse(localStorage.getItem("notes"));
+                let newText = prompt("Edit your note:", notes[index]);
+                if (newText !== null) {
+                    notes[index] = newText.trim();
+                    localStorage.setItem("notes", JSON.stringify(notes));
+                    loadNotes();
+                }
+            };
+
+            window.deleteNote = function (index) {
+                let notes = JSON.parse(localStorage.getItem("notes"));
+                notes.splice(index, 1);
+                localStorage.setItem("notes", JSON.stringify(notes));
+                loadNotes();
+            };
+        });
+    </script>
+
+</body>
+</html>

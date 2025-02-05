@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+        .sentence {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            min-height: 50px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+            resize: none;
+            display: none;
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Typing Speed Test</h2>
+        <p class="sentence" id="sentence">Click "Start" to begin the test.</p>
+        <textarea id="inputText" placeholder="Start typing here..."></textarea>
+        <div class="stats">
+            <p>Time Taken: <span id="timer">0</span> sec</p>
+            <p>WPM: <span id="wpm">0</span></p>
+            <p>Accuracy: <span id="accuracy">100</span>%</p>
+        </div>
+        <button id="start">Start</button>
+        <button id="restart" style="display: none;">Restart</button>
+    </div>
+
+    <script>
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog.",
+            "JavaScript is a powerful programming language.",
+            "Practice makes a man perfect.",
+            "Typing fast improves productivity.",
+            "Learning to code is a valuable skill."
+        ];
+
+        let startTime, interval, isTyping = false;
+        let selectedSentence = "";
+
+        document.getElementById("start").addEventListener("click", function() {
+            selectedSentence = sentences[Math.floor(Math.random() * sentences.length)];
+            document.getElementById("sentence").innerHTML = selectedSentence;
+            document.getElementById("inputText").style.display = "block";
+            document.getElementById("start").style.display = "none";
+            document.getElementById("inputText").focus();
+        });
+
+        document.getElementById("inputText").addEventListener("input", function() {
+            if (!isTyping) {
+                isTyping = true;
+                startTime = new Date().getTime();
+                interval = setInterval(updateTimer, 1000);
+            }
+            checkTyping();
+        });
+
+        function updateTimer() {
+            let elapsedTime = Math.floor((new Date().getTime() - startTime) / 1000);
+            document.getElementById("timer").textContent = elapsedTime;
+        }
+
+        function checkTyping() {
+            let inputText = document.getElementById("inputText").value;
+            let sentence = selectedSentence;
+            let correctChars = 0;
+            let highlightedText = "";
+
+            for (let i = 0; i < sentence.length; i++) {
+                if (i < inputText.length) {
+                    if (inputText[i] === sentence[i]) {
+                        correctChars++;
+                        highlightedText += `<span class="correct">${sentence[i]}</span>`;
+                    } else {
+                        highlightedText += `<span class="incorrect">${sentence[i]}</span>`;
+                    }
+                } else {
+                    highlightedText += sentence[i];
+                }
+            }
+
+            document.getElementById("sentence").innerHTML = highlightedText;
+            let accuracy = (correctChars / inputText.length) * 100 || 100;
+            document.getElementById("accuracy").textContent = accuracy.toFixed(2);
+
+            if (inputText === sentence) {
+                clearInterval(interval); // Stop timer
+                let elapsedTime = Math.floor((new Date().getTime() - startTime) / 1000);
+                let words = sentence.split(" ").length;
+                let wpm = (words / elapsedTime) * 60;
+                document.getElementById("wpm").textContent = Math.round(wpm);
+                isTyping = false; // Prevent further updates
+                document.getElementById("restart").style.display = "block";
+            }
+        }
+
+        document.getElementById("restart").addEventListener("click", function() {
+            location.reload();
+        });
+    </script>
+
+</body>
+</html>
