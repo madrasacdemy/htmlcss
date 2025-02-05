@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Character Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f1f1f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            resize: none;
+            transition: border-color 0.3s ease;
+        }
+        textarea:focus {
+            border-color: #007bff;
+        }
+        .counter {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #555;
+        }
+        .limit {
+            color: #28a745;
+        }
+        .limit-exceeded {
+            color: #dc3545;
+        }
+        #charCount {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Live Character Counter</h2>
+        <textarea id="textInput" placeholder="Start typing here..."></textarea>
+        <div class="counter">
+            <p>Character Count: <span id="charCount">0</span></p>
+            <p class="limit" id="charLimitMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        const maxCharLimit = 200;  // Optional: Set a character limit, or set to `0` for unlimited
+
+        const textInput = document.getElementById('textInput');
+        const charCount = document.getElementById('charCount');
+        const charLimitMessage = document.getElementById('charLimitMessage');
+
+        textInput.addEventListener('input', function() {
+            const currentCharCount = textInput.value.length;
+            charCount.textContent = currentCharCount;
+
+            if (maxCharLimit > 0) {
+                if (currentCharCount > maxCharLimit) {
+                    charLimitMessage.textContent = `Character limit exceeded! Maximum is ${maxCharLimit}.`;
+                    charLimitMessage.classList.add('limit-exceeded');
+                    textInput.value = textInput.value.substring(0, maxCharLimit);  // Limit the input
+                } else {
+                    charLimitMessage.textContent = `You can type ${maxCharLimit - currentCharCount} more characters.`;
+                    charLimitMessage.classList.remove('limit-exceeded');
+                    charLimitMessage.classList.add('limit');
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>
