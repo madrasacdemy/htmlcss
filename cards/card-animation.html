@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Design</title>
+  <style>
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        }
+        body{
+            background-color: rgb(2, 1, 1);
+        }
+
+        .main{
+            display: flex;
+            position: relative;
+        }
+        .maindiv{
+            width:600px;
+            justify-content: center;
+            padding: 25%;
+        }
+
+        .card{
+            height: 150px;
+            width: 350px;
+            position: absolute;
+            object-fit: cover;   
+            box-shadow: 1px 1px 60px red ;     
+            background: url(../image/red.jpg);
+            border-radius: 10px 10px 0 0;
+            object-fit: cover;
+        }
+
+
+        .card_1{
+            position: relative;
+            z-index:1;
+            width: 100px;
+            height: 80px;
+            background-color: black;
+            color: white;
+
+            padding: 10px;
+            padding-top: 15px;
+            box-shadow: 1px 1px 60px red  ;
+            border-radius: 10px;
+            justify-self: start;
+            transform: translateX(-95%) translateY(50%);
+            & h2{
+                color: red;
+            }
+        }
+
+        .card_2{
+            width: 350px;
+            height: 350px;
+            background-color: black;
+            color: white;
+            z-index: 0;
+            text-align: justify;
+            padding: 20px;
+            border-radius: 0 0 10px  10px;
+            margin-top: -15px;
+            box-shadow: 1px 1px 60px red;
+            z-index: 2;
+            display: grid;
+            gap: 2%;
+
+            h3{
+                color: red;
+                text-shadow: 5px 1px 10px red;            
+            }
+            & p{
+                margin-bottom: 20px;
+            }
+        }
+        .maindivc{
+            width:600px;
+            justify-content: center;
+            padding: 25%;
+        }
+
+        .cardc{
+            height: 150px;
+            width: 350px;
+            position: absolute;
+            object-fit: cover;            
+            background: url(../image/red.jpg);
+            border-radius: 10px 10px 0 0;
+            object-fit: cover;
+            box-shadow: 1px 1px 60px green;
+        }
+
+
+        .card_1c{
+            position: relative;
+            z-index:1;
+            width: 100px;
+            height: 80px;
+            background-color: black;
+            color: white;
+            padding: 10px;
+            padding-top: 15px;
+            box-shadow: 1px 1px 60px green  ;
+            border-radius: 10px;
+            justify-self: start;
+            transform: translateX(-95%) translateY(50%);
+            & h2{
+                color: green;
+            }
+        }
+
+        .card_2c{
+            width: 350px;
+            height: 350px;
+            background-color: black;
+            color: white;
+            z-index: 0;
+            text-align: justify;
+            padding: 20px;
+            border-radius: 0 0 10px  10px;
+            margin-top: -15px;
+            box-shadow: 1px 1px 60px green;
+            z-index: 2;
+            display: grid;
+            gap: 2%;
+            h3{
+                color: green;
+                text-shadow: 5px 1px 10px green;        
+            }
+            & p{
+                margin-bottom: 20px;
+            }
+        }
+
+
+        .cardcontainer{
+            width: fit-content;
+            border-radius: 10px 10px 0 0;
+            position: absolute;
+        }
+        .cardcontainer:hover{
+            width: fit-content;
+            animation: flip 0.09s linear forwards;
+        }
+        @keyframes flip  {
+            to{
+                perspective: 1000px;
+                transform: rotateX(15deg)
+                rotateY(25deg) rotateZ(2deg)
+                translateZ(-10px);        
+                border-radius: 10px 10px 0 0;
+            }
+        }
+
+        .card , .cardc{
+            animation: bgflip 0.1s linear forwards;
+        }
+        @keyframes bgflip {
+            to{
+                background-attachment: fixed;
+            }
+        }
+
+        .card_2 , .card_2c{
+            .h1:hover{            
+                animation: up 0.3s linear forwards ;            
+            }
+            .p:hover{
+                animation: up 0.3s linear forwards;
+            }
+            .h2:hover{
+                animation: up 0.3s linear forwards;
+            }
+        }
+
+        @keyframes up{
+            to{
+                transform: translate3d(8px, -12.5px, -25px);
+            }
+        }
+
+        .heading {
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            margin-top: 50px;
+            margin-left: 450px;
+            text-shadow: 2px 2px 10px red;
+            position: absolute;
+        }        
+  </style>
+</head>
+<body>
+  <div class="main">
+    <h1 class="heading">Responsive Card Design</h1>
+    <section>
+        <center class="maindiv">  
+            <div class="cardcontainer">
+                <div class="card" style="background: url(../image/red.jpg);"></div>
+                <br><br><br>
+                <div class="card_1">
+                    <div>    
+                        <center><h1>SEPT</h1><h2>03</h2></center>
+                    </div>                    
+                </div>
+                <div class="card_2">
+                    <br><br><br>
+                    <div class="h1"><h1>Card Title</h1></div>
+                    <div class="p"><p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo dolores eaque distinctio cum delectus? Reiciendis totam officia provident ducimus cupiditate porro, quasi earum, dolore, odiofacilis quae est quos dolores?</p></div>
+                    <div class="h2"><h3> SEE MORE</h3></div> 
+                </div>
+            </div>
+        </center>
+    </section>    
+    <section>
+        <center class="maindivc">
+            <div class="cardcontainer">
+                <div class="cardc" style="background: url(../image/green_version_resized.jpg);"></div>
+                <br><br><br>
+                <div class="card_1c">
+                    <div >
+                        <center><h1>SEPT</h1><h2>03</h2></center>
+                    </div>
+                </div>
+                <div class="card_2c">
+                    <br><br><br>
+                    <div class="h1"><h1>Card Title</h1></div>
+                    <div class="p"><p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nemo doloreseaque distinctio cum delectus? Reiciendistotam officia provident ducimus cupiditateporro, quasi earum, dolore, odio facilis quae est quos dolores?</p></div>
+                    <div class="h2"><h3> SEE MORE</h3></div> 
+                </div>
+            </div>
+        </center>
+    </section>
+  </div>
+ 
+</body>
+</html>
