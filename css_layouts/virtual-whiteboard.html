@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Whiteboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        #canvas {
+            border: 1px solid #000;
+            margin-top: 20px;
+            cursor: crosshair;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .color-picker {
+            padding: 5px;
+        }
+
+        button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        #color-picker {
+            width: 50px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Virtual Whiteboard</h1>
+
+    <div class="controls">
+        <label for="color-picker">Pick Color:</label>
+        <input type="color" id="color-picker" class="color-picker" value="#000000">
+        <button onclick="clearBoard()">Clear Board</button>
+    </div>
+
+    <canvas id="canvas" width="600" height="400"></canvas>
+
+    <script>
+        // Initialize canvas and drawing context
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let color = "#000000";
+        let prevX = 0, prevY = 0;
+
+        // Set up event listeners for drawing on canvas
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        // Handle color change from color picker
+        document.getElementById('color-picker').addEventListener('input', function (e) {
+            color = e.target.value;
+        });
+
+        // Start drawing when mouse is pressed
+        function startDrawing(e) {
+            drawing = true;
+            prevX = e.offsetX;
+            prevY = e.offsetY;
+        }
+
+        // Draw on canvas when mouse is moved
+        function draw(e) {
+            if (!drawing) return;
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            prevX = e.offsetX;
+            prevY = e.offsetY;
+        }
+
+        // Stop drawing when mouse is released or moved out of canvas
+        function stopDrawing() {
+            drawing = false;
+        }
+
+        // Clear the canvas
+        function clearBoard() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+
+</body>
+</html>
