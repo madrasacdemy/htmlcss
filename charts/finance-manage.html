@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        input, button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .card {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            max-height: 400px; /* Increased chart size */
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Personal Finance Manager</h1>
+
+    <div class="input-container">
+        <input type="text" id="transaction-name" placeholder="Transaction Name" required>
+        <input type="number" id="transaction-amount" placeholder="Amount" required>
+        <select id="transaction-type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+        </select>
+        <button onclick="addTransaction()">Add Transaction</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h3>Income</h3>
+            <p id="income-amount">₹0</p> <!-- Updated to Rupees -->
+        </div>
+        <div class="card">
+            <h3>Expenses</h3>
+            <p id="expense-amount">₹0</p> <!-- Updated to Rupees -->
+        </div>
+        <div class="card">
+            <h3>Balance</h3>
+            <p id="balance">₹0</p> <!-- Updated to Rupees -->
+        </div>
+    </div>
+
+    <div>
+        <h2>Expense vs Income</h2>
+        <canvas id="financeChart"></canvas>
+    </div>
+
+    <script>
+        let income = 0;
+        let expenses = 0;
+        let financeChart = null; // Initialize outside function
+
+        // Load saved data from local storage
+        if (localStorage.getItem('income')) {
+            income = parseFloat(localStorage.getItem('income'));
+        }
+        if (localStorage.getItem('expenses')) {
+            expenses = parseFloat(localStorage.getItem('expenses'));
+        }
+
+        // Initial load of data
+        updateDashboard();
+        updateChart();
+
+        function addTransaction() {
+            const name = document.getElementById('transaction-name').value;
+            const amount = parseFloat(document.getElementById('transaction-amount').value);
+            const type = document.getElementById('transaction-type').value;
+
+            if (name && amount) {
+                if (type === "income") {
+                    income += amount;
+                } else if (type === "expense") {
+                    expenses += amount;
+                }
+
+                // Save updated data to local storage
+                localStorage.setItem('income', income);
+                localStorage.setItem('expenses', expenses);
+
+                // Update the UI and chart
+                updateDashboard();
+                updateChart();
+
+                // Clear inputs automatically
+                document.getElementById('transaction-name').value = '';
+                document.getElementById('transaction-amount').value = '';
+                document.getElementById('transaction-type').value = 'income';
+            } else {
+                alert("Please enter both transaction name and amount.");
+            }
+        }
+
+        function updateDashboard() {
+            document.getElementById('income-amount').innerText = `₹${income.toFixed(2)}`;
+            document.getElementById('expense-amount').innerText = `₹${expenses.toFixed(2)}`;
+            document.getElementById('balance').innerText = `₹${(income - expenses).toFixed(2)}`;
+        }
+
+        // Chart.js visualization
+        function updateChart() {
+            const ctx = document.getElementById('financeChart').getContext('2d');
+
+            // Destroy the previous chart if it exists
+            if (financeChart) {
+                financeChart.destroy();
+            }
+
+            // Create a new chart
+            financeChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Income', 'Expenses'],
+                    datasets: [{
+                        data: [income, expenses],
+                        backgroundColor: ['#4CAF50', '#FF6347'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    return `₹${tooltipItem.raw.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    // Set chart size
+                    aspectRatio: 2 // Increased chart aspect ratio for bigger chart
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

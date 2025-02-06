@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .metrics {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Social Media Dashboard</h1>
+
+    <div class="dashboard" id="dashboard">
+        <div class="metrics">
+            <h3>Followers</h3>
+            <p id="followers">0</p>
+        </div>
+        <div class="metrics">
+            <h3>Likes</h3>
+            <p id="likes">0</p>
+        </div>
+        <div class="metrics">
+            <h3>Posts</h3>
+            <p id="posts">0</p>
+        </div>
+    </div>
+
+    <div id="charts">
+        <h2>Engagement Trends</h2>
+        <canvas id="followersChart"></canvas>
+    </div>
+
+    <script>
+        // Dummy data for demo
+        const dummyData = {
+            followers: 1500,
+            likes: 3500,
+            posts: 120,
+            engagementData: [500, 700, 800, 1000, 1200, 1500, 1800, 2000]
+        };
+
+        // Fill in the data
+        document.getElementById("followers").innerText = dummyData.followers;
+        document.getElementById("likes").innerText = dummyData.likes;
+        document.getElementById("posts").innerText = dummyData.posts;
+
+        // Render the chart
+        renderFollowersChart();
+
+        function renderFollowersChart() {
+            const ctx = document.getElementById('followersChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                    datasets: [{
+                        label: 'Followers Growth',
+                        data: dummyData.engagementData,
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
