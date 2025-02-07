@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Ticket Booking</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        select:focus, input:focus, button:focus {
+            border-color: #6c63ff;
+            outline: none;
+        }
+        select {
+            background-color: #f9f9f9;
+        }
+        input[type="date"] {
+            background-color: #f9f9f9;
+        }
+        .seats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            margin-left: 50px;
+        }
+        .seat {
+            width: 50px;
+            height: 50px;
+            background-color: #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .seat.selected {
+            background-color: #28a745;
+            color: white;
+        }
+        .seat.booked {
+            background-color: #dc3545;
+            cursor: not-allowed;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 18px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #summary {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+        }
+        label {
+            text-align: left;
+            display: block;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Bus Ticket Booking</h2>
+
+        <label for="from">From:</label>
+        <select id="from">
+            <option value="Chennai">Chennai</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Hyderabad">Hyderabad</option>
+        </select>
+
+        <label for="to">To:</label>
+        <select id="to">
+            <option value="Bangalore">Bangalore</option>
+            <option value="Hyderabad">Hyderabad</option>
+            <option value="Chennai">Chennai</option>
+        </select>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date">
+
+        <h3>Select Seats</h3>
+        <div class="seats" id="seats-container">
+            <!-- Seats will be generated here -->
+        </div>
+
+        <button onclick="bookTickets()">Book Tickets</button>
+
+        <p id="summary"></p>
+    </div>
+
+    <script>
+        const seatsContainer = document.getElementById('seats-container');
+        let selectedSeats = [];
+
+        function generateSeats() {
+            seatsContainer.innerHTML = '';
+            for (let i = 1; i <= 16; i++) {
+                const seat = document.createElement('div');
+                seat.classList.add('seat');
+                seat.innerText = i;
+
+                seat.addEventListener('click', () => toggleSeat(seat, i));
+
+                seatsContainer.appendChild(seat);
+            }
+        }
+
+        function toggleSeat(seat, seatNumber) {
+            if (seat.classList.contains('booked')) return;
+
+            if (seat.classList.contains('selected')) {
+                seat.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+            } else {
+                seat.classList.add('selected');
+                selectedSeats.push(seatNumber);
+            }
+        }
+
+        function bookTickets() {
+            const from = document.getElementById('from').value;
+            const to = document.getElementById('to').value;
+            const date = document.getElementById('date').value;
+
+            if (!date || selectedSeats.length === 0) {
+                alert("Please select a date and at least one seat.");
+                return;
+            }
+
+            selectedSeats.forEach(seatNumber => {
+                document.querySelector(`.seat:nth-child(${seatNumber})`).classList.add('booked');
+            });
+
+            document.getElementById('summary').innerText = 
+                `Trip: ${from} → ${to}\nDate: ${date}\nSeats: ${selectedSeats.join(', ')}`;
+
+            selectedSeats = [];
+        }
+
+        generateSeats();
+    </script>
+
+</body>
+</html>
