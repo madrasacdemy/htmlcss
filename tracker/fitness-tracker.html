@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        input, button, select {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .card {
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 200px;
+            background-color: #fff;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Fitness Tracker</h1>
+
+    <div class="input-container">
+        <input type="text" id="workout-name" placeholder="Workout Name" required>
+        <input type="number" id="calories-burned" placeholder="Calories Burned" required>
+        <select id="workout-type">
+            <option value="running">Running</option>
+            <option value="cycling">Cycling</option>
+            <option value="weightlifting">Weightlifting</option>
+        </select>
+        <button onclick="addWorkout()">Add Workout</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h3>Total Workouts</h3>
+            <p id="total-workouts">0</p>
+        </div>
+        <div class="card">
+            <h3>Total Calories</h3>
+            <p id="total-calories">0</p>
+        </div>
+    </div>
+
+    <div>
+        <h2>Calories Burned Over Time</h2>
+        <canvas id="progressChart"></canvas>
+    </div>
+
+    <script>
+        let workouts = [];
+        let totalCalories = 0;
+        let totalWorkouts = 0;
+        let progressChart = null;
+
+        if (localStorage.getItem('workouts')) {
+            workouts = JSON.parse(localStorage.getItem('workouts'));
+            updateDashboard();
+            updateChart();
+        }
+
+        function addWorkout() {
+            const name = document.getElementById('workout-name').value;
+            const calories = parseFloat(document.getElementById('calories-burned').value);
+            const type = document.getElementById('workout-type').value;
+
+            if (name && !isNaN(calories)) {
+                const workout = {
+                    name,
+                    calories,
+                    type,
+                    date: new Date().toLocaleDateString()
+                };
+                workouts.push(workout);
+
+                localStorage.setItem('workouts', JSON.stringify(workouts));
+
+                updateDashboard();
+                updateChart();
+
+                document.getElementById('workout-name').value = '';
+                document.getElementById('calories-burned').value = '';
+                document.getElementById('workout-type').value = 'running';
+            } else {
+                alert("Please enter valid workout details.");
+            }
+        }
+
+        function updateDashboard() {
+            totalCalories = workouts.reduce((total, workout) => total + workout.calories, 0);
+            totalWorkouts = workouts.length;
+
+            document.getElementById('total-calories').innerText = totalCalories;
+            document.getElementById('total-workouts').innerText = totalWorkouts;
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+
+            if (progressChart) {
+                progressChart.destroy();
+            }
+
+            const labels = workouts.map(workout => workout.date);
+            const data = workouts.map(workout => workout.calories);
+
+            progressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Calories Burned',
+                        data: data,
+                        borderColor: '#FF6347',
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    aspectRatio: 1.5
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

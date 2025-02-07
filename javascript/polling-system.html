@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Polling System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .input-container {
+            margin: 20px 0;
+        }
+
+        input, button, select {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        .poll-container {
+            margin-top: 30px;
+        }
+
+        .poll {
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+        }
+
+        .poll-result {
+            margin-top: 20px;
+        }
+
+        .result {
+            margin: 10px 0;
+        }
+
+        .result-bar {
+            height: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Online Polling System</h1>
+
+    <div class="input-container">
+        <input type="text" id="poll-question" placeholder="Enter Poll Question" required>
+        <input type="text" id="poll-option1" placeholder="Option 1" required>
+        <input type="text" id="poll-option2" placeholder="Option 2" required>
+        <input type="text" id="poll-option3" placeholder="Option 3" required>
+        <input type="text" id="poll-option4" placeholder="Option 4" required>
+        <button onclick="createPoll()">Create Poll</button>
+    </div>
+
+    <div class="poll-container" id="poll-list"></div>
+
+    <script>
+        let polls = JSON.parse(localStorage.getItem('polls')) || [];
+
+        // Load existing polls from local storage
+        displayPolls();
+
+        function createPoll() {
+            const question = document.getElementById('poll-question').value;
+            const option1 = document.getElementById('poll-option1').value;
+            const option2 = document.getElementById('poll-option2').value;
+            const option3 = document.getElementById('poll-option3').value;
+            const option4 = document.getElementById('poll-option4').value;
+
+            if (question && option1 && option2 && option3 && option4) {
+                const poll = {
+                    question,
+                    options: [option1, option2, option3, option4],
+                    votes: [0, 0, 0, 0],
+                    id: new Date().getTime()
+                };
+
+                polls.push(poll);
+                localStorage.setItem('polls', JSON.stringify(polls));
+
+                // Clear inputs
+                document.getElementById('poll-question').value = '';
+                document.getElementById('poll-option1').value = '';
+                document.getElementById('poll-option2').value = '';
+                document.getElementById('poll-option3').value = '';
+                document.getElementById('poll-option4').value = '';
+
+                // Display the updated poll list
+                displayPolls();
+            } else {
+                alert("Please fill in all the fields.");
+            }
+        }
+
+        function displayPolls() {
+            const pollList = document.getElementById('poll-list');
+            pollList.innerHTML = '';
+
+            polls.forEach((poll, index) => {
+                const pollDiv = document.createElement('div');
+                pollDiv.classList.add('poll');
+                pollDiv.innerHTML = `
+                    <h3>${poll.question}</h3>
+                    <div>
+                        <button onclick="votePoll(${index}, 0)">${poll.options[0]}</button>
+                        <button onclick="votePoll(${index}, 1)">${poll.options[1]}</button>
+                        <button onclick="votePoll(${index}, 2)">${poll.options[2]}</button>
+                        <button onclick="votePoll(${index}, 3)">${poll.options[3]}</button>
+                    </div>
+                    <div class="poll-result">
+                        <h4>Results:</h4>
+                        <div class="result">
+                            <span>${poll.options[0]}:</span>
+                            <div class="result-bar" style="width: ${(poll.votes[0] / poll.votes.reduce((a, b) => a + b, 0)) * 100 || 0}%; background-color: #4CAF50;"></div>
+                            <span>${poll.votes[0]} votes</span>
+                        </div>
+                        <div class="result">
+                            <span>${poll.options[1]}:</span>
+                            <div class="result-bar" style="width: ${(poll.votes[1] / poll.votes.reduce((a, b) => a + b, 0)) * 100 || 0}%; background-color: #FF6347;"></div>
+                            <span>${poll.votes[1]} votes</span>
+                        </div>
+                        <div class="result">
+                            <span>${poll.options[2]}:</span>
+                            <div class="result-bar" style="width: ${(poll.votes[2] / poll.votes.reduce((a, b) => a + b, 0)) * 100 || 0}%; background-color: #FFD700;"></div>
+                            <span>${poll.votes[2]} votes</span>
+                        </div>
+                        <div class="result">
+                            <span>${poll.options[3]}:</span>
+                            <div class="result-bar" style="width: ${(poll.votes[3] / poll.votes.reduce((a, b) => a + b, 0)) * 100 || 0}%; background-color: #00BFFF;"></div>
+                            <span>${poll.votes[3]} votes</span>
+                        </div>
+                    </div>
+                `;
+                pollList.appendChild(pollDiv);
+            });
+        }
+
+        function votePoll(pollIndex, optionIndex) {
+            polls[pollIndex].votes[optionIndex]++;
+            localStorage.setItem('polls', JSON.stringify(polls));
+
+            // Re-render the polls
+            displayPolls();
+        }
+    </script>
+
+</body>
+</html>

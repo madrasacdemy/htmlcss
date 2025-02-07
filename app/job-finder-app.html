@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Finder App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            width: fit-content;
+        }
+
+        .job-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .job-card {
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            background: #fff;
+        }
+
+        .job-card h3 {
+            margin: 5px 0;
+        }
+
+        .job-card p {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .apply-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .apply-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Job Finder App</h1>
+
+        <div>
+            <input type="text" id="job-title" placeholder="Job Title">
+            <input type="text" id="job-location" placeholder="Location">
+            <select id="job-type">
+                <option value="">All Types</option>
+                <option value="full-time">Full-Time</option>
+                <option value="part-time">Part-Time</option>
+                <option value="remote">Remote</option>
+            </select>
+            <button onclick="searchJobs()">Search Jobs</button>
+        </div>
+
+        <div class="job-list" id="job-list">
+            <!-- Jobs will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Sample Job Data (Static for now)
+        const jobs = [
+            { title: "Web Developer", company: "Tech Corp", location: "Chennai", type: "Full-Time", url: "#" },
+            { title: "Graphic Designer", company: "Design Studio", location: "Remote", type: "Part-Time", url: "#" },
+            { title: "Software Engineer", company: "XYZ Ltd", location: "Bangalore", type: "Full-Time", url: "#" },
+            { title: "Digital Marketer", company: "Marketing Hub", location: "Mumbai", type: "Remote", url: "#" },
+            { title: "Web Developer", company: "Tech Corp", location: "Chennai", type: "Full-Time", url: "#" },
+            { title: "Graphic Designer", company: "Design Studio", location: "Remote", type: "Part-Time", url: "#" },
+            { title: "Software Engineer", company: "XYZ Ltd", location: "Bangalore", type: "Full-Time", url: "#" },
+            { title: "Digital Marketer", company: "Marketing Hub", location: "Mumbai", type: "Remote", url: "#" }
+        ];
+
+        function searchJobs() {
+            const title = document.getElementById("job-title").value.toLowerCase();
+            const location = document.getElementById("job-location").value.toLowerCase();
+            const type = document.getElementById("job-type").value.toLowerCase();
+
+            const filteredJobs = jobs.filter(job => 
+                (title === "" || job.title.toLowerCase().includes(title)) &&
+                (location === "" || job.location.toLowerCase().includes(location)) &&
+                (type === "" || job.type.toLowerCase() === type)
+            );
+
+            displayJobs(filteredJobs);
+        }
+
+        function displayJobs(jobList) {
+            const jobContainer = document.getElementById("job-list");
+            jobContainer.innerHTML = "";
+
+            if (jobList.length === 0) {
+                jobContainer.innerHTML = "<p>No jobs found</p>";
+                return;
+            }
+
+            jobList.forEach(job => {
+                const jobElement = document.createElement("div");
+                jobElement.classList.add("job-card");
+                jobElement.innerHTML = `
+                    <h3>${job.title}</h3>
+                    <p><strong>Company:</strong> ${job.company}</p>
+                    <p><strong>Location:</strong> ${job.location}</p>
+                    <p><strong>Type:</strong> ${job.type}</p>
+                    <button class="apply-btn" onclick="applyJob('${job.url}')">Apply Now</button>
+                `;
+                jobContainer.appendChild(jobElement);
+            });
+        }
+
+        function applyJob(url) {
+            alert("Redirecting to job application page.");
+            window.location.href = url; 
+        }
+
+        // Display initial job listings
+        displayJobs(jobs);
+    </script>
+
+</body>
+</html>
