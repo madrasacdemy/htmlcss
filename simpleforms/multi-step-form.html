@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Step Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .prev-btn {
+            background-color: #f44336;
+        }
+
+        .next-btn {
+            background-color: #4CAF50;
+        }
+
+        .submit-btn {
+            background-color: #2196F3;
+        }
+
+        .form-footer {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <form id="multi-step-form">
+            <!-- Step 1 -->
+            <div class="form-step step-1 active">
+                <h2>Step 1: Personal Information</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="phone">Phone Number:</label>
+                <input type="text" id="phone" name="phone" required>
+
+                <div class="form-footer">
+                    <button type="button" class="btn next-btn" onclick="nextStep(1)">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-step step-2">
+                <h2>Step 2: Address Information</h2>
+                <label for="address">Address:</label>
+                <input type="text" id="address" name="address" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required>
+
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+
+                <div class="form-footer">
+                    <button type="button" class="btn prev-btn" onclick="prevStep(2)">Previous</button>
+                    <button type="button" class="btn next-btn" onclick="nextStep(2)">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="form-step step-3">
+                <h2>Step 3: Confirmation</h2>
+                <p>Review your information:</p>
+                <ul id="summary"></ul>
+
+                <div class="form-footer">
+                    <button type="button" class="btn prev-btn" onclick="prevStep(3)">Previous</button>
+                    <button type="submit" class="btn submit-btn">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function nextStep(step) {
+            const currentFormStep = document.querySelector(`.step-${step}`);
+            
+            if (step === 1) {
+                const email = document.getElementById("email").value;
+                if (!validateEmail(email)) {
+                    alert("Please enter a valid email address.");
+                    return;
+                }
+
+                const phone = document.getElementById("phone").value;
+                if (!validatePhone(phone)) {
+                    alert("Please enter a valid phone number.");
+                    return;
+                }
+            }
+
+            currentFormStep.classList.remove("active");
+            currentStep++;
+            const nextFormStep = document.querySelector(`.step-${currentStep}`);
+            nextFormStep.classList.add("active");
+
+            if (currentStep === 3) {
+                showSummary();
+            }
+        }
+
+        function prevStep(step) {
+            const currentFormStep = document.querySelector(`.step-${step}`);
+            currentFormStep.classList.remove("active");
+            currentStep--;
+            const prevFormStep = document.querySelector(`.step-${currentStep}`);
+            prevFormStep.classList.add("active");
+        }
+
+        function showSummary() {
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const address = document.getElementById("address").value;
+            const city = document.getElementById("city").value;
+            const dob = document.getElementById("dob").value;
+            const gender = document.getElementById("gender").value;
+
+            const summary = document.getElementById("summary");
+            summary.innerHTML = `
+                <li><strong>Name:</strong> ${name}</li>
+                <li><strong>Email:</strong> ${email}</li>
+                <li><strong>Phone:</strong> ${phone}</li>
+                <li><strong>Address:</strong> ${address}</li>
+                <li><strong>City:</strong> ${city}</li>
+                <li><strong>Date of Birth:</strong> ${dob}</li>
+                <li><strong>Gender:</strong> ${gender}</li>
+            `;
+        }
+
+        function validateEmail(email) {
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return emailPattern.test(email);
+        }
+
+        function validatePhone(phone) {
+            const phonePattern = /^[0-9]{10}$/;
+            return phonePattern.test(phone);
+        }
+
+        document.getElementById("multi-step-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Form submitted successfully!");
+        });
+    </script>
+
+</body>
+</html>
