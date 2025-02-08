@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Audio Player with Playlist</title>
+    <style>
+        /* Styles for the page */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e1e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .player-container {
+            background-color: #2a2a2a;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            text-align: center;
+            width: 380px;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        #current-song {
+            margin-bottom: 15px;
+        }
+
+        .controls {
+            margin: 20px 0;
+        }
+
+        .control-btn {
+            padding: 12px;
+            margin: 0 8px;
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .control-btn:hover {
+            background-color: #e67e22;
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #333;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        #progress {
+            height: 100%;
+            background-color: #f39c12;
+            width: 0;
+        }
+
+        #time {
+            font-size: 14px;
+        }
+
+        #volume-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #333;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        #volume {
+            height: 100%;
+            background-color: #f39c12;
+            width: 100%;
+        }
+
+        #playlist {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        #playlist-items {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .playlist-item {
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .playlist-item:hover {
+            background-color: #444;
+        }
+
+        .active {
+            background-color: #f39c12;
+        }
+
+        .repeat-btn, .shuffle-btn {
+            margin-top: 15px;
+            background-color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <h2>Creative Audio Player</h2>
+        
+        <!-- Current Song -->
+        <div id="current-song">
+            <p>Now Playing: <span id="song-title">Song 1</span></p>
+        </div>
+
+        <!-- Audio Controls -->
+        <div class="controls">
+            <button id="prev" class="control-btn">⏮</button>
+            <button id="play-pause" class="control-btn">⏸️</button>
+            <button id="next" class="control-btn">⏭</button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+
+        <!-- Time and Volume Control -->
+        <div id="time">
+            <span id="current-time">0:00</span> / <span id="total-time">0:00</span>
+        </div>
+
+        <div id="volume-bar">
+            <div id="volume"></div>
+        </div>
+
+        <!-- Shuffle and Repeat buttons -->
+        <button id="shuffle" class="control-btn shuffle-btn">🔀</button>
+        <button id="repeat" class="control-btn repeat-btn">🔁</button>
+
+        <!-- Playlist -->
+        <div id="playlist">
+            <h3>Playlist</h3>
+            <ul id="playlist-items">
+                <li class="playlist-item" data-index="0">Song 1</li>
+                <li class="playlist-item" data-index="1">Song 2</li>
+                <li class="playlist-item" data-index="2">Song 3</li>
+            </ul>
+        </div>
+
+        <!-- Audio Element -->
+        <audio id="audio" preload="auto">
+            <source id="audio-source" src="song1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <script>
+        // JavaScript functionality
+
+        const audio = document.getElementById('audio');
+        const playPauseBtn = document.getElementById('play-pause');
+        const prevBtn = document.getElementById('prev');
+        const nextBtn = document.getElementById('next');
+        const songTitle = document.getElementById('song-title');
+        const playlistItems = document.querySelectorAll('.playlist-item');
+        const audioSource = document.getElementById('audio-source');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalTimeDisplay = document.getElementById('total-time');
+        const volumeBar = document.getElementById('volume-bar');
+        const volume = document.getElementById('volume');
+        const shuffleBtn = document.getElementById('shuffle');
+        const repeatBtn = document.getElementById('repeat');
+
+        // Playlist songs array
+        const playlist = [
+            { title: 'Song 1', src: '../image/[iSongs.info] 01 - Pattudala.mp3' },
+            { title: 'Song 2', src: '../image/[iSongs.info] 01 - Rise Of Dragon.mp3' },
+            { title: 'Song 3', src: 'song3.mp3' }
+        ];
+
+        let currentSongIndex = 0;
+        let isShuffling = false;
+        let isRepeating = false;
+
+        // Function to load and play the selected song
+        function loadSong(songIndex) {
+            currentSongIndex = songIndex;
+            songTitle.textContent = playlist[songIndex].title;
+            audioSource.src = playlist[songIndex].src;
+            audio.load(); // Reload audio element with new source
+            audio.play();
+            playPauseBtn.textContent = '⏸️';
+            updatePlaylistUI();
+        }
+
+        // Update the progress bar and time
+        function updateProgressBar() {
+            const progressPercent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = `${progressPercent}%`;
+
+            const currentMinutes = Math.floor(audio.currentTime / 60);
+            const currentSeconds = Math.floor(audio.currentTime % 60);
+            const totalMinutes = Math.floor(audio.duration / 60);
+            const totalSeconds = Math.floor(audio.duration % 60);
+
+            currentTimeDisplay.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+            totalTimeDisplay.textContent = `${totalMinutes}:${totalSeconds < 10 ? '0' : ''}${totalSeconds}`;
+        }
+
+        // Play/Pause button
+        playPauseBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                playPauseBtn.textContent = '⏸️';
+            } else {
+                audio.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        });
+
+        // Previous song
+        prevBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex === 0) ? playlist.length - 1 : currentSongIndex - 1;
+            loadSong(currentSongIndex);
+        });
+
+        // Next song
+        nextBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex === playlist.length - 1) ? 0 : currentSongIndex + 1;
+            loadSong(currentSongIndex);
+        });
+
+        // Shuffle button
+        shuffleBtn.addEventListener('click', () => {
+            isShuffling = !isShuffling;
+            shuffleBtn.style.backgroundColor = isShuffling ? '#e67e22' : '#f39c12';
+        });
+
+        // Repeat button
+        repeatBtn.addEventListener('click', () => {
+            isRepeating = !isRepeating;
+            repeatBtn.style.backgroundColor = isRepeating ? '#e67e22' : '#f39c12';
+        });
+
+        // Click on a playlist item to change the song
+        playlistItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const songIndex = parseInt(item.getAttribute('data-index'));
+                loadSong(songIndex);
+            });
+        });
+
+        // Update the playlist UI to highlight the current song
+        function updatePlaylistUI() {
+            playlistItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            playlistItems[currentSongIndex].classList.add('active');
+        }
+
+        // Update the progress bar during playback
+        audio.addEventListener('timeupdate', updateProgressBar);
+
+        // Load the first song initially
+        loadSong(currentSongIndex);
+    </script>
+</body>
+</html>
