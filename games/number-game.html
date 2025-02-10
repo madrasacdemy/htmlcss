@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        #game-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h2>Number Guessing Game</h2>
+        <p>Guess a number between 1 and 100</p>
+        <input type="number" id="guess" min="1" max="100">
+        <button onclick="checkGuess()">Submit Guess</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        const randomNumber = Math.floor(Math.random() * 100) + 1;
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guess').value);
+            const message = document.getElementById('message');
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                message.textContent = 'Please enter a valid number between 1 and 100.';
+                message.style.color = 'red';
+            } else if (guess < randomNumber) {
+                message.textContent = 'Too low! Try again.';
+                message.style.color = 'blue';
+            } else if (guess > randomNumber) {
+                message.textContent = 'Too high! Try again.';
+                message.style.color = 'blue';
+            } else {
+                message.textContent = 'Congratulations! You guessed the right number!';
+                message.style.color = 'green';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stylish Accordion Menu</title>
+    <style>
+        /* Basic reset for margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Accordion Container */
+        .accordion {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Accordion Title */
+        .accordion-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 15px;
+            color: #3498db;
+        }
+
+        /* Accordion Buttons */
+        .accordion button {
+            background-color: #3498db;
+            color: white;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+            font-size: 18px;
+            border-top: 1px solid #ddd;
+            transition: 0.3s;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .accordion button:hover, .accordion button.active {
+            background-color: #2980b9;
+        }
+
+        /* Accordion Content */
+        .panel {
+            padding: 15px;
+            display: none;
+            overflow: hidden;
+            background-color: #ecf0f1;
+            font-size: 16px;
+            border-bottom: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        /* Transition Effect */
+        .panel {
+            transition: all 0.4s ease-in-out;
+        }
+
+        /* Styling for the panel content */
+        .panel p {
+            line-height: 1.6;
+        }
+
+        .panel ul {
+            padding-left: 20px;
+        }
+
+        .panel ul li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="accordion">
+        <div class="accordion-title">Accordion Menu Example</div>
+        <button class="accordion-btn">Section 1: Web Development</button>
+        <div class="panel">
+            <p>Web development refers to the building, creating, and maintaining of websites. It involves various tasks such as web design, web content development, client-side/server-side scripting, and network security configuration.</p>
+            <ul>
+                <li><strong>Frontend Development:</strong> HTML, CSS, JavaScript</li>
+                <li><strong>Backend Development:</strong> PHP, Python, Node.js</li>
+                <li><strong>Full Stack Development:</strong> Combining frontend and backend</li>
+            </ul>
+        </div>
+
+        <button class="accordion-btn">Section 2: Design Principles</button>
+        <div class="panel">
+            <p>Good design is essential for any successful website. Effective design is not only visually appealing but also user-friendly and functional. It involves layout, typography, color schemes, and responsiveness.</p>
+            <ul>
+                <li><strong>Consistency:</strong> Use consistent fonts, colors, and layout.</li>
+                <li><strong>Balance:</strong> Keep visual balance in your design.</li>
+                <li><strong>Hierarchy:</strong> Ensure a clear visual hierarchy with headings and subheadings.</li>
+            </ul>
+        </div>
+
+        <button class="accordion-btn">Section 3: JavaScript and jQuery</button>
+        <div class="panel">
+            <p>JavaScript is a powerful programming language used to make web pages interactive. jQuery is a fast, small, and feature-rich JavaScript library that simplifies tasks like HTML document traversal and event handling.</p>
+            <ul>
+                <li><strong>JavaScript:</strong> Provides the functionality of a website (e.g., dynamic content).</li>
+                <li><strong>jQuery:</strong> A library that simplifies JavaScript coding.</li>
+                <li><strong>ES6:</strong> Modern JavaScript with new features like arrow functions and classes.</li>
+            </ul>
+        </div>
+
+        <button class="accordion-btn">Section 4: Web Hosting and Deployment</button>
+        <div class="panel">
+            <p>Web hosting is a service that allows you to publish your website on the internet. Once hosted, you can deploy your website using platforms like FTP, SSH, or through Git-based deployment.</p>
+            <ul>
+                <li><strong>Shared Hosting:</strong> Multiple websites share the same server resources.</li>
+                <li><strong>VPS Hosting:</strong> Virtual private server hosting with more resources.</li>
+                <li><strong>Cloud Hosting:</strong> Hosting your website on cloud services like AWS or Google Cloud.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Get all accordion buttons
+        const accButtons = document.querySelectorAll(".accordion-btn");
+
+        // Loop through each button and add event listener
+        accButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                // Toggle the active class for the clicked button
+                this.classList.toggle("active");
+
+                // Get the associated panel
+                const panel = this.nextElementSibling;
+
+                // Close other panels before opening the clicked one
+                accButtons.forEach(otherButton => {
+                    if (otherButton !== this) {
+                        otherButton.classList.remove("active");
+                        otherButton.nextElementSibling.style.display = "none";
+                    }
+                });
+
+                // If the panel is open, close it; if it's closed, open it
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

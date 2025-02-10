@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Keyboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f4f4f4;
+        }
+        #output {
+            width: 80%;
+            padding: 15px;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            background-color: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            margin: auto;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .key {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 50px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        .key:hover {
+            background: #45a049;
+            transform: scale(1.1);
+        }
+        .key:active {
+            background: #3e8e41;
+            transform: scale(1.05);
+        }
+        @media (max-width: 600px) {
+            .key {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                line-height: 40px;
+            }
+        }
+        @media (max-width: 400px) {
+            .key {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+                line-height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Virtual Keyboard</h2>
+    <input type="text" id="output" readonly>
+    <div class="keyboard" id="keyboard">
+        <div class="row" id="row1"></div>
+        <div class="row" id="row2"></div>
+        <div class="row" id="row3"></div>
+    </div>
+    <script>
+        const rows = {
+            row1: 'QWERTYUIOP',
+            row2: 'ASDFGHJKL',
+            row3: 'ZXCVBNM'
+        };
+        const output = document.getElementById('output');
+
+        Object.keys(rows).forEach(rowId => {
+            const rowElement = document.getElementById(rowId);
+            rows[rowId].split('').forEach(key => {
+                const button = document.createElement('button');
+                button.textContent = key;
+                button.classList.add('key');
+                button.addEventListener('click', () => {
+                    output.value += key;
+                });
+                rowElement.appendChild(button);
+            });
+        });
+    </script>
+</body>
+</html>

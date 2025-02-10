@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Joke Generator</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #3498db;
+        }
+
+        .joke {
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Random Joke Generator</h1>
+        <div class="joke" id="joke">
+            Click the button to load a joke!
+        </div>
+        <button class="btn" id="getJoke">Get a Joke</button>
+    </div>
+
+    <script>
+        // Get the button and the joke display element
+        const getJokeButton = document.getElementById('getJoke');
+        const jokeDisplay = document.getElementById('joke');
+
+        // Fetch a random joke from the API
+        function fetchJoke() {
+            fetch('https://official-joke-api.appspot.com/random_joke')
+                .then(response => response.json())
+                .then(data => {
+                    // Display the joke
+                    jokeDisplay.innerHTML = `${data.setup} <br><strong>${data.punchline}</strong>`;
+                })
+                .catch(error => {
+                    jokeDisplay.innerHTML = 'Oops! Something went wrong. Please try again.';
+                });
+        }
+
+        // Add event listener to the button
+        getJokeButton.addEventListener('click', fetchJoke);
+    </script>
+
+</body>
+</html>
