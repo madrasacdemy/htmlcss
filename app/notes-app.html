@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App with Categories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 50px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 500px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .note-form {
+            margin-bottom: 30px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        input, select {
+            background-color: #fafafa;
+        }
+
+        textarea {
+            height: 120px;
+            resize: none;
+            background-color: #fafafa;
+        }
+
+        .note-list {
+            margin-top: 20px;
+        }
+
+        .note {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s ease-in-out;
+        }
+
+        .note:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .note-title {
+            font-weight: bold;
+            font-size: 1.4em;
+            color: #333;
+        }
+
+        .note-category {
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .note-content {
+            margin-top: 15px;
+            color: #444;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            font-size: 0.9em;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        .delete-btn:hover {
+            background-color: #e53935;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Notes App</h2>
+
+        <!-- Note Form -->
+        <div class="note-form">
+            <input type="text" id="note-title" placeholder="Note Title" />
+            <select id="note-category">
+                <option value="">Select Category</option>
+                <option value="Work">Work</option>
+                <option value="Personal">Personal</option>
+                <option value="Study">Study</option>
+                <option value="Other">Other</option>
+            </select>
+            <textarea id="note-content" placeholder="Write your note..." rows="4"></textarea>
+            <button onclick="addNote()">Add Note</button>
+        </div>
+
+        <!-- Note List -->
+        <div class="note-list" id="note-list"></div>
+    </div>
+
+    <script>
+        // Function to load notes from local storage
+        function loadNotes() {
+            const notes = JSON.parse(localStorage.getItem("notes")) || [];
+            const noteList = document.getElementById("note-list");
+            noteList.innerHTML = "";
+            notes.forEach((note, index) => {
+                const noteElement = document.createElement("div");
+                noteElement.classList.add("note");
+                noteElement.innerHTML = `
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-category">Category: ${note.category}</div>
+                    <div class="note-content">${note.content}</div>
+                    <button class="delete-btn" onclick="deleteNote(${index})">Delete</button>
+                `;
+                noteList.appendChild(noteElement);
+            });
+        }
+
+        // Function to add a new note
+        function addNote() {
+            const title = document.getElementById("note-title").value;
+            const category = document.getElementById("note-category").value;
+            const content = document.getElementById("note-content").value;
+
+            if (!title || !category || !content) {
+                alert("Please fill out all fields.");
+                return;
+            }
+
+            const note = {
+                title,
+                category,
+                content
+            };
+
+            let notes = JSON.parse(localStorage.getItem("notes")) || [];
+            notes.push(note);
+            localStorage.setItem("notes", JSON.stringify(notes));
+            loadNotes();
+
+            // Clear the form fields
+            document.getElementById("note-title").value = "";
+            document.getElementById("note-category").value = "";
+            document.getElementById("note-content").value = "";
+        }
+
+        // Function to delete a note
+        function deleteNote(index) {
+            let notes = JSON.parse(localStorage.getItem("notes")) || [];
+            notes.splice(index, 1);
+            localStorage.setItem("notes", JSON.stringify(notes));
+            loadNotes();
+        }
+
+        // Load notes when the page loads
+        window.onload = loadNotes;
+    </script>
+
+</body>
+</html>
