@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 50px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dictionary App</h2>
+        <input type="text" id="wordInput" placeholder="Enter a word">
+        <button onclick="fetchWordDetails()">Search</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        async function fetchWordDetails() {
+            const word = document.getElementById('wordInput').value.trim();
+            if (!word) {
+                alert("Please enter a word");
+                return;
+            }
+            
+            const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`;
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = "Loading...";
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (!data || data.title === "No Definitions Found") {
+                    resultDiv.innerHTML = "No definition found. Try another word.";
+                    return;
+                }
+                
+                const definition = data[0].meanings[0].definitions[0].definition;
+                const example = data[0].meanings[0].definitions[0].example || "No example available.";
+                const synonyms = data[0].meanings[0].synonyms.join(", ") || "No synonyms available.";
+                
+                resultDiv.innerHTML = `<strong>Definition:</strong> ${definition}<br>
+                                      <strong>Example:</strong> ${example}<br>
+                                      <strong>Synonyms:</strong> ${synonyms}`;
+            } catch (error) {
+                resultDiv.innerHTML = "Error fetching data. Please try again later.";
+            }
+        }
+    </script>
+</body>
+</html>
