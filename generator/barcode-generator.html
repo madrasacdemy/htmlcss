@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Generator</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #ff6b6b;
+            color: white;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        #barcode {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📦 Barcode Generator</h2>
+        <input type="text" id="product-id" placeholder="Enter Product ID">
+        <button onclick="generateBarcode()">Generate Barcode</button>
+        <svg id="barcode"></svg>
+        <button onclick="downloadBarcode()">Download Barcode</button>
+    </div>
+
+    <script>
+        function generateBarcode() {
+            let productId = document.getElementById("product-id").value;
+            if (!productId) {
+                alert("Please enter a product ID.");
+                return;
+            }
+            JsBarcode("#barcode", productId, {
+                format: "CODE128",  // You can change barcode type (e.g., "EAN13", "UPC")
+                width: 2,  // Adjust the width of barcode bars
+                height: 60,  // Adjust the height of barcode
+                displayValue: true  // Show the product ID below the barcode
+            });
+        }
+
+        function downloadBarcode() {
+            let svg = document.getElementById("barcode");
+            let svgData = new XMLSerializer().serializeToString(svg);
+            let blob = new Blob([svgData], { type: "image/svg+xml" });
+            let link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "barcode.svg";
+            link.click();
+        }
+    </script>
+
+</body>
+</html>
