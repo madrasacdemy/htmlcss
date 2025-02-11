@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch with Laps</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+            color: white;
+        }
+
+        /* Stopwatch Display */
+        .stopwatch {
+            font-size: 2.5em;
+            font-weight: bold;
+            padding: 20px 0;
+        }
+
+        /* Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            color: white;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+        }
+
+        .start { background: #28a745; }
+        .stop { background: #dc3545; }
+        .reset { background: #ffc107; color: black; }
+        .lap { background: #17a2b8; }
+
+        /* Laps List */
+        .laps {
+            margin-top: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 5px;
+            border-top: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .lap-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 10px;
+            font-size: 1em;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>⏱ Stopwatch with Laps</h2>
+
+        <div class="stopwatch" id="display">00:00:00</div>
+
+        <div class="buttons">
+            <button class="start" onclick="startStopwatch()">Start</button>
+            <button class="stop" onclick="stopStopwatch()">Stop</button>
+            <button class="reset" onclick="resetStopwatch()">Reset</button>
+            <button class="lap" onclick="recordLap()">Lap</button>
+        </div>
+
+        <div class="laps" id="lapsList"></div>
+    </div>
+
+    <script>
+        let startTime, updatedTime, difference;
+        let running = false, interval, laps = [];
+
+        function startStopwatch() {
+            if (!running) {
+                startTime = new Date().getTime() - (difference || 0);
+                interval = setInterval(updateTime, 10);
+                running = true;
+            }
+        }
+
+        function stopStopwatch() {
+            if (running) {
+                clearInterval(interval);
+                running = false;
+                difference = new Date().getTime() - startTime;
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(interval);
+            running = false;
+            document.getElementById("display").innerText = "00:00:00";
+            document.getElementById("lapsList").innerHTML = "";
+            difference = 0;
+            laps = [];
+        }
+
+        function recordLap() {
+            if (running) {
+                laps.push(document.getElementById("display").innerText);
+                updateLaps();
+            }
+        }
+
+        function updateLaps() {
+            let lapList = document.getElementById("lapsList");
+            lapList.innerHTML = "";
+            laps.forEach((lap, index) => {
+                let lapItem = document.createElement("div");
+                lapItem.className = "lap-item";
+                lapItem.innerText = `Lap ${index + 1}: ${lap}`;
+                lapList.appendChild(lapItem);
+            });
+        }
+
+        function updateTime() {
+            updatedTime = new Date().getTime() - startTime;
+            let milliseconds = Math.floor((updatedTime % 1000) / 10);
+            let seconds = Math.floor((updatedTime / 1000) % 60);
+            let minutes = Math.floor((updatedTime / (1000 * 60)) % 60);
+
+            milliseconds = milliseconds < 10 ? "0" + milliseconds : milliseconds;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+
+            document.getElementById("display").innerText = `${minutes}:${seconds}:${milliseconds}`;
+        }
+    </script>
+
+</body>
+</html>
