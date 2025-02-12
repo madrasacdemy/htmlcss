@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collapsible Sidebar Menu</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #sidebar {
+      width: 250px;
+      height: 100vh;
+      position: fixed;
+      left: -250px;
+      top: 0;
+      background-color: #1a202c;
+      transition: all 0.3s;
+    }
+    #sidebar.open {
+      left: 0;
+    }
+    #content {
+      margin-left: 0;
+      transition: margin-left 0.3s;
+    }
+    #content.shifted {
+      margin-left: 250px;
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Sidebar -->
+  <div id="sidebar" class="p-6 text-white">
+    <h2 class="text-xl font-bold mb-6">Menu</h2>
+    <ul class="space-y-4">
+      <li><a href="#" class="hover:underline">Home</a></li>
+      <li><a href="#" class="hover:underline">About</a></li>
+      <li><a href="#" class="hover:underline">Services</a></li>
+      <li><a href="#" class="hover:underline">Contact</a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div id="content" class="p-6">
+    <button id="toggleBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Toggle Menu</button>
+    <h1 class="text-2xl font-bold mt-6">Welcome to the Collapsible Sidebar Menu</h1>
+    <p class="mt-4">This is a simple implementation of a collapsible sidebar menu using HTML, CSS, and JavaScript.</p>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleBtn');
+    const sidebar = document.getElementById('sidebar');
+    const content = document.getElementById('content');
+
+    toggleBtn.addEventListener('click', function() {
+      sidebar.classList.toggle('open');
+      content.classList.toggle('shifted');
+    });
+  </script>
+</body>
+</html>

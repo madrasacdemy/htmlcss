@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Subscription Popup</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    #popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+    }
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+  <button id="subscribeBtn" class="bg-blue-500 text-white px-4 py-2 rounded">Subscribe to Newsletter</button>
+
+  <!-- Popup Overlay -->
+  <div id="overlay"></div>
+
+  <!-- Email Subscription Popup -->
+  <div id="popup" class="bg-white p-6 rounded-lg shadow-lg max-w-md">
+    <h2 class="text-xl font-bold mb-4">Subscribe to our Newsletter</h2>
+    <p class="mb-4">Enter your email to receive the latest updates.</p>
+    <form id="subscriptionForm">
+      <input type="email" id="email" name="email" placeholder="Your Email" class="w-full p-2 border rounded mb-4" required>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full">Subscribe</button>
+    </form>
+    <button id="closeBtn" class="mt-4 text-red-500">Close</button>
+  </div>
+
+  <script>
+    document.getElementById('subscribeBtn').addEventListener('click', function() {
+      document.getElementById('popup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', function() {
+      document.getElementById('popup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    });
+
+    document.getElementById('subscriptionForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      if (email) {
+        alert(`Thank you for subscribing with email: ${email}`);
+        document.getElementById('popup').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('subscriptionForm').reset();
+      } else {
+        alert('Please enter a valid email address.');
+      }
+    });
+  </script>
+
+</body>
+</html>

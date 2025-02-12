@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Converter</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <h1 class="text-2xl font-bold mb-4 text-center">Unit Converter</h1>
+
+    <label for="conversionType" class="block font-semibold mb-2">Select Conversion Type:</label>
+    <select id="conversionType" class="w-full p-2 mb-4 border rounded">
+      <option value="length">Length</option>
+      <option value="weight">Weight</option>
+      <option value="temperature">Temperature</option>
+    </select>
+
+    <label for="inputValue" class="block font-semibold mb-2">Enter Value:</label>
+    <input id="inputValue" type="number" class="w-full p-2 mb-4 border rounded" placeholder="Enter value">
+
+    <label for="unitFrom" class="block font-semibold mb-2">From:</label>
+    <select id="unitFrom" class="w-full p-2 mb-4 border rounded"></select>
+
+    <label for="unitTo" class="block font-semibold mb-2">To:</label>
+    <select id="unitTo" class="w-full p-2 mb-4 border rounded"></select>
+
+    <button id="convertBtn" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Convert</button>
+
+    <p id="result" class="text-center mt-4 font-bold text-lg"></p>
+  </div>
+
+  <script>
+    const conversionOptions = {
+      length: ["Meters", "Kilometers", "Miles", "Feet"],
+      weight: ["Kilograms", "Grams", "Pounds", "Ounces"],
+      temperature: ["Celsius", "Fahrenheit", "Kelvin"]
+    };
+
+    const conversionTypeSelect = document.getElementById('conversionType');
+    const unitFromSelect = document.getElementById('unitFrom');
+    const unitToSelect = document.getElementById('unitTo');
+    const convertBtn = document.getElementById('convertBtn');
+    const resultText = document.getElementById('result');
+
+    function populateUnits() {
+      const type = conversionTypeSelect.value;
+      const units = conversionOptions[type];
+
+      unitFromSelect.innerHTML = '';
+      unitToSelect.innerHTML = '';
+
+      units.forEach(unit => {
+        const option1 = document.createElement('option');
+        option1.value = unit;
+        option1.textContent = unit;
+
+        const option2 = option1.cloneNode(true);
+
+        unitFromSelect.appendChild(option1);
+        unitToSelect.appendChild(option2);
+      });
+    }
+
+    function convertUnits() {
+      const type = conversionTypeSelect.value;
+      const value = parseFloat(document.getElementById('inputValue').value);
+      const fromUnit = unitFromSelect.value;
+      const toUnit = unitToSelect.value;
+
+      if (isNaN(value)) {
+        resultText.textContent = "Please enter a valid number.";
+        return;
+      }
+
+      let result;
+      if (type === "length") {
+        result = convertLength(value, fromUnit, toUnit);
+      } else if (type === "weight") {
+        result = convertWeight(value, fromUnit, toUnit);
+      } else if (type === "temperature") {
+        result = convertTemperature(value, fromUnit, toUnit);
+      }
+
+      resultText.textContent = `Converted Value: ${result}`;
+    }
+
+    function convertLength(value, from, to) {
+      const lengthFactors = {
+        Meters: 1,
+        Kilometers: 0.001,
+        Miles: 0.000621371,
+        Feet: 3.28084
+      };
+      return (value * lengthFactors[to] / lengthFactors[from]).toFixed(2);
+    }
+
+    function convertWeight(value, from, to) {
+      const weightFactors = {
+        Kilograms: 1,
+        Grams: 1000,
+        Pounds: 2.20462,
+        Ounces: 35.274
+      };
+      return (value * weightFactors[to] / weightFactors[from]).toFixed(2);
+    }
+
+    function convertTemperature(value, from, to) {
+      if (from === to) return value.toFixed(2);
+
+      if (from === "Celsius" && to === "Fahrenheit") return ((value * 9/5) + 32).toFixed(2);
+      if (from === "Celsius" && to === "Kelvin") return (value + 273.15).toFixed(2);
+      if (from === "Fahrenheit" && to === "Celsius") return ((value - 32) * 5/9).toFixed(2);
+      if (from === "Fahrenheit" && to === "Kelvin") return ((value - 32) * 5/9 + 273.15).toFixed(2);
+      if (from === "Kelvin" && to === "Celsius") return (value - 273.15).toFixed(2);
+      if (from === "Kelvin" && to === "Fahrenheit") return ((value - 273.15) * 9/5 + 32).toFixed(2);
+    }
+
+    conversionTypeSelect.addEventListener('change', populateUnits);
+    convertBtn.addEventListener('click', convertUnits);
+
+    // Initialize default unit selections
+    populateUnits();
+  </script>
+</body>
+</html>

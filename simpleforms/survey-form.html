@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Survey Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            width: 500px;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .rating label {
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message {
+            text-align: center;
+            font-size: 18px;
+            color: green;
+            display: none;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Online Survey Form</h2>
+        <form id="surveyForm">
+
+            <!-- Question 1: Name -->
+            <div class="question">
+                <label for="name">What's your name?</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <!-- Question 2: Age -->
+            <div class="question">
+                <label for="age">How old are you?</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+
+            <!-- Question 3: Gender -->
+            <div class="question">
+                <label>What's your gender?</label>
+                <input type="radio" id="male" name="gender" value="Male" required>
+                <label for="male">Male</label>
+                <input type="radio" id="female" name="gender" value="Female">
+                <label for="female">Female</label>
+                <input type="radio" id="other" name="gender" value="Other">
+                <label for="other">Other</label>
+            </div>
+
+            <!-- Question 4: Favorite Color -->
+            <div class="question">
+                <label for="color">What's your favorite color?</label>
+                <select id="color" name="color" required>
+                    <option value="">Select a color</option>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Green">Green</option>
+                    <option value="Yellow">Yellow</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <!-- Question 5: Hobbies -->
+            <div class="question">
+                <label>What are your hobbies? (Select all that apply)</label>
+                <input type="checkbox" id="reading" name="hobbies" value="Reading">
+                <label for="reading">Reading</label>
+                <input type="checkbox" id="sports" name="hobbies" value="Sports">
+                <label for="sports">Sports</label>
+                <input type="checkbox" id="travelling" name="hobbies" value="Travelling">
+                <label for="travelling">Travelling</label>
+            </div>
+
+            <!-- Question 6: Satisfaction Rating -->
+            <div class="question rating">
+                <label>How satisfied are you with our service?</label>
+                <label for="rating1">1</label>
+                <input type="radio" id="rating1" name="rating" value="1" required>
+                <label for="rating2">2</label>
+                <input type="radio" id="rating2" name="rating" value="2">
+                <label for="rating3">3</label>
+                <input type="radio" id="rating3" name="rating" value="3">
+                <label for="rating4">4</label>
+                <input type="radio" id="rating4" name="rating" value="4">
+                <label for="rating5">5</label>
+                <input type="radio" id="rating5" name="rating" value="5">
+            </div>
+
+            <!-- Question 7: Comments -->
+            <div class="question">
+                <label for="comments">Any additional comments?</label>
+                <textarea id="comments" name="comments"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Submit Survey</button>
+            <div class="success-message" id="successMessage">
+                Thank you for completing the survey!
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Form validation and success message
+        const form = document.getElementById('surveyForm');
+        const successMessage = document.getElementById('successMessage');
+
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            // Check if all required fields are filled
+            const formData = new FormData(form);
+            let valid = true;
+
+            formData.forEach((value, key) => {
+                if (!value && document.querySelector(`[name="${key}"]`)) {
+                    valid = false;
+                }
+            });
+
+            if (valid) {
+                // Show success message
+                form.reset(); // Reset form fields
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            } else {
+                alert('Please fill out all required fields.');
+            }
+        });
+    </script>
+
+</body>
+</html>
