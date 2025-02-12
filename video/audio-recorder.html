@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audio Recorder</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #e3f2fd;
+    }
+    h1 {
+      font-size: 28px;
+      color: #0d47a1;
+    }
+    .container {
+      display: inline-block;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      background-color: #ffffff;
+    }
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      margin: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      color: #fff;
+    }
+    #startBtn {
+      background-color: #4caf50;
+    }
+    #stopBtn {
+      background-color: #f44336;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .download-link a {
+      font-size: 18px;
+      color: #0d47a1;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+      display: none; /* Initially hidden */
+    }
+    .timer {
+      font-size: 24px;
+      color: #ff5722;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Custom Audio Recorder</h1>
+  <div class="container">
+    <button id="startBtn">Start Recording</button>
+    <button id="stopBtn" disabled>Stop Recording</button>
+    <div class="timer" id="timer">00:00</div>
+    <div class="download-link">
+      <a id="downloadLink">Download Audio</a>
+    </div>
+  </div>
+
+  <script>
+    let mediaRecorder;
+    let audioChunks = [];
+    let timerInterval;
+    let secondsElapsed = 0;
+
+    const startBtn = document.getElementById("startBtn");
+    const stopBtn = document.getElementById("stopBtn");
+    const downloadLink = document.getElementById("downloadLink");
+    const timerElement = document.getElementById("timer");
+
+    // Function to format time as MM:SS
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return (
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(remainingSeconds).padStart(2, "0")
+      );
+    }
+
+    // Function to start the timer
+    function startTimer() {
+      secondsElapsed = 0;
+      timerElement.textContent = "00:00";
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        timerElement.textContent = formatTime(secondsElapsed);
+      }, 1000);
+    }
+
+    // Function to stop the timer
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+
+    // Start recording
+    startBtn.addEventListener("click", async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          downloadLink.href = audioUrl;
+          downloadLink.download = "recording.webm";
+          downloadLink.style.display = "block";
+          downloadLink.textContent = "Download Audio";
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+          stopTimer();
+        };
+
+        mediaRecorder.start();
+        startTimer();
+      } catch (error) {
+        console.error("Error accessing microphone:", error);
+        alert("Microphone access is required for recording.");
+      }
+    });
+
+    stopBtn.addEventListener("click", () => {
+      if (mediaRecorder && mediaRecorder.state === "recording") {
+        mediaRecorder.stop();
+      }
+    });
+  </script>
+</body>
+</html>

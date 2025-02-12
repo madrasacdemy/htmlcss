@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Button Effects</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0d0d0d;
+      color: #ffffff;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #00e0ff;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 50px;
+    }
+
+    /* Neon button styles */
+    .neon-btn {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: transparent;
+      border: 2px solid #00e0ff;
+      border-radius: 8px;
+      cursor: pointer;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Neon glow effect */
+    .neon-btn::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #00e0ff;
+      opacity: 0.2;
+      filter: blur(8px);
+      border-radius: 8px;
+      z-index: -1;
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Button hover effect */
+    .neon-btn:hover {
+      color: #0d0d0d;
+      background-color: #00e0ff;
+      box-shadow: 0 0 20px #00e0ff, 0 0 40px #00e0ff, 0 0 60px #00e0ff;
+    }
+
+    /* Animation for the glow to intensify on hover */
+    .neon-btn:hover::before {
+      opacity: 0.5;
+      filter: blur(12px);
+    }
+
+    /* Additional button colors */
+    .neon-btn.pink {
+      border-color: #ff00f0;
+    }
+    .neon-btn.pink::before {
+      background: #ff00f0;
+    }
+    .neon-btn.pink:hover {
+      background-color: #ff00f0;
+      box-shadow: 0 0 20px #ff00f0, 0 0 40px #ff00f0, 0 0 60px #ff00f0;
+    }
+
+    .neon-btn.green {
+      border-color: #00ff00;
+    }
+    .neon-btn.green::before {
+      background: #00ff00;
+    }
+    .neon-btn.green:hover {
+      background-color: #00ff00;
+      box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 60px #00ff00;
+    }
+  </style>
+</head>
+<body>
+  <h1>Neon Button Effects</h1>
+  <div class="button-container">
+    <button class="neon-btn">Blue Neon</button>
+    <button class="neon-btn pink">Pink Neon</button>
+    <button class="neon-btn green">Green Neon</button>
+  </div>
+</body>
+</html>
