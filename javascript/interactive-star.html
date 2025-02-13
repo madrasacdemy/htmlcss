@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Star Design</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .star-container {
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.5s ease, fill 0.5s ease;
+    }
+
+    .star {
+      fill: #ff6ec7;
+      stroke: #4d5bf9;
+      stroke-width: 2;
+      transition: fill 0.3s ease;
+    }
+
+    .star-container:hover svg {
+      transform: rotate(360deg);
+      fill: #4d5bf9;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Interactive Star Design</h1>
+  
+  <div class="star-container">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path class="star" d="M12 2L15 8L22 9L17 14L18 21L12 17L6 21L7 14L2 9L9 8L12 2Z" />
+    </svg>
+  </div>
+
+</body>
+</html>

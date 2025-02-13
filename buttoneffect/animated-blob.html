@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blob Animation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      color: #ffffff;
+    }
+
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    /* Blob container */
+    .blob {
+      width: 300px;
+      height: 300px;
+      background: linear-gradient(135deg, #ff9a8b, #ff6a88);
+      border-radius: 50%;
+      position: relative;
+      animation: morph 8s infinite ease-in-out;
+    }
+
+    /* Keyframes for blob morphing */
+    @keyframes morph {
+      0% {
+        border-radius: 60% 40% 60% 40%;
+        transform: translate(0, 0);
+      }
+      25% {
+        border-radius: 50% 50% 40% 60%;
+        transform: translate(20px, -20px);
+      }
+      50% {
+        border-radius: 40% 60% 60% 40%;
+        transform: translate(-20px, 20px);
+      }
+      75% {
+        border-radius: 60% 40% 50% 50%;
+        transform: translate(10px, -10px);
+      }
+      100% {
+        border-radius: 60% 40% 60% 40%;
+        transform: translate(0, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Animated Morphing Blob</h1>
+  <div class="blob"></div>
+</body>
+</html>

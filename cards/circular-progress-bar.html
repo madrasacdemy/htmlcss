@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circular Progress Bar</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+      flex-direction: column;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .progress-wrapper {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: conic-gradient(#4d5bf9 calc(var(--progress) * 1%), #dcdfe6 0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .progress-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background-color: #fff;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+    .percentage {
+      position: absolute;
+      font-size: 30px;
+      color: #4d5bf9;
+      font-weight: bold;
+      z-index: 2;
+    }
+
+  </style>
+</head>
+<body>
+  <h1>Circular Progress Bar Animation</h1>
+  <div class="progress-wrapper" style="--progress: 75;">
+    <div class="percentage">75%</div>
+  </div>
+
+  <script>
+    let progress = 0;
+    const progressWrapper = document.querySelector('.progress-wrapper');
+    const percentageText = document.querySelector('.percentage');
+
+    function updateProgress() {
+      if (progress <= 100) {
+        progress++;
+        progressWrapper.style.setProperty('--progress', progress);
+        percentageText.textContent = `${progress}%`;
+      }
+    }
+
+    setInterval(updateProgress, 50); // Update progress every 50ms
+  </script>
+</body>
+</html>
