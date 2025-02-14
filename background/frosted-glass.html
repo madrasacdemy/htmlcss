@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frosted Glass Effect</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0');
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card {
+      width: 300px;
+      padding: 20px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+      backdrop-filter: blur(10px); /* Frosted glass effect */
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Soft shadow */
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Frosted Glass</h1>
+    <p>This is a frosted glass UI effect with blur and transparency.</p>
+  </div>
+</body>
+</html>
