@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Circular Menu</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #1e1e1e;
+      font-family: Arial, sans-serif;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 150px;
+      font-size: 28px;
+    }
+
+    .menu-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .menu-button {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #4caf50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .menu-item {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background-color: #ff9800;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      transform: scale(0); /* Initially hidden */
+      transition: transform 0.4s ease, top 0.4s ease, left 0.4s ease;
+    }
+
+    /* Positions for menu items */
+    .item1 { top: -100px; left: 0; }
+    .item2 { top: -70px; left: 70px; }
+    .item3 { top: 0; left: 100px; }
+    .item4 { top: 70px; left: 70px; }
+    .item5 { top: 100px; left: 0; }
+
+    .menu-container.active .menu-item {
+      transform: scale(1); /* Show items */
+    }
+  </style>
+</head>
+<body>
+  <h1>Animated Circular Menu</h1>
+  <div class="menu-container">
+    <div class="menu-button">+</div>
+    <div class="menu-item item1">1</div>
+    <div class="menu-item item2">2</div>
+    <div class="menu-item item3">3</div>
+    <div class="menu-item item4">4</div>
+    <div class="menu-item item5">5</div>
+  </div>
+
+  <script>
+    const menuButton = document.querySelector('.menu-button');
+    const menuContainer = document.querySelector('.menu-container');
+
+    menuButton.addEventListener('click', () => {
+      menuContainer.classList.toggle('active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Geometric Patterns</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1e1e1e;
+      overflow: hidden;
+    }
+
+    .pattern-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      animation: animateBackground 5s infinite alternate;
+      z-index: -1;
+    }
+
+    /* Keyframe animation for the background */
+    @keyframes animateBackground {
+      0% {
+        transform: rotate(0deg);
+        background: linear-gradient(45deg, #ff6f61, #6a1b9a, #00bcd4, #4caf50);
+        background-size: 400% 400%;
+      }
+      100% {
+        transform: rotate(360deg);
+        background: linear-gradient(45deg, #9c27b0, #ffeb3b, #2196f3, #4caf50);
+        background-size: 400% 400%;
+      }
+    }
+
+    .circle, .square {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      animation: moveShapes 8s infinite ease-in-out;
+    }
+
+    .square {
+      border-radius: 10px;
+    }
+
+    /* Keyframe animation for moving the shapes */
+    @keyframes moveShapes {
+      0% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(200px, -200px) scale(1.5);
+      }
+      50% {
+        transform: translate(400px, 0) scale(1);
+      }
+      75% {
+        transform: translate(200px, 200px) scale(0.8);
+      }
+      100% {
+        transform: translate(0, 0) scale(1);
+      }
+    }
+
+    /* Different positioning for multiple shapes */
+    .circle {
+      top: 20%;
+      left: 10%;
+      animation-delay: 0s;
+    }
+
+    .square {
+      top: 50%;
+      left: 70%;
+      animation-delay: 2s;
+    }
+  </style>
+</head>
+<body>
+  <div class="pattern-container"></div>
+
+  <!-- Geometric shapes -->
+  <div class="circle"></div>
+  <div class="square"></div>
+  <div class="circle" style="top: 30%; left: 70%;"></div>
+  <div class="square" style="top: 80%; left: 20%;"></div>
+
+</body>
+</html>

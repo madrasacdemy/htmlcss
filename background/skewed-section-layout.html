@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skewed Section Layout</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* General section styles */
+    section {
+      padding: 60px 20px;
+      color: white;
+      text-align: center;
+    }
+
+    /* First section background */
+    .section-one {
+      background-color: #1e1e1e;
+    }
+
+    /* Skewed divider */
+    .skewed-divider {
+      position: relative;
+      height: 50px;
+      background-color: #ff6f61;
+      transform: skewY(-7deg);
+      margin: 0 -20px;
+    }
+
+    .skewed-divider:before {
+      content: '';
+      position: absolute;
+      top: -30px;
+      left: 0;
+      width: 100%;
+      height: 30px;
+      background-color: #1e1e1e;
+    }
+
+    /* Second section background */
+    .section-two {
+      background-color: #00bcd4;
+    }
+
+    /* Third section background */
+    .section-three {
+      background-color: #4caf50;
+    }
+
+    /* Section title */
+    h1 {
+      font-size: 36px;
+      margin: 0;
+    }
+
+    p {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- First Section -->
+  <section class="section-one">
+    <h1>Welcome to My Website</h1>
+    <p>Experience dynamic and creative layouts with skewed section dividers.</p>
+  </section>
+
+  <!-- Skewed Divider -->
+  <div class="skewed-divider"></div>
+
+  <!-- Second Section -->
+  <section class="section-two">
+    <h1>Features</h1>
+    <p>Our website offers innovative design with user-friendly functionality.</p>
+  </section>
+
+  <!-- Skewed Divider -->
+  <div class="skewed-divider"></div>
+
+  <!-- Third Section -->
+  <section class="section-three">
+    <h1>Contact Us</h1>
+    <p>Get in touch with us for more information and collaborations.</p>
+  </section>
+
+</body>
+</html>
