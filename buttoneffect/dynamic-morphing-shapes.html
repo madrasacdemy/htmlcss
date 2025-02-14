@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morphing Shapes</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(45deg, #00bcd4, #ff4081);
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+
+    h1 {
+      position: absolute;
+      top: 20px;
+      color: #fff;
+      font-size: 36px;
+      font-weight: bold;
+      text-align: center;
+      z-index: 10;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .shape-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .shape {
+      width: 150px;
+      height: 150px;
+      background-color: #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 1s ease-in-out, border-radius 1s ease-in-out;
+      border-radius: 50%;
+      animation: morph 5s infinite alternate;
+    }
+
+    /* Define the morphing animation */
+    @keyframes morph {
+      0% {
+        border-radius: 50%; /* Circle */
+        transform: scale(1);
+      }
+      25% {
+        border-radius: 0%; /* Square */
+        transform: scale(1.1);
+      }
+      50% {
+        border-radius: 25%; /* Rounded square */
+        transform: scale(1);
+      }
+      75% {
+        border-radius: 10%; /* More rounded shape */
+        transform: scale(0.9);
+      }
+      100% {
+        border-radius: 50%; /* Back to circle */
+        transform: scale(1);
+      }
+    }
+
+    /* Hover effect to trigger a bigger morphing */
+    .shape:hover {
+      animation: morph 2s infinite alternate;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Heading -->
+  <h1>Dynamic Morphing Shapes</h1>
+
+  <!-- Shape Container -->
+  <div class="shape-container">
+    <div class="shape"></div>
+  </div>
+
+</body>
+</html>

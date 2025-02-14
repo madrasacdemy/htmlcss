@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Gradient Controls</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: background 0.5s ease;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .gradient-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .gradient-slider {
+      width: 300px;
+      margin: 10px;
+    }
+
+    .slider-label {
+      color: #fff;
+      font-size: 18px;
+    }
+
+    .value {
+      color: #fff;
+      font-size: 14px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div>
+    <h1>Interactive Gradient Background</h1>
+    <div class="gradient-controls">
+      <!-- Control for the first color stop -->
+      <div>
+        <label class="slider-label">Color 1:</label>
+        <input type="color" id="color1" value="#00bcd4" class="gradient-slider">
+        <span class="value" id="color1-value">#00bcd4</span>
+      </div>
+
+      <!-- Control for the second color stop -->
+      <div>
+        <label class="slider-label">Color 2:</label>
+        <input type="color" id="color2" value="#ff4081" class="gradient-slider">
+        <span class="value" id="color2-value">#ff4081</span>
+      </div>
+
+      <!-- Control for the gradient angle -->
+      <div>
+        <label class="slider-label">Angle:</label>
+        <input type="range" id="angle" min="0" max="360" value="45" class="gradient-slider">
+        <span class="value" id="angle-value">45°</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const color1Input = document.getElementById('color1');
+    const color2Input = document.getElementById('color2');
+    const angleInput = document.getElementById('angle');
+    const angleValue = document.getElementById('angle-value');
+    const color1Value = document.getElementById('color1-value');
+    const color2Value = document.getElementById('color2-value');
+    
+    // Function to update background gradient
+    function updateGradient() {
+      const color1 = color1Input.value;
+      const color2 = color2Input.value;
+      const angle = angleInput.value;
+      
+      // Update the background gradient style
+      document.body.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+      
+      // Update the displayed values
+      color1Value.textContent = color1;
+      color2Value.textContent = color2;
+      angleValue.textContent = `${angle}°`;
+    }
+
+    // Event listeners for input changes
+    color1Input.addEventListener('input', updateGradient);
+    color2Input.addEventListener('input', updateGradient);
+    angleInput.addEventListener('input', updateGradient);
+
+    // Initial gradient update
+    updateGradient();
+  </script>
+
+</body>
+</html>
