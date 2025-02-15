@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Water Ripple Background</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
+      overflow: hidden;
+    }
+
+    .ripple-background {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle, #1e90ff, #4682b4);
+      overflow: hidden;
+    }
+
+    .ripple {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      animation: ripple-animation 6s infinite;
+      opacity: 0;
+    }
+
+    @keyframes ripple-animation {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(2);
+        opacity: 0.4;
+      }
+      100% {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    /* Create multiple ripples with slight variations */
+    .ripple:nth-child(1) {
+      animation-delay: 0s;
+      left: 30%;
+      top: 40%;
+    }
+
+    .ripple:nth-child(2) {
+      animation-delay: 1.5s;
+      left: 60%;
+      top: 50%;
+    }
+
+    .ripple:nth-child(3) {
+      animation-delay: 3s;
+      left: 50%;
+      top: 30%;
+    }
+
+    .ripple:nth-child(4) {
+      animation-delay: 4.5s;
+      left: 70%;
+      top: 60%;
+    }
+  </style>
+</head>
+<body>
+  <div class="ripple-background">
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+    <div class="ripple"></div>
+  </div>
+</body>
+</html>

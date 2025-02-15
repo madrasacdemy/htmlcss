@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wave Text Animation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #1a1a1a;
+      color: #ffffff;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .wave-text {
+      font-size: 40px;
+      font-weight: bold;
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 50px;
+    }
+
+    .wave-text span {
+      display: inline-block;
+      animation: wave-animation 1.5s ease-in-out infinite;
+      animation-delay: calc(var(--i) * 0.1s);
+    }
+
+    @keyframes wave-animation {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wave-text">
+    <span style="--i: 0;">W</span>
+    <span style="--i: 1;">a</span>
+    <span style="--i: 2;">v</span>
+    <span style="--i: 3;">e</span>
+    <span style="--i: 4;"> </span>
+    <span style="--i: 5;">T</span>
+    <span style="--i: 6;">e</span>
+    <span style="--i: 7;">x</span>
+    <span style="--i: 8;">t</span>
+    <span style="--i: 9;"> </span>
+    <span style="--i: 10;">A</span>
+    <span style="--i: 11;">n</span>
+    <span style="--i: 12;">i</span>
+    <span style="--i: 13;">m</span>
+    <span style="--i: 14;">a</span>
+    <span style="--i: 15;">t</span>
+    <span style="--i: 16;">i</span>
+    <span style="--i: 17;">o</span>
+    <span style="--i: 18;">n</span>
+  </div>
+</body>
+</html>

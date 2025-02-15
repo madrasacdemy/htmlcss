@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradient Borders</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f8ff;
+    }
+
+    .gradient-border-button {
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: white;
+      background: #000;
+      border: 4px solid;
+      border-image-slice: 1;
+      border-width: 4px;
+      border-image-source: linear-gradient(45deg, #ff7f50, #1e90ff, #32cd32);
+      border-radius: 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+
+    .gradient-border-button:hover {
+      background: linear-gradient(45deg, #ff7f50, #1e90ff, #32cd32);
+      color: #000;
+    }
+
+    .gradient-border-card {
+      margin: 20px 0;
+      padding: 30px;
+      font-size: 18px;
+      color: #333;
+      text-align: center;
+      width: 300px;
+      background-color: white;
+      border: 4px solid;
+      border-image-slice: 1;
+      border-width: 4px;
+      border-image-source: linear-gradient(45deg, #ff4500, #1e90ff, #9400d3);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      animation: border-animation 6s infinite linear;
+    }
+
+    @keyframes border-animation {
+      0% {
+        border-image-source: linear-gradient(45deg, #ff4500, #1e90ff, #9400d3);
+      }
+      50% {
+        border-image-source: linear-gradient(135deg, #9400d3, #32cd32, #ff4500);
+      }
+      100% {
+        border-image-source: linear-gradient(45deg, #ff4500, #1e90ff, #9400d3);
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="gradient-border-button">Click Me</button>
+
+  <div class="gradient-border-card">
+    This is a card with an animated gradient border.
+  </div>
+</body>
+</html>
