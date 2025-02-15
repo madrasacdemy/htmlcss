@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Doodle Borders</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f5;
+      font-family: Arial, sans-serif;
+    }
+
+    .doodle-box {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    /* SVG doodle border */
+    svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    path {
+      fill: none;
+      stroke: #007bff;
+      stroke-width: 4;
+      stroke-dasharray: 700;
+      stroke-dashoffset: 700;
+      animation: draw-border 2s ease-in-out infinite;
+    }
+
+    @keyframes draw-border {
+      0% {
+        stroke-dashoffset: 700;
+      }
+      50% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: 700;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="doodle-box">
+    Doodle Border
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200" preserveAspectRatio="none">
+      <path d="M10,10 Q150,0 290,10 
+               Q300,100 290,190 
+               Q150,200 10,190 
+               Q0,100 10,10 Z" />
+    </svg>
+  </div>
+
+</body>
+</html>
