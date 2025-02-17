@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Glowing Effects on Hover</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #121212;
+    }
+
+    h1, .icon {
+      font-family: 'Arial', sans-serif;
+      font-size: 3em;
+      color: #fff;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    /* Neon Glowing Text Effect */
+    h1 {
+      color: #ffffff;
+      text-shadow: 0 0 5px #fff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 80px #ff00ff, 0 0 90px #ff00ff, 0 0 100px #ff00ff, 0 0 150px #ff00ff;
+    }
+
+    h1:hover {
+      text-shadow: 0 0 10px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 60px #ff00ff, 0 0 100px #ff00ff, 0 0 120px #ff00ff, 0 0 150px #ff00ff;
+    }
+
+    /* Neon Glowing Icon Effect */
+    .icon {
+      display: inline-block;
+      color: #fff;
+      text-shadow: 0 0 5px #fff, 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 40px #ff00ff;
+    }
+
+    .icon:hover {
+      text-shadow: 0 0 10px #fff, 0 0 20px #ff00ff, 0 0 30px #ff00ff, 0 0 60px #ff00ff, 0 0 100px #ff00ff, 0 0 120px #ff00ff, 0 0 150px #ff00ff;
+      transform: scale(1.1);
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Neon Glowing Text</h1>
+  <div class="icon">
+    <span>&#9733;</span> <!-- Star Icon -->
+  </div>
+
+</body>
+</html>

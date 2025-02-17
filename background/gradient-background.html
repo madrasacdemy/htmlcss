@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Gradient Background</title>
+  <style>
+    body {
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ff7eb3, #ff758c);
+      font-family: Arial, sans-serif;
+      transition: background 1s ease;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #333;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Interactive Gradient Background</h1>
+    <button onclick="cycleGradient()">Change Background</button>
+  </div>
+
+  <script>
+    const gradients = [
+      'linear-gradient(135deg, #ff7eb3, #ff758c)',
+      'linear-gradient(135deg, #42e695, #3bb2b8)',
+      'linear-gradient(135deg, #4776e6, #8e54e9)',
+      'linear-gradient(135deg, #ee9ca7, #ffdde1)',
+      'linear-gradient(135deg, #ff9966, #ff5e62)',
+      'linear-gradient(135deg, #f4d03f, #16a085)',
+      'linear-gradient(135deg, #bdc3c7, #2c3e50)',
+      'linear-gradient(135deg, #ff6b6b, #f8e71c)',
+      'linear-gradient(135deg, #8e44ad, #3498db)',
+      'linear-gradient(135deg, #e67e22, #f1c40f)',
+      'linear-gradient(135deg, #c0392b, #8e44ad)'
+    ];
+
+    let currentIndex = 0;
+
+    function cycleGradient() {
+      currentIndex = (currentIndex + 1) % gradients.length;
+      document.body.style.background = gradients[currentIndex];
+    }
+  </script>
+</body>
+</html>

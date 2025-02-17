@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Shape Background</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #1a1a1a;
+    }
+
+    .shape {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: #ff6347;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: move-shape 5s infinite ease-in-out;
+    }
+
+    @keyframes move-shape {
+      0% {
+        transform: translate(0, 0);
+      }
+      50% {
+        transform: translate(calc(100vw - 50px), calc(100vh - 50px));
+      }
+      100% {
+        transform: translate(0, 0);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Shapes will be added by JavaScript -->
+
+  <script>
+    const shapeCount = 20;
+
+    // Function to generate random color
+    function getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Function to create and animate shapes
+    for (let i = 0; i < shapeCount; i++) {
+      const shape = document.createElement("div");
+      shape.classList.add("shape");
+
+      // Randomize initial position
+      shape.style.top = `${Math.random() * 100}vh`;
+      shape.style.left = `${Math.random() * 100}vw`;
+
+      // Randomize size
+      const size = Math.random() * 50 + 30; // Between 30px and 80px
+      shape.style.width = `${size}px`;
+      shape.style.height = `${size}px`;
+
+      // Randomize color
+      shape.style.backgroundColor = getRandomColor();
+
+      // Add the shape to the body
+      document.body.appendChild(shape);
+
+      // Change color every 2 seconds
+      setInterval(() => {
+        shape.style.backgroundColor = getRandomColor();
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>

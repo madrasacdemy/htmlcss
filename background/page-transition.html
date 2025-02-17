@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Transition Animations</title>
+  <style>
+    /* Reset default styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      overflow: hidden;
+    }
+
+    /* Page container */
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease-in-out;
+    }
+
+    /* Page 1 and Page 2 content */
+    .page-content {
+      text-align: center;
+      padding: 40px 30px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .page-content h1 {
+      margin: 0;
+      font-size: 36px;
+      color: #333;
+    }
+
+    .page-content p {
+      font-size: 18px;
+      color: #666;
+      margin: 20px 0;
+    }
+
+    .page-content button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #00bcd4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .page-content button:hover {
+      background-color: #0097a7;
+    }
+
+    /* Slide animation for transitions */
+    .slide-in {
+      animation: slideIn 1s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* Transition container to handle the page transitions */
+    #transition {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Custom background style for the page */
+    .custom-background {
+      background-image: linear-gradient(45deg, #ff6f61, #ffeb3b, #4caf50);
+      background-size: 400% 400%;
+      animation: gradientAnimation 5s ease infinite;
+    }
+
+    /* Gradient animation for dynamic background */
+    @keyframes gradientAnimation {
+      0% {
+        background-position: 0 0;
+      }
+      50% {
+        background-position: 100% 100%;
+      }
+      100% {
+        background-position: 0 0;
+      }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Transition Overlay (used to hide content during transition) -->
+  <div id="transition"></div>
+
+  <!-- Page 1 -->
+  <div id="page1" class="page custom-background">
+    <div class="page-content slide-in">
+      <h1>Welcome to Our Website</h1>
+      <p>This is the first page. Click the button to transition to the second page.</p>
+      <button onclick="transitionPage('page1', 'page2')">Go to Page 2</button>
+    </div>
+  </div>
+
+  <!-- Page 2 -->
+  <div id="page2" class="page custom-background">
+    <div class="page-content slide-in">
+      <h1>About Us</h1>
+      <p>This is the second page. Click the button to return to the first page.</p>
+      <button onclick="transitionPage('page2', 'page1')">Go to Page 1</button>
+    </div>
+  </div>
+
+  <script>
+    // Function to handle page transitions
+    function transitionPage(currentPage, nextPage) {
+      // Hide the current page with fade-out effect
+      document.getElementById(currentPage).style.opacity = '0';
+
+      // Show the transition overlay
+      document.getElementById('transition').style.opacity = '1';
+
+      // After the overlay fades in, show the next page with a slight delay
+      setTimeout(function() {
+        document.getElementById(currentPage).style.display = 'none';
+        document.getElementById(nextPage).style.display = 'flex';
+        document.getElementById(nextPage).style.opacity = '1';
+
+        // Hide the transition overlay
+        setTimeout(function() {
+          document.getElementById('transition').style.opacity = '0';
+        }, 500);
+      }, 500);
+    }
+
+    // Initially show page 1
+    window.onload = function() {
+      document.getElementById('page1').style.display = 'flex';
+      document.getElementById('page1').style.opacity = '1';
+    };
+  </script>
+
+</body>
+</html>
