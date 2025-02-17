@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagonal Scroll Sections with Designs</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        .section {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: white;
+            position: relative;
+            transform: skewY(-10deg); /* Diagonal skew effect */
+            transform-origin: top left;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3); /* Dark overlay */
+            z-index: -1;
+        }
+
+        .section:hover {
+            background-size: 110% 110%; /* Zoom effect on hover */
+        }
+
+        .section:nth-child(1) {
+            background: linear-gradient(135deg, #FF6F61, #FFD166);
+        }
+
+        .section:nth-child(2) {
+            background: linear-gradient(135deg, #06D6A0, #118AB2);
+        }
+
+        .section:nth-child(3) {
+            background: linear-gradient(135deg, #073B4C, #EF476F);
+        }
+
+        .section:nth-child(4) {
+            background: linear-gradient(135deg, #6A4C93, #FFCA3A);
+        }
+
+        .section:nth-child(5) {
+            background: linear-gradient(135deg, #3A86FF, #8338EC);
+        }
+
+        .content {
+            transform: skewY(10deg); /* Counter-skew to keep content straight */
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent background for text */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content:hover {
+            transform: skewY(10deg) scale(1.1); /* Hover effect */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0 0;
+        }
+
+        /* Smooth scrolling behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Scroll snapping */
+        .scroll-container {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100vh;
+        }
+
+        .section {
+            scroll-snap-align: start;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scroll-container">
+        <div class="section">
+            <div class="content">
+                <h1>Welcome</h1>
+                <p>Scroll down to explore more.</p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="content">
+                <h1>About Us</h1>
+                <p>We create amazing designs.</p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="content">
+                <h1>Services</h1>
+                <p>Discover what we offer.</p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="content">
+                <h1>Portfolio</h1>
+                <p>Check out our work.</p>
+            </div>
+        </div>
+        <div class="section">
+            <div class="content">
+                <h1>Contact</h1>
+                <p>Get in touch with us.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Add scroll snapping for better UX
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.section');
+            let isScrolling;
+
+            window.addEventListener('scroll', () => {
+                window.clearTimeout(isScrolling);
+
+                isScrolling = setTimeout(() => {
+                    const scrollY = window.scrollY;
+                    const windowHeight = window.innerHeight;
+
+                    sections.forEach((section, index) => {
+                        const sectionTop = section.offsetTop;
+                        const sectionHeight = section.offsetHeight;
+
+                        if (scrollY >= sectionTop - windowHeight / 2 && scrollY < sectionTop + sectionHeight - windowHeight / 2) {
+                            window.scrollTo({
+                                top: sectionTop,
+                                behavior: 'smooth'
+                            });
+                        }
+                    });
+                }, 100);
+            });
+        });
+    </script>
+
+</body>
+</html>
