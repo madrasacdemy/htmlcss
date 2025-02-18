@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Checkbox Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 2.5rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 18px;
+            color: #333;
+        }
+
+        /* Style 1: Simple Bounce */
+        .checkbox-custom-1 {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-custom-1::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 2px;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-1 {
+            border-color: #4CAF50;
+            background-color: #4CAF50;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-1::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label {
+            color: #4CAF50;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-1 {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        /* Style 2: Flip Animation */
+        .checkbox-custom-2 {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .checkbox-custom-2::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 2px;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-2 {
+            border-color: #FF5722;
+            background-color: #FF5722;
+            transform: rotateY(180deg);
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-2::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label[for^="checkbox4"] {
+            color: #FF5722;
+        }
+
+        /* Style 3: Pulse Animation */
+        .checkbox-custom-3 {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #333;
+            border-radius: 50%;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-custom-3::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: #333;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.3s ease;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-3 {
+            border-color: #2196F3;
+            background-color: #2196F3;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-3::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label[for^="checkbox7"] {
+            color: #2196F3;
+        }
+
+        input[type="checkbox"]:checked + .checkbox-label .checkbox-custom-3 {
+            animation: pulse 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Custom Checkbox Designs</h1>
+    <div class="checkbox-container">
+        <!-- Style 1: Simple Bounce -->
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox1">
+            <label for="checkbox1" class="checkbox-label">
+                <span class="checkbox-custom-1"></span>
+                Simple Bounce
+            </label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox2">
+            <label for="checkbox2" class="checkbox-label">
+                <span class="checkbox-custom-1"></span>
+                Another Option
+            </label>
+        </div>
+
+        <!-- Style 2: Flip Animation -->
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox4">
+            <label for="checkbox4" class="checkbox-label">
+                <span class="checkbox-custom-2"></span>
+                Flip Animation
+            </label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox5">
+            <label for="checkbox5" class="checkbox-label">
+                <span class="checkbox-custom-2"></span>
+                Another Flip Option
+            </label>
+        </div>
+
+        <!-- Style 3: Pulse Animation -->
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox7">
+            <label for="checkbox7" class="checkbox-label">
+                <span class="checkbox-custom-3"></span>
+                Pulse Animation
+            </label>
+        </div>
+        <div class="checkbox-item">
+            <input type="checkbox" id="checkbox8">
+            <label for="checkbox8" class="checkbox-label">
+                <span class="checkbox-custom-3"></span>
+                Another Pulse Option
+            </label>
+        </div>
+    </div>
+</body>
+</html>

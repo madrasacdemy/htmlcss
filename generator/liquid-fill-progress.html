@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquid Fill Animation</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1e1e2f;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid #ffffff;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .wave {
+      position: absolute;
+      bottom: 0;
+      width: 200%;
+      height: 200%;
+      background: #00bcd4;
+      animation: wave-animation 4s ease-in-out infinite;
+      border-radius: 45%;
+    }
+
+    @keyframes wave-animation {
+      0% {
+        transform: translate(-50%, 0) rotate(0deg);
+      }
+      50% {
+        transform: translate(-50%, -20%) rotate(180deg);
+      }
+      100% {
+        transform: translate(-50%, 0) rotate(360deg);
+      }
+    }
+
+    /* Progress text in the center */
+    .progress-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #ffffff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Liquid Fill Progress</h1>
+  <div class="container">
+    <div class="wave"></div>
+    <div class="progress-text">70%</div>
+  </div>
+</body>
+</html>

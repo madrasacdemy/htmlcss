@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ribbon Banner Design</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Ribbon Banner Container */
+        .ribbon-banner {
+            position: relative;
+            background-color: #4caf50;
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px 30px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+        }
+
+        /* Left and Right Ribbon Tails */
+        .ribbon-banner::before,
+        .ribbon-banner::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 30px;
+            background-color: #4caf50;
+            transform: translateY(-50%) rotate(45deg);
+            z-index: -1;
+        }
+
+        .ribbon-banner::before {
+            left: -15px;
+        }
+
+        .ribbon-banner::after {
+            right: -15px;
+        }
+
+        /* Add slight hover effect */
+        .ribbon-banner:hover {
+            background-color: #45a044;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="ribbon-banner">
+        Special Announcement
+    </div>
+</body>
+</html>

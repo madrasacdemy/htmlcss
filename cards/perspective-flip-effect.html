@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Flip Card Effect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        /* Flip Card Container */
+        .flip-card {
+            width: 200px;
+            height: 300px;
+            perspective: 1000px; /* Adds 3D perspective */
+            cursor: pointer;
+        }
+
+        /* Flip Card Inner Container */
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d; /* Ensures 3D transformation */
+        }
+
+        /* Flip Effect on Hover */
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg); /* Rotates 180 degrees on hover */
+        }
+
+        /* Front and Back of the Card */
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Hides the back face during rotation */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        /* Front of the Card */
+        .flip-card-front {
+            background-color: #2196F3; /* Blue */
+        }
+
+        /* Back of the Card */
+        .flip-card-back {
+            background-color: #FF5722; /* Orange */
+            transform: rotateY(180deg); /* Initially flipped */
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Flip Card -->
+    <h1>3D Flip Card Effect</h1>
+    <div class="flip-card" onclick="toggleFlip(this)">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                Front
+            </div>
+            <div class="flip-card-back">
+                Back
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript to toggle flip on click
+        function toggleFlip(card) {
+            card.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
