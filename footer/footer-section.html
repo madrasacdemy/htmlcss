@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Footer Design</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .content {
+      flex: 1;
+      padding: 20px;
+      text-align: center;
+    }
+
+    /* Footer styles */
+    .footer {
+      background-color: #2c3e50;
+      color: #ffffff;
+      padding: 40px 20px;
+      text-align: left;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .footer-section {
+      flex: 1 1 250px;
+    }
+
+    .footer h3 {
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+
+    /* Footer links */
+    .footer-links {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .footer-links a {
+      text-decoration: none;
+      color: #ffffff;
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: #1abc9c;
+    }
+
+    /* Social icons */
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .social-icons a {
+      color: #ffffff;
+      font-size: 1.5rem;
+      text-decoration: none;
+      transition: transform 0.3s;
+    }
+
+    .social-icons a:hover {
+      transform: scale(1.2);
+      color: #1abc9c;
+    }
+
+    /* Newsletter input styles */
+    .newsletter-input {
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .subscribe-btn {
+      padding: 10px 20px;
+      background-color: #1abc9c;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .subscribe-btn:hover {
+      background-color: #16a085;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="content">
+    <h1>Welcome to Our Website</h1>
+    <p>This is a sample page with an enhanced footer section.</p>
+  </div>
+
+  <footer class="footer">
+    <!-- About Us Section -->
+    <div class="footer-section">
+      <h3>About Us</h3>
+      <p>We are a team of passionate web developers providing modern, dynamic web solutions for businesses worldwide.</p>
+      <div class="social-icons">
+        <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+        <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+
+    <!-- Quick Links Section -->
+    <div class="footer-section">
+      <h3>Quick Links</h3>
+      <ul class="footer-links">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Portfolio</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Newsletter Section -->
+    <div class="footer-section">
+      <h3>Newsletter</h3>
+      <p>Subscribe to our newsletter for the latest updates and offers.</p>
+      <input type="email" class="newsletter-input" placeholder="Enter your email">
+      <button class="subscribe-btn">Subscribe</button>
+    </div>
+  </footer>
+
+</body>
+</html>
