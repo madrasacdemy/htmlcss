@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lottie Animation Integration</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    #lottie-container {
+      width: 300px;
+      height: 300px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Lottie Animation</h1>
+  <div id="lottie-container"></div>
+
+  <!-- Include the Lottie Web Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+
+  <script>
+    // Load the Lottie animation
+    lottie.loadAnimation({
+      container: document.getElementById('lottie-container'), // The container element
+      renderer: 'svg', // Render as SVG for scalability
+      loop: true, // Set to true to make the animation loop
+      autoplay: true, // Autoplay the animation on load
+      path: 'https://assets4.lottiefiles.com/packages/lf20_jcikwtux.json' // URL to the Lottie animation JSON
+    });
+  </script>
+</body>
+</html>

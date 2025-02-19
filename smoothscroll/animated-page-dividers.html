@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Page Dividers</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    section {
+      padding: 100px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .section1 {
+      background-color: #6C63FF;
+    }
+
+    .wave-divider {
+      position: relative;
+      height: 100px;
+      background-color: #6C63FF;
+    }
+
+    /* Wave Effect */
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23FFFFFF" fill-opacity="1" d="M0,192L48,186.7C96,181,192,171,288,170.7C384,171,480,181,576,181.3C672,181,768,171,864,160C960,149,1056,139,1152,133.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
+      animation: wave-animation 5s linear infinite;
+    }
+
+    @keyframes wave-animation {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    .section2 {
+      background-color: #FF6C63;
+    }
+
+    /* Zigzag Divider */
+    .zigzag-divider {
+      height: 50px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #FF6C63,
+        #FF6C63 10px,
+        #FFFFFF 10px,
+        #FFFFFF 20px
+      );
+    }
+
+    .section3 {
+      background-color: #63C6FF;
+    }
+
+    /* Curved Divider */
+    .curve-divider {
+      position: relative;
+      height: 100px;
+      background-color: #63C6FF;
+    }
+
+    .curve {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23FFFFFF" fill-opacity="1" d="M0,64L80,90.7C160,117,320,171,480,192C640,213,800,203,960,170.7C1120,139,1280,85,1360,58.7L1440,32L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"></path></svg>') no-repeat;
+      background-size: cover;
+    }
+
+    .section4 {
+      background-color: #6CFF6C;
+    }
+  </style>
+</head>
+<body>
+  <!-- Section 1 -->
+  <section class="section1">
+    <h1>Welcome to Section 1</h1>
+    <p>This section introduces the wave effect as a page divider. You can use this style for creative and modern designs.</p>
+  </section>
+
+  <!-- Wave Divider -->
+  <div class="wave-divider">
+    <div class="wave"></div>
+  </div>
+
+  <!-- Section 2 -->
+  <section class="section2">
+    <h1>Welcome to Section 2</h1>
+    <p>The zigzag effect is a bold design choice that can separate content with a dynamic and edgy style.</p>
+  </section>
+
+  <!-- Zigzag Divider -->
+  <div class="zigzag-divider"></div>
+
+  <!-- Section 3 -->
+  <section class="section3">
+    <h1>Welcome to Section 3</h1>
+    <p>The curved divider is a subtle and elegant way to transition between sections. It works well for formal or clean designs.</p>
+  </section>
+
+  <!-- Curved Divider -->
+  <div class="curve-divider">
+    <div class="curve"></div>
+  </div>
+
+  <!-- Section 4 -->
+  <section class="section4">
+    <h1>Welcome to Section 4</h1>
+    <p>This is the final section of the page. You can mix and match different dividers to create visually appealing web pages.</p>
+  </section>
+</body>
+</html>
