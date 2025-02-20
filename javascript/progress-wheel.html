@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Progress Wheel</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .progress-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      background: conic-gradient(#4caf50 0% 0%, #ddd 0% 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-text {
+      position: absolute;
+      font-size: 24px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .slider-container {
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Interactive Progress Wheel</h1>
+  <div class="progress-container" id="progress-container">
+    <div class="progress-text" id="progress-text">0%</div>
+  </div>
+
+  <div class="slider-container">
+    <label for="progress-slider">Adjust Progress:</label>
+    <input type="range" id="progress-slider" min="0" max="100" value="0">
+  </div>
+
+  <script>
+    const progressContainer = document.getElementById("progress-container");
+    const progressText = document.getElementById("progress-text");
+    const progressSlider = document.getElementById("progress-slider");
+
+    progressSlider.addEventListener("input", (e) => {
+      const progressValue = e.target.value;
+      progressText.textContent = `${progressValue}%`;
+      progressContainer.style.background = `conic-gradient(
+        #4caf50 ${progressValue * 3.6}deg, 
+        #ddd ${progressValue * 3.6}deg
+      )`;
+    });
+  </script>
+</body>
+</html>

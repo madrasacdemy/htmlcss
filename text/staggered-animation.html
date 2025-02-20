@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staggered Text Animation</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1e1e1e;
+      font-family: Arial, sans-serif;
+    }
+
+    .staggered-text {
+      font-size: 48px;
+      font-weight: bold;
+      color: white;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fade-up 1s forwards ease-out;
+    }
+
+    /* Keyframe for the animation */
+    @keyframes fade-up {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="staggered-container"></div>
+
+  <script>
+    const text = "Staggered Animation";
+    const container = document.getElementById("staggered-container");
+
+    // Create a span for each character with staggered animation
+    text.split("").forEach((char, index) => {
+      const span = document.createElement("span");
+      span.className = "staggered-text";
+      span.style.animationDelay = `${index * 0.1}s`;
+
+      // Check for spaces and handle them
+      if (char === " ") {
+        span.innerHTML = "&nbsp;"; // Preserve space using non-breaking space
+      } else {
+        span.textContent = char;
+      }
+
+      container.appendChild(span);
+    });
+  </script>
+</body>
+</html>

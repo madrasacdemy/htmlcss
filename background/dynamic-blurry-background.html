@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Blurry Background</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background-color: #333;
+    }
+
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, #ff7eb9, #ff758c, #85e3ff, #b9fbc0);
+      filter: blur(80px);
+      transition: transform 0.3s ease-out;
+    }
+
+    .content {
+      position: relative;
+      z-index: 10;
+      color: white;
+      font-size: 24px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px 30px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="content">
+    Move your mouse around to shift the blurry background!
+  </div>
+
+  <script>
+    const background = document.querySelector(".background");
+
+    document.addEventListener("mousemove", (e) => {
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      background.style.transform = `translate(-${x / 2}%, -${y / 2}%)`;
+    });
+  </script>
+</body>
+</html>

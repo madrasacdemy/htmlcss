@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Shadow Tilt Effect</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .tilt-box {
+      width: 300px;
+      height: 200px;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 20px 20px 40px rgba(0, 0, 0, 0.2);
+      transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
+    }
+  </style>
+</head>
+<body>
+  <div class="tilt-box">Hover me for 3D tilt!</div>
+
+  <script>
+    const box = document.querySelector('.tilt-box');
+
+    box.addEventListener('mousemove', (e) => {
+      const boxRect = box.getBoundingClientRect();
+      const centerX = boxRect.left + boxRect.width / 2;
+      const centerY = boxRect.top + boxRect.height / 2;
+
+      const xOffset = (e.clientX - centerX) / 10;
+      const yOffset = (e.clientY - centerY) / 10;
+
+      box.style.transform = `rotateY(${xOffset}deg) rotateX(${-yOffset}deg)`;
+      box.style.boxShadow = `${xOffset * 2}px ${yOffset * 2}px 40px rgba(0, 0, 0, 0.3)`;
+    });
+
+    box.addEventListener('mouseleave', () => {
+      box.style.transform = 'rotateY(0) rotateX(0)';
+      box.style.boxShadow = '20px 20px 40px rgba(0, 0, 0, 0.2)';
+    });
+  </script>
+</body>
+</html>
