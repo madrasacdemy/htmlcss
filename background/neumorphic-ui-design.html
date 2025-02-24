@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic UI Design</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: #e0e5ec;
+            font-family: Arial, sans-serif;
+        }
+        .card {
+            width: 250px;
+            height: 150px;
+            background: #e0e5ec;
+            border-radius: 20px;
+            box-shadow: 10px 10px 20px #babecc, -10px -10px 20px #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            background: #e0e5ec;
+            border-radius: 10px;
+            box-shadow: 5px 5px 10px #babecc, -5px -5px 10px #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .button:active {
+            box-shadow: inset 5px 5px 10px #babecc, inset -5px -5px 10px #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">Neumorphic Card</div>
+    <button class="button">Click Me</button>
+</body>
+</html>

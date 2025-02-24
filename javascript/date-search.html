@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Table by Date</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: #f4f4f4;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 60%;
+            margin: auto;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        input, button {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <label for="dateFilter">Select Date: </label>
+        <input type="date" id="dateFilter">
+        <button onclick="filterTable()">Search</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Event</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr>
+                <td>2025-02-20</td>
+                <td>Meeting with Client</td>
+            </tr>
+            <tr>
+                <td>2025-02-21</td>
+                <td>Project Deadline</td>
+            </tr>
+            <tr>
+                <td>2025-02-22</td>
+                <td>Team Outing</td>
+            </tr>
+        </tbody>
+    </table>
+    <script>
+        function filterTable() {
+            let input = document.getElementById("dateFilter").value;
+            let table = document.getElementById("tableBody");
+            let rows = table.getElementsByTagName("tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let dateCell = rows[i].getElementsByTagName("td")[0];
+                if (dateCell) {
+                    let dateValue = dateCell.textContent || dateCell.innerText;
+                    rows[i].style.display = dateValue === input ? "" : "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>

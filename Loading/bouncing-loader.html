@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bouncing Loader Animation</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #1e1e1e;
+      font-family: Arial, sans-serif;
+    }
+
+    .loader {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      width: 80px;
+    }
+
+    .loader div {
+      width: 20px;
+      height: 20px;
+      background-color: #4caf50;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite ease-in-out;
+    }
+
+    /* Stagger the animation for each ball */
+    .loader div:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .loader div:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .loader div:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-30px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</body>
+</html>
