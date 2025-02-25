@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resizable Split Screen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            height: 100vh;
+        }
+        .panel {
+            overflow: auto;
+            padding: 20px;
+        }
+        .left {
+            background-color: #3498db;
+            color: white;
+            width: 50%;
+        }
+        .right {
+            background-color: #2ecc71;
+            color: white;
+            flex-grow: 1;
+        }
+        .resizer {
+            width: 10px;
+            cursor: ew-resize;
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel left" id="leftPanel">Left Panel</div>
+    <div class="resizer" id="resizer"></div>
+    <div class="panel right">Right Panel</div>
+    <script>
+        const resizer = document.getElementById("resizer");
+        const leftPanel = document.getElementById("leftPanel");
+        let isResizing = false;
+
+        resizer.addEventListener("mousedown", (e) => {
+            isResizing = true;
+            document.addEventListener("mousemove", resize);
+            document.addEventListener("mouseup", stopResize);
+        });
+
+        function resize(e) {
+            if (isResizing) {
+                let newWidth = Math.max(100, e.clientX);
+                leftPanel.style.width = `${newWidth}px`;
+            }
+        }
+
+        function stopResize() {
+            isResizing = false;
+            document.removeEventListener("mousemove", resize);
+            document.removeEventListener("mouseup", stopResize);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Elements</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .draggable {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            cursor: grab;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="draggable" id="dragBox">Drag me</div>
+    <script>
+        const dragBox = document.getElementById("dragBox");
+
+        let offsetX, offsetY, isDragging = false;
+
+        dragBox.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.clientX - dragBox.getBoundingClientRect().left;
+            offsetY = e.clientY - dragBox.getBoundingClientRect().top;
+            dragBox.style.cursor = "grabbing";
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            dragBox.style.left = `${e.clientX - offsetX}px`;
+            dragBox.style.top = `${e.clientY - offsetY}px`;
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+            dragBox.style.cursor = "grab";
+        });
+    </script>
+</body>
+</html>

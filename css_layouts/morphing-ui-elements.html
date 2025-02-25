@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morphing UI Elements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .morph {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.5s ease-in-out;
+        }
+        .morph.active {
+            width: 150px;
+            height: 80px;
+            border-radius: 10px;
+            background-color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="morph" id="morphBox">Click Me</div>
+    <script>
+        const morphBox = document.getElementById("morphBox");
+
+        morphBox.addEventListener("click", () => {
+            morphBox.classList.toggle("active");
+        });
+    </script>
+</body>
+</html>
