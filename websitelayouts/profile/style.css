@@ -1,0 +1,178 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  header {
+    background: #333;
+    color: #fff;
+    padding: 20px 0;
+  }
+  
+  header nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  header .logo h1 {
+    font-size: 2rem;
+  }
+  
+  header .nav-links {
+    list-style: none;
+  }
+  
+  header .nav-links li {
+    display: inline;
+    margin: 0 15px;
+  }
+  
+  header .nav-links li a {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  header .nav-links li a:hover {
+    color: #f4b400;
+  }
+  
+  /* About Section */
+  #about {
+    padding: 50px 10%;
+    background: #fff;
+  }
+  
+  #about h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  #about .about-content p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+  
+  #about .avatar-img {
+    max-width: 200px;
+    border-radius: 50%;
+    margin-top: 20px;
+  }
+  
+  /* Skills Section */
+  #skills {
+    padding: 50px 10%;
+    background: #f9f9f9;
+  }
+  
+  #skills h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  #skills ul {
+    list-style: none;
+  }
+  
+  #skills li {
+    margin: 10px 0;
+    font-size: 1.2rem;
+  }
+  
+  /* Experience Section */
+  #experience {
+    padding: 50px 10%;
+    background: #fff;
+  }
+  
+  #experience h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  #experience ul {
+    list-style: none;
+  }
+  
+  #experience li {
+    margin-bottom: 20px;
+  }
+  
+  #experience li h3 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+  }
+  
+  #experience li p {
+    font-size: 1rem;
+  }
+  
+  /* Contact Section */
+  #contact {
+    padding: 50px 10%;
+    background: #f9f9f9;
+  }
+  
+  #contact h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  #contact form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  #contact form label {
+    margin: 10px 0 5px;
+  }
+  
+  #contact form input, #contact form textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+  }
+  
+  #contact form button {
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  #contact form button:hover {
+    background: #f4b400;
+  }
+  
+  /* Footer */
+  footer {
+    background: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+  }
+  
+  footer .social-links {
+    margin-top: 10px;
+  }
+  
+  footer .social-links a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+  }
+  
+  footer .social-links a:hover {
+    color: #f4b400;
+  }
+  
