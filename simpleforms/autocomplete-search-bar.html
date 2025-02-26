@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Autocomplete Search Bar</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding: 50px; }
+        h1 { color: #333; margin-bottom: 20px; }
+        .search-container { 
+            position: relative; 
+            width: 350px; 
+            margin: auto; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 10px; 
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.15); 
+        }
+        input { 
+            width: 90%; 
+            padding: 12px; 
+            border: 2px solid #007BFF; 
+            border-radius: 6px; 
+            outline: none; 
+            font-size: 16px;
+        }
+        .suggestions { 
+            position: absolute; 
+            width: 100%; 
+            background: white; 
+            border: 1px solid #ccc; 
+            border-top: none; 
+            max-height: 200px; 
+            overflow-y: auto; 
+            display: none; 
+            border-radius: 6px; 
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .suggestions div { 
+            padding: 15px; 
+            cursor: pointer; 
+            transition: background 0.3s ease;
+            font-size: 14px;
+        }
+        .suggestions div:hover { 
+            background: #007BFF; 
+            color: white;
+        }
+        .search-container:focus-within {
+            box-shadow: 0px 5px 12px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Fruits</h1>
+    <div class="search-container">
+        <input type="text" id="searchBox" placeholder="Search for fruits..." oninput="showSuggestions()">
+        <div class="suggestions" id="suggestionsBox"></div>
+    </div>
+
+    <script>
+        const suggestions = ["Apple", "Banana", "Cherry", "Date", "Grape", "Mango", "Orange", "Peach", "Pear", "Pineapple", "Strawberry", "Watermelon"];
+        const searchBox = document.getElementById("searchBox");
+        const suggestionsBox = document.getElementById("suggestionsBox");
+
+        function showSuggestions() {
+            const query = searchBox.value.toLowerCase();
+            suggestionsBox.innerHTML = "";
+            if (!query) {
+                suggestionsBox.style.display = "none";
+                return;
+            }
+            const filteredSuggestions = suggestions.filter(item => item.toLowerCase().includes(query));
+            if (filteredSuggestions.length) {
+                suggestionsBox.style.display = "block";
+                filteredSuggestions.forEach(item => {
+                    const div = document.createElement("div");
+                    div.textContent = item;
+                    div.onclick = () => {
+                        searchBox.value = item;
+                        suggestionsBox.style.display = "none";
+                    };
+                    suggestionsBox.appendChild(div);
+                });
+            } else {
+                suggestionsBox.style.display = "none";
+            }
+        }
+
+        document.addEventListener("click", (event) => {
+            if (!event.target.closest(".search-container")) {
+                suggestionsBox.style.display = "none";
+            }
+        });
+    </script>
+</body>
+</html>

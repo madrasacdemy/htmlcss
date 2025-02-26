@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Form Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none;
+            text-align: left;
+            margin: -5px 0 10px 10px;
+        }
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #e84118;
+        }
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Animated Form Submission</h2>
+        <input type="text" id="name" placeholder="Name">
+        <div class="error" id="nameError">Name is required</div>
+        
+        <input type="email" id="email" placeholder="Email">
+        <div class="error" id="emailError">Valid email is required</div>
+        
+        <button onclick="validateForm()">Submit</button>
+        <div class="loader" id="loader"></div>
+    </div>
+
+    <script>
+        function validateForm() {
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let nameError = document.getElementById("nameError");
+            let emailError = document.getElementById("emailError");
+            let isValid = true;
+
+            // Name validation
+            if (name === "") {
+                nameError.style.display = "block";
+                isValid = false;
+            } else {
+                nameError.style.display = "none";
+            }
+
+            // Email validation (corrected regex)
+            let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (email === "" || !emailPattern.test(email)) {
+                emailError.style.display = "block";
+                isValid = false;
+            } else {
+                emailError.style.display = "none";
+            }
+
+            // If valid, show loader
+            if (isValid) {
+                document.getElementById("loader").style.display = "block";
+                setTimeout(() => {
+                    document.getElementById("loader").style.display = "none";
+                    alert("Form submitted successfully!");
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
