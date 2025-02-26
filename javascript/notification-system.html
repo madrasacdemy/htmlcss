@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Notification Bell</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            margin: 0;
+        }
+        h1 {
+            font-size: 24px;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 250px;
+        }
+        .notification-container {
+            position: relative;
+            font-size: 50px;
+            cursor: pointer;
+        }
+        .bell {
+            transition: transform 0.3s, filter 0.3s;
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        .glow {
+            filter: drop-shadow(0px 0px 10px gold);
+        }
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: red;
+            color: white;
+            font-size: 14px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+        }
+        .message {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Notification System</h1>
+
+    <div class="card">
+        <div class="notification-container" onclick="resetNotifications()">
+            <span class="bell">🔔</span>
+            <span class="badge" id="notification-count">0</span>
+        </div>
+        <p class="message" id="notification-text">No new notifications</p>
+    </div>
+
+    <script>
+        let notificationCount = 0;
+        const bell = document.querySelector(".bell");
+        const badge = document.getElementById("notification-count");
+        const notificationText = document.getElementById("notification-text");
+
+        function newNotification() {
+            notificationCount++;
+            badge.textContent = notificationCount;
+            notificationText.textContent = `You have ${notificationCount} new notifications!`;
+            bell.classList.add("shake", "glow");
+
+            setTimeout(() => {
+                bell.classList.remove("shake");
+            }, 500);
+        }
+
+        function resetNotifications() {
+            notificationCount = 0;
+            badge.textContent = notificationCount;
+            notificationText.textContent = "No new notifications";
+            bell.classList.remove("glow");
+        }
+
+        // Simulate receiving a new notification every 4 seconds
+        setInterval(newNotification, 4000);
+    </script>
+
+</body>
+</html>

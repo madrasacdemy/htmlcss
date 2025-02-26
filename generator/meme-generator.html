@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Meme Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        button {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #e84118;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Random Meme Generator</h2>
+        <img id="meme" src="" alt="Random Meme">
+        <button onclick="fetchMeme()">Get Meme</button>
+    </div>
+
+    <script>
+        function fetchMeme() {
+            fetch("https://meme-api.com/gimme")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("meme").src = data.url;
+                })
+                .catch(error => console.error("Error fetching meme:", error));
+        }
+
+        // Load a meme on page load
+        fetchMeme();
+    </script>
+
+</body>
+</html>
