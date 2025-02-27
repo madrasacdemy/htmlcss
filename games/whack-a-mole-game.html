@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whack-a-Mole Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #4CAF50;
+      margin-top: 30px;
+      font-size: 36px;
+    }
+    #game-container {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-template-rows: repeat(3, 120px);
+      gap: 10px;
+      justify-content: center;
+      margin-top: 40px;
+      margin-bottom: 30px;
+    }
+    .hole {
+      width: 120px;
+      height: 120px;
+      background-color: #8B4513;
+      position: relative;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+    .hole:hover {
+      background-color: #6f3620;
+    }
+    .mole {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 100px;
+      height: 100px;
+      background-color: #228B22;
+      border-radius: 50%;
+      display: none;
+      animation: popUp 1s ease-in-out;
+    }
+    @keyframes popUp {
+      0% {
+        bottom: -50px;
+        opacity: 0;
+      }
+      50% {
+        bottom: 10px;
+        opacity: 1;
+      }
+      100% {
+        bottom: 10px;
+        opacity: 1;
+      }
+    }
+    .scoreboard {
+      margin-top: 30px;
+      font-size: 24px;
+      color: #333;
+    }
+    .start-btn {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 15px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      margin-top: 20px;
+    }
+    .start-btn:hover {
+      background-color: #45a049;
+    }
+    .game-over {
+      font-size: 28px;
+      color: #ff6347;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Whack-a-Mole Game</h1>
+  <div id="game-container">
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+    <div class="hole"><div class="mole"></div></div>
+  </div>
+
+  <div class="scoreboard">
+    Score: <span id="score">0</span>
+  </div>
+
+  <button class="start-btn" onclick="startGame()">Start Game</button>
+
+  <div class="game-over" id="gameOverMessage" style="display: none;"></div>
+
+  <script>
+    let score = 0;
+    let gameInterval;
+    let moleInterval;
+    const moles = document.querySelectorAll('.mole');
+    const holes = document.querySelectorAll('.hole');
+    const scoreDisplay = document.getElementById('score');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+
+    function randomMole() {
+      const randomIndex = Math.floor(Math.random() * holes.length);
+      const mole = moles[randomIndex];
+      const hole = holes[randomIndex];
+      mole.style.display = 'block';
+
+      hole.addEventListener('click', function() {
+        if (mole.style.display === 'block') {
+          score++;
+          scoreDisplay.textContent = score;
+          mole.style.display = 'none';
+        }
+      });
+
+      setTimeout(function() {
+        mole.style.display = 'none';
+      }, 1000);
+    }
+
+    function startGame() {
+      score = 0;
+      scoreDisplay.textContent = score;
+      gameOverMessage.style.display = 'none';
+      moles.forEach(mole => mole.style.display = 'none');
+
+      gameInterval = setInterval(randomMole, 1500);
+
+      setTimeout(function() {
+        clearInterval(gameInterval);
+        gameOverMessage.style.display = 'block';
+        gameOverMessage.textContent = 'Game Over! Your final score is ' + score;
+      }, 20000); // game ends after 20 seconds
+    }
+  </script>
+
+</body>
+</html>
