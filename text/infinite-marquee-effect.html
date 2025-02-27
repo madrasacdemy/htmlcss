@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Marquee Effect</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 30px;
+            font-size: 35px;
+        }
+        .marquee-container {
+            width: 80%;
+            text-align: center;
+            font-size: 24px;
+        }
+        marquee:nth-child(1) { color: red; }
+        marquee:nth-child(2) { color: blue; }
+        marquee:nth-child(3) { color: green; }
+        marquee:nth-child(4) { color: yellow; }
+        marquee:nth-child(5) { color: orange; }
+        marquee:nth-child(6) { color: cyan; }
+        marquee:nth-child(7) { color: magenta; }
+        marquee:nth-child(8) { color: lime; }
+    </style>
+</head>
+<body>
+    <h1>Infinite Marquee Effect</h1>
+    <div class="marquee-container">
+        <marquee behavior="scroll" direction="left">This text scrolls to the left.</marquee>
+        <marquee behavior="scroll" direction="right">This text scrolls to the right.</marquee>
+        <marquee behavior="scroll" direction="up">This text scrolls upwards.</marquee>
+        <marquee behavior="scroll" direction="down">This text scrolls downwards.</marquee>
+        <marquee behavior="alternate" direction="left">This text bounces left and right.</marquee>
+        <marquee behavior="alternate" direction="up">This text bounces up and down.</marquee>
+        <marquee behavior="slide" direction="left">This text slides in from the left and stops.</marquee>
+        <marquee behavior="slide" direction="right">This text slides in from the right and stops.</marquee>
+    </div>
+</body>
+</html>

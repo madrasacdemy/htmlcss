@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Card Game</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        h1 {
+            margin-bottom: 10px;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            background: #444;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .hidden {
+            background-color: #888;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h1>Memory Card Game</h1>
+    <p class="instructions">Click on two cards to flip them. Match all pairs to win!</p>
+    <div class="game-container" id="gameBoard"></div>
+    <script>
+        const symbols = ['🍎', '🍌', '🍒', '🍇', '🍉', '🍓', '🍍', '🥭'];
+        let cards = [...symbols, ...symbols];
+        cards.sort(() => 0.5 - Math.random());
+        
+        const gameBoard = document.getElementById("gameBoard");
+        let firstCard = null;
+        let secondCard = null;
+        
+        function createCard(symbol) {
+            const card = document.createElement("div");
+            card.classList.add("card", "hidden");
+            card.textContent = symbol;
+            card.addEventListener("click", () => flipCard(card));
+            gameBoard.appendChild(card);
+        }
+        
+        function flipCard(card) {
+            if (!firstCard) {
+                firstCard = card;
+                card.classList.remove("hidden");
+            } else if (!secondCard && card !== firstCard) {
+                secondCard = card;
+                card.classList.remove("hidden");
+                checkMatch();
+            }
+        }
+        
+        function checkMatch() {
+            if (firstCard.textContent === secondCard.textContent) {
+                firstCard = null;
+                secondCard = null;
+            } else {
+                setTimeout(() => {
+                    firstCard.classList.add("hidden");
+                    secondCard.classList.add("hidden");
+                    firstCard = null;
+                    secondCard = null;
+                }, 1000);
+            }
+        }
+        
+        cards.forEach(createCard);
+    </script>
+</body>
+</html>

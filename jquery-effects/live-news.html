@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Scrolling News Ticker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        h2 {
+            color: #d32f2f;
+            margin-bottom: 50px;
+        }
+        .news-container {
+            width: 100%;
+            max-width: 600px;
+            overflow: hidden;
+            background: #d32f2f;
+            padding: 10px 0;
+            position: relative;
+            border-radius: 5px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 150px;
+        }
+        .news-title {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            background: #b71c1c;
+            padding: 5px 10px;
+            border-radius: 3px;
+            z-index: 10;
+        }
+        .news-ticker-wrapper {
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+        .news-ticker {
+            display: flex;
+            white-space: nowrap;
+            animation: scroll 15s linear infinite;
+        }
+        .news-ticker span {
+            padding: 0 20px;
+            color: white;
+            font-size: 16px;
+        }
+        @keyframes scroll {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h2>📰 Live News Updates</h2>
+
+    <div class="news-container">
+        <span class="news-title">Breaking News</span>
+        <div class="news-ticker-wrapper">
+            <div class="news-ticker" id="news-ticker">
+                <!-- News items will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const newsList = [
+            "🚀 AI revolutionizing the tech industry!",
+            "🌍 Global warming concerns rise in 2025.",
+            "📱 New smartphone released with insane features!",
+            "🎬 Upcoming blockbuster movie breaks records!",
+            "⚽ Football championship finals this weekend!"
+        ];
+
+        function updateNews() {
+            const ticker = document.getElementById("news-ticker");
+            const newsItems = newsList.map(news => `<span>${news}</span>`).join("");
+            
+            // Duplicate content to ensure smooth looping
+            ticker.innerHTML = newsItems + newsItems;
+        }
+
+        updateNews();
+    </script>
+
+</body>
+</html>
