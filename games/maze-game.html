@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .maze {
+            display: grid;
+            grid-template-columns: repeat(10, 30px);
+            grid-template-rows: repeat(10, 30px);
+            gap: 1px;
+            background-color: #333;
+        }
+
+        .cell {
+            width: 30px;
+            height: 30px;
+            background-color: #ddd;
+        }
+
+        .wall {
+            background-color: #333;
+        }
+
+        .player {
+            background-color: #00f;
+        }
+
+        .exit {
+            background-color: #0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Maze Game</h1>
+    <div class="maze" id="maze"></div>
+    
+    <script>
+        const mazeData = [
+            [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
+            [1, 0, 0, 0, 1, 0, 0, 0, 1, 1],
+            [1, 0, 1, 0, 1, 0, 1, 0, 1, 1],
+            [1, 0, 1, 0, 0, 0, 1, 1, 0, 0],
+            [1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [1, 1, 1, 1, 1, 0, 1, 1, 1, 0],
+            [1, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 1, 1, 0, 1, 0, 0],
+            [1, 0, 0, 0, 0, 0, 1, 1, 1, 0]
+        ];
+
+        const player = { x: 0, y: 0 };
+        const exit = { x: 9, y: 9 };
+
+        const mazeElement = document.getElementById('maze');
+
+        // Function to render the maze
+        function renderMaze() {
+            mazeElement.innerHTML = '';
+            for (let i = 0; i < mazeData.length; i++) {
+                for (let j = 0; j < mazeData[i].length; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    // Add wall class
+                    if (mazeData[i][j] === 1) {
+                        cell.classList.add('wall');
+                    }
+
+                    // Add player
+                    if (player.x === j && player.y === i) {
+                        cell.classList.add('player');
+                    }
+
+                    // Add exit
+                    if (exit.x === j && exit.y === i) {
+                        cell.classList.add('exit');
+                    }
+
+                    mazeElement.appendChild(cell);
+                }
+            }
+        }
+
+        // Move player based on key press
+        function movePlayer(event) {
+            let newX = player.x;
+            let newY = player.y;
+
+            if (event.key === 'w' && player.y > 0 && mazeData[player.y - 1][player.x] !== 1) {
+                newY--;
+            } else if (event.key === 'a' && player.x > 0 && mazeData[player.y][player.x - 1] !== 1) {
+                newX--;
+            } else if (event.key === 's' && player.y < mazeData.length - 1 && mazeData[player.y + 1][player.x] !== 1) {
+                newY++;
+            } else if (event.key === 'd' && player.x < mazeData[0].length - 1 && mazeData[player.y][player.x + 1] !== 1) {
+                newX++;
+            }
+
+            // Update player position
+            player.x = newX;
+            player.y = newY;
+
+            // Check if player reached exit
+            if (player.x === exit.x && player.y === exit.y) {
+                alert('You Win!');
+                // Optionally, reset the game here
+                player.x = 0;
+                player.y = 0;
+                renderMaze();
+            }
+
+            renderMaze();
+        }
+
+        // Set up event listener for key presses
+        window.addEventListener('keydown', movePlayer);
+
+        // Initial rendering
+        renderMaze();
+    </script>
+</body>
+</html>

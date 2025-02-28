@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Drum Kit</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        .drum-kit {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .drum {
+            width: 80px;
+            height: 80px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: #444;
+            border: 3px solid #777;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s ease;
+        }
+
+        .drum:active, .playing {
+            background: #ffcc00;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🥁 Virtual Drum Kit 🎵</h1>
+    <p>Press A, S, D, F, J, K, L to play different drums</p>
+
+    <div class="drum-kit">
+        <div class="drum" data-key="A">A</div>
+        <div class="drum" data-key="S">S</div>
+        <div class="drum" data-key="D">D</div>
+        <div class="drum" data-key="F">F</div>
+        <div class="drum" data-key="J">J</div>
+        <div class="drum" data-key="K">K</div>
+        <div class="drum" data-key="L">L</div>
+    </div>
+
+    <script>
+        const sounds = {
+            A: "https://www.fesliyanstudios.com/play-mp3/4386", // Bass Drum
+            S: "https://www.fesliyanstudios.com/play-mp3/4384", // Snare
+            D: "https://www.fesliyanstudios.com/play-mp3/4392", // Hi-Hat
+            F: "https://www.fesliyanstudios.com/play-mp3/4393", // Tom
+            J: "https://www.fesliyanstudios.com/play-mp3/4390", // Cymbal
+            K: "https://www.fesliyanstudios.com/play-mp3/4387", // Clap
+            L: "https://www.fesliyanstudios.com/play-mp3/4389"  // Cowbell
+        };
+
+        function playSound(key) {
+            if (!sounds[key]) return;
+            const audio = new Audio(sounds[key]);
+            audio.currentTime = 0;
+            audio.play();
+            const drum = document.querySelector(`.drum[data-key="${key}"]`);
+            if (drum) {
+                drum.classList.add("playing");
+                setTimeout(() => drum.classList.remove("playing"), 100);
+            }
+        }
+
+        document.addEventListener("keydown", (event) => playSound(event.key.toUpperCase()));
+
+        document.querySelectorAll(".drum").forEach(drum => {
+            drum.addEventListener("click", () => playSound(drum.dataset.key));
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .score {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .game-container {
+            display: inline-block;
+            background: #bbada0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-template-rows: repeat(4, 80px);
+            gap: 10px;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            background: #cdc1b4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+        }
+
+        .tile-2 { background: #eee4da; color: #776e65; }
+        .tile-4 { background: #ede0c8; color: #776e65; }
+        .tile-8 { background: #f2b179; }
+        .tile-16 { background: #f59563; }
+        .tile-32 { background: #f67c5f; }
+        .tile-64 { background: #f65e3b; }
+        .tile-128 { background: #edcf72; }
+        .tile-256 { background: #edcc61; }
+        .tile-512 { background: #edc850; }
+        .tile-1024 { background: #edc53f; }
+        .tile-2048 { background: #edc22e; }
+
+        .game-over {
+            font-size: 24px;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>2048 Game</h1>
+    <p class="score">Score: <span id="score">0</span></p>
+    <div class="game-container">
+        <div class="grid" id="grid"></div>
+    </div>
+    <p class="game-over" id="game-over"></p>
+
+    <script>
+        const gridElement = document.getElementById("grid");
+        const scoreElement = document.getElementById("score");
+        const gameOverElement = document.getElementById("game-over");
+        let score = 0;
+        let board = Array(4).fill().map(() => Array(4).fill(0));
+
+        function createGrid() {
+            gridElement.innerHTML = "";
+            board.forEach(row => {
+                row.forEach(cell => {
+                    const cellDiv = document.createElement("div");
+                    cellDiv.classList.add("cell");
+                    if (cell) {
+                        cellDiv.textContent = cell;
+                        cellDiv.classList.add(`tile-${cell}`);
+                    }
+                    gridElement.appendChild(cellDiv);
+                });
+            });
+            scoreElement.textContent = score;
+        }
+
+        function addRandomTile() {
+            let emptyCells = [];
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    if (board[r][c] === 0) emptyCells.push({ r, c });
+                }
+            }
+            if (emptyCells.length > 0) {
+                let { r, c } = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                board[r][c] = Math.random() > 0.1 ? 2 : 4;
+            }
+        }
+
+        function slide(row) {
+            let newRow = row.filter(val => val);
+            for (let i = 0; i < newRow.length - 1; i++) {
+                if (newRow[i] === newRow[i + 1]) {
+                    newRow[i] *= 2;
+                    score += newRow[i];
+                    newRow.splice(i + 1, 1);
+                }
+            }
+            while (newRow.length < 4) newRow.push(0);
+            return newRow;
+        }
+
+        function rotateLeft(matrix) {
+            return matrix[0].map((_, i) => matrix.map(row => row[i])).reverse();
+        }
+
+        function move(direction) {
+            let rotated = board;
+            if (direction === "up") rotated = rotateLeft(board);
+            else if (direction === "right") rotated = board.map(row => row.reverse());
+            else if (direction === "down") rotated = rotateLeft(rotateLeft(rotateLeft(board)));
+
+            let moved = rotated.map(row => slide(row));
+
+            if (JSON.stringify(rotated) !== JSON.stringify(moved)) {
+                if (direction === "up") board = rotateLeft(rotateLeft(rotateLeft(moved)));
+                else if (direction === "right") board = moved.map(row => row.reverse());
+                else if (direction === "down") board = rotateLeft(moved);
+                else board = moved;
+                
+                addRandomTile();
+                createGrid();
+                checkGameOver();
+            }
+        }
+
+        function checkGameOver() {
+            for (let row of board) {
+                if (row.includes(0)) return;
+            }
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    if ((c < 3 && board[r][c] === board[r][c + 1]) || 
+                        (r < 3 && board[r][c] === board[r + 1][c])) {
+                        return;
+                    }
+                }
+            }
+            gameOverElement.textContent = "Game Over!";
+        }
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowUp") move("up");
+            else if (event.key === "ArrowDown") move("down");
+            else if (event.key === "ArrowLeft") move("left");
+            else if (event.key === "ArrowRight") move("right");
+        });
+
+        addRandomTile();
+        addRandomTile();
+        createGrid();
+    </script>
+
+</body>
+</html>
