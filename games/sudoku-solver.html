@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(9, 45px);
+            grid-template-rows: repeat(9, 45px);
+            gap: 2px;
+            margin: 20px auto;
+            max-width: 410px;
+            padding: 5px;
+            background-color: #000;
+            border-radius: 5px;
+        }
+
+        .cell {
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            border: none;
+            background-color: white;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .cell:focus {
+            background-color: #d1d1d1;
+        }
+
+        .pre-filled {
+            background-color: #ddd;
+            pointer-events: none;
+        }
+
+        .button-container {
+            margin-top: 15px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .solve {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .clear {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Sudoku Solver</h1>
+    <p>Fill the remaining numbers or click "Solve" to complete!</p>
+
+    <div class="grid" id="sudoku-grid"></div>
+
+    <div class="button-container">
+        <button class="button solve" onclick="solveSudoku()">Solve</button>
+        <button class="button clear" onclick="clearGrid()">Clear</button>
+    </div>
+
+    <script>
+        const SIZE = 9;
+        let grid = document.getElementById("sudoku-grid");
+
+        // Predefined Sudoku puzzle (50% filled)
+        const puzzle = [
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9]
+        ];
+
+        // Create Sudoku grid with pre-filled values
+        function createGrid() {
+            for (let i = 0; i < SIZE; i++) {
+                for (let j = 0; j < SIZE; j++) {
+                    let input = document.createElement("input");
+                    input.type = "text";
+                    input.maxLength = 1;
+                    input.classList.add("cell");
+
+                    if (puzzle[i][j] !== 0) {
+                        input.value = puzzle[i][j];
+                        input.classList.add("pre-filled");
+                    } else {
+                        input.addEventListener("input", function () {
+                            this.value = this.value.replace(/[^1-9]/g, "");
+                        });
+                    }
+
+                    grid.appendChild(input);
+                }
+            }
+        }
+
+        // Get grid values as a 2D array
+        function getGridValues() {
+            let values = [];
+            let cells = document.querySelectorAll(".cell");
+            for (let i = 0; i < SIZE; i++) {
+                values.push([]);
+                for (let j = 0; j < SIZE; j++) {
+                    let val = cells[i * SIZE + j].value;
+                    values[i].push(val ? parseInt(val) : 0);
+                }
+            }
+            return values;
+        }
+
+        // Set grid values from a 2D array
+        function setGridValues(values) {
+            let cells = document.querySelectorAll(".cell");
+            for (let i = 0; i < SIZE; i++) {
+                for (let j = 0; j < SIZE; j++) {
+                    if (!cells[i * SIZE + j].classList.contains("pre-filled")) {
+                        cells[i * SIZE + j].value = values[i][j] || "";
+                    }
+                }
+            }
+        }
+
+        // Check if a number can be placed in a position
+        function isValid(board, row, col, num) {
+            for (let i = 0; i < SIZE; i++) {
+                if (board[row][i] === num || board[i][col] === num) {
+                    return false;
+                }
+            }
+
+            let startRow = Math.floor(row / 3) * 3;
+            let startCol = Math.floor(col / 3) * 3;
+
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j++) {
+                    if (board[startRow + i][startCol + j] === num) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        // Solve Sudoku using backtracking
+        function solve(board) {
+            for (let row = 0; row < SIZE; row++) {
+                for (let col = 0; col < SIZE; col++) {
+                    if (board[row][col] === 0) {
+                        for (let num = 1; num <= SIZE; num++) {
+                            if (isValid(board, row, col, num)) {
+                                board[row][col] = num;
+                                if (solve(board)) return true;
+                                board[row][col] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // Solve Sudoku on button click
+        function solveSudoku() {
+            let board = getGridValues();
+            if (solve(board)) {
+                setGridValues(board);
+            } else {
+                alert("No solution found! Please check your input.");
+            }
+        }
+
+        // Clear the grid (except pre-filled cells)
+        function clearGrid() {
+            document.querySelectorAll(".cell").forEach(cell => {
+                if (!cell.classList.contains("pre-filled")) {
+                    cell.value = "";
+                }
+            });
+        }
+
+        // Initialize grid with 50% pre-filled
+        createGrid();
+    </script>
+
+</body>
+</html>

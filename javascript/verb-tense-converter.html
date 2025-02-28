@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verb Tense Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+            text-align: center;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Verb Tense Converter</h2>
+        <label for="past">Past Tense:</label>
+        <input type="text" id="past" oninput="validateAndConvert('past')" placeholder="Enter past tense">
+        <p id="error-past" class="error"></p>
+
+        <label for="present">Present Tense:</label>
+        <input type="text" id="present" oninput="validateAndConvert('present')" placeholder="Enter present tense">
+        <p id="error-present" class="error"></p>
+
+        <label for="future">Future Tense:</label>
+        <input type="text" id="future" oninput="validateAndConvert('future')" placeholder="Enter future tense">
+        <p id="error-future" class="error"></p>
+    </div>
+
+    <script>
+        // Local verb dictionary (expanded with more words)
+        const verbDictionary = {
+            "go": { past: "went", present: "go", future: "will go" },
+            "eat": { past: "ate", present: "eat", future: "will eat" },
+            "run": { past: "ran", present: "run", future: "will run" },
+            "write": { past: "wrote", present: "write", future: "will write" },
+            "read": { past: "read", present: "read", future: "will read" },
+            "play": { past: "played", present: "play", future: "will play" },
+            "work": { past: "worked", present: "work", future: "will work" },
+            "walk": { past: "walked", present: "walk", future: "will walk" },
+            "talk": { past: "talked", present: "talk", future: "will talk" },
+            "dance": { past: "danced", present: "dance", future: "will dance" },
+            "jump": { past: "jumped", present: "jump", future: "will jump" },
+            "sing": { past: "sang", present: "sing", future: "will sing" },
+            "drink": { past: "drank", present: "drink", future: "will drink" }
+        };
+
+        function validateAndConvert(inputType) {
+            let inputElement = document.getElementById(inputType);
+            let errorElement = document.getElementById("error-" + inputType);
+            let inputValue = inputElement.value.toLowerCase();
+
+            // Allow only English letters and spaces
+            if (!/^[a-zA-Z\s]*$/.test(inputValue)) {
+                errorElement.textContent = "Only English letters are allowed!";
+                inputElement.value = inputValue.replace(/[^a-zA-Z\s]/g, ""); // Remove invalid characters
+                return;
+            } else {
+                errorElement.textContent = "";
+            }
+
+            convertTense(inputType, inputValue);
+        }
+
+        function convertTense(inputType, inputValue) {
+            let pastInput = document.getElementById("past");
+            let presentInput = document.getElementById("present");
+            let futureInput = document.getElementById("future");
+
+            // If input is present tense
+            if (inputType === "present" && verbDictionary[inputValue]) {
+                pastInput.value = verbDictionary[inputValue].past;
+                futureInput.value = verbDictionary[inputValue].future;
+            }
+            // If input is past tense
+            else if (inputType === "past") {
+                let match = Object.entries(verbDictionary).find(([key, value]) => value.past === inputValue);
+                if (match) {
+                    presentInput.value = match[1].present;
+                    futureInput.value = match[1].future;
+                }
+            }
+            // If input is future tense
+            else if (inputType === "future") {
+                let match = Object.entries(verbDictionary).find(([key, value]) => value.future === inputValue);
+                if (match) {
+                    pastInput.value = match[1].past;
+                    presentInput.value = match[1].present;
+                }
+            }
+            // If the word is not in the dictionary, try regular verb rule
+            else {
+                applyRegularVerbRule(inputType, inputValue);
+            }
+        }
+
+        function applyRegularVerbRule(inputType, inputValue) {
+            let pastInput = document.getElementById("past");
+            let presentInput = document.getElementById("present");
+            let futureInput = document.getElementById("future");
+
+            if (inputType === "present") {
+                pastInput.value = inputValue + "ed";  // Regular verbs
+                futureInput.value = "will " + inputValue;
+            } else if (inputType === "past") {
+                let baseVerb = inputValue.replace(/ed$/, ''); // Remove "ed" if exists
+                presentInput.value = baseVerb;
+                futureInput.value = "will " + baseVerb;
+            } else if (inputType === "future") {
+                let baseVerb = inputValue.replace(/^will\s+/, ''); // Remove "will"
+                pastInput.value = baseVerb + "ed";
+                presentInput.value = baseVerb;
+            }
+        }
+    </script>
+
+</body>
+</html>
