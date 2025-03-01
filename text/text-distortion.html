@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Distortion Effects</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+        
+        body {
+            background: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+        }
+        .glitch {
+            font-size: 4rem;
+            position: relative;
+            text-transform: uppercase;
+            color: white;
+            animation: glitch 1s infinite;
+        }
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            color: white;
+            background: black;
+            overflow: hidden;
+        }
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 red;
+            clip: rect(0, 0, 0, 0);
+            animation: glitch-before 0.5s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 blue;
+            clip: rect(0, 0, 0, 0);
+            animation: glitch-after 0.5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch {
+            0% { transform: skew(0deg); }
+            20% { transform: skew(-5deg); }
+            40% { transform: skew(5deg); }
+            60% { transform: skew(-5deg); }
+            80% { transform: skew(5deg); }
+            100% { transform: skew(0deg); }
+        }
+        
+        @keyframes glitch-before {
+            0% { clip: rect(10px, 9999px, 50px, 0); }
+            100% { clip: rect(30px, 9999px, 80px, 0); }
+        }
+        
+        @keyframes glitch-after {
+            0% { clip: rect(20px, 9999px, 60px, 0); }
+            100% { clip: rect(40px, 9999px, 90px, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="glitch" data-text="GLITCH EFFECT">GLITCH EFFECT</div>
+</body>
+</html>

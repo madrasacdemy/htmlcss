@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireworks Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: black;
+            overflow: hidden;
+            height: 100vh;
+        }
+        .firework {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(white, transparent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: explode 1.5s ease-out forwards;
+        }
+        @keyframes explode {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener("click", function(event) {
+            for (let i = 0; i < 30; i++) {
+                let firework = document.createElement("div");
+                firework.classList.add("firework");
+                document.body.appendChild(firework);
+
+                let x = event.clientX;
+                let y = event.clientY;
+                let angle = Math.random() * 2 * Math.PI;
+                let distance = Math.random() * 100;
+
+                let fx = x + Math.cos(angle) * distance;
+                let fy = y + Math.sin(angle) * distance;
+
+                firework.style.left = `${x}px`;
+                firework.style.top = `${y}px`;
+                firework.style.transform = `translate(${fx - x}px, ${fy - y}px)`;
+                firework.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                setTimeout(() => firework.remove(), 1500);
+            }
+        });
+    </script>
+</body>
+</html>

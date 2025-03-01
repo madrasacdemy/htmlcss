@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Browser Theme Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            background-color: var(--bg-color, #f4f4f4);
+            color: var(--text-color, #333);
+        }
+        .theme-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .theme-container h1 {
+            margin-bottom: 15px;
+        }
+        .color-picker {
+            margin: 10px 0;
+        }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-container">
+        <h1>Custom Theme Generator</h1>
+        <label>Background Color: </label>
+        <input type="color" id="bg-color" class="color-picker"><br>
+        <label>Text Color: </label>
+        <input type="color" id="text-color" class="color-picker"><br>
+        <button class="btn" id="save-theme">Save Theme</button>
+    </div>
+    <script>
+        $(document).ready(function() {
+            if (localStorage.getItem("bgColor")) {
+                document.documentElement.style.setProperty('--bg-color', localStorage.getItem("bgColor"));
+            }
+            if (localStorage.getItem("textColor")) {
+                document.documentElement.style.setProperty('--text-color', localStorage.getItem("textColor"));
+            }
+            
+            $('#save-theme').click(function() {
+                let bgColor = $('#bg-color').val();
+                let textColor = $('#text-color').val();
+                
+                document.documentElement.style.setProperty('--bg-color', bgColor);
+                document.documentElement.style.setProperty('--text-color', textColor);
+                
+                localStorage.setItem("bgColor", bgColor);
+                localStorage.setItem("textColor", textColor);
+            });
+        });
+    </script>
+</body>
+</html>

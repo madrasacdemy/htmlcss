@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Org Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #eef2f3;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .tree {
+            list-style: none;
+            padding: 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .tree ul {
+            margin-left: 20px;
+            padding-left: 20px;
+            border-left: 2px solid #555;
+            display: none;
+        }
+        .tree li {
+            margin: 10px 0;
+            position: relative;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .tree li:hover {
+            background: #d3e0ea;
+        }
+        .tree li::before {
+            content: "▶";
+            position: absolute;
+            left: -15px;
+            font-size: 12px;
+            color: #555;
+        }
+        .tree li.open > ul {
+            display: block;
+        }
+        .tree li.open::before {
+            content: "▼";
+        }
+    </style>
+</head>
+<body>
+    <h1>Company Organizational Chart</h1>
+    <ul class="tree">
+        <li>CEO - John Doe
+            <ul>
+                <li>VP of Sales - Alice Smith
+                    <ul>
+                        <li>Sales Manager - Robert Brown
+                            <ul>
+                                <li>Sales Executive - Emma Johnson</li>
+                                <li>Sales Executive - Liam Williams</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>VP of Engineering - David Wilson
+                    <ul>
+                        <li>Software Manager - Michael Clark
+                            <ul>
+                                <li>Frontend Developer - Sarah Martinez</li>
+                                <li>Backend Developer - James Anderson</li>
+                                <li>QA Engineer - Olivia Thompson</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>VP of HR - Laura Adams
+                    <ul>
+                        <li>HR Manager - Kevin Lewis
+                            <ul>
+                                <li>Recruiter - Sophia Hall</li>
+                                <li>Training Coordinator - Daniel Young</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <script>
+        $(document).ready(function() {
+            $('.tree li').click(function(e) {
+                e.stopPropagation();
+                $(this).toggleClass('open');
+            });
+        });
+    </script>
+</body>
+</html>

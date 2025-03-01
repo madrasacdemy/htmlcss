@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .file-manager {
+            width: 60%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .folder {
+            cursor: pointer;
+            padding: 10px;
+            margin: 5px 0;
+            background: #e3f2fd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .folder span {
+            margin-left: 10px;
+        }
+        .folder-list {
+            list-style: none;
+            padding: 0;
+        }
+        .file {
+            padding: 8px;
+            margin-left: 20px;
+            background: #fff3e0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="file-manager">
+        <h2>File Manager</h2>
+        <ul class="folder-list">
+            <li class="folder">📁 <span>Documents</span>
+                <ul class="nested">
+                    <li class="file">📄 Resume.pdf</li>
+                    <li class="file">📄 Report.docx</li>
+                </ul>
+            </li>
+            <li class="folder">📁 <span>Images</span>
+                <ul class="nested">
+                    <li class="file">🖼️ Photo1.jpg</li>
+                    <li class="file">🖼️ Photo2.png</li>
+                </ul>
+            </li>
+            <li class="folder">📁 <span>Music</span>
+                <ul class="nested">
+                    <li class="file">🎵 Song1.mp3</li>
+                    <li class="file">🎵 Song2.wav</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('.nested').hide();
+            $('.folder').click(function(e) {
+                e.stopPropagation();
+                $(this).children('.nested').slideToggle();
+            });
+        });
+    </script>
+</body>
+</html>
