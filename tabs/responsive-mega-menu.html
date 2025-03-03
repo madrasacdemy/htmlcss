@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Mega Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f4f4f4;
+        }
+        nav {
+            background: #007bff;
+            padding: 15px;
+        }
+        .menu {
+            display: flex;
+            list-style: none;
+            justify-content: center;
+            gap: 20px;
+        }
+        .menu li {
+            position: relative;
+        }
+        .menu a {
+            text-decoration: none;
+            color: white;
+            padding: 10px 15px;
+            display: block;
+        }
+        .mega-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 600px;
+            background: white;
+            display: none;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .menu li:hover .mega-menu {
+            display: flex;
+            justify-content: space-between;
+        }
+        .mega-menu .column {
+            width: 30%;
+        }
+        .mega-menu h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .mega-menu a {
+            color: #333;
+            padding: 5px 0;
+        }
+        .mega-menu a:hover {
+            color: #007bff;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .menu {
+                flex-direction: column;
+                align-items: center;
+            }
+            .mega-menu {
+                width: 100%;
+                position: relative;
+                flex-direction: column;
+            }
+            .mega-menu .column {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul class="menu">
+            <li>
+                <a href="#">Home</a>
+            </li>
+            <li>
+                <a href="#">Services ▾</a>
+                <div class="mega-menu">
+                    <div class="column">
+                        <h3>Web Development</h3>
+                        <a href="#">HTML & CSS</a>
+                        <a href="#">JavaScript</a>
+                        <a href="#">PHP & Laravel</a>
+                    </div>
+                    <div class="column">
+                        <h3>Design</h3>
+                        <a href="#">UI/UX</a>
+                        <a href="#">Graphics</a>
+                        <a href="#">Illustrations</a>
+                    </div>
+                    <div class="column">
+                        <h3>Marketing</h3>
+                        <a href="#">SEO</a>
+                        <a href="#">Social Media</a>
+                        <a href="#">Email Marketing</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#">About</a>
+            </li>
+            <li>
+                <a href="#">Contact</a>
+            </li>
+        </ul>
+    </nav>
+
+</body>
+</html>

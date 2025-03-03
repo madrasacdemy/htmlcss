@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Breadcrumb Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f4f4f4;
+        }
+        .breadcrumb {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .breadcrumb a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .breadcrumb span {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="breadcrumb" id="breadcrumb">
+        <!-- Breadcrumb links will be inserted here dynamically -->
+    </nav>
+
+    <script>
+        function generateBreadcrumb() {
+            const breadcrumbContainer = document.getElementById("breadcrumb");
+            const pathArray = window.location.pathname.split("/").filter(p => p);
+            
+            let breadcrumbHTML = `<a href="/">Home</a>`;
+            let fullPath = "";
+
+            pathArray.forEach((segment, index) => {
+                fullPath += `/${segment}`;
+                if (index === pathArray.length - 1) {
+                    breadcrumbHTML += ` <span>›</span> <span>${decodeURIComponent(segment)}</span>`;
+                } else {
+                    breadcrumbHTML += ` <span>›</span> <a href="${fullPath}">${decodeURIComponent(segment)}</a>`;
+                }
+            });
+
+            breadcrumbContainer.innerHTML = breadcrumbHTML;
+        }
+
+        document.addEventListener("DOMContentLoaded", generateBreadcrumb);
+    </script>
+
+</body>
+</html>

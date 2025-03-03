@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Timeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #333;
+        }
+        .timeline {
+            position: relative;
+            max-width: 700px;
+            padding: 50px 0;
+        }
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 4px;
+            height: 100%;
+            background: #333;
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            position: relative;
+            width: 45%;
+            padding: 20px;
+            margin: 40px 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-in-out;
+        }
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+        .timeline-item:nth-child(even) {
+            left: 55%;
+        }
+        .timeline-dot {
+            position: absolute;
+            top: 20px;
+            left: calc(100% + 15px);
+            width: 15px;
+            height: 15px;
+            background: #333;
+            border-radius: 50%;
+        }
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -30px;
+        }
+        .timeline-item.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        @media screen and (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+            .timeline-item {
+                width: 100%;
+                left: 0 !important;
+                padding-left: 40px;
+            }
+            .timeline-item .timeline-dot {
+                left: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>India's Historical Timeline</h1>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h3>Independence of India (1947)</h3>
+            <p>On August 15, 1947, India gained independence from British rule.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h3>Republic Day (1950)</h3>
+            <p>India became a republic on January 26, 1950, with the adoption of the Constitution.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h3>Green Revolution (1960s)</h3>
+            <p>The Green Revolution transformed Indian agriculture, improving food production.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h3>Pokhran Nuclear Test (1998)</h3>
+            <p>India conducted successful nuclear tests in Pokhran, strengthening its defense.</p>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <h3>Chandrayaan-3 Moon Landing (2023)</h3>
+            <p>India made history by landing Chandrayaan-3 near the Moon's south pole.</p>
+        </div>
+    </div>
+
+    <script>
+        function revealTimelineItems() {
+            const items = document.querySelectorAll(".timeline-item");
+            const triggerBottom = window.innerHeight * 0.85;
+            
+            items.forEach(item => {
+                const itemTop = item.getBoundingClientRect().top;
+                if (itemTop < triggerBottom) {
+                    item.classList.add("show");
+                }
+            });
+        }
+        
+        document.addEventListener("scroll", revealTimelineItems);
+        window.addEventListener("load", revealTimelineItems);
+    </script>
+</body>
+</html>
