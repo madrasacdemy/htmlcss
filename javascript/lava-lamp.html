@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lava Lamp Navigation Bar</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #222;
+        }
+        .nav {
+            position: relative;
+            display: flex;
+            background: #333;
+            padding: 10px;
+            border-radius: 50px;
+        }
+        .nav a {
+            position: relative;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            z-index: 2;
+        }
+        .nav .lamp {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border-radius: 20px;
+            transition: 0.4s;
+            top: 10px;
+            left: 15px;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="lamp"></div>
+        <a href="#" onmouseover="moveLamp(this)">Home</a>
+        <a href="#" onmouseover="moveLamp(this)">About</a>
+        <a href="#" onmouseover="moveLamp(this)">Services</a>
+        <a href="#" onmouseover="moveLamp(this)">Contact</a>
+    </div>
+    
+    <script>
+        function moveLamp(element) {
+            let lamp = document.querySelector(".lamp");
+            let rect = element.getBoundingClientRect();
+            let navRect = document.querySelector(".nav").getBoundingClientRect();
+            lamp.style.left = rect.left - navRect.left + "px";
+            lamp.style.width = rect.width + "px";
+        }
+    </script>
+</body>
+</html>

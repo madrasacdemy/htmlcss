@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Mood Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        .mood-log {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .entry {
+            background: #f4f4f4;
+            padding: 10px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Interactive Mood Tracker</h2>
+    <label for="mood">Select Your Mood:</label>
+    <select id="mood">
+        <option value="Happy">😊 Happy</option>
+        <option value="Sad">😢 Sad</option>
+        <option value="Excited">🤩 Excited</option>
+        <option value="Angry">😡 Angry</option>
+        <option value="Calm">😌 Calm</option>
+    </select>
+    <button onclick="logMood()">Log Mood</button>
+    <div class="mood-log" id="moodLog"></div>
+    
+    <script>
+        function logMood() {
+            let mood = document.getElementById("mood").value;
+            let log = document.getElementById("moodLog");
+            let entry = document.createElement("div");
+            entry.className = "entry";
+            entry.innerHTML = `<strong>${new Date().toLocaleDateString()}</strong>: ${mood}`;
+            log.prepend(entry);
+        }
+    </script>
+</body>
+</html>

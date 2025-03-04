@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Autofill Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+            background: #f0f0f0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Smart Autofill Form</h2>
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Enter your name" required>
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <input type="tel" id="phone" placeholder="Enter your phone number" required>
+            <button type="button" onclick="saveUserData()">Save Data</button>
+            <button type="button" onclick="loadUserData()">Load Data</button>
+        </form>
+    </div>
+    
+    <script>
+        function saveUserData() {
+            let userData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value
+            };
+            localStorage.setItem("userData", JSON.stringify(userData));
+            alert("User data saved!");
+        }
+
+        function loadUserData() {
+            let storedData = localStorage.getItem("userData");
+            if (storedData) {
+                let userData = JSON.parse(storedData);
+                document.getElementById("name").value = userData.name;
+                document.getElementById("email").value = userData.email;
+                document.getElementById("phone").value = userData.phone;
+            } else {
+                alert("No saved data found.");
+            }
+        }
+    </script>
+</body>
+</html>
