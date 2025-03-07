@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Skill Progress Bars</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .skill-container {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+        .skill {
+            margin: 10px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .progress {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #1e90ff, #00bfff);
+            border-radius: 10px;
+            transition: width 2s ease-in-out;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>My Skills</h1>
+    <div class="skill-container">
+        <div class="skill">HTML</div>
+        <div class="progress-bar">
+            <div class="progress" data-percent="90"></div>
+            <div class="progress-text">90%</div>
+        </div>
+    </div>
+    <div class="skill-container">
+        <div class="skill">CSS</div>
+        <div class="progress-bar">
+            <div class="progress" data-percent="80"></div>
+            <div class="progress-text">80%</div>
+        </div>
+    </div>
+    <div class="skill-container">
+        <div class="skill">JavaScript</div>
+        <div class="progress-bar">
+            <div class="progress" data-percent="70"></div>
+            <div class="progress-text">70%</div>
+        </div>
+    </div>
+    <div class="skill-container">
+        <div class="skill">React</div>
+        <div class="progress-bar">
+            <div class="progress" data-percent="60"></div>
+            <div class="progress-text">60%</div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const progressBars = document.querySelectorAll(".progress");
+            progressBars.forEach(bar => {
+                const percent = bar.getAttribute("data-percent");
+                bar.style.width = percent + "%";
+            });
+        });
+    </script>
+</body>
+</html>
