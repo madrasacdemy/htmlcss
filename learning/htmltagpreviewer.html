@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tag Explorer</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 250px;
+            background: #f4f4f4;
+            padding: 15px;
+            border-right: 2px solid #ddd;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .tag-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+        }
+        .tag-button:hover {
+            background: #0056b3;
+        }
+        .preview-box {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 20px;
+            background: #fff;
+        }
+        .code-box {
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>HTML Tags</h2>
+        <button class="tag-button" onclick="showPreview('heading')">Heading Tag</button>
+        <button class="tag-button" onclick="showPreview('paragraph')">Paragraph Tag</button>
+        <button class="tag-button" onclick="showPreview('image')">Image Tag</button>
+        <button class="tag-button" onclick="showPreview('link')">Anchor Tag</button>
+        <button class="tag-button" onclick="showPreview('list')">List Tags</button>
+        <button class="tag-button" onclick="showPreview('table')">Table Tag</button>
+        <button class="tag-button" onclick="showPreview('form')">Form Tag</button>
+        <button class="tag-button" onclick="showPreview('button')">Button Tag</button>
+        <button class="tag-button" onclick="showPreview('video')">Video Tag</button>
+        <button class="tag-button" onclick="showPreview('audio')">Audio Tag</button>
+    </div>
+    
+    <div class="content">
+        <h2>Tag Preview</h2>
+        <div id="preview" class="preview-box">Select a tag to preview.</div>
+        <h2>HTML Code</h2>
+        <div id="code" class="code-box">Code will appear here.</div>
+    </div>
+    
+    <script>
+        function showPreview(tag) {
+            let previewContent = {
+                heading: "<h1>This is a Heading (h1)</h1>",
+                paragraph: "<p>This is a paragraph tag. It is used to define text content.</p>",
+                image: "<img src='https://via.placeholder.com/150' alt='Sample Image'>",
+                link: "<a href='https://www.example.com' target='_blank'>Click here to visit Example.com</a>",
+                list: "<ul><li>Item 1</li><li>Item 2</li><li>Item 3</li></ul>",
+                table: "<table border='1'><tr><th>Name</th><th>Age</th></tr><tr><td>John</td><td>25</td></tr><tr><td>Jane</td><td>30</td></tr></table>",
+                form: "<form><label for='name'>Name:</label><input type='text' id='name' name='name'><input type='submit' value='Submit'></form>",
+                button: "<button>Click Me!</button>",
+                video: "<video width='320' height='240' controls><source src='sample.mp4' type='video/mp4'>Your browser does not support the video tag.</video>",
+                audio: "<audio controls><source src='sample.mp3' type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+            };
+            
+            document.getElementById("preview").innerHTML = previewContent[tag];
+            document.getElementById("code").innerText = previewContent[tag];
+        }
+    </script>
+</body>
+</html>
