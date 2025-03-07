@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Blogging Platform</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        input, textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            transition: 0.3s;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        input:focus, textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background 0.3s ease, transform 0.2s;
+        }
+        button:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+        .posts-container {
+            margin-top: 20px;
+        }
+        .post {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 5px solid #007BFF;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+            text-align: left;
+        }
+        .post:hover {
+            transform: scale(1.02);
+        }
+        .post h3 {
+            margin: 0;
+            color: #333;
+        }
+        .post p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+        .delete {
+            background: #ff4d4d;
+        }
+        .delete:hover {
+            background: #e60000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Simple Blogging Platform</h2>
+        <div class="input-container">
+            <input type="text" id="title" placeholder="Blog Title">
+            <textarea id="content" rows="5" placeholder="Write your blog post..."></textarea>
+            <button onclick="addPost()">Post</button>
+        </div>
+        <div class="posts-container" id="posts"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadPosts);
+
+        function addPost() {
+            let title = document.getElementById("title").value;
+            let content = document.getElementById("content").value;
+
+            if (title && content) {
+                let posts = JSON.parse(localStorage.getItem("posts")) || [];
+                posts.push({ title, content });
+                localStorage.setItem("posts", JSON.stringify(posts));
+                loadPosts();
+                document.getElementById("title").value = "";
+                document.getElementById("content").value = "";
+            }
+        }
+
+        function loadPosts() {
+            let posts = JSON.parse(localStorage.getItem("posts")) || [];
+            let postsContainer = document.getElementById("posts");
+            postsContainer.innerHTML = "";
+            
+            posts.forEach((post, index) => {
+                let postDiv = document.createElement("div");
+                postDiv.classList.add("post");
+                postDiv.innerHTML = `
+                    <h3 contenteditable="true" onblur="editPost(${index}, this, 'title')">${post.title}</h3>
+                    <p contenteditable="true" onblur="editPost(${index}, this, 'content')">${post.content}</p>
+                    <div class="actions">
+                        <button class="delete" onclick="deletePost(${index})">Delete</button>
+                    </div>
+                `;
+                postsContainer.appendChild(postDiv);
+            });
+        }
+
+        function editPost(index, element, field) {
+            let posts = JSON.parse(localStorage.getItem("posts")) || [];
+            posts[index][field] = element.innerText;
+            localStorage.setItem("posts", JSON.stringify(posts));
+        }
+
+        function deletePost(index) {
+            let posts = JSON.parse(localStorage.getItem("posts")) || [];
+            posts.splice(index, 1);
+            localStorage.setItem("posts", JSON.stringify(posts));
+            loadPosts();
+        }
+    </script>
+
+</body>
+</html>
