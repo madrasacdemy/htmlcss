@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Clock with Time Zones</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .clock-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        h2 {
+            font-size: 28px;
+            color: #007BFF;
+            background: #E3F2FD;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .clock {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .digital-clock {
+            font-size: 30px;
+            font-weight: bold;
+            background: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .analog-clock {
+            width: 100px;
+            height: 100px;
+            border: 5px solid black;
+            border-radius: 50%;
+            position: relative;
+            margin-top: 20px;
+        }
+        .hand {
+            position: absolute;
+            background: black;
+            transform-origin: bottom;
+            bottom: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(50%) rotate(0deg);
+        }
+        .hour {
+            width: 6px;
+            height: 25px;
+        }
+        .minute {
+            width: 4px;
+            height: 35px;
+        }
+        .second {
+            width: 2px;
+            height: 45px;
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="clock-container">
+        <h2>Live Time Zones</h2>
+        <div class="clock" id="localTime">Local Time: --:--:--</div>
+        <div class="clock" id="newYorkTime">New York: --:--:--</div>
+        <div class="clock" id="londonTime">London: --:--:--</div>
+        <div class="clock" id="tokyoTime">Tokyo: --:--:--</div>
+    </div>
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById("localTime").textContent = "Local Time: " + now.toLocaleTimeString();
+            
+            const newYorkTime = new Date().toLocaleTimeString("en-US", { timeZone: "America/New_York", hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById("newYorkTime").textContent = "New York: " + newYorkTime;
+            
+            const londonTime = new Date().toLocaleTimeString("en-GB", { timeZone: "Europe/London", hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById("londonTime").textContent = "London: " + londonTime;
+            
+            const tokyoTime = new Date().toLocaleTimeString("ja-JP", { timeZone: "Asia/Tokyo", hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById("tokyoTime").textContent = "Tokyo: " + tokyoTime;
+            
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
