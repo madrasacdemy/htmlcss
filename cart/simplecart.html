@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Cart</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        .header {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 15px 30px; 
+            background: #333; 
+            color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .cart-icon {
+            cursor: pointer;
+            position: relative;
+            font-size: 20px;
+        }
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background: red;
+            color: white;
+            font-size: 12px;
+            padding: 3px 7px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .product { 
+            display: flex; 
+            align-items: center; 
+            border: 1px solid #ddd; 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            background: #f9f9f9;
+        }
+        .product img { 
+            width: 100px; 
+            height: 100px; 
+            margin-right: 20px; 
+            border-radius: 5px; 
+        }
+        .product-info { flex: 1; }
+        .cart-popup { 
+            position: fixed; 
+            top: 60px; 
+            right: 20px; 
+            background: white; 
+            padding: 20px; 
+            border: 1px solid #ccc; 
+            display: none; 
+            width: 300px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        .cart-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin: 10px 0; 
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        .cart-btn { 
+            cursor: pointer; 
+            background: #28a745; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            border-radius: 5px; 
+            font-size: 14px;
+        }
+        .remove-btn { 
+            background: red; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+            padding: 6px 10px; 
+            border-radius: 5px; 
+            font-size: 12px;
+        }
+        .close-btn { 
+            background: #555; 
+            color: white; 
+            border: none; 
+            padding: 10px; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            border-radius: 5px; 
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>My Store</h2>
+        <div class="cart-icon" onclick="toggleCart()">
+            🛒 <span class="cart-count" id="cartCount">0</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Products</h2>
+        <div class="product">
+            <img src="https://via.placeholder.com/100" alt="Product 1">
+            <div class="product-info">
+                <h4>Product 1</h4>
+                <p>High-quality product with great features.</p>
+                <button class="cart-btn" onclick="addToCart('Product 1')">Add to Cart</button>
+            </div>
+        </div>
+        
+        <div class="product">
+            <img src="https://via.placeholder.com/100" alt="Product 2">
+            <div class="product-info">
+                <h4>Product 2</h4>
+                <p>Another amazing product for your needs.</p>
+                <button class="cart-btn" onclick="addToCart('Product 2')">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="cart-popup" id="cartPopup">
+        <h3>Mini Cart</h3>
+        <div id="cartItems"></div>
+        <button class="close-btn" onclick="closeCart()">Close</button>
+    </div>
+    
+    <script>
+        let cart = [];
+
+        function addToCart(product) {
+            cart.push(product);
+            updateCart();
+            document.getElementById("cartPopup").style.display = "block";
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function updateCart() {
+            let cartContainer = document.getElementById("cartItems");
+            cartContainer.innerHTML = "";
+            cart.forEach((item, index) => {
+                cartContainer.innerHTML += `<div class='cart-item'>${item} <button class='remove-btn' onclick='removeFromCart(${index})'>X</button></div>`;
+            });
+            document.getElementById("cartCount").textContent = cart.length;
+        }
+
+        function closeCart() {
+            document.getElementById("cartPopup").style.display = "none";
+        }
+
+        function toggleCart() {
+            let cartPopup = document.getElementById("cartPopup");
+            cartPopup.style.display = cartPopup.style.display === "block" ? "none" : "block";
+        }
+    </script>
+</body>
+</html>

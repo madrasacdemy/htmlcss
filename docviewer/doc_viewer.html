@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Format Document Viewer</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #viewer-container {
+            width: 100%;
+            height: 500px;
+            margin: 20px 0;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        iframe, video, img {
+            max-width: 100%;
+            max-height: 100%;
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        #docMessage {
+            display: none;
+            font-size: 18px;
+            color: red;
+        }
+        .btn-group {
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #resetButton {
+            background: #dc3545;
+        }
+        #resetButton:hover {
+            background: #a71d2a;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Multi-Format Document Viewer</h2>
+        <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg,.gif,.mp4,.webm">
+        
+        <div id="viewer-container">
+            <iframe id="pdfViewer"></iframe>
+            <img id="imageViewer">
+            <video id="videoViewer" controls></video>
+            <p id="docMessage">❌ DOCX/PPTX cannot be previewed. Please open them manually.</p>
+        </div>
+
+        <div class="btn-group">
+            <button id="resetButton" style="display: none;">Remove / Reset</button>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#fileInput").change(function (event) {
+                let file = event.target.files[0];
+                if (!file) return;
+
+                let fileType = file.type;
+                let fileURL = URL.createObjectURL(file);
+
+                // Hide all viewers
+                $("#pdfViewer, #imageViewer, #videoViewer, #docMessage").hide();
+
+                // Determine file type and display accordingly
+                if (fileType.includes("pdf")) {
+                    $("#pdfViewer").attr("src", fileURL).show();
+                } else if (fileType.includes("image")) {
+                    $("#imageViewer").attr("src", fileURL).show();
+                } else if (fileType.includes("video")) {
+                    $("#videoViewer").attr("src", fileURL).show();
+                } else if (fileType.includes("officedocument") || fileType.includes("msword") || fileType.includes("vnd.ms-powerpoint")) {
+                    $("#docMessage").show();
+                } else {
+                    alert("Unsupported file type. Please select a valid document, image, or video.");
+                }
+
+                // Show reset button
+                $("#resetButton").show();
+            });
+
+            // Reset / Remove File
+            $("#resetButton").click(function () {
+                $("#fileInput").val("");
+                $("#pdfViewer, #imageViewer, #videoViewer, #docMessage").hide();
+                $("#resetButton").hide();
+            });
+        });
+    </script>
+
+</body>
+</html>
