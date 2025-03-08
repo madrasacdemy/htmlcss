@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPN Finder & Privacy Analyzer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: inline-block;
+            width: 80%;
+            max-width: 600px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #ff9800;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #e68900;
+        }
+        .vpn-list {
+            margin-top: 15px;
+            text-align: left;
+        }
+        .vpn-list li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>VPN Finder & Privacy Analyzer</h2>
+        <p><strong>Your IP:</strong> <span id="ip">Loading...</span></p>
+        <p><strong>User-Agent:</strong> <span id="userAgent">Loading...</span></p>
+        <p><strong>WebRTC Leak Test:</strong> <span id="webrtc">Loading...</span></p>
+        <button onclick="getPrivacyData()">Check Privacy</button>
+        <h3>Recommended VPNs:</h3>
+        <ul class="vpn-list">
+            <li>NordVPN - Secure and fast</li>
+            <li>ExpressVPN - Best for streaming</li>
+            <li>Surfshark - Budget-friendly</li>
+            <li>CyberGhost - Great for beginners</li>
+        </ul>
+    </div>
+    <script>
+        function getPrivacyData() {
+            // Get IP Address
+            fetch('https://api64.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => document.getElementById('ip').innerText = data.ip)
+                .catch(() => document.getElementById('ip').innerText = 'Error fetching IP');
+            
+            // Get User-Agent
+            document.getElementById('userAgent').innerText = navigator.userAgent;
+            
+            // WebRTC Leak Test
+            let rtc = new RTCPeerConnection({ iceServers: [] });
+            rtc.createDataChannel('');
+            rtc.createOffer().then(o => rtc.setLocalDescription(o));
+            rtc.onicecandidate = event => {
+                if (event && event.candidate && event.candidate.candidate) {
+                    document.getElementById('webrtc').innerText = 'Possible Leak!';
+                } else {
+                    document.getElementById('webrtc').innerText = 'No Leak Detected';
+                }
+            };
+        }
+    </script>
+</body>
+</html>
