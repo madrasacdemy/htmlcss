@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic HTML Table Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 90%;
+            max-width: 600px;
+            padding: 30px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .container h2 {
+            color: black;
+            margin-bottom: 20px;
+        }
+        .input-box {
+            margin-bottom: 15px;
+        }
+        .input-box input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.4);
+            border: none;
+            border-radius: 5px;
+            color: black;
+            font-weight: bold;
+            outline: none;
+        }
+        .input-box input::placeholder {
+            color: rgba(0, 0, 0, 0.7);
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .table-container {
+            margin-top: 20px;
+            color: black;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(5px);
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            text-align: center;
+            color: black;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Dynamic Table Generator</h2>
+        <div class="input-box">
+            <input type="number" id="rows" placeholder="Enter number of rows" required>
+        </div>
+        <div class="input-box">
+            <input type="number" id="cols" placeholder="Enter number of columns" required>
+        </div>
+        <button class="btn" onclick="generateTable()">Generate Table</button>
+        <div class="table-container" id="table-container"></div>
+    </div>
+
+    <script>
+        function generateTable() {
+            let rows = document.getElementById('rows').value;
+            let cols = document.getElementById('cols').value;
+            let tableContainer = document.getElementById('table-container');
+            
+            if (rows <= 0 || cols <= 0) {
+                alert("Please enter valid row and column numbers.");
+                return;
+            }
+            
+            let table = '<table>';
+            for (let i = 0; i < rows; i++) {
+                table += '<tr>';
+                for (let j = 0; j < cols; j++) {
+                    table += `<td>Row ${i + 1}, Col ${j + 1}</td>`;
+                }
+                table += '</tr>';
+            }
+            table += '</table>';
+            
+            tableContainer.innerHTML = table;
+        }
+    </script>
+</body>
+</html>

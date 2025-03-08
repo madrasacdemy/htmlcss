@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 20px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        .dashboard {
+            width: 90%;
+            max-width: 900px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .widget {
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        .widget:hover {
+            transform: translateY(-5px);
+        }
+        #task-input {
+            width: 80%;
+            padding: 8px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background: #6e8efb;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #4c6ef5;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>Personalized Dashboard</h1>
+    <div class="dashboard">
+        <div class="widget" id="weather">
+            <h3>Weather</h3>
+            <p>Loading...</p>
+        </div>
+        <div class="widget" id="news">
+            <h3>Latest News</h3>
+            <p>Loading...</p>
+        </div>
+        <div class="widget" id="tasks">
+            <h3>Tasks</h3>
+            <ul id="task-list"></ul>
+            <input type="text" id="task-input" placeholder="Add a task">
+            <button onclick="addTask()">Add</button>
+        </div>
+    </div>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script>
+        function fetchWeather() {
+            document.getElementById("weather").innerHTML = "<h3>Weather</h3><p>Sunny, 28°C</p>";
+        }
+        function fetchNews() {
+            document.getElementById("news").innerHTML = "<h3>Latest News</h3><p>Breaking: Tech trends rising!</p>";
+        }
+        function addTask() {
+            let taskInput = document.getElementById("task-input");
+            let taskList = document.getElementById("task-list");
+            if (taskInput.value.trim() !== "") {
+                let li = document.createElement("li");
+                li.textContent = taskInput.value;
+                taskList.appendChild(li);
+                taskInput.value = "";
+            }
+        }
+        window.onload = function() {
+            fetchWeather();
+            fetchNews();
+            renderChart();
+        }
+        function renderChart() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Productivity Level',
+                        data: [12, 19, 3, 5, 2, 3, 10],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

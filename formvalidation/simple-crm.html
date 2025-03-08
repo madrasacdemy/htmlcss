@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple CRM for Small Businesses</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            padding: 20px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            display: block;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: #ff6f61;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #e05a50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+        th {
+            background: #333;
+            color: white;
+        }
+        .remove-btn {
+            padding: 6px 12px;
+            border: none;
+            background: #dc3545;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .remove-btn:hover {
+            background: #b52b3a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Simple CRM for Small Businesses</h2>
+        <input type="text" id="customerName" placeholder="Enter Customer Name">
+        <input type="text" id="customerEmail" placeholder="Enter Customer Email">
+        <input type="text" id="customerOrder" placeholder="Enter Order Details">
+        <button onclick="addCustomer()">Add Customer</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Order</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="customerTable">
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function addCustomer() {
+            let name = document.getElementById("customerName").value;
+            let email = document.getElementById("customerEmail").value;
+            let order = document.getElementById("customerOrder").value;
+            if (name.trim() !== "" && email.trim() !== "" && order.trim() !== "") {
+                let table = document.getElementById("customerTable");
+                let row = table.insertRow();
+                row.innerHTML = `<td>${name}</td><td>${email}</td><td>${order}</td><td><button class='remove-btn' onclick="removeCustomer(this)">Remove</button></td>`;
+                document.getElementById("customerName").value = "";
+                document.getElementById("customerEmail").value = "";
+                document.getElementById("customerOrder").value = "";
+            }
+        }
+        function removeCustomer(button) {
+            let row = button.parentNode.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+</body>
+</html>

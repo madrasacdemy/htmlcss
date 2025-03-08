@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager with Reminder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+        }
+        .container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            border: 1px solid black;
+        }
+        button {
+            background: #6e8efb;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #4c6ef5;
+        }
+        ul {
+            list-style: none;
+            margin-top: 20px;
+        }
+        li {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Task Manager</h2>
+        <input type="text" id="task" placeholder="Task Name">
+        <input type="datetime-local" id="due-date">
+        <button onclick="addTask()">Add Task</button>
+        <ul id="task-list"></ul>
+    </div>
+
+    <script>
+        function addTask() {
+            let taskInput = document.getElementById("task").value;
+            let dueDate = document.getElementById("due-date").value;
+            let taskList = document.getElementById("task-list");
+            
+            if (taskInput && dueDate) {
+                let li = document.createElement("li");
+                li.innerHTML = `${taskInput} <span>${new Date(dueDate).toLocaleString()}</span>`;
+                taskList.appendChild(li);
+                
+                let timeDiff = new Date(dueDate) - new Date();
+                if (timeDiff > 0) {
+                    setTimeout(() => alert(`Reminder: ${taskInput} is due!`), timeDiff);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
