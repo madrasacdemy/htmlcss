@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Filter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .filter-buttons {
+            margin-bottom: 20px;
+        }
+        .filter-buttons button {
+            margin: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .filter-buttons button:hover {
+            background: #0056b3;
+        }
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .product {
+            display: inline-block;
+            width: 200px;
+            margin: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .product:hover {
+            transform: scale(1.05);
+        }
+        .product img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .product-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Product Filter</h2>
+        <div class="filter-buttons">
+            <button onclick="filterProducts('all')">All</button>
+            <button onclick="filterProducts('electronics')">Electronics</button>
+            <button onclick="filterProducts('clothing')">Clothing</button>
+            <button onclick="filterProducts('home')">Home</button>
+        </div>
+        <div class="product-list" id="product-list">
+            <div class="product" data-category="electronics">
+                <img src="https://via.placeholder.com/150" alt="Laptop">
+                <div class="product-name">Laptop</div>
+            </div>
+            <div class="product" data-category="clothing">
+                <img src="https://via.placeholder.com/150" alt="T-Shirt">
+                <div class="product-name">T-Shirt</div>
+            </div>
+            <div class="product" data-category="electronics">
+                <img src="https://via.placeholder.com/150" alt="Smartphone">
+                <div class="product-name">Smartphone</div>
+            </div>
+            <div class="product" data-category="home">
+                <img src="https://via.placeholder.com/150" alt="Blender">
+                <div class="product-name">Blender</div>
+            </div>
+            <div class="product" data-category="clothing">
+                <img src="https://via.placeholder.com/150" alt="Jeans">
+                <div class="product-name">Jeans</div>
+            </div>
+            <div class="product" data-category="home">
+                <img src="https://via.placeholder.com/150" alt="Vacuum Cleaner">
+                <div class="product-name">Vacuum Cleaner</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterProducts(category) {
+            let products = document.querySelectorAll('.product');
+            products.forEach(product => {
+                if (category === 'all' || product.getAttribute('data-category') === category) {
+                    product.style.display = 'inline-block';
+                } else {
+                    product.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
