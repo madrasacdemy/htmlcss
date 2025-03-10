@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Finance Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, select, button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        canvas {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Personal Finance Dashboard</h2>
+        <input type="number" id="amount" placeholder="Enter amount">
+        <select id="category">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+            <option value="investment">Investment</option>
+        </select>
+        <button onclick="addTransaction()">Add Transaction</button>
+
+        <h3>Summary</h3>
+        <p>Income: <span id="incomeTotal">0</span></p>
+        <p>Expense: <span id="expenseTotal">0</span></p>
+        <p>Investment: <span id="investmentTotal">0</span></p>
+
+        <canvas id="financeChart"></canvas>
+    </div>
+
+    <script>
+        let financeData = { income: 0, expense: 0, investment: 0 };
+
+        function addTransaction() {
+            let amount = parseFloat(document.getElementById('amount').value);
+            let category = document.getElementById('category').value;
+
+            if (!amount || amount <= 0) {
+                alert("Please enter a valid amount.");
+                return;
+            }
+
+            financeData[category] += amount;
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('incomeTotal').innerText = financeData.income;
+            document.getElementById('expenseTotal').innerText = financeData.expense;
+            document.getElementById('investmentTotal').innerText = financeData.investment;
+            updateChart();
+        }
+
+        let ctx = document.getElementById('financeChart').getContext('2d');
+        let financeChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Income', 'Expense', 'Investment'],
+                datasets: [{
+                    label: 'Financial Overview',
+                    data: [0, 0, 0],
+                    backgroundColor: ['green', 'red', 'blue']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        function updateChart() {
+            financeChart.data.datasets[0].data = [
+                financeData.income,
+                financeData.expense,
+                financeData.investment
+            ];
+            financeChart.update();
+        }
+    </script>
+</body>
+</html>
