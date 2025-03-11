@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Code Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        textarea {
+            width: 90%;
+            height: 150px;
+            margin: 5px 0;
+            font-family: monospace;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        iframe {
+            width: 90%;
+            height: 300px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-top: 10px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 10px 0;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        label {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        h2 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2>Online Code Editor</h2>
+    <label>HTML:</label>
+    <textarea id="html" placeholder="Write HTML here..."></textarea>
+    <label>CSS:</label>
+    <textarea id="css" placeholder="Write CSS here..."></textarea>
+    <label>JavaScript:</label>
+    <textarea id="js" placeholder="Write JavaScript here..."></textarea>
+    <button onclick="runCode()">Run Code</button>
+    <h3>Output:</h3>
+    <iframe id="output"></iframe>
+
+    <script>
+        function runCode() {
+            const html = document.getElementById("html").value;
+            const css = `<style>${document.getElementById("css").value}</style>`;
+            const js = `<script>${document.getElementById("js").value}</scr` + `ipt>`;
+            
+            const iframe = document.getElementById("output").contentWindow.document;
+            iframe.open();
+            iframe.write(html + css + js);
+            iframe.close();
+        }
+    </script>
+</body>
+</html>
