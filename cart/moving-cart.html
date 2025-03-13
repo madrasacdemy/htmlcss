@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moving Cart</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            position: relative;
+            width: 400px;
+            height: 100px;
+            border: 2px solid #333;
+            background: #ddd;
+            overflow: hidden;
+        }
+        .cart {
+            width: 50px;
+            height: 50px;
+            background-color: red;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            transition: left 0.2s;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cart"></div>
+    </div>
+    <div class="buttons">
+        <button onclick="moveCart(-20)">Left</button>
+        <button onclick="moveCart(20)">Right</button>
+    </div>
+
+    <script>
+        let position = 10;
+        function moveCart(amount) {
+            const cart = document.querySelector('.cart');
+            position += amount;
+            if (position < 0) position = 0;
+            if (position > 350) position = 350;
+            cart.style.left = position + 'px';
+        }
+    </script>
+</body>
+</html>

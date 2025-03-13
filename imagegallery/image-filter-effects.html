@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Filter Effects</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #89f7fe, #66a6ff);
+            font-family: Arial, sans-serif;
+        }
+        img {
+            max-width: 100%;
+            width: 300px;
+            border-radius: 10px;
+            transition: 0.3s ease-in-out;
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input {
+            width: 200px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Image Filter Effects</h2>
+    <img id="image" src="../image/communication-skills-training.jpg" alt="Sample Image">
+    <div class="controls">
+        <label>Brightness</label>
+        <input type="range" id="brightness" min="0" max="200" value="100">
+        <label>Contrast</label>
+        <input type="range" id="contrast" min="0" max="200" value="100">
+        <label>Blur</label>
+        <input type="range" id="blur" min="0" max="10" value="0">
+    </div>
+    <script>
+        const image = document.getElementById("image");
+        const brightness = document.getElementById("brightness");
+        const contrast = document.getElementById("contrast");
+        const blur = document.getElementById("blur");
+        
+        function updateFilters() {
+            image.style.filter = `brightness(${brightness.value}%) contrast(${contrast.value}%) blur(${blur.value}px)`;
+        }
+        
+        brightness.addEventListener("input", updateFilters);
+        contrast.addEventListener("input", updateFilters);
+        blur.addEventListener("input", updateFilters);
+    </script>
+</body>
+</html>
