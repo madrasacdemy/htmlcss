@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Input with Auto Move</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #89f7fe, #66a6ff);
+        }
+        .otp-container {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #ff4081;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <input type="text" maxlength="1" onkeyup="moveNext(this, 1)">
+        <input type="text" maxlength="1" onkeyup="moveNext(this, 2)">
+        <input type="text" maxlength="1" onkeyup="moveNext(this, 3)">
+        <input type="text" maxlength="1" onkeyup="moveNext(this, 4)">
+    </div>
+    <script>
+        function moveNext(current, index) {
+            const inputs = document.querySelectorAll(".otp-container input");
+            if (current.value && index < inputs.length) {
+                inputs[index].focus();
+            }
+        }
+    </script>
+</body>
+</html>

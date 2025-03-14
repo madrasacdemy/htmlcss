@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeleton Loading Screen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 320px;
+            padding: 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Skeleton Loading Effect */
+        .skeleton {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f3f3f3 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 5px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton.title {
+            width: 80%;
+            height: 20px;
+            margin: 10px auto;
+        }
+
+        .skeleton.text {
+            width: 100%;
+            height: 15px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton.image {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+        }
+
+        .content {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>🌟 Skeleton Loading Effect 🌟</h1>
+
+    <div class="card">
+        <div id="skeleton">
+            <div class="skeleton image"></div>
+            <div class="skeleton title"></div>
+            <div class="skeleton text"></div>
+            <div class="skeleton text"></div>
+        </div>
+
+        <div id="content" class="content">
+            <img src="../image/communication-skills-training.jpg" alt="Image" style="width:100%; border-radius: 10px;">
+            <h3>Amazing Nature</h3>
+            <p>This is a beautiful view of nature. Enjoy the scenery!</p>
+        </div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById("skeleton").style.display = "none";
+            document.getElementById("content").style.display = "block";
+        }, 3000); // Simulating a delay of 3 seconds
+    </script>
+
+</body>
+</html>

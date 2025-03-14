@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Tooltip & Popover UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f3f3f3;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        /* Tooltip Styles */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 120%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .tooltip-container:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* Popover Styles */
+        .popover-container {
+            position: relative;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .popover-button {
+            font-size: 18px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .popover {
+            position: absolute;
+            top: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 220px;
+            background: white;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+        }
+
+        .popover p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .popover .close-btn {
+            margin-top: 10px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Custom Tooltip & Popover UI</h1>
+
+    <!-- Tooltip -->
+    <div class="tooltip-container">
+        Hover me for Tooltip
+        <div class="tooltip">This is a tooltip!</div>
+    </div>
+
+    <!-- Popover -->
+    <div class="popover-container">
+        <button class="popover-button" id="popoverBtn">Click me for Popover</button>
+        <div class="popover" id="popover">
+            <p>This is a popover!</p>
+            <button class="close-btn" id="closePopover">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let popover = document.getElementById("popover");
+            let popoverBtn = document.getElementById("popoverBtn");
+            let closePopover = document.getElementById("closePopover");
+
+            // Toggle popover on button click
+            popoverBtn.addEventListener("click", function (event) {
+                event.stopPropagation();
+                popover.style.display = (popover.style.display === "block") ? "none" : "block";
+            });
+
+            // Close popover when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!popover.contains(event.target) && event.target !== popoverBtn) {
+                    popover.style.display = "none";
+                }
+            });
+
+            // Close button inside popover
+            closePopover.addEventListener("click", function () {
+                popover.style.display = "none";
+            });
+        });
+    </script>
+
+</body>
+</html>
