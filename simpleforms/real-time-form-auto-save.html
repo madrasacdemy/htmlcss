@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Form Auto-Save</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        form {
+            width: 50%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input, textarea {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Real-Time Form Auto-Save</h2>
+    <form id="autoSaveForm">
+        <input type="text" id="name" placeholder="Enter your name">
+        <input type="email" id="email" placeholder="Enter your email">
+        <textarea id="message" rows="5" placeholder="Type your message..."></textarea>
+        <button type="reset" onclick="clearStorage()">Clear Form</button>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadFormData);
+
+        function loadFormData() {
+            document.getElementById("name").value = localStorage.getItem("name") || "";
+            document.getElementById("email").value = localStorage.getItem("email") || "";
+            document.getElementById("message").value = localStorage.getItem("message") || "";
+        }
+
+        document.getElementById("autoSaveForm").addEventListener("input", function(event) {
+            localStorage.setItem(event.target.id, event.target.value);
+        });
+
+        function clearStorage() {
+            localStorage.removeItem("name");
+            localStorage.removeItem("email");
+            localStorage.removeItem("message");
+        }
+    </script>
+
+</body>
+</html>

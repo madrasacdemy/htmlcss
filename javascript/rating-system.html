@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Rating System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f3f3f3;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        /* Star Rating */
+        .stars {
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .star {
+            color: #ccc;
+            transition: color 0.3s;
+        }
+        .star:hover, .star.active {
+            color: gold;
+        }
+
+        /* Emoji Rating */
+        .emoji-rating {
+            font-size: 40px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .emoji-rating:hover, .emoji-rating.active {
+            transform: scale(1.2);
+        }
+
+        /* Thumbs Up/Down */
+        .thumbs {
+            font-size: 40px;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+        .thumbs:hover, .thumbs.active {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>⭐ Star Rating</h2>
+    <div id="starRating" class="stars">
+        <span class="star" data-value="1">★</span>
+        <span class="star" data-value="2">★</span>
+        <span class="star" data-value="3">★</span>
+        <span class="star" data-value="4">★</span>
+        <span class="star" data-value="5">★</span>
+    </div>
+    <p id="starResult">Rate us!</p>
+
+    <h2>😊 Emoji Rating</h2>
+    <div id="emojiRating">
+        <span class="emoji-rating" data-value="1">😞</span>
+        <span class="emoji-rating" data-value="2">😐</span>
+        <span class="emoji-rating" data-value="3">😊</span>
+    </div>
+    <p id="emojiResult">Choose your mood!</p>
+
+    <h2>👍 Thumbs Up/Down</h2>
+    <div id="thumbsRating">
+        <span class="thumbs" id="thumbsUp" data-value="up">👍</span>
+        <span class="thumbs" id="thumbsDown" data-value="down">👎</span>
+    </div>
+    <p id="thumbsResult">Like or Dislike?</p>
+
+    <script>
+        // ⭐ Star Rating
+        const stars = document.querySelectorAll(".star");
+        const starResult = document.getElementById("starResult");
+
+        stars.forEach(star => {
+            star.addEventListener("mouseover", function() {
+                let value = this.getAttribute("data-value");
+                stars.forEach(s => s.style.color = (s.getAttribute("data-value") <= value) ? "gold" : "#ccc");
+            });
+
+            star.addEventListener("click", function() {
+                let value = this.getAttribute("data-value");
+                stars.forEach(s => s.classList.remove("active"));
+                for (let i = 0; i < value; i++) {
+                    stars[i].classList.add("active");
+                }
+                starResult.textContent = `You rated ${value} stars!`;
+            });
+        });
+
+        // 😊 Emoji Rating
+        const emojis = document.querySelectorAll(".emoji-rating");
+        const emojiResult = document.getElementById("emojiResult");
+
+        emojis.forEach(emoji => {
+            emoji.addEventListener("click", function() {
+                emojis.forEach(e => e.classList.remove("active"));
+                this.classList.add("active");
+                let value = this.getAttribute("data-value");
+                let mood = value == 1 ? "Sad 😞" : value == 2 ? "Neutral 😐" : "Happy 😊";
+                emojiResult.textContent = `You selected: ${mood}`;
+            });
+        });
+
+        // 👍 Thumbs Up/Down
+        const thumbsUp = document.getElementById("thumbsUp");
+        const thumbsDown = document.getElementById("thumbsDown");
+        const thumbsResult = document.getElementById("thumbsResult");
+
+        thumbsUp.addEventListener("click", function() {
+            thumbsUp.classList.add("active");
+            thumbsDown.classList.remove("active");
+            thumbsResult.textContent = "You liked it! 👍";
+        });
+
+        thumbsDown.addEventListener("click", function() {
+            thumbsDown.classList.add("active");
+            thumbsUp.classList.remove("active");
+            thumbsResult.textContent = "You disliked it! 👎";
+        });
+    </script>
+
+</body>
+</html>

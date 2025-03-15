@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Table with Live Updates</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4a261;
+            color: white;
+        }
+
+        td:focus {
+            outline: none;
+            background-color: #fcd5ce;
+        }
+
+        .btn {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .add-btn {
+            background-color: #2a9d8f;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #e76f51;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Editable Table with Live Updates</h2>
+    <button class="btn add-btn" onclick="addRow()">Add Row</button>
+    <table id="editableTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>City</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadTable);
+
+        function loadTable() {
+            let tableData = JSON.parse(localStorage.getItem("tableData")) || [];
+            let tbody = document.querySelector("#editableTable tbody");
+            tbody.innerHTML = "";
+            tableData.forEach((row, index) => {
+                addRow(row.name, row.age, row.city, index);
+            });
+        }
+
+        function addRow(name = "", age = "", city = "", index = null) {
+            let tbody = document.querySelector("#editableTable tbody");
+            let row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td contenteditable="true" oninput="updateTable()">${name}</td>
+                <td contenteditable="true" oninput="updateTable()">${age}</td>
+                <td contenteditable="true" oninput="updateTable()">${city}</td>
+                <td><button class="btn delete-btn" onclick="deleteRow(this)">Delete</button></td>
+            `;
+
+            tbody.appendChild(row);
+            updateTable();
+        }
+
+        function deleteRow(button) {
+            button.parentElement.parentElement.remove();
+            updateTable();
+        }
+
+        function updateTable() {
+            let rows = document.querySelectorAll("#editableTable tbody tr");
+            let tableData = [];
+            rows.forEach(row => {
+                let cols = row.querySelectorAll("td");
+                tableData.push({
+                    name: cols[0].innerText.trim(),
+                    age: cols[1].innerText.trim(),
+                    city: cols[2].innerText.trim()
+                });
+            });
+            localStorage.setItem("tableData", JSON.stringify(tableData));
+        }
+    </script>
+
+</body>
+</html>
