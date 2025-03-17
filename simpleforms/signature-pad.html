@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Pad</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/4.1.5/signature_pad.umd.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: auto;
+        }
+        canvas {
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            height: 150px;
+            background: white;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+        }
+        .clear-btn {
+            background: red;
+        }
+        .submit-btn {
+            background: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Signature Pad</h2>
+        
+        <canvas id="signatureCanvas"></canvas>
+        
+        <button class="clear-btn" onclick="clearSignature()">Clear Signature</button>
+        <button class="submit-btn" onclick="submitSignature()">Submit</button>
+
+        <form id="signatureForm" action="save_signature.php" method="POST">
+            <input type="hidden" id="signatureData" name="signature">
+        </form>
+    </div>
+
+    <script>
+        let canvas = document.getElementById('signatureCanvas');
+        let signaturePad = new SignaturePad(canvas);
+
+        function clearSignature() {
+            signaturePad.clear();
+        }
+
+        function submitSignature() {
+            if (!signaturePad.isEmpty()) {
+                document.getElementById('signatureData').value = signaturePad.toDataURL();
+                document.getElementById('signatureForm').submit();
+            } else {
+                alert("Please sign before submitting!");
+            }
+        }
+    </script>
+
+</body>
+</html>

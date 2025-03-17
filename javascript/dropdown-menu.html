@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Level Dropdown Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+
+        .menu {
+            list-style: none;
+            background: #007bff;
+            display: inline-block;
+            border-radius: 5px;
+            padding: 0;
+        }
+
+        .menu > li {
+            position: relative;
+            float: left;
+        }
+
+        .menu li a {
+            text-decoration: none;
+            color: white;
+            padding: 12px 18px;
+            display: block;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .menu li a:hover {
+            background: #0056b3;
+        }
+
+        /* Submenu (Initially Hidden) */
+        .submenu {
+            list-style: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #0056b3;
+            display: none;
+            min-width: 180px;
+            border-radius: 5px;
+        }
+
+        .submenu li {
+            position: relative;
+        }
+
+        .submenu li a {
+            padding: 10px;
+            color: white;
+            display: block;
+        }
+
+        .submenu li a:hover {
+            background: #004099;
+        }
+
+        /* Nested submenu (3rd level) */
+        .submenu .submenu {
+            left: 100%;
+            top: 0;
+            position: absolute;
+            display: none;
+        }
+
+        /* Show submenu when active */
+        .submenu.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Multi-Level Dropdown Menu (Click to Open)</h2>
+    
+    <ul class="menu">
+        <li><a href="#">Home</a></li>
+        <li>
+            <a href="#" class="dropdown-toggle">Services ▼</a>
+            <ul class="submenu">
+                <li><a href="#">Web Development</a></li>
+                <li>
+                    <a href="#" class="dropdown-toggle">Design ▼</a>
+                    <ul class="submenu">
+                        <li><a href="#">UI Design</a></li>
+                        <li><a href="#">UX Design</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">SEO</a></li>
+            </ul>
+        </li>
+        <li><a href="#">Portfolio</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".dropdown-toggle").forEach(button => {
+                button.addEventListener("click", function (event) {
+                    event.preventDefault(); 
+                    let submenu = this.nextElementSibling;
+
+                    // Hide all other open dropdowns before opening the clicked one
+                    document.querySelectorAll(".submenu").forEach(menu => {
+                        if (menu !== submenu) {
+                            menu.classList.remove("show");
+                        }
+                    });
+
+                    submenu.classList.toggle("show");
+                });
+            });
+
+            // Close dropdowns when clicking outside
+            document.addEventListener("click", function (event) {
+                if (!event.target.closest(".menu")) {
+                    document.querySelectorAll(".submenu").forEach(menu => {
+                        menu.classList.remove("show");
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

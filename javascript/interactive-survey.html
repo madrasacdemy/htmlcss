@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Survey</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .survey-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            margin: auto;
+        }
+        .question {
+            display: none;
+        }
+        .question.active {
+            display: block;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="survey-container">
+        <h2>Interactive Survey</h2>
+        
+        <div id="q1" class="question active">
+            <p>Do you like programming?</p>
+            <button onclick="nextQuestion(1, 'yes')">Yes</button>
+            <button onclick="nextQuestion(1, 'no')">No</button>
+        </div>
+
+        <div id="q2" class="question">
+            <p>What is your favorite programming language?</p>
+            <button onclick="nextQuestion(2, 'javascript')">JavaScript</button>
+            <button onclick="nextQuestion(2, 'python')">Python</button>
+            <button onclick="nextQuestion(2, 'java')">Java</button>
+        </div>
+
+        <div id="q3" class="question">
+            <p>What field do you prefer?</p>
+            <button onclick="nextQuestion(3, 'frontend')">Frontend</button>
+            <button onclick="nextQuestion(3, 'backend')">Backend</button>
+            <button onclick="nextQuestion(3, 'fullstack')">Full Stack</button>
+        </div>
+
+        <div id="q4" class="question">
+            <p>Thanks for completing the survey! 🎉</p>
+        </div>
+
+    </div>
+
+    <script>
+        function nextQuestion(current, answer) {
+            document.getElementById("q" + current).classList.remove("active");
+
+            if (current === 1 && answer === "yes") {
+                document.getElementById("q2").classList.add("active");
+            } else if (current === 2) {
+                document.getElementById("q3").classList.add("active");
+            } else {
+                document.getElementById("q4").classList.add("active");
+            }
+        }
+    </script>
+
+</body>
+</html>

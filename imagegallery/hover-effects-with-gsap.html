@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Hover Effects with GSAP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .image-container img {
+            width: 300px;
+            height: auto;
+            display: block;
+            transition: transform 0.3s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-container">
+        <img src="../image/communication-skills-training.jpg" alt="Sample Image" id="hoverImage">
+    </div>
+
+    <script>
+        const image = document.getElementById("hoverImage");
+
+        image.addEventListener("mouseenter", () => {
+            gsap.to(image, { scale: 1.2, boxShadow: "10px 10px 20px rgba(0,0,0,0.3)", duration: 0.3 });
+        });
+
+        image.addEventListener("mouseleave", () => {
+            gsap.to(image, { scale: 1, boxShadow: "none", duration: 0.3 });
+        });
+    </script>
+</body>
+</html>
