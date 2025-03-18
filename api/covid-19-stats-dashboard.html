@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COVID-19 Stats Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            margin: 0;
+            padding: 20px;
+        }
+        .dashboard {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            margin: auto;
+            transition: transform 0.3s;
+        }
+        .dashboard:hover {
+            transform: scale(1.05);
+        }
+        .stat {
+            margin: 15px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        .confirmed {
+            background: #ffcc00;
+            color: #333;
+        }
+        .deaths {
+            background: #ff4c4c;
+            color: white;
+        }
+        .recovered {
+            background: #4caf50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: white;">COVID-19 Stats Dashboard</h1>
+    <div class="dashboard">
+        <div class="stat confirmed">Confirmed: <span id="confirmed">Loading...</span></div>
+        <div class="stat deaths">Deaths: <span id="deaths">Loading...</span></div>
+        <div class="stat recovered">Recovered: <span id="recovered">Loading...</span></div>
+    </div>
+    <script>
+        async function fetchCovidStats() {
+            try {
+                let response = await fetch('https://disease.sh/v3/covid-19/all');
+                let data = await response.json();
+                document.getElementById('confirmed').textContent = data.cases.toLocaleString();
+                document.getElementById('deaths').textContent = data.deaths.toLocaleString();
+                document.getElementById('recovered').textContent = data.recovered.toLocaleString();
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+            }
+        }
+        fetchCovidStats();
+    </script>
+</body>
+</html>
