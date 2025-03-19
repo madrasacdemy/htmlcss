@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Repositories</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #009efd;
+        }
+        .repo-list {
+            list-style: none;
+            padding: 0;
+        }
+        .repo-card {
+            background: #f9f9f9;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: left;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .repo-card a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>GitHub Repositories</h2>
+        <input type="text" id="username" placeholder="Enter GitHub Username">
+        <button onclick="fetchRepos()">Get Repositories</button>
+        <ul class="repo-list" id="repoList"></ul>
+    </div>
+
+    <script>
+        function fetchRepos() {
+            const username = document.getElementById('username').value;
+            const repoList = document.getElementById('repoList');
+            repoList.innerHTML = 'Loading...';
+
+            if (!username) {
+                repoList.innerHTML = '❌ Please enter a username.';
+                return;
+            }
+
+            fetch(`https://api.github.com/users/${username}/repos`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === "Not Found") {
+                        repoList.innerHTML = '❌ User not found!';
+                        return;
+                    }
+                    
+                    repoList.innerHTML = '';
+                    data.forEach(repo => {
+                        const repoItem = document.createElement('li');
+                        repoItem.classList.add('repo-card');
+                        repoItem.innerHTML = `
+                            <strong>${repo.name}</strong><br>
+                            <small>${repo.description || "No description available"}</small><br>
+                            <a href="${repo.html_url}" target="_blank">🔗 View on GitHub</a>
+                        `;
+                        repoList.appendChild(repoItem);
+                    });
+                })
+                .catch(error => {
+                    repoList.innerHTML = '❌ Error fetching repositories.';
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+
+</body>
+</html>
