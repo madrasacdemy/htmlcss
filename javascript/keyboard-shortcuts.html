@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Shortcuts</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        h2 {
+            color: #333;
+        }
+        .shortcut-list {
+            text-align: left;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .shortcut-list p {
+            font-size: 18px;
+            padding: 5px;
+            background: #e3e3e3;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .info {
+            font-size: 18px; 
+            margin-top: 20px; 
+            font-weight: bold;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Keyboard Shortcuts for Web Apps</h2>
+        <p>Try these shortcuts:</p>
+        <div class="shortcut-list">
+            <p><b>Ctrl + S</b> - Save</p>
+            <p><b>Ctrl + D</b> - Show Date</p>
+            <p><b>Ctrl + H</b> - Show Help</p>
+            <p><b>Ctrl + R</b> - Refresh Page</p>
+            <p><b>Ctrl + P</b> - Print Page</p>
+            <p><b>Ctrl + T</b> - Open New Tab</p>
+        </div>
+        <div class="info" id="output"></div>
+    </div>
+    
+    <script>
+        document.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.key.toLowerCase() === "s") {
+                event.preventDefault();
+                document.getElementById("output").innerText = "Saved successfully!";
+            }
+            if (event.ctrlKey && event.key.toLowerCase() === "d") {
+                event.preventDefault();
+                let date = new Date().toLocaleString();
+                document.getElementById("output").innerText = "Current Date & Time: " + date;
+            }
+            if (event.ctrlKey && event.key.toLowerCase() === "h") {
+                event.preventDefault();
+                alert("Help: Use Ctrl + S to save, Ctrl + D to show date, Ctrl + H for help.");
+            }
+            if (event.ctrlKey && event.key.toLowerCase() === "r") {
+                event.preventDefault();
+                location.reload();
+            }
+            if (event.ctrlKey && event.key.toLowerCase() === "p") {
+                event.preventDefault();
+                window.print();
+            }
+            if (event.ctrlKey && event.key.toLowerCase() === "t") {
+                event.preventDefault();
+                window.open('about:blank', '_blank');
+            }
+        });
+    </script>
+</body>
+</html>
