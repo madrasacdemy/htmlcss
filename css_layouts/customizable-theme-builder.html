@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Theme Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .preview {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="color"], input[type="range"] {
+            margin-left: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Customizable Theme Builder</h1>
+    <div class="controls">
+        <label>Background Color: <input type="color" id="bgColor" value="#ffffff"></label>
+        <label>Text Color: <input type="color" id="textColor" value="#000000"></label>
+        <label>Border Radius: <input type="range" id="borderRadius" min="0" max="50" value="8"></label>
+        <button onclick="applyTheme()">Apply Theme</button>
+        <button onclick="exportCSS()">Export CSS</button>
+    </div>
+    <div class="preview" id="preview">
+        <h2>Live Preview</h2>
+        <p>This is a preview of your theme customization.</p>
+    </div>
+    <script>
+        function applyTheme() {
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const borderRadius = document.getElementById('borderRadius').value + 'px';
+            
+            const preview = document.getElementById('preview');
+            preview.style.backgroundColor = bgColor;
+            preview.style.color = textColor;
+            preview.style.borderRadius = borderRadius;
+        }
+        
+        function exportCSS() {
+            const bgColor = document.getElementById('bgColor').value;
+            const textColor = document.getElementById('textColor').value;
+            const borderRadius = document.getElementById('borderRadius').value + 'px';
+            
+            const cssCode = `
+.preview {
+    background-color: ${bgColor};
+    color: ${textColor};
+    border-radius: ${borderRadius};
+}`;
+            
+            const blob = new Blob([cssCode], { type: 'text/css' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'theme.css';
+            link.click();
+        }
+    </script>
+</body>
+</html>

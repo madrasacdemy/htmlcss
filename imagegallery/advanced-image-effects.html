@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Hover Effects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        .image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            padding: 20px;
+        }
+        .image-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: white;
+            padding: 10px;
+        }
+        .image-box img {
+            width: 100%;
+            height: auto;
+            transition: all 0.5s ease;
+            display: block;
+            border-radius: 8px;
+        }
+        .image-box h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+        }
+        .image-box:hover img.blur {
+            filter: blur(5px);
+        }
+        .image-box:hover img.zoom {
+            transform: scale(1.2);
+        }
+        .image-box:hover img.color-shift {
+            filter: hue-rotate(90deg);
+        }
+        .image-box:hover img.grayscale {
+            filter: grayscale(100%);
+        }
+        .image-box:hover img.shadow {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .image-box:hover img.opacity {
+            opacity: 0.5;
+        }
+        @media (max-width: 768px) {
+            .image-container {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Advanced Image Hover Effects</h1>
+    <div class="image-container">
+        <div class="image-box">
+            <h3>Blur Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Blur Effect" class="blur">
+        </div>
+        <div class="image-box">
+            <h3>Zoom Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Zoom Effect" class="zoom">
+        </div>
+        <div class="image-box">
+            <h3>Color Shift Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Color Shift Effect" class="color-shift">
+        </div>
+        <div class="image-box">
+            <h3>Grayscale Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Grayscale Effect" class="grayscale">
+        </div>
+        <div class="image-box">
+            <h3>Shadow Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Shadow Effect" class="shadow">
+        </div>
+        <div class="image-box">
+            <h3>Opacity Effect</h3>
+            <img src="../image/communication-skills-training.jpg" alt="Opacity Effect" class="opacity">
+        </div>
+    </div>
+</body>
+</html>

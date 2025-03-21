@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Based Color Palette Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+        }
+        h2 {
+            color: #333;
+        }
+        .palette {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .color-box {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .color-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+        }
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .color-label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .color-input {
+            border: none;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 12px;
+            outline: none;
+            background: transparent;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .color-input:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        button {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>AI-Based Color Palette Generator</h2>
+        <div class="color-picker-wrapper">
+            <label class="color-label">Choose a color:</label>
+            <input type="color" id="baseColor" class="color-input" value="#3498db">
+        </div>
+        <button onclick="generatePalette()">Generate Palette</button>
+        <div class="palette" id="palette"></div>
+    </div>
+    
+    <script>
+        function generatePalette() {
+            const baseColor = document.getElementById('baseColor').value;
+            const paletteContainer = document.getElementById('palette');
+            paletteContainer.innerHTML = '';
+            
+            function adjustColor(hex, factor) {
+                let r = parseInt(hex.substr(1, 2), 16);
+                let g = parseInt(hex.substr(3, 2), 16);
+                let b = parseInt(hex.substr(5, 2), 16);
+                
+                r = Math.min(255, Math.max(0, r + factor));
+                g = Math.min(255, Math.max(0, g + factor));
+                b = Math.min(255, Math.max(0, b + factor));
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            const shades = [-60, -40, -20, 0, 20, 40, 60];
+            shades.forEach(factor => {
+                const color = adjustColor(baseColor, factor);
+                const colorBox = document.createElement('div');
+                colorBox.className = 'color-box';
+                colorBox.style.background = color;
+                colorBox.innerText = color;
+                paletteContainer.appendChild(colorBox);
+            });
+        }
+    </script>
+</body>
+</html>
