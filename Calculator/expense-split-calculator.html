@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Splitter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        input, button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #218838;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #e9ecef;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+        #result {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+        }
+        @media (max-width: 480px) {
+            .container {
+                width: 90%;
+                padding: 15px;
+            }
+            input, button {
+                font-size: 14px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Expense Splitter</h2>
+        <input type="text" id="friend" placeholder="Enter friend name">
+        <button onclick="addFriend()">Add Friend</button>
+        <ul id="friendList"></ul>
+        <input type="number" id="expense" placeholder="Enter total expense">
+        <button onclick="calculateSplit()">Split Expense</button>
+        <h3 id="result"></h3>
+    </div>
+
+    <script>
+        let friends = [];
+
+        function addFriend() {
+            let friendName = document.getElementById("friend").value.trim();
+            if (friendName && !friends.includes(friendName)) {
+                friends.push(friendName);
+                let listItem = document.createElement("li");
+                listItem.textContent = friendName;
+                document.getElementById("friendList").appendChild(listItem);
+                document.getElementById("friend").value = "";
+            }
+        }
+
+        function calculateSplit() {
+            let totalExpense = parseFloat(document.getElementById("expense").value);
+            if (totalExpense && friends.length > 0) {
+                let perPerson = (totalExpense / friends.length).toFixed(2);
+                document.getElementById("result").innerText = `Each person owes: ₹${perPerson}`;
+            } else {
+                alert("Please enter valid expense and add friends.");
+            }
+        }
+    </script>
+</body>
+</html>
