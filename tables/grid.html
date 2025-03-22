@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Table to Card Layout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Hide table on small screens */
+        @media (max-width: 768px) {
+            .table-container {
+                display: none;
+            }
+        }
+        /* Hide cards on large screens */
+        @media (min-width: 769px) {
+            .card-container {
+                display: none;
+            }
+        }
+        /* Alternate row colors */
+        .table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2 !important; /* Light gray */
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #ffffff !important; /* White */
+        }
+    </style>
+</head>
+<body class="bg-light p-4">
+
+    <div class="container bg-white p-4 shadow rounded">
+        <h2 class="mb-3">Dance Class Booking</h2>
+        <p><strong>Date:</strong> 14th March 2025</p>
+
+        <!-- Table for larger screens -->
+        <div class="table-container">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Dance Type</th>
+                        <th>Location</th>
+                        <th>Tutor</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Tapdance</td>
+                        <td>New York Studio</td>
+                        <td>John Doe</td>
+                        <td>$50</td>
+                        <td><button class="btn btn-primary">Book Now</button></td>
+                    </tr>
+                    <tr>
+                        <td>Ballet</td>
+                        <td>Los Angeles Center</td>
+                        <td>Mary Jane</td>
+                        <td>$60</td>
+                        <td><button class="btn btn-primary">Book Now</button></td>
+                    </tr>
+                    <tr>
+                        <td>Hip-Hop</td>
+                        <td>Chicago Academy</td>
+                        <td>Mike Tyson</td>
+                        <td>$45</td>
+                        <td><button class="btn btn-primary">Book Now</button></td>
+                    </tr>
+                    <tr>
+                        <td>Salsa</td>
+                        <td>Miami Dance Hall</td>
+                        <td>Elena Ruiz</td>
+                        <td>$55</td>
+                        <td><button class="btn btn-primary">Book Now</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Card layout for small screens -->
+        <div class="card-container">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Tapdance</h5>
+                    <p class="card-text"><strong>Location:</strong> New York Studio</p>
+                    <p class="card-text"><strong>Tutor:</strong> John Doe</p>
+                    <p class="card-text"><strong>Price:</strong> $50</p>
+                    <button class="btn btn-primary">Book Now</button>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Ballet</h5>
+                    <p class="card-text"><strong>Location:</strong> Los Angeles Center</p>
+                    <p class="card-text"><strong>Tutor:</strong> Mary Jane</p>
+                    <p class="card-text"><strong>Price:</strong> $60</p>
+                    <button class="btn btn-primary">Book Now</button>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Hip-Hop</h5>
+                    <p class="card-text"><strong>Location:</strong> Chicago Academy</p>
+                    <p class="card-text"><strong>Tutor:</strong> Mike Tyson</p>
+                    <p class="card-text"><strong>Price:</strong> $45</p>
+                    <button class="btn btn-primary">Book Now</button>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Salsa</h5>
+                    <p class="card-text"><strong>Location:</strong> Miami Dance Hall</p>
+                    <p class="card-text"><strong>Tutor:</strong> Elena Ruiz</p>
+                    <p class="card-text"><strong>Price:</strong> $55</p>
+                    <button class="btn btn-primary">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

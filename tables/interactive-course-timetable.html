@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Timetable</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .month-tabs-container {
+    align-items: center;
+    justify-content: center;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px;
+    margin: 0 auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Hides scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hides scrollbar for Internet Explorer */
+}
+
+.month-tabs-container::-webkit-scrollbar {
+    display: none; /* Hides scrollbar for Chrome, Safari, Edge */
+}
+        .month-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        .month-tab {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            cursor: pointer;
+            border: 1px solid #f3f3f3;
+            border-radius: 5px;
+            background: #f3f3f3;
+            color: #000;
+            text-align: center;
+            min-width: 100px;
+            font-size: 14px;
+        }
+        .month-tab.active {
+            background: #06D6A0;
+			border: 1px solid #06D6A0;
+            color: white;
+        }
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-nav {
+            padding: 5px 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+		.btn-primary{
+			background-color:#06D6A0 !important;
+			border: 1px solid #06D6A0 !important;
+			color:#000000 !important;
+		}
+		.btn-primary:hover {
+    background-color: #04b38c !important;
+    border-color: #04b38c !important;
+    color: white !important;
+}
+.month-tab {
+    transition: all 0.3s ease-in-out;
+}
+
+.month-tab:hover {
+    background: #04b38c;
+    color: white;
+    transform: scale(1.05);
+}
+@keyframes smoothScroll {
+    from {
+        scroll-behavior: auto;
+    }
+    to {
+        scroll-behavior: smooth;
+    }
+}
+
+.month-tabs-container {
+    animation: smoothScroll 0.3s ease-in-out;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-striped tbody tr:hover {
+    background-color: #e3fcef;
+    transition: background-color 0.3s ease;
+}
+th {
+    text-align: center;
+    background-color: #06D6A0;
+    color: white;
+}
+.month-tab, .btn-nav {
+    border-radius: 8px;
+}
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2 class="text-center">Course Timetable</h2>
+        <div class="nav-buttons">
+            <button id="prevMonth" class="btn btn-primary btn-nav" disabled>&#9665;</button>
+            <div class="month-tabs-container">
+                <div class="month-tabs" id="monthTabs"></div>
+            </div>
+            <button id="nextMonth" class="btn btn-primary btn-nav">&#9655;</button>
+        </div>
+        
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Course Name</th>
+                    <th>Time</th>
+                    <th>Instructor</th>
+                </tr>
+            </thead>
+            <tbody id="timetableBody">
+                <!-- Timetable will be loaded dynamically -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            let currentIndex = 0;
+            let startMonth = new Date();
+
+            let timetableData = [
+                { "date": "2025-03-19", "course": "Web Development", "time": "10:00 AM - 12:00 PM", "instructor": "John Doe" },
+                { "date": "2025-03-19", "course": "Web Development 2", "time": "10:00 AM - 12:00 PM", "instructor": "John Doe" },
+                { "date": "2025-03-19", "course": "Web Development 3", "time": "10:00 AM - 12:00 PM", "instructor": "John Doe" },
+                { "date": "2025-04-20", "course": "Data Science", "time": "02:00 PM - 04:00 PM", "instructor": "Jane Smith" },
+                { "date": "2025-05-21", "course": "Machine Learning", "time": "11:00 AM - 01:00 PM", "instructor": "Alan Turing" }
+            ];
+
+            function generateMonthTabs() {
+                const monthTabs = $('#monthTabs');
+                monthTabs.empty();
+                for (let i = 0; i < 12; i++) {
+                    let tempDate = new Date(startMonth);
+                    tempDate.setMonth(startMonth.getMonth() + i);
+                    let monthYear = tempDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                    let monthValue = tempDate.getFullYear() + '-' + ('0' + (tempDate.getMonth() + 1)).slice(-2);
+                    let tab = $('<div class="month-tab"></div>').text(monthYear).attr('data-month', monthValue);
+                    if (i === currentIndex) tab.addClass('active');
+                    tab.click(function () {
+                        $('.month-tab').removeClass('active');
+                        $(this).addClass('active');
+                        currentIndex = $(this).index();
+                        filterTable($(this).attr('data-month'));
+                        updateNavButtons();
+                        scrollToActiveTab();
+                    });
+                    monthTabs.append(tab);
+                }
+                updateNavButtons();
+                filterTable($('.month-tab.active').attr('data-month'));
+                scrollToActiveTab();
+            }
+
+            function filterTable(selectedMonth) {
+                let tbody = $('#timetableBody');
+                tbody.empty();
+
+                let filteredData = timetableData.filter(item => item.date.startsWith(selectedMonth));
+                if (filteredData.length === 0) {
+                    tbody.append(`<tr><td colspan="4" class="text-center">No courses available</td></tr>`);
+                } else {
+                    filteredData.forEach(item => {
+                        let row = `<tr>
+                            <td>${item.date}</td>
+                            <td>${item.course}</td>
+                            <td>${item.time}</td>
+                            <td>${item.instructor}</td>
+                        </tr>`;
+                        tbody.append(row);
+                    });
+                }
+            }
+
+            function updateNavButtons() {
+                $('#prevMonth').prop('disabled', currentIndex === 0);
+                $('#nextMonth').prop('disabled', currentIndex === 11);
+            }
+
+            function scrollToActiveTab() {
+                let activeTab = $('.month-tab.active');
+                let container = $('.month-tabs-container');
+                let scrollLeft = activeTab.position().left + container.scrollLeft() - container.width() / 2 + activeTab.width() / 2;
+                container.animate({ scrollLeft: scrollLeft }, 300);
+            }
+
+            $('#prevMonth').click(function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    $('.month-tab').removeClass('active').eq(currentIndex).addClass('active');
+                    filterTable($('.month-tab.active').attr('data-month'));
+                    updateNavButtons();
+                    scrollToActiveTab();
+                }
+            });
+
+            $('#nextMonth').click(function () {
+                if (currentIndex < 11) {
+                    currentIndex++;
+                    $('.month-tab').removeClass('active').eq(currentIndex).addClass('active');
+                    filterTable($('.month-tab.active').attr('data-month'));
+                    updateNavButtons();
+                    scrollToActiveTab();
+                }
+            });
+
+            generateMonthTabs();
+        });
+    </script>
+</body>
+</html>
