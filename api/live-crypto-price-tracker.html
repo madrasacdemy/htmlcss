@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Price Tracker</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+        .crypto-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+        .crypto-card {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .crypto-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .crypto-card img {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+        }
+        .crypto-card h3 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .crypto-card p {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .green { color: #4caf50; }
+        .red { color: #ff5252; }
+        @media (max-width: 600px) {
+            .crypto-list {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📊 Live Crypto Price Tracker</h2>
+        <div class="crypto-list" id="cryptoList"></div>
+    </div>
+
+    <script>
+        async function fetchCryptoPrices() {
+            try {
+                let response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+                let data = await response.json();
+
+                let cryptoHTML = '';
+                data.slice(0, 10).forEach(coin => {
+                    let priceChange = coin.price_change_percentage_24h.toFixed(2);
+                    let priceClass = priceChange >= 0 ? 'green' : 'red';
+
+                    cryptoHTML += `
+                        <div class="crypto-card">
+                            <img src="${coin.image}" alt="${coin.name}">
+                            <h3>${coin.name} (${coin.symbol.toUpperCase()})</h3>
+                            <p>💲 ${coin.current_price.toFixed(2)}</p>
+                            <p class="${priceClass}">📈 ${priceChange}%</p>
+                        </div>
+                    `;
+                });
+
+                document.getElementById("cryptoList").innerHTML = cryptoHTML;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        fetchCryptoPrices();
+        setInterval(fetchCryptoPrices, 30000); // Refresh every 30 seconds
+    </script>
+
+</body>
+</html>
