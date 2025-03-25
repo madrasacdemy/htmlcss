@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique E-Commerce Homepage</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    header .logo h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header nav ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+
+    header nav ul li {
+      margin: 0 15px;
+    }
+
+    header nav ul li a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    header .icons i {
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: url('../image/desktop-wallpaper-lake-mountains-canoe-kayak.jpg') no-repeat center center/cover;
+      height: 60vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .hero-content h2 {
+      font-size: 48px;
+      margin: 0;
+    }
+
+    .hero-content p {
+      font-size: 18px;
+      margin: 10px 0 20px;
+    }
+
+    .hero-content .btn {
+      background-color: #ff6b6b;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    /* Featured Products Section */
+    .featured-products {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .featured-products h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .product-grid {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .product-card {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      width: 30%;
+      margin: 10px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+
+    .product-card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .product-card h3 {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .product-card p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .product-card .btn {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    /* New Arrivals Section */
+    .new-arrivals {
+      padding: 40px 20px;
+      text-align: center;
+      background-color: #f4f4f4;
+    }
+
+    .new-arrivals h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .arrival-grid {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .arrival-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      width: 22%;
+      margin: 10px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .arrival-card:hover {
+      transform: scale(1.05);
+    }
+
+    .arrival-card img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+
+    .arrival-card h3 {
+      font-size: 20px;
+      margin: 10px 0;
+    }
+
+    .arrival-card p {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .arrival-card .btn {
+      background-color: #ff6b6b;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    /* Testimonials Section */
+    .testimonials {
+      padding: 40px 20px;
+      text-align: center;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .testimonials h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .testimonial-grid {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .testimonial-card {
+      background-color: #444;
+      border-radius: 10px;
+      padding: 20px;
+      width: 30%;
+      margin: 10px;
+      text-align: center;
+    }
+
+    .testimonial-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .testimonial-card p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    .testimonial-card h4 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    /* Newsletter Section */
+    .newsletter {
+      background-color: #ff6b6b;
+      color: #fff;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .newsletter h2 {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .newsletter p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .newsletter form {
+      display: flex;
+      justify-content: center;
+    }
+
+    .newsletter input {
+      padding: 10px;
+      width: 300px;
+      border: none;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .newsletter button {
+      background-color: #333;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+
+    /* Footer Section */
+    footer {
+      background-color: #222;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+    }
+
+    .footer-section {
+      width: 30%;
+      margin: 10px;
+    }
+
+    .footer-section h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .footer-section p {
+      font-size: 14px;
+    }
+
+    .footer-section ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-section ul li {
+      margin: 5px 0;
+    }
+
+    .footer-section ul li a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .social-icons a {
+      color: #fff;
+      margin: 0 10px;
+      font-size: 20px;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 10px;
+      border-top: 1px solid #444;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      header nav ul {
+        flex-direction: column;
+      }
+
+      .product-grid, .arrival-grid, .testimonial-grid {
+        flex-direction: column;
+      }
+
+      .product-card, .arrival-card, .testimonial-card {
+        width: 100%;
+      }
+
+      .footer-section {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header Section -->
+  <header>
+    <div class="logo">
+      <h1>ShopNest</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Shop</a></li>
+        <li><a href="#">Categories</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="icons">
+      <i class="fas fa-search"></i>
+      <i class="fas fa-shopping-cart"></i>
+      <i class="fas fa-user"></i>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h2>Welcome to ShopNest</h2>
+      <p>Discover the latest trends in fashion, electronics, and more.</p>
+      <a href="#" class="btn">Shop Now</a>
+    </div>
+  </section>
+
+  <!-- Featured Products Section -->
+  <section class="featured-products">
+    <h2>Featured Products</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="../image/brand01.png" alt="Product 1">
+        <h3>Product 1</h3>
+        <p>$49.99</p>
+        <a href="#" class="btn">Add to Cart</a>
+      </div>
+      <div class="product-card">
+        <img src="../image/brand02.png" alt="Product 2">
+        <h3>Product 2</h3>
+        <p>$59.99</p>
+        <a href="#" class="btn">Add to Cart</a>
+      </div>
+      <div class="product-card">
+        <img src="../image/brand04.png" alt="Product 3">
+        <h3>Product 3</h3>
+        <p>$39.99</p>
+        <a href="#" class="btn">Add to Cart</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- New Arrivals Section -->
+  <section class="new-arrivals">
+    <h2>New Arrivals</h2>
+    <div class="arrival-grid">
+      <div class="arrival-card">
+        <img src="../image/brand05.png" alt="New Arrival 1">
+        <h3>New Arrival 1</h3>
+        <p>$79.99</p>
+        <a href="#" class="btn">Shop Now</a>
+      </div>
+      <div class="arrival-card">
+        <img src="../image/brand06.png" alt="New Arrival 2">
+        <h3>New Arrival 2</h3>
+        <p>$89.99</p>
+        <a href="#" class="btn">Shop Now</a>
+      </div>
+      <div class="arrival-card">
+        <img src="../image/brand07.png" alt="New Arrival 3">
+        <h3>New Arrival 3</h3>
+        <p>$69.99</p>
+        <a href="#" class="btn">Shop Now</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials">
+    <h2>What Our Customers Say</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <img src="../image/communication-skills-training.jpg" alt="Customer 1">
+        <p>"ShopNest has the best products and customer service. Highly recommended!"</p>
+        <h4>John Doe</h4>
+      </div>
+      <div class="testimonial-card">
+        <img src="../image/communication-skills-training.jpg" alt="Customer 2">
+        <p>"I love shopping here. The quality is amazing and the prices are great!"</p>
+        <h4>Jane Smith</h4>
+      </div>
+      <div class="testimonial-card">
+        <img src="../image/communication-skills-training.jpg" alt="Customer 3">
+        <p>"Fast delivery and excellent products. Will definitely shop again!"</p>
+        <h4>Mike Johnson</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter">
+    <h2>Subscribe to Our Newsletter</h2>
+    <p>Get the latest updates on new products and exclusive offers.</p>
+    <form>
+      <input type="email" placeholder="Enter your email">
+      <button type="submit" class="btn">Subscribe</button>
+    </form>
+  </section>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>About Us</h3>
+        <p>ShopNest is your one-stop destination for all your shopping needs.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">Categories</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2023 ShopNest. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>

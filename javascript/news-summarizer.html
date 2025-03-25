@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI News Summarizer (No API)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+        .news-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+        .news-card {
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: 0.3s;
+            text-align: left;
+        }
+        .news-card:hover {
+            transform: scale(1.02);
+        }
+        .news-card img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .news-card h3 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .news-card p {
+            font-size: 16px;
+            color: #555;
+        }
+        .read-more {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .news-list {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>📰 AI-Powered News Summarizer</h2>
+        <div class="news-list" id="newsList"></div>
+    </div>
+
+    <script>
+        const newsData = [
+            {
+                title: "Tech Giant Releases New AI Model",
+                content: "A major tech company has launched a revolutionary AI model capable of generating text, images, and even music. Experts say this could redefine the future of artificial intelligence.",
+                image: "../image/AI_image.jpg",
+                url: "#"
+            },
+            {
+                title: "SpaceX Successfully Launches Satellite",
+                content: "SpaceX has launched another satellite into orbit as part of its global internet project. This marks their 50th launch in the last year, setting a new record.",
+                image: "../image/SpaceX-Falcon-9-AP.avif",
+                url: "#"
+            },
+            {
+                title: "New Electric Car Breaks Range Record",
+                content: "A new electric vehicle has set a record for the longest range on a single charge, traveling over 600 miles. Experts believe this could accelerate the shift to electric cars.",
+                image: "../image/Rimac_Nevera.avif",
+                url: "#"
+            },
+            {
+                title: "Scientists Discover New Exoplanet",
+                content: "Astronomers have identified a potentially habitable exoplanet located 20 light-years away. The planet has conditions similar to Earth, raising hopes for extraterrestrial life.",
+                image: "../image/Scientists_Discover.jpg",
+                url: "#"
+            },
+            {
+                title: "Stock Markets Hit Record Highs",
+                content: "Stock markets have surged to record highs following positive economic data. Investors are optimistic about growth prospects in the coming months.",
+                image: "../image/20240831053417_Market_up.webp",
+                url: "#"
+            }
+        ];
+
+        function generateSummary(text) {
+            if (!text) return "No summary available.";
+            let words = text.split(" ");
+            return words.length > 20 ? words.slice(0, 20).join(" ") + "..." : text;
+        }
+
+        function displayNews() {
+            let newsHTML = "";
+            newsData.forEach(article => {
+                let summary = generateSummary(article.content);
+                newsHTML += `
+                    <div class="news-card">
+                        <img src="${article.image}" alt="News Image">
+                        <h3>${article.title}</h3>
+                        <p>${summary}</p>
+                        <a href="${article.url}" target="_blank" class="read-more">Read More</a>
+                    </div>
+                `;
+            });
+            document.getElementById("newsList").innerHTML = newsHTML;
+        }
+
+        displayNews();
+    </script>
+
+</body>
+</html>
