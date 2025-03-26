@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Text Translator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4285f4;
+            --secondary-color: #f8f9fa;
+            --accent-color: #34a853;
+            --text-color: #202124;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-color);
+        }
+        
+        .translator-card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .language-select {
+            border-radius: 4px;
+            border: 1px solid #dadce0;
+            padding: 8px 12px;
+            background-color: white;
+        }
+        
+        .swap-btn {
+            background-color: white;
+            border: 1px solid #dadce0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .swap-btn:hover {
+            background-color: #f1f3f4;
+        }
+        
+        .text-area {
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 12px;
+            min-height: 150px;
+            resize: none;
+            font-size: 16px;
+        }
+        
+        .text-area:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+        
+        .translate-btn {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .translate-btn:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .language-option {
+            display: flex;
+            align-items: center;
+        }
+        
+        .language-flag {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .history-item {
+            border-left: 3px solid var(--primary-color);
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            background-color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .history-item:hover {
+            background-color: #f1f3f4;
+        }
+        
+        .character-count {
+            font-size: 12px;
+            color: #5f6368;
+        }
+        
+        .detected-language {
+            font-size: 14px;
+            color: #5f6368;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            .swap-btn-container {
+                display: flex;
+                justify-content: center;
+                margin: 10px 0;
+            }
+            
+            .swap-btn {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="translator-card card">
+                    <div class="card-header text-center py-3">
+                        <h3><i class="fas fa-language me-2"></i>AI-Powered Text Translator</h3>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <!-- Source Language -->
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <select class="language-select form-select" id="sourceLanguage">
+                                        <option value="auto">Detect Language</option>
+                                        <option value="en" selected>English</option>
+                                        <option value="es">Spanish</option>
+                                        <option value="fr">French</option>
+                                        <option value="de">German</option>
+                                        <option value="it">Italian</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="ru">Russian</option>
+                                        <option value="zh">Chinese</option>
+                                        <option value="ja">Japanese</option>
+                                        <option value="ar">Arabic</option>
+                                        <option value="hi">Hindi</option>
+                                    </select>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-secondary me-2" id="clearSource">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" id="listenSource">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea class="text-area form-control w-100" id="sourceText" placeholder="Enter text to translate"></textarea>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="character-count" id="sourceCount">0/5000</span>
+                                    <span class="detected-language" id="detectedLanguage"></span>
+                                </div>
+                            </div>
+                            
+                            <!-- Swap Button -->
+                            <div class="col-md-2 swap-btn-container d-flex align-items-center justify-content-center">
+                                <div class="swap-btn" id="swapLanguages" title="Swap languages">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Target Language -->
+                            <div class="col-md-5">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <select class="language-select form-select" id="targetLanguage">
+                                        <option value="en" selected>English</option>
+                                        <option value="es">Spanish</option>
+                                        <option value="fr">French</option>
+                                        <option value="de">German</option>
+                                        <option value="it">Italian</option>
+                                        <option value="pt">Portuguese</option>
+                                        <option value="ru">Russian</option>
+                                        <option value="zh">Chinese</option>
+                                        <option value="ja">Japanese</option>
+                                        <option value="ar">Arabic</option>
+                                        <option value="hi">Hindi</option>
+                                    </select>
+                                    <div class="d-flex align-items-center">
+                                        <button class="btn btn-sm btn-outline-secondary me-2" id="copyTarget">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary" id="listenTarget">
+                                            <i class="fas fa-volume-up"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <textarea class="text-area form-control w-100" id="targetText" placeholder="Translation" readonly></textarea>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <span class="character-count" id="targetCount">0/5000</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-center mt-4">
+                            <button class="btn translate-btn btn-primary" id="translateBtn">
+                                <i class="fas fa-exchange-alt me-2"></i>Translate
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Translation History -->
+                <div class="card mt-4">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Translation History</h5>
+                        <button class="btn btn-sm btn-outline-danger" id="clearHistory">
+                            <i class="fas fa-trash me-1"></i>Clear
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="translationHistory"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const sourceText = document.getElementById('sourceText');
+            const targetText = document.getElementById('targetText');
+            const sourceLanguage = document.getElementById('sourceLanguage');
+            const targetLanguage = document.getElementById('targetLanguage');
+            const translateBtn = document.getElementById('translateBtn');
+            const swapBtn = document.getElementById('swapLanguages');
+            const clearSource = document.getElementById('clearSource');
+            const copyTarget = document.getElementById('copyTarget');
+            const listenSource = document.getElementById('listenSource');
+            const listenTarget = document.getElementById('listenTarget');
+            const clearHistory = document.getElementById('clearHistory');
+            const translationHistory = document.getElementById('translationHistory');
+            const sourceCount = document.getElementById('sourceCount');
+            const targetCount = document.getElementById('targetCount');
+            const detectedLanguage = document.getElementById('detectedLanguage');
+            
+            // Initialize history from localStorage
+            let history = JSON.parse(localStorage.getItem('translationHistory')) || [];
+            renderHistory();
+            
+            // Character count update
+            sourceText.addEventListener('input', function() {
+                const count = sourceText.value.length;
+                sourceCount.textContent = `${count}/5000`;
+                
+                // Auto detect language if set to auto
+                if (sourceLanguage.value === 'auto' && count > 0) {
+                    detectLanguage(sourceText.value);
+                } else {
+                    detectedLanguage.textContent = '';
+                }
+            });
+            
+            // Translate button click
+            translateBtn.addEventListener('click', function() {
+                if (sourceText.value.trim() === '') {
+                    alert('Please enter text to translate');
+                    return;
+                }
+                
+                translateText();
+            });
+            
+            // Swap languages
+            swapBtn.addEventListener('click', function() {
+                const tempLang = sourceLanguage.value;
+                sourceLanguage.value = targetLanguage.value;
+                targetLanguage.value = tempLang;
+                
+                const tempText = sourceText.value;
+                sourceText.value = targetText.value;
+                targetText.value = tempText;
+                
+                // Update counts
+                sourceCount.textContent = `${sourceText.value.length}/5000`;
+                targetCount.textContent = `${targetText.value.length}/5000`;
+                
+                // Clear detection if swapped
+                if (sourceLanguage.value !== 'auto') {
+                    detectedLanguage.textContent = '';
+                }
+            });
+            
+            // Clear source text
+            clearSource.addEventListener('click', function() {
+                sourceText.value = '';
+                sourceCount.textContent = '0/5000';
+                detectedLanguage.textContent = '';
+            });
+            
+            // Copy target text
+            copyTarget.addEventListener('click', function() {
+                if (targetText.value.trim() === '') return;
+                
+                navigator.clipboard.writeText(targetText.value)
+                    .then(() => {
+                        const originalText = copyTarget.innerHTML;
+                        copyTarget.innerHTML = '<i class="fas fa-check"></i>';
+                        setTimeout(() => {
+                            copyTarget.innerHTML = originalText;
+                        }, 2000);
+                    });
+            });
+            
+            // Listen to source text
+            listenSource.addEventListener('click', function() {
+                if (sourceText.value.trim() === '') return;
+                speak(sourceText.value, sourceLanguage.value === 'auto' ? 'en' : sourceLanguage.value);
+            });
+            
+            // Listen to target text
+            listenTarget.addEventListener('click', function() {
+                if (targetText.value.trim() === '') return;
+                speak(targetText.value, targetLanguage.value);
+            });
+            
+            // Clear history
+            clearHistory.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all translation history?')) {
+                    history = [];
+                    localStorage.setItem('translationHistory', JSON.stringify(history));
+                    renderHistory();
+                }
+            });
+            
+            // Keyboard shortcut (Ctrl+Enter to translate)
+            sourceText.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    translateText();
+                }
+            });
+            
+            // Function to translate text (mock implementation)
+            function translateText() {
+                const text = sourceText.value;
+                const sourceLang = sourceLanguage.value === 'auto' ? 'en' : sourceLanguage.value;
+                const targetLang = targetLanguage.value;
+                
+                // Show loading state
+                const originalText = translateBtn.innerHTML;
+                translateBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Translating...';
+                translateBtn.disabled = true;
+                
+                // Mock translation - in a real app, you would call an API here
+                setTimeout(() => {
+                    let translatedText = '';
+                    
+                    // Simple mock translations for demonstration
+                    if (sourceLang === 'en' && targetLang === 'es') {
+                        translatedText = mockTranslateToSpanish(text);
+                    } else if (sourceLang === 'en' && targetLang === 'fr') {
+                        translatedText = mockTranslateToFrench(text);
+                    } else if (sourceLang === 'es' && targetLang === 'en') {
+                        translatedText = mockTranslateFromSpanish(text);
+                    } else if (sourceLang === 'fr' && targetLang === 'en') {
+                        translatedText = mockTranslateFromFrench(text);
+                    } else {
+                        // Default mock translation (just uppercase for demo)
+                        translatedText = text.toUpperCase() + ' (TRANSLATED TO ' + getLanguageName(targetLang) + ')';
+                    }
+                    
+                    targetText.value = translatedText;
+                    targetCount.textContent = `${translatedText.length}/5000`;
+                    
+                    // Add to history
+                    addToHistory(text, translatedText, sourceLang, targetLang);
+                    
+                    // Restore button
+                    translateBtn.innerHTML = originalText;
+                    translateBtn.disabled = false;
+                }, 800);
+            }
+            
+            // Function to detect language (mock implementation)
+            function detectLanguage(text) {
+                // Simple mock detection based on some keywords
+                if (text.includes(' el ') || text.includes(' la ') || text.includes(' de ')) {
+                    detectedLanguage.textContent = 'Detected: Spanish';
+                } else if (text.includes(' le ') || text.includes(' la ') || text.includes(' de ') || text.includes(' je ')) {
+                    detectedLanguage.textContent = 'Detected: French';
+                } else if (text.includes(' der ') || text.includes(' die ') || text.includes(' das ')) {
+                    detectedLanguage.textContent = 'Detected: German';
+                } else {
+                    detectedLanguage.textContent = 'Detected: English';
+                }
+            }
+            
+            // Function to add translation to history
+            function addToHistory(sourceText, targetText, sourceLang, targetLang) {
+                const timestamp = new Date().toLocaleString();
+                history.unshift({
+                    sourceText,
+                    targetText,
+                    sourceLang,
+                    targetLang,
+                    timestamp
+                });
+                
+                // Keep only last 20 items
+                if (history.length > 20) {
+                    history.pop();
+                }
+                
+                localStorage.setItem('translationHistory', JSON.stringify(history));
+                renderHistory();
+            }
+            
+            // Function to render history
+            function renderHistory() {
+                translationHistory.innerHTML = '';
+                
+                if (history.length === 0) {
+                    translationHistory.innerHTML = '<p class="text-muted text-center">No translation history yet</p>';
+                    return;
+                }
+                
+                history.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `
+                        <div class="d-flex justify-content-between">
+                            <strong>${getLanguageName(item.sourceLang)} → ${getLanguageName(item.targetLang)}</strong>
+                            <small class="text-muted">${item.timestamp}</small>
+                        </div>
+                        <div class="text-truncate">${item.sourceText}</div>
+                        <div class="text-truncate text-primary">${item.targetText}</div>
+                    `;
+                    
+                    historyItem.addEventListener('click', () => {
+                        sourceLanguage.value = item.sourceLang;
+                        targetLanguage.value = item.targetLang;
+                        sourceText.value = item.sourceText;
+                        targetText.value = item.targetText;
+                        sourceCount.textContent = `${item.sourceText.length}/5000`;
+                        targetCount.textContent = `${item.targetText.length}/5000`;
+                        detectedLanguage.textContent = '';
+                    });
+                    
+                    translationHistory.appendChild(historyItem);
+                });
+            }
+            
+            // Function to get language name from code
+            function getLanguageName(code) {
+                const languages = {
+                    'auto': 'Detect Language',
+                    'en': 'English',
+                    'es': 'Spanish',
+                    'fr': 'French',
+                    'de': 'German',
+                    'it': 'Italian',
+                    'pt': 'Portuguese',
+                    'ru': 'Russian',
+                    'zh': 'Chinese',
+                    'ja': 'Japanese',
+                    'ar': 'Arabic',
+                    'hi': 'Hindi'
+                };
+                return languages[code] || code;
+            }
+            
+            // Function for text-to-speech
+            function speak(text, lang) {
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = lang;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert('Text-to-speech is not supported in your browser');
+                }
+            }
+            
+            // Mock translation functions for demo
+            function mockTranslateToSpanish(text) {
+                const translations = {
+                    'hello': 'hola',
+                    'goodbye': 'adiós',
+                    'thank you': 'gracias',
+                    'please': 'por favor',
+                    'yes': 'sí',
+                    'no': 'no',
+                    'how are you': 'cómo estás',
+                    'my name is': 'me llamo',
+                    'i love you': 'te quiero',
+                    'good morning': 'buenos días'
+                };
+                
+                let result = text.toLowerCase();
+                for (const [en, es] of Object.entries(translations)) {
+                    result = result.replace(new RegExp(en, 'gi'), es);
+                }
+                return result + ' (Spanish Translation)';
+            }
+            
+            function mockTranslateToFrench(text) {
+                const translations = {
+                    'hello': 'bonjour',
+                    'goodbye': 'au revoir',
+                    'thank you': 'merci',
+                    'please': 's\'il vous plaît',
+                    'yes': 'oui',
+                    'no': 'non',
+                    'how are you': 'comment allez-vous',
+                    'my name is': 'je m\'appelle',
+                    'i love you': 'je t\'aime',
+                    'good morning': 'bonjour'
+                };
+                
+                let result = text.toLowerCase();
+                for (const [en, fr] of Object.entries(translations)) {
+                    result = result.replace(new RegExp(en, 'gi'), fr);
+                }
+                return result + ' (French Translation)';
+            }
+            
+            function mockTranslateFromSpanish(text) {
+                const translations = {
+                    'hola': 'hello',
+                    'adiós': 'goodbye',
+                    'gracias': 'thank you',
+                    'por favor': 'please',
+                    'sí': 'yes',
+                    'no': 'no',
+                    'cómo estás': 'how are you',
+                    'me llamo': 'my name is',
+                    'te quiero': 'i love you',
+                    'buenos días': 'good morning'
+                };
+                
+                let result = text.toLowerCase();
+                for (const [es, en] of Object.entries(translations)) {
+                    result = result.replace(new RegExp(es, 'gi'), en);
+                }
+                return result + ' (English Translation)';
+            }
+            
+            function mockTranslateFromFrench(text) {
+                const translations = {
+                    'bonjour': 'hello',
+                    'au revoir': 'goodbye',
+                    'merci': 'thank you',
+                    's\'il vous plaît': 'please',
+                    'oui': 'yes',
+                    'non': 'no',
+                    'comment allez-vous': 'how are you',
+                    'je m\'appelle': 'my name is',
+                    'je t\'aime': 'i love you'
+                };
+                
+                let result = text.toLowerCase();
+                for (const [fr, en] of Object.entries(translations)) {
+                    result = result.replace(new RegExp(fr, 'gi'), en);
+                }
+                return result + ' (English Translation)';
+            }
+        });
+    </script>
+</body>
+</html>
