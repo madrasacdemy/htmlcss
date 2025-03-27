@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Notes PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --primary: #6200ee;
+            --primary-dark: #3700b3;
+            --secondary: #03dac6;
+            --background: #f5f5f5;
+            --surface: #ffffff;
+            --error: #b00020;
+            --on-primary: #ffffff;
+            --on-secondary: #000000;
+            --on-background: #000000;
+            --on-surface: #000000;
+            --on-error: #ffffff;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--on-background);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .status {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .online {
+            color: green;
+        }
+        
+        .offline {
+            color: red;
+        }
+        
+        .note-form {
+            background-color: var(--surface);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--on-primary);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .notes-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .note-card {
+            background-color: var(--surface);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .note-title {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        
+        .note-content {
+            margin-bottom: 15px;
+        }
+        
+        .note-date {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .note-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .delete-btn {
+            background-color: var(--error);
+        }
+        
+        .sync-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: var(--on-primary);
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Offline Notes</h1>
+            <div class="status">
+                Status: <span id="connection-status">Checking...</span>
+            </div>
+        </header>
+        
+        <div class="note-form">
+            <h2>Add New Note</h2>
+            <form id="note-form">
+                <div class="form-group">
+                    <label for="note-title">Title</label>
+                    <input type="text" id="note-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="note-content">Content</label>
+                    <textarea id="note-content" required></textarea>
+                </div>
+                <button type="submit">Save Note</button>
+            </form>
+        </div>
+        
+        <h2>Your Notes</h2>
+        <div class="notes-list" id="notes-list">
+            <!-- Notes will be inserted here -->
+        </div>
+    </div>
+    
+    <div class="sync-notification" id="sync-notification">
+        Syncing your changes...
+    </div>
+    
+    <script>
+        // Database setup
+        let db;
+        const DB_NAME = 'notesDB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'notes';
+        
+        // Open or create IndexedDB database
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        
+        request.onupgradeneeded = (event) => {
+            db = event.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+            }
+        };
+        
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            loadNotes();
+            checkConnection();
+        };
+        
+        request.onerror = (event) => {
+            console.error('Database error:', event.target.error);
+        };
+        
+        // Form submission
+        document.getElementById('note-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('note-title').value;
+            const content = document.getElementById('note-content').value;
+            const timestamp = new Date().toISOString();
+            const isSynced = navigator.onLine ? true : false;
+            
+            const note = {
+                title,
+                content,
+                timestamp,
+                isSynced
+            };
+            
+            saveNote(note);
+            
+            // Reset form
+            e.target.reset();
+        });
+        
+        // Save note to IndexedDB
+        function saveNote(note) {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            const request = store.add(note);
+            
+            request.onsuccess = () => {
+                loadNotes();
+                if (navigator.onLine) {
+                    syncWithServer();
+                }
+            };
+            
+            request.onerror = (event) => {
+                console.error('Error saving note:', event.target.error);
+            };
+        }
+        
+        // Load notes from IndexedDB
+        function loadNotes() {
+            const transaction = db.transaction([STORE_NAME], 'readonly');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                displayNotes(request.result);
+            };
+            
+            request.onerror = (event) => {
+                console.error('Error loading notes:', event.target.error);
+            };
+        }
+        
+        // Display notes in the UI
+        function displayNotes(notes) {
+            const notesList = document.getElementById('notes-list');
+            notesList.innerHTML = '';
+            
+            if (notes.length === 0) {
+                notesList.innerHTML = '<p>No notes yet. Add your first note above!</p>';
+                return;
+            }
+            
+            // Sort by timestamp (newest first)
+            notes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            notes.forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                
+                noteCard.innerHTML = `
+                    <h3 class="note-title">${note.title}</h3>
+                    <div class="note-content">${note.content.replace(/\n/g, '<br>')}</div>
+                    <div class="note-date">${new Date(note.timestamp).toLocaleString()}</div>
+                    <div class="note-actions">
+                        <button class="delete-btn" data-id="${note.id}">Delete</button>
+                    </div>
+                    ${note.isSynced ? '' : '<div class="sync-status">(Pending sync)</div>'}
+                `;
+                
+                notesList.appendChild(noteCard);
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = Number(e.target.getAttribute('data-id'));
+                    deleteNote(id);
+                });
+            });
+        }
+        
+        // Delete note
+        function deleteNote(id) {
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            
+            const request = store.delete(id);
+            
+            request.onsuccess = () => {
+                loadNotes();
+                if (navigator.onLine) {
+                    syncWithServer();
+                }
+            };
+            
+            request.onerror = (event) => {
+                console.error('Error deleting note:', event.target.error);
+            };
+        }
+        
+        // Sync with server (simulated)
+        function syncWithServer() {
+            // In a real app, this would sync with your backend API
+            // For this demo, we'll just mark all notes as synced
+            
+            showSyncNotification();
+            
+            const transaction = db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAll();
+            
+            request.onsuccess = () => {
+                const notes = request.result;
+                const unsyncedNotes = notes.filter(note => !note.isSynced);
+                
+                if (unsyncedNotes.length === 0) {
+                    hideSyncNotification();
+                    return;
+                }
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Mark all notes as synced
+                    unsyncedNotes.forEach(note => {
+                        note.isSynced = true;
+                        store.put(note);
+                    });
+                    
+                    loadNotes();
+                    hideSyncNotification();
+                    
+                    console.log('Synced notes with server');
+                }, 1500);
+            };
+        }
+        
+        // Connection status
+        function checkConnection() {
+            const statusElement = document.getElementById('connection-status');
+            
+            if (navigator.onLine) {
+                statusElement.textContent = 'Online';
+                statusElement.className = 'online';
+                // When coming online, sync any pending changes
+                syncWithServer();
+            } else {
+                statusElement.textContent = 'Offline';
+                statusElement.className = 'offline';
+            }
+        }
+        
+        // Sync notification
+        function showSyncNotification() {
+            document.getElementById('sync-notification').style.display = 'block';
+        }
+        
+        function hideSyncNotification() {
+            document.getElementById('sync-notification').style.display = 'none';
+        }
+        
+        // Event listeners for online/offline status
+        window.addEventListener('online', () => {
+            checkConnection();
+            syncWithServer();
+        });
+        
+        window.addEventListener('offline', checkConnection);
+        
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('ServiceWorker registration successful');
+                }).catch(err => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

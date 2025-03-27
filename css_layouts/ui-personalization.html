@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered UI Personalization</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { transition: background 0.5s, color 0.5s; padding: 20px; }
+        .container { max-width: 600px; margin: auto; text-align: center; padding: 20px; border-radius: 10px; transition: all 0.5s ease; }
+        .settings { margin-top: 20px; }
+        button { padding: 10px 15px; margin: 5px; border: none; cursor: pointer; font-size: 16px; border-radius: 5px; }
+        .light-mode { background: #ffffff; color: #222; }
+        .dark-mode { background: #222; color: #fff; }
+        .compact { padding: 10px; font-size: 14px; }
+        .spacious { padding: 30px; font-size: 18px; }
+        .btn-light { background: #f0f0f0; }
+        .btn-dark { background: #333; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+        <h1>AI-Powered UI Personalization</h1>
+        <p>Customize your UI experience.</p>
+        
+        <div class="settings">
+            <h3>Choose Theme</h3>
+            <button class="btn-light" onclick="setTheme('light')">Light Mode</button>
+            <button class="btn-dark" onclick="setTheme('dark')">Dark Mode</button>
+        </div>
+
+        <div class="settings">
+            <h3>Choose Layout</h3>
+            <button class="btn-light" onclick="setLayout('compact')">Compact</button>
+            <button class="btn-dark" onclick="setLayout('spacious')">Spacious</button>
+        </div>
+    </div>
+
+    <script>
+        function setTheme(mode) {
+            document.body.className = mode + "-mode";
+            localStorage.setItem("theme", mode);
+        }
+
+        function setLayout(style) {
+            let container = document.getElementById("main-container");
+            container.className = "container " + style;
+            localStorage.setItem("layout", style);
+        }
+
+        // Load User Preferences
+        window.onload = function () {
+            let savedTheme = localStorage.getItem("theme") || "light";
+            let savedLayout = localStorage.getItem("layout") || "spacious";
+            setTheme(savedTheme);
+            setLayout(savedLayout);
+        };
+    </script>
+
+</body>
+</html>
