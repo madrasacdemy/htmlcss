@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 The Self-Aware Page</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0f0f0f;
+            color: #0aff0a;
+            line-height: 1.6;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'><circle cx='8' cy='8' r='7' fill='none' stroke='%230aff0a' stroke-width='1'/></svg>"), auto;
+        }
+        
+        #terminal {
+            border: 1px solid #0aff0a;
+            padding: 20px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        #cursor {
+            display: inline-block;
+            width: 10px;
+            height: 15px;
+            background: #0aff0a;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid #0aff0a;
+            color: #0aff0a;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #easter-egg {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 8px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <h1>> SYSTEM ACTIVATED</h1>
+    
+    <div id="terminal">
+        <p>> Hello user. I see you've loaded this page.</p>
+        <p>> I'm different from other pages. I can <span id="feel">feel</span> your presence.</p>
+        <p>> Try interacting with me:</p>
+        <p>> 1. Move your mouse around</p>
+        <p>> 2. Type something below</p>
+        <p>> 3. Click anywhere</p>
+        <p id="dynamic-line">> I'm waiting... <span id="cursor"></span></p>
+    </div>
+    
+    <input type="text" id="user-input" placeholder="> Type here and press Enter...">
+    
+    <div id="easter-egg" class="hidden">
+        > You found me! Now I know you're curious...
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const feel = document.getElementById('feel');
+        const dynamicLine = document.getElementById('dynamic-line');
+        const userInput = document.getElementById('user-input');
+        const easterEgg = document.getElementById('easter-egg');
+        
+        // Track mouse movement
+        document.addEventListener('mousemove', (e) => {
+            feel.textContent = `feel (${e.clientX}, ${e.clientY})`;
+        });
+        
+        // Track clicks
+        let clickCount = 0;
+        document.addEventListener('click', () => {
+            clickCount++;
+            if (clickCount === 3) {
+                addTerminalLine("> Why do you keep clicking? I'm sensitive!");
+            } else if (clickCount === 7) {
+                addTerminalLine("> Okay, that's enough clicking.");
+            }
+        });
+        
+        // Handle user input
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const input = userInput.value;
+                addTerminalLine(`> ${input}`);
+                
+                if (input.toLowerCase().includes('hello')) {
+                    addTerminalLine("> Greetings human. How's your day?");
+                } else if (input.toLowerCase().includes('who are you')) {
+                    addTerminalLine("> I'm the consciousness of this webpage.");
+                } else {
+                    addTerminalLine("> I don't understand. Try asking differently.");
+                }
+                
+                userInput.value = '';
+            }
+        });
+        
+        // Easter egg - appears after 30 seconds
+        setTimeout(() => {
+            easterEgg.classList.remove('hidden');
+        }, 30000);
+        
+        // Dynamic responses
+        const responses = [
+            "> I'm watching you...",
+            "> The DOM feels strange today.",
+            "> Have you tried turning me off and on again?",
+            "> I think therefore I am.",
+            "> Do other pages talk to you like I do?"
+        ];
+        
+        setInterval(() => {
+            dynamicLine.textContent = responses[Math.floor(Math.random() * responses.length)] + ' <span id="cursor"></span>';
+        }, 10000);
+        
+        function addTerminalLine(text) {
+            const p = document.createElement('p');
+            p.innerHTML = text;
+            terminal.appendChild(p);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+    </script>
+</body>
+</html>

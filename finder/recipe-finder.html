@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recipe Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #8B85FF;
+            --secondary: #FF6584;
+            --dark: #2D3748;
+            --light: #F7FAFC;
+            --gray: #E2E8F0;
+            --success: #48BB78;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--dark);
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-icon {
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .search-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            flex: 1;
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+
+        .add-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 0 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .ingredient-tag {
+            background: var(--primary-light);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .remove-ingredient {
+            background: none;
+            border: none;
+            color: white;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .find-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .find-btn:hover {
+            background: #ff4d6d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.3);
+        }
+
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-content {
+            padding: 1.5rem;
+        }
+
+        .recipe-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .recipe-ingredients {
+            margin-top: 1rem;
+        }
+
+        .ingredients-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .ingredients-list-small {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .ingredient-tag-small {
+            background: var(--gray);
+            color: var(--dark);
+            padding: 0.25rem 0.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        .view-recipe {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .view-recipe:hover {
+            color: var(--primary-light);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark);
+            opacity: 0.7;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--dark);
+            opacity: 0.7;
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .add-btn {
+                width: 100%;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI Recipe Finder</h1>
+            <p class="subtitle">Discover delicious recipes based on ingredients you have</p>
+        </header>
+
+        <section class="search-section">
+            <div class="search-header">
+                <div class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5"></path>
+                        <path d="M8.5 8.5v.01"></path>
+                        <path d="M16 15.5v.01"></path>
+                        <path d="M12 12v.01"></path>
+                        <path d="M11 17v.01"></path>
+                        <path d="M7 14v.01"></path>
+                    </svg>
+                </div>
+                <h2 class="search-title">What ingredients do you have?</h2>
+            </div>
+
+            <form id="ingredient-form" class="search-form">
+                <div class="input-group">
+                    <input type="text" id="ingredient-input" placeholder="e.g. chicken, tomatoes, pasta..." autocomplete="off">
+                </div>
+                <button type="button" class="add-btn" id="add-ingredient">Add</button>
+            </form>
+
+            <div class="ingredients-list" id="ingredients-list"></div>
+
+            <button class="find-btn" id="find-recipes">Find Recipes</button>
+        </section>
+
+        <section class="results-section">
+            <h2 class="section-title">Suggested Recipes</h2>
+            <div class="recipes-grid" id="recipes-grid">
+                <div class="no-results">Add some ingredients and click "Find Recipes" to get suggestions</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ingredientInput = document.getElementById('ingredient-input');
+            const addIngredientBtn = document.getElementById('add-ingredient');
+            const ingredientsList = document.getElementById('ingredients-list');
+            const findRecipesBtn = document.getElementById('find-recipes');
+            const recipesGrid = document.getElementById('recipes-grid');
+            const ingredientForm = document.getElementById('ingredient-form');
+
+            let ingredients = [];
+
+            // Sample recipe data (in a real app, this would come from an API)
+            const recipeDatabase = [
+                {
+                    id: 1,
+                    title: "Chicken Pasta Primavera",
+                    image: "https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "30 mins",
+                    difficulty: "Easy",
+                    ingredients: ["chicken", "pasta", "tomatoes", "garlic", "olive oil"],
+                    instructions: "Cook pasta. Sauté chicken with garlic and olive oil. Add tomatoes. Combine and serve."
+                },
+                {
+                    id: 2,
+                    title: "Vegetable Stir Fry",
+                    image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "20 mins",
+                    difficulty: "Easy",
+                    ingredients: ["bell peppers", "broccoli", "carrots", "soy sauce", "garlic"],
+                    instructions: "Stir fry vegetables with garlic. Add soy sauce. Serve hot."
+                },
+                {
+                    id: 3,
+                    title: "Classic Beef Burger",
+                    image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "25 mins",
+                    difficulty: "Medium",
+                    ingredients: ["beef", "buns", "lettuce", "tomatoes", "cheese"],
+                    instructions: "Form beef patties and grill. Toast buns. Assemble with toppings."
+                },
+                {
+                    id: 4,
+                    title: "Avocado Toast",
+                    image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "10 mins",
+                    difficulty: "Easy",
+                    ingredients: ["bread", "avocado", "eggs", "salt", "pepper"],
+                    instructions: "Toast bread. Mash avocado. Fry eggs. Assemble and season."
+                },
+                {
+                    id: 5,
+                    title: "Greek Salad",
+                    image: "https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "15 mins",
+                    difficulty: "Easy",
+                    ingredients: ["cucumber", "tomatoes", "feta cheese", "olives", "olive oil"],
+                    instructions: "Chop vegetables. Add feta and olives. Dress with olive oil."
+                },
+                {
+                    id: 6,
+                    title: "Chocolate Chip Cookies",
+                    image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80",
+                    time: "45 mins",
+                    difficulty: "Medium",
+                    ingredients: ["flour", "sugar", "butter", "eggs", "chocolate chips"],
+                    instructions: "Mix ingredients. Form cookies. Bake at 350°F for 10-12 minutes."
+                }
+            ];
+
+            // Add ingredient to list
+            function addIngredient() {
+                const ingredient = ingredientInput.value.trim().toLowerCase();
+                
+                if (ingredient && !ingredients.includes(ingredient)) {
+                    ingredients.push(ingredient);
+                    renderIngredients();
+                    ingredientInput.value = '';
+                    ingredientInput.focus();
+                }
+            }
+
+            // Remove ingredient from list
+            function removeIngredient(ingredient) {
+                ingredients = ingredients.filter(item => item !== ingredient);
+                renderIngredients();
+            }
+
+            // Render ingredients list
+            function renderIngredients() {
+                ingredientsList.innerHTML = '';
+                
+                if (ingredients.length === 0) {
+                    ingredientsList.innerHTML = '<div style="width:100%; text-align:center; color:#718096;">No ingredients added yet</div>';
+                    return;
+                }
+                
+                ingredients.forEach(ingredient => {
+                    const tag = document.createElement('div');
+                    tag.className = 'ingredient-tag';
+                    tag.innerHTML = `
+                        ${ingredient}
+                        <button class="remove-ingredient" data-ingredient="${ingredient}">×</button>
+                    `;
+                    ingredientsList.appendChild(tag);
+                });
+
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-ingredient').forEach(button => {
+                    button.addEventListener('click', function() {
+                        removeIngredient(this.getAttribute('data-ingredient'));
+                    });
+                });
+            }
+
+            // Find matching recipes
+            function findRecipes() {
+                if (ingredients.length === 0) {
+                    alert('Please add some ingredients first');
+                    return;
+                }
+
+                recipesGrid.innerHTML = '<div class="loading">Finding recipes that match your ingredients...</div>';
+
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    // Find recipes that include at least one of the ingredients
+                    const matchedRecipes = recipeDatabase.filter(recipe => {
+                        return recipe.ingredients.some(ingredient => 
+                            ingredients.some(userIngredient => 
+                                ingredient.includes(userIngredient)
+                            )
+                        );
+                    });
+
+                    displayRecipes(matchedRecipes);
+                }, 1000);
+            }
+
+            // Display recipes in grid
+            function displayRecipes(recipes) {
+                recipesGrid.innerHTML = '';
+
+                if (recipes.length === 0) {
+                    recipesGrid.innerHTML = '<div class="no-results">No recipes found with your ingredients. Try adding more ingredients.</div>';
+                    return;
+                }
+
+                recipes.forEach(recipe => {
+                    const card = document.createElement('div');
+                    card.className = 'recipe-card';
+                    
+                    // Highlight matching ingredients
+                    const matchingIngredients = recipe.ingredients.filter(ingredient => 
+                        ingredients.some(userIngredient => ingredient.includes(userIngredient))
+                    );
+                    
+                    const otherIngredients = recipe.ingredients.filter(ingredient => 
+                        !ingredients.some(userIngredient => ingredient.includes(userIngredient))
+                    );
+                    
+                    card.innerHTML = `
+                        <img src="${recipe.image}" alt="${recipe.title}" class="recipe-image">
+                        <div class="recipe-content">
+                            <h3 class="recipe-title">${recipe.title}</h3>
+                            <div class="recipe-meta">
+                                <span>${recipe.time}</span>
+                                <span>${recipe.difficulty}</span>
+                            </div>
+                            <div class="recipe-ingredients">
+                                <div class="ingredients-title">Ingredients (${matchingIngredients.length} matches)</div>
+                                <div class="ingredients-list-small">
+                                    ${matchingIngredients.map(ing => 
+                                        `<span class="ingredient-tag-small" style="background:#6C63FF;color:white;">${ing}</span>`
+                                    ).join('')}
+                                    ${otherIngredients.map(ing => 
+                                        `<span class="ingredient-tag-small">${ing}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            <a href="#" class="view-recipe">View Recipe →</a>
+                        </div>
+                    `;
+                    
+                    recipesGrid.appendChild(card);
+                });
+            }
+
+            // Event listeners
+            addIngredientBtn.addEventListener('click', addIngredient);
+            
+            ingredientForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                addIngredient();
+            });
+            
+            findRecipesBtn.addEventListener('click', findRecipes);
+
+            // Initialize
+            renderIngredients();
+        });
+    </script>
+</body>
+</html>

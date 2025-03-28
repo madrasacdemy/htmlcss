@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌧️ Living Digital Garden</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            height: 100vh;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%234CAF50" d="M12 2L4 12l8 4-4-4 8 8 4-16z"/></svg>'), auto;
+        }
+        
+        #garden {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .plant {
+            position: absolute;
+            bottom: 0;
+            width: 60px;
+            height: 0;
+            background-position: bottom;
+            background-repeat: no-repeat;
+            transition: height 1.5s ease-in-out;
+            filter: drop-shadow(0 0 5px rgba(0,100,0,0.3));
+        }
+        
+        .butterfly {
+            position: absolute;
+            width: 40px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70"><path fill="%23FFA000" d="M50 35C40 10 0 5 0 35C0 65 40 60 50 35C60 60 100 65 100 35C100 5 60 10 50 35Z"/><path fill="%23FF5722" d="M50 35C45 25 15 20 15 35C15 50 45 45 50 35C55 45 85 50 85 35C85 20 55 25 50 35Z"/><circle cx="50" cy="35" r="3" fill="%23212121"/></svg>');
+            background-size: contain;
+            animation: flutter 2s infinite alternate-reverse ease-in-out;
+            z-index: 10;
+        }
+        
+        .rain {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: rgba(174, 214, 241, 0.8);
+            animation: rain-fall linear forwards;
+        }
+        
+        .splash {
+            position: absolute;
+            width: 8px;
+            height: 5px;
+            background: rgba(174, 214, 241, 0.6);
+            border-radius: 50%;
+            animation: splash 0.4s ease-out forwards;
+        }
+        
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        #message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 25px;
+            border-radius: 25px;
+            opacity: 0;
+            transition: opacity 0.5s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;
+        }
+        
+        @keyframes flutter {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
+        }
+        
+        @keyframes rain-fall {
+            to { transform: translateY(100vh); }
+        }
+        
+        @keyframes splash {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to top, #8BC34A, #689F38);
+        }
+    </style>
+</head>
+<body>
+    <div id="garden">
+        <div class="ground"></div>
+    </div>
+    
+    <div id="controls">
+        <button id="plant-btn">🌱 Plant Garden</button>
+        <button id="rain-btn">🌧 Heavy Rain</button>
+        <button id="butterfly-btn">🦋 Add Butterflies</button>
+    </div>
+    
+    <div id="message"></div>
+
+    <script>
+        const garden = document.getElementById('garden');
+        const plantBtn = document.getElementById('plant-btn');
+        const rainBtn = document.getElementById('rain-btn');
+        const butterflyBtn = document.getElementById('butterfly-btn');
+        const messageEl = document.getElementById('message');
+        
+        const plantTypes = [
+            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 150"><path fill="%238BC34A" d="M30 150Q20 100 25 50Q15 70 30 0Q45 70 35 50Q40 100 30 150Z"/></svg>',
+            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120"><path fill="%234CAF50" d="M30 120Q15 80 30 40Q20 60 30 0Q40 60 30 40Q45 80 30 120Z"/></svg>',
+            'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 130"><path fill="%232E7D32" d="M40 130Q20 90 40 50Q25 70 40 0Q55 70 40 50Q60 90 40 130Z"/><circle cx="40" cy="30" r="10" fill="%23FFEB3B"/></svg>'
+        ];
+        
+        let butterflies = [];
+        let isRaining = false;
+        
+        // Plant multiple plants
+        plantBtn.addEventListener('click', () => {
+            showMessage("Growing a beautiful garden...");
+            
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createPlant();
+                }, i * 200);
+            }
+        });
+        
+        function createPlant() {
+            const plant = document.createElement('div');
+            plant.className = 'plant';
+            plant.style.left = `${Math.random() * 90 + 5}%`;
+            plant.style.backgroundImage = `url('${plantTypes[Math.floor(Math.random() * plantTypes.length)]}')`;
+            
+            garden.appendChild(plant);
+            
+            setTimeout(() => {
+                plant.style.height = `${Math.random() * 180 + 70}px`;
+            }, 100);
+        }
+        
+        // Heavy rain with splashes
+        rainBtn.addEventListener('click', () => {
+            if (isRaining) return;
+            
+            isRaining = true;
+            showMessage("Heavy rainfall! The plants are getting watered!");
+            
+            // Create continuous rain
+            const rainInterval = setInterval(() => {
+                for (let i = 0; i < 30; i++) {
+                    createRaindrop();
+                }
+            }, 100);
+            
+            // Stop rain after 5 seconds
+            setTimeout(() => {
+                clearInterval(rainInterval);
+                isRaining = false;
+                showMessage("The rain has stopped. The garden looks fresh!");
+            }, 5000);
+        });
+        
+        function createRaindrop() {
+            const raindrop = document.createElement('div');
+            raindrop.className = 'rain';
+            raindrop.style.left = `${Math.random() * 100}%`;
+            raindrop.style.top = '-20px';
+            raindrop.style.animationDuration = `${Math.random() * 0.5 + 0.3}s`;
+            
+            garden.appendChild(raindrop);
+            
+            // Create splash when raindrop hits bottom
+            setTimeout(() => {
+                if (isRaining) {
+                    createSplash(raindrop.style.left, window.innerHeight - 50);
+                }
+                raindrop.remove();
+            }, 300);
+        }
+        
+        function createSplash(x, y) {
+            const splash = document.createElement('div');
+            splash.className = 'splash';
+            splash.style.left = x;
+            splash.style.top = `${y}px`;
+            
+            garden.appendChild(splash);
+            
+            setTimeout(() => {
+                splash.remove();
+            }, 400);
+        }
+        
+        // Add multiple butterflies
+        butterflyBtn.addEventListener('click', () => {
+            showMessage("Butterflies are visiting your garden!");
+            
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createButterfly();
+                }, i * 300);
+            }
+        });
+        
+        function createButterfly() {
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.style.left = `${Math.random() * 80 + 10}%`;
+            butterfly.style.top = `${Math.random() * 60 + 20}%`;
+            butterfly.style.animationDuration = `${Math.random() * 2 + 1}s`;
+            
+            garden.appendChild(butterfly);
+            butterflies.push(butterfly);
+            
+            // Butterfly random movement
+            const moveButterfly = () => {
+                const x = Math.random() * 80 + 10;
+                const y = Math.random() * 60 + 20;
+                
+                butterfly.style.transition = `all ${Math.random() * 4 + 3}s cubic-bezier(0.4, 0, 0.2, 1)`;
+                butterfly.style.left = `${x}%`;
+                butterfly.style.top = `${y}%`;
+                
+                setTimeout(moveButterfly, (Math.random() * 8000) + 4000);
+            };
+            
+            moveButterfly();
+        }
+        
+        // Click to plant special flowers
+        garden.addEventListener('click', (e) => {
+            if (e.target === garden || e.target.className === 'ground') {
+                const flower = document.createElement('div');
+                flower.className = 'plant';
+                flower.style.left = `${e.clientX}px`;
+                flower.style.bottom = '0';
+                flower.style.backgroundImage = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 120"><path fill="%234CAF50" d="M30 120Q15 80 30 40Q20 60 30 0Q40 60 30 40Q45 80 30 120Z"/><circle cx="30" cy="30" r="15" fill="%23${Math.floor(Math.random()*16777215).toString(16)}"/></svg>')`;
+                
+                garden.appendChild(flower);
+                
+                setTimeout(() => {
+                    flower.style.height = `${Math.random() * 120 + 80}px`;
+                }, 100);
+                
+                showMessage("You planted a special flower!");
+            }
+        });
+        
+        function showMessage(text) {
+            messageEl.textContent = text;
+            messageEl.style.opacity = 1;
+            
+            setTimeout(() => {
+                messageEl.style.opacity = 0;
+            }, 3000);
+        }
+        
+        // Initialize with some plants
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                createPlant();
+            }, i * 300);
+        }
+    </script>
+</body>
+</html>

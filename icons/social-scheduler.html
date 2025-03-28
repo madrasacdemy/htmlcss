@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Social Media Scheduler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .platform-icon {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+        
+        .facebook { color: #3b5998; }
+        .twitter { color: #1da1f2; }
+        .instagram { color: #e1306c; }
+        .linkedin { color: #0077b5; }
+        
+        .analytics-chart {
+            height: 300px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .post-preview {
+            border-left: 4px solid var(--accent-color);
+            background-color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .optimal-time-badge {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        #contentEditor {
+            min-height: 150px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .drag-drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .drag-drop-area:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .schedule-timeline {
+            position: relative;
+            height: 60px;
+            background-color: #e9ecef;
+            border-radius: 30px;
+            margin: 20px 0;
+        }
+        
+        .time-marker {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .time-label {
+            position: absolute;
+            top: 100%;
+            font-size: 0.8rem;
+            transform: translateX(-50%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>AI Social Scheduler
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#schedule">Schedule</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analytics">Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings">Settings</a>
+                    </li>
+                    <li class="nav-item ms-2">
+                        <button class="btn btn-outline-primary btn-sm mt-1">Upgrade</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="mb-5">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2>Dashboard</h2>
+                    <p class="text-muted">Welcome back! Here's your social media overview.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Create New Post
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Stats Cards -->
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-calendar-alt platform-icon text-primary"></i>
+                                <div>
+                                    <h5 class="mb-0">24</h5>
+                                    <small class="text-muted">Scheduled Posts</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-chart-line platform-icon text-success"></i>
+                                <div>
+                                    <h5 class="mb-0">8.2%</h5>
+                                    <small class="text-muted">Avg. Engagement</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users platform-icon text-info"></i>
+                                <div>
+                                    <h5 class="mb-0">1,248</h5>
+                                    <small class="text-muted">New Followers</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-bolt platform-icon text-warning"></i>
+                                <div>
+                                    <h5 class="mb-0">3.1x</h5>
+                                    <small class="text-muted">Performance</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">Recent Activity</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="post-preview">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <span class="badge bg-primary me-2">Facebook</span>
+                                        <span class="badge optimal-time-badge">Optimal Time</span>
+                                    </div>
+                                    <small class="text-muted">Posted 2 hours ago</small>
+                                </div>
+                                <p class="mt-2 mb-1">Our new product launch was a success! Thank you to everyone who joined us.</p>
+                                <div class="d-flex align-items-center mt-2">
+                                    <small class="text-muted me-3"><i class="fas fa-heart me-1 text-danger"></i> 142</small>
+                                    <small class="text-muted me-3"><i class="fas fa-comment me-1"></i> 28</small>
+                                    <small class="text-muted"><i class="fas fa-share me-1"></i> 17</small>
+                                </div>
+                            </div>
+                            
+                            <div class="post-preview">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <span class="badge bg-info me-2">Twitter</span>
+                                    </div>
+                                    <small class="text-muted">Posted 5 hours ago</small>
+                                </div>
+                                <p class="mt-2 mb-1">Check out our latest blog post about AI-powered marketing strategies!</p>
+                                <div class="d-flex align-items-center mt-2">
+                                    <small class="text-muted me-3"><i class="fas fa-heart me-1 text-danger"></i> 89</small>
+                                    <small class="text-muted me-3"><i class="fas fa-comment me-1"></i> 14</small>
+                                    <small class="text-muted"><i class="fas fa-retweet me-1"></i> 23</small>
+                                </div>
+                            </div>
+                            
+                            <div class="post-preview">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <span class="badge bg-danger me-2">Instagram</span>
+                                        <span class="badge optimal-time-badge">Optimal Time</span>
+                                    </div>
+                                    <small class="text-muted">Posted yesterday</small>
+                                </div>
+                                <p class="mt-2 mb-1">Behind the scenes at our office - teamwork makes the dream work!</p>
+                                <div class="d-flex align-items-center mt-2">
+                                    <small class="text-muted me-3"><i class="fas fa-heart me-1 text-danger"></i> 324</small>
+                                    <small class="text-muted me-3"><i class="fas fa-comment me-1"></i> 42</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Optimal Posting Times -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">Optimal Posting Times</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="mb-3">Based on your audience activity</h6>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Facebook</span>
+                                    <small class="text-muted">Best: 9:00 AM - 11:00 AM</small>
+                                </div>
+                                <div class="schedule-timeline">
+                                    <div class="time-marker" style="left: 25%;"></div>
+                                    <div class="time-marker" style="left: 35%;"></div>
+                                    <div class="time-marker" style="left: 75%;"></div>
+                                    <div class="time-label" style="left: 25%;">9 AM</div>
+                                    <div class="time-label" style="left: 50%;">12 PM</div>
+                                    <div class="time-label" style="left: 75%;">3 PM</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Twitter</span>
+                                    <small class="text-muted">Best: 1:00 PM - 3:00 PM</small>
+                                </div>
+                                <div class="schedule-timeline">
+                                    <div class="time-marker" style="left: 15%;"></div>
+                                    <div class="time-marker" style="left: 45%;"></div>
+                                    <div class="time-marker" style="left: 55%;"></div>
+                                    <div class="time-label" style="left: 25%;">9 AM</div>
+                                    <div class="time-label" style="left: 50%;">12 PM</div>
+                                    <div class="time-label" style="left: 75%;">3 PM</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Instagram</span>
+                                    <small class="text-muted">Best: 7:00 PM - 9:00 PM</small>
+                                </div>
+                                <div class="schedule-timeline">
+                                    <div class="time-marker" style="left: 65%;"></div>
+                                    <div class="time-marker" style="left: 75%;"></div>
+                                    <div class="time-marker" style="left: 85%;"></div>
+                                    <div class="time-label" style="left: 25%;">5 PM</div>
+                                    <div class="time-label" style="left: 50%;">7 PM</div>
+                                    <div class="time-label" style="left: 75%;">9 PM</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-sm btn-outline-primary w-100">
+                                <i class="fas fa-sync-alt me-2"></i>Refresh AI Analysis
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Schedule Section -->
+        <section id="schedule" class="mb-5 py-4 border-top">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Create New Post</h2>
+                    <p class="text-muted">Let AI help you schedule at the best times for engagement.</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Post Content</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Platforms</label>
+                                <div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="facebookCheck" checked>
+                                        <label class="form-check-label" for="facebookCheck">
+                                            <i class="fab fa-facebook-f me-1 facebook"></i>Facebook
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="twitterCheck">
+                                        <label class="form-check-label" for="twitterCheck">
+                                            <i class="fab fa-twitter me-1 twitter"></i>Twitter
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="instagramCheck" checked>
+                                        <label class="form-check-label" for="instagramCheck">
+                                            <i class="fab fa-instagram me-1 instagram"></i>Instagram
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="linkedinCheck">
+                                        <label class="form-check-label" for="linkedinCheck">
+                                            <i class="fab fa-linkedin-in me-1 linkedin"></i>LinkedIn
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Post Content</label>
+                                <div id="contentEditor" contenteditable="true">What's on your mind?</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Media</label>
+                                <div class="drag-drop-area">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-muted"></i>
+                                    <h5>Drag & Drop Files Here</h5>
+                                    <p class="text-muted">or click to browse</p>
+                                    <input type="file" class="d-none" id="fileUpload" multiple>
+                                </div>
+                                <div class="d-flex flex-wrap mt-2" id="mediaPreview"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">AI Suggestions</label>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-lightbulb me-2"></i>
+                                    Based on your past performance, we recommend including a call-to-action and 1-2 hashtags for better engagement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Schedule Options</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Posting Strategy</label>
+                                <select class="form-select">
+                                    <option selected>AI-Optimized Timing</option>
+                                    <option>Specific Date & Time</option>
+                                    <option>Recurring Post</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Suggested Times</label>
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                                        Today at 9:15 AM
+                                        <span class="badge bg-primary rounded-pill">Best</span>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        Today at 2:30 PM
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        Tomorrow at 7:45 AM
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        Custom Time...
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">AI Predictions</label>
+                                <div class="alert alert-success">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Estimated Engagement:</span>
+                                        <strong>8.5% - 11.2%</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Expected Reach:</span>
+                                        <strong>1,200 - 1,800</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Optimal Hashtags:</span>
+                                        <strong>#SocialMedia #AIMarketing</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary w-100">
+                                <i class="fas fa-calendar-check me-2"></i>Schedule Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Analytics Section -->
+        <section id="analytics" class="mb-5 py-4 border-top">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Performance Analytics</h2>
+                    <p class="text-muted">AI-powered insights to improve your social media strategy.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <select class="form-select d-inline-block w-auto">
+                        <option>Last 7 Days</option>
+                        <option selected>Last 30 Days</option>
+                        <option>Last 90 Days</option>
+                        <option>Custom Range</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Engagement Trends</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="analytics-chart">
+                                <!-- Placeholder for chart -->
+                                <div class="d-flex justify-content-center align-items-center h-100 text-muted">
+                                    <i class="fas fa-chart-bar fa-3x me-3"></i>
+                                    <h4>Engagement Data Visualization</h4>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-primary">8.2%</h3>
+                                            <small class="text-muted">Avg. Engagement Rate</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-success">+1.5%</h3>
+                                            <small class="text-muted">vs Previous Period</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h3 class="text-warning">3.1x</h3>
+                                            <small class="text-muted">Industry Benchmark</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="mb-0">Top Performing Posts</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-primary me-2">FB</span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <small class="text-muted">Jun 12 at 9:15 AM</small>
+                                        <p class="mb-1">Our biggest sale of the year starts today! Don't miss out...</p>
+                                        <small class="text-muted"><i class="fas fa-heart text-danger me-1"></i> 245</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-danger me-2">IG</span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <small class="text-muted">Jun 8 at 7:30 PM</small>
+                                        <p class="mb-1">Team building day at the park! #CompanyCulture</p>
+                                        <small class="text-muted"><i class="fas fa-heart text-danger me-1"></i> 312</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-start mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-info me-2">TW</span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <small class="text-muted">Jun 5 at 2:45 PM</small>
+                                        <p class="mb-1">Just published: The future of AI in digital marketing...</p>
+                                        <small class="text-muted"><i class="fas fa-retweet text-info me-1"></i> 87</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex align-items-start">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-primary me-2">FB</span>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <small class="text-muted">May 29 at 10:00 AM</small>
+                                        <p class="mb-1">Customer success story: How we helped @Client grow by 150%</p>
+                                        <small class="text-muted"><i class="fas fa-share text-primary me-1"></i> 42</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-warning">
+                                <i class="fas fa-bullseye me-2"></i>
+                                Posts with images perform 2.3x better for your audience.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">AI Recommendations</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card border-0 bg-light h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-clock text-primary fa-2x me-3"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h5>Posting Frequency</h5>
+                                                    <p>Our AI recommends increasing your Facebook posts to 5x/week for optimal engagement.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card border-0 bg-light h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-hashtag text-success fa-2x me-3"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h5>Hashtag Strategy</h5>
+                                                    <p>Using 3-5 hashtags on Instagram increases your reach by 18% on average.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="card border-0 bg-light h-100">
+                                        <div class="card-body">
+                                            <div class="d-flex align-items-start">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-image text-warning fa-2x me-3"></i>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h5>Content Mix</h5>
+                                                    <p>Videos receive 48% more engagement than images for your LinkedIn audience.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Settings Section -->
+        <section id="settings" class="py-4 border-top">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2>Account Settings</h2>
+                    <p class="text-muted">Manage your connected accounts and AI preferences.</p>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Connected Accounts</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Platform</th>
+                                            <th>Account</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><i class="fab fa-facebook-f me-2 facebook"></i>Facebook</td>
+                                            <td>My Business Page</td>
+                                            <td><span class="badge bg-success">Connected</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fab fa-twitter me-2 twitter"></i>Twitter</td>
+                                            <td>@mybusiness</td>
+                                            <td><span class="badge bg-success">Connected</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fab fa-instagram me-2 instagram"></i>Instagram</td>
+                                            <td>@mybusiness</td>
+                                            <td><span class="badge bg-success">Connected</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><i class="fab fa-linkedin-in me-2 linkedin"></i>LinkedIn</td>
+                                            <td>Company Page</td>
+                                            <td><span class="badge bg-warning">Needs Refresh</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                                                <button class="btn btn-sm btn-outline-danger">Disconnect</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <button class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Connect Another Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">AI Preferences</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Learning Mode</label>
+                                <select class="form-select">
+                                    <option selected>Aggressive Optimization</option>
+                                    <option>Balanced Approach</option>
+                                    <option>Conservative Testing</option>
+                                </select>
+                                <small class="text-muted">How quickly should the AI adapt to new patterns?</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Primary Goal</label>
+                                <select class="form-select">
+                                    <option>Maximize Engagement</option>
+                                    <option selected>Increase Followers</option>
+                                    <option>Drive Website Traffic</option>
+                                    <option>Generate Leads</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Content Types</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="imagesCheck" checked>
+                                    <label class="form-check-label" for="imagesCheck">Images</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="videosCheck" checked>
+                                    <label class="form-check-label" for="videosCheck">Videos</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="textCheck" checked>
+                                    <label class="form-check-label" for="textCheck">Text Posts</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="storiesCheck">
+                                    <label class="form-check-label" for="storiesCheck">Stories</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">AI Analysis Frequency</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="analysisFreq" id="dailyCheck" checked>
+                                    <label class="form-check-label" for="dailyCheck">Daily</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="analysisFreq" id="weeklyCheck">
+                                    <label class="form-check-label" for="weeklyCheck">Weekly</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="analysisFreq" id="monthlyCheck">
+                                    <label class="form-check-label" for="monthlyCheck">Monthly</label>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary w-100">
+                                <i class="fas fa-save me-2"></i>Save Preferences
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5 border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2023 AI Social Scheduler. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none me-3">Terms of Service</a>
+                    <a href="#" class="text-decoration-none">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Simple drag and drop functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const dragDropArea = document.querySelector('.drag-drop-area');
+            const fileUpload = document.getElementById('fileUpload');
+            const mediaPreview = document.getElementById('mediaPreview');
+            
+            // Click to upload
+            dragDropArea.addEventListener('click', () => fileUpload.click());
+            
+            // Drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dragDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dragDropArea.classList.add('bg-primary', 'bg-opacity-10');
+            }
+            
+            function unhighlight() {
+                dragDropArea.classList.remove('bg-primary', 'bg-opacity-10');
+            }
+            
+            // Handle dropped files
+            dragDropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            // Handle selected files
+            fileUpload.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            function handleFiles(files) {
+                mediaPreview.innerHTML = '';
+                
+                if (files.length > 0) {
+                    dragDropArea.querySelector('h5').textContent = `${files.length} file(s) selected`;
+                    dragDropArea.querySelector('p').textContent = 'Click to change';
+                    
+                    for (let i = 0; i < Math.min(files.length, 3); i++) {
+                        const file = files[i];
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'position-relative me-2 mb-2';
+                            previewDiv.style.width = '100px';
+                            previewDiv.style.height = '100px';
+                            
+                            if (file.type.startsWith('image/')) {
+                                previewDiv.innerHTML = `
+                                    <img src="${e.target.result}" class="img-thumbnail w-100 h-100 object-fit-cover">
+                                    <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                `;
+                            } else if (file.type.startsWith('video/')) {
+                                previewDiv.innerHTML = `
+                                    <div class="bg-dark text-white w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                        <i class="fas fa-video mb-2"></i>
+                                        <small>${file.name}</small>
+                                        <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                `;
+                            } else {
+                                previewDiv.innerHTML = `
+                                    <div class="bg-secondary text-white w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                                        <i class="fas fa-file mb-2"></i>
+                                        <small>${file.name}</small>
+                                        <button class="btn btn-danger btn-sm position-absolute top-0 end-0 m-1">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                            
+                            mediaPreview.appendChild(previewDiv);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                    
+                    if (files.length > 3) {
+                        const moreFilesDiv = document.createElement('div');
+                        moreFilesDiv.className = 'd-flex justify-content-center align-items-center bg-light';
+                        moreFilesDiv.style.width = '100px';
+                        moreFilesDiv.style.height = '100px';
+                        moreFilesDiv.innerHTML = `
+                            <span class="badge bg-primary">+${files.length - 3} more</span>
+                        `;
+                        mediaPreview.appendChild(moreFilesDiv);
+                    }
+                }
+            }
+            
+            // Remove media preview
+            mediaPreview.addEventListener('click', function(e) {
+                if (e.target.closest('.btn-danger')) {
+                    e.target.closest('.position-relative').remove();
+                    
+                    if (mediaPreview.children.length === 0) {
+                        resetDragDropArea();
+                    }
+                }
+            });
+            
+            function resetDragDropArea() {
+                dragDropArea.querySelector('h5').textContent = 'Drag & Drop Files Here';
+                dragDropArea.querySelector('p').textContent = 'or click to browse';
+                fileUpload.value = '';
+            }
+            
+            // Simple tab navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
