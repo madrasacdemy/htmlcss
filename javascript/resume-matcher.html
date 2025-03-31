@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Matcher</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #3b82f6;
+            --background-color: #f8fafc;
+            --text-color: #1e293b;
+            --accent-color: #1d4ed8;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --border-radius: 8px;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px 0;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .input-section, .results-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        textarea, input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-weight: 500;
+            transition: background-color 0.2s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+        }
+
+        button:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .match-results {
+            margin-top: 20px;
+        }
+
+        .match-score {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--primary-color);
+        }
+
+        .progress-container {
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        .strengths, .weaknesses {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .strengths {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .weaknesses {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        h3 {
+            margin-top: 0;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .keyword {
+            background: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+
+        .match-keyword {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .missing-keyword {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .file-upload.active {
+            border-color: var(--primary-color);
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .tab-nav {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-Powered Resume Matcher</h1>
+            <p class="subtitle">Upload your resume and a job description to get a compatibility score and improvement suggestions</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <div class="tab-nav">
+                    <div class="tab active" data-tab="upload">Upload Resume</div>
+                    <div class="tab" data-tab="paste">Paste Resume</div>
+                </div>
+
+                <div class="tab-content active" id="upload-tab">
+                    <div class="file-upload" id="dropZone">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Drag & drop your resume here</p>
+                        <p>or</p>
+                        <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx,.txt">
+                        <div class="file-info" id="fileInfo">No file selected</div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="paste-tab">
+                    <div class="form-group">
+                        <label for="resumeText">Paste your resume text:</label>
+                        <textarea id="resumeText" placeholder="Copy and paste your resume content here..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="jobDescription">Job Description:</label>
+                    <textarea id="jobDescription" placeholder="Paste the job description you're applying for..."></textarea>
+                </div>
+
+                <button id="analyzeBtn">Analyze Match</button>
+                <div class="loading" id="loadingIndicator">
+                    <div class="spinner"></div>
+                    <p>Analyzing your resume...</p>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Matching Results</h2>
+                <div id="resultsPlaceholder">
+                    <p>Your analysis results will appear here after you submit your resume and job description.</p>
+                </div>
+                <div id="resultsContent" style="display: none;">
+                    <div class="match-score">
+                        <span id="matchPercentage">0</span>% Match
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
+
+                    <div class="strengths">
+                        <h3>Strengths</h3>
+                        <ul id="strengthsList"></ul>
+                    </div>
+
+                    <div class="weaknesses">
+                        <h3>Areas for Improvement</h3>
+                        <ul id="weaknessesList"></ul>
+                    </div>
+
+                    <div class="keyword-analysis">
+                        <h3>Keyword Analysis</h3>
+                        <p>Keywords found in job description:</p>
+                        <div class="keyword-list" id="keywordsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // File upload handling
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('resumeUpload');
+            const fileInfo = document.getElementById('fileInfo');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', () => {
+                if (fileInput.files.length > 0) {
+                    fileInfo.textContent = fileInput.files[0].name;
+                }
+            });
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, highlight, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropZone.classList.add('active');
+            }
+
+            function unhighlight() {
+                dropZone.classList.remove('active');
+            }
+
+            dropZone.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                fileInput.files = files;
+                fileInfo.textContent = files[0].name;
+            }
+
+            // Analysis button
+            document.getElementById('analyzeBtn').addEventListener('click', analyzeResume);
+
+            async function analyzeResume() {
+                const jobDescription = document.getElementById('jobDescription').value.trim();
+                let resumeText = '';
+
+                // Get resume text based on active tab
+                const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+                
+                if (activeTab === 'paste') {
+                    resumeText = document.getElementById('resumeText').value.trim();
+                } else {
+                    if (fileInput.files.length === 0) {
+                        alert('Please upload your resume first');
+                        return;
+                    }
+                    // In a real app, you would extract text from the uploaded file
+                    // For this demo, we'll just simulate it
+                    resumeText = "[Simulated resume text extracted from uploaded file]";
+                }
+
+                if (!resumeText || !jobDescription) {
+                    alert('Please provide both your resume and the job description');
+                    return;
+                }
+
+                // Show loading indicator
+                document.getElementById('loadingIndicator').style.display = 'block';
+                document.getElementById('analyzeBtn').disabled = true;
+
+                // Simulate API call with timeout
+                setTimeout(() => {
+                    // This is where you would call your actual AI matching API
+                    // For this demo, we'll generate simulated results
+                    const matchScore = Math.floor(Math.random() * 30) + 70; // Random score between 70-100%
+                    const strengths = generateRandomStrengths();
+                    const weaknesses = generateRandomWeaknesses();
+                    const keywords = generateRandomKeywords();
+
+                    displayResults(matchScore, strengths, weaknesses, keywords);
+
+                    // Hide loading indicator
+                    document.getElementById('loadingIndicator').style.display = 'none';
+                    document.getElementById('analyzeBtn').disabled = false;
+                }, 2000);
+            }
+
+            function generateRandomStrengths() {
+                const possibleStrengths = [
+                    "Your experience with project management matches well with the job requirements",
+                    "You have all the required technical skills mentioned in the job description",
+                    "Your education background is a perfect fit for this role",
+                    "You demonstrate strong leadership experience which is valued for this position",
+                    "Your previous job titles closely match what they're looking for"
+                ];
+                return shuffleArray(possibleStrengths).slice(0, 3);
+            }
+
+            function generateRandomWeaknesses() {
+                const possibleWeaknesses = [
+                    "Consider adding more keywords from the job description like 'agile methodology' and 'cross-functional teams'",
+                    "The job requires 5+ years of experience in this field, but your resume shows 3 years",
+                    "You might want to highlight your teamwork skills more prominently",
+                    "Add more metrics and quantifiable achievements to strengthen your resume",
+                    "The job description emphasizes cloud computing skills which aren't clearly shown in your resume"
+                ];
+                return shuffleArray(possibleWeaknesses).slice(0, 3);
+            }
+
+            function generateRandomKeywords() {
+                const possibleKeywords = [
+                    {text: "JavaScript", matched: true},
+                    {text: "React", matched: true},
+                    {text: "Node.js", matched: false},
+                    {text: "Agile", matched: true},
+                    {text: "Team Leadership", matched: true},
+                    {text: "AWS", matched: false},
+                    {text: "Python", matched: true},
+                    {text: "Data Analysis", matched: false},
+                    {text: "Project Management", matched: true},
+                    {text: "SQL", matched: true}
+                ];
+                return shuffleArray(possibleKeywords);
+            }
+
+            function shuffleArray(array) {
+                return array.sort(() => Math.random() - 0.5);
+            }
+
+            function displayResults(score, strengths, weaknesses, keywords) {
+                document.getElementById('resultsPlaceholder').style.display = 'none';
+                const resultsContent = document.getElementById('resultsContent');
+                resultsContent.style.display = 'block';
+
+                // Animate the score
+                animateValue('matchPercentage', 0, score, 1000);
+                animateProgressBar('progressBar', 0, score, 1000);
+
+                // Display strengths and weaknesses
+                const strengthsList = document.getElementById('strengthsList');
+                strengthsList.innerHTML = '';
+                strengths.forEach(strength => {
+                    const li = document.createElement('li');
+                    li.textContent = strength;
+                    strengthsList.appendChild(li);
+                });
+
+                const weaknessesList = document.getElementById('weaknessesList');
+                weaknessesList.innerHTML = '';
+                weaknesses.forEach(weakness => {
+                    const li = document.createElement('li');
+                    li.textContent = weakness;
+                    weaknessesList.appendChild(li);
+                });
+
+                // Display keywords
+                const keywordsList = document.getElementById('keywordsList');
+                keywordsList.innerHTML = '';
+                keywords.forEach(keyword => {
+                    const span = document.createElement('span');
+                    span.textContent = keyword.text;
+                    span.classList.add('keyword');
+                    if (keyword.matched) {
+                        span.classList.add('match-keyword');
+                    } else {
+                        span.classList.add('missing-keyword');
+                    }
+                    keywordsList.appendChild(span);
+                });
+            }
+
+            function animateValue(id, start, end, duration) {
+                const obj = document.getElementById(id);
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    obj.innerHTML = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+
+            function animateProgressBar(id, start, end, duration) {
+                const element = document.getElementById(id);
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    element.style.width = progress * (end - start) + start + '%';
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+        });
+    </script>
+</body>
+</html>

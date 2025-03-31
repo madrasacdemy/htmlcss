@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Builder</title>
+    <style>
+        :root {
+            --primary-color: #6200ee;
+            --secondary-color: #03dac6;
+            --background-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #3700b3;
+            --error-color: #b00020;
+            --font-family: 'Roboto', sans-serif;
+            --border-radius: 4px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .controls {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .preview {
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--accent-color);
+        }
+
+        .button-secondary {
+            background-color: var(--secondary-color);
+            color: #000;
+        }
+
+        .button-secondary:hover {
+            opacity: 0.9;
+        }
+
+        .preview-component {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            font-family: var(--font-family);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background-color: rgba(0, 200, 83, 0.1);
+            border: 1px solid rgba(0, 200, 83, 0.3);
+        }
+
+        .alert-error {
+            background-color: rgba(176, 0, 32, 0.1);
+            border: 1px solid rgba(176, 0, 32, 0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-tab.active {
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: 500;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .css-output {
+            width: 100%;
+            height: 200px;
+            font-family: monospace;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            resize: vertical;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+        }
+
+        .theme-name-input {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <h1>Theme Builder</h1>
+            
+            <div class="control-group">
+                <label for="themeName">Theme Name</label>
+                <input type="text" id="themeName" class="form-control theme-name-input" placeholder="My Custom Theme">
+            </div>
+            
+            <div class="nav-tabs">
+                <div class="nav-tab active" data-tab="colors">Colors</div>
+                <div class="nav-tab" data-tab="typography">Typography</div>
+                <div class="nav-tab" data-tab="spacing">Spacing</div>
+            </div>
+            
+            <div class="tab-content active" id="colors-tab">
+                <div class="control-group">
+                    <label for="primaryColor">Primary Color</label>
+                    <input type="color" id="primaryColor" value="#6200ee">
+                </div>
+                
+                <div class="control-group">
+                    <label for="secondaryColor">Secondary Color</label>
+                    <input type="color" id="secondaryColor" value="#03dac6">
+                </div>
+                
+                <div class="control-group">
+                    <label for="backgroundColor">Background Color</label>
+                    <input type="color" id="backgroundColor" value="#ffffff">
+                </div>
+                
+                <div class="control-group">
+                    <label for="textColor">Text Color</label>
+                    <input type="color" id="textColor" value="#000000">
+                </div>
+                
+                <div class="control-group">
+                    <label for="accentColor">Accent Color</label>
+                    <input type="color" id="accentColor" value="#3700b3">
+                </div>
+                
+                <div class="control-group">
+                    <label for="errorColor">Error Color</label>
+                    <input type="color" id="errorColor" value="#b00020">
+                </div>
+            </div>
+            
+            <div class="tab-content" id="typography-tab">
+                <div class="control-group">
+                    <label for="fontFamily">Font Family</label>
+                    <select id="fontFamily">
+                        <option value="'Roboto', sans-serif">Roboto</option>
+                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                        <option value="'Montserrat', sans-serif">Montserrat</option>
+                        <option value="'Lato', sans-serif">Lato</option>
+                        <option value="'Poppins', sans-serif">Poppins</option>
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="Georgia, serif">Georgia</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="borderRadius">Border Radius (px)</label>
+                    <input type="text" id="borderRadius" value="4">
+                </div>
+            </div>
+            
+            <div class="tab-content" id="spacing-tab">
+                <div class="control-group">
+                    <label for="basePadding">Base Padding (px)</label>
+                    <input type="text" id="basePadding" value="20">
+                </div>
+                
+                <div class="control-group">
+                    <label for="baseMargin">Base Margin (px)</label>
+                    <input type="text" id="baseMargin" value="20">
+                </div>
+            </div>
+            
+            <button id="exportBtn">Export CSS</button>
+            <button id="resetBtn" class="button-secondary">Reset</button>
+            
+            <div id="cssOutputContainer" style="display: none; margin-top: 20px;">
+                <h3>Your Custom CSS</h3>
+                <textarea id="cssOutput" class="css-output" readonly></textarea>
+                <button id="copyBtn" class="copy-btn">Copy to Clipboard</button>
+                <div id="copyStatus" class="alert" style="display: none;"></div>
+            </div>
+        </div>
+        
+        <div class="preview">
+            <h2>Theme Preview</h2>
+            
+            <div class="preview-component">
+                <h3>Typography</h3>
+                <h1>Heading 1</h1>
+                <h2>Heading 2</h2>
+                <h3>Heading 3</h3>
+                <p>This is a paragraph of text showing how your body text will look. You can customize the font family, colors, and other properties using the controls on the left.</p>
+            </div>
+            
+            <div class="preview-component">
+                <h3>Buttons</h3>
+                <button>Primary Button</button>
+                <button class="button-secondary">Secondary Button</button>
+            </div>
+            
+            <div class="preview-component">
+                <h3>Form Elements</h3>
+                <div class="form-group">
+                    <label for="sampleInput">Sample Input</label>
+                    <input type="text" id="sampleInput" class="form-control" placeholder="Type something...">
+                </div>
+                <div class="form-group">
+                    <label for="sampleSelect">Sample Select</label>
+                    <select id="sampleSelect" class="form-control">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="preview-component">
+                <h3>Cards & Alerts</h3>
+                <div class="card">
+                    <h4>Card Title</h4>
+                    <p>This is a card component that you can use to display content in a contained area.</p>
+                </div>
+                
+                <div class="alert alert-success">
+                    This is a success message alert.
+                </div>
+                
+                <div class="alert alert-error">
+                    This is an error message alert.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+            
+            // Form controls
+            const controls = [
+                'primaryColor', 'secondaryColor', 'backgroundColor', 'textColor', 
+                'accentColor', 'errorColor', 'fontFamily', 'borderRadius'
+            ];
+            
+            // Update preview when controls change
+            controls.forEach(controlId => {
+                document.getElementById(controlId).addEventListener('input', updateTheme);
+            });
+            
+            // Export CSS
+            document.getElementById('exportBtn').addEventListener('click', exportCSS);
+            
+            // Reset to defaults
+            document.getElementById('resetBtn').addEventListener('click', resetTheme);
+            
+            // Copy to clipboard
+            document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+            
+            function updateTheme() {
+                const root = document.documentElement;
+                
+                // Update color variables
+                root.style.setProperty('--primary-color', document.getElementById('primaryColor').value);
+                root.style.setProperty('--secondary-color', document.getElementById('secondaryColor').value);
+                root.style.setProperty('--background-color', document.getElementById('backgroundColor').value);
+                root.style.setProperty('--text-color', document.getElementById('textColor').value);
+                root.style.setProperty('--accent-color', document.getElementById('accentColor').value);
+                root.style.setProperty('--error-color', document.getElementById('errorColor').value);
+                
+                // Update typography
+                root.style.setProperty('--font-family', document.getElementById('fontFamily').value);
+                root.style.setProperty('--border-radius', document.getElementById('borderRadius').value + 'px');
+            }
+            
+            function exportCSS() {
+                const themeName = document.getElementById('themeName').value || 'custom-theme';
+                const primaryColor = document.getElementById('primaryColor').value;
+                const secondaryColor = document.getElementById('secondaryColor').value;
+                const backgroundColor = document.getElementById('backgroundColor').value;
+                const textColor = document.getElementById('textColor').value;
+                const accentColor = document.getElementById('accentColor').value;
+                const errorColor = document.getElementById('errorColor').value;
+                const fontFamily = document.getElementById('fontFamily').value;
+                const borderRadius = document.getElementById('borderRadius').value + 'px';
+                
+                const css = `/* ${themeName} */
+:root {
+    --primary-color: ${primaryColor};
+    --secondary-color: ${secondaryColor};
+    --background-color: ${backgroundColor};
+    --text-color: ${textColor};
+    --accent-color: ${accentColor};
+    --error-color: ${errorColor};
+    --font-family: ${fontFamily};
+    --border-radius: ${borderRadius};
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary-color);
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+}
+
+button:hover {
+    background-color: var(--accent-color);
+}
+
+.button-secondary {
+    background-color: var(--secondary-color);
+    color: #000;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: var(--border-radius);
+}
+
+.alert-success {
+    background-color: rgba(0, 200, 83, 0.1);
+    border: 1px solid rgba(0, 200, 83, 0.3);
+}
+
+.alert-error {
+    background-color: rgba(176, 0, 32, 0.1);
+    border: 1px solid rgba(176, 0, 32, 0.3);
+}
+
+.card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Add your custom styles below */`;
+                
+                document.getElementById('cssOutput').value = css;
+                document.getElementById('cssOutputContainer').style.display = 'block';
+            }
+            
+            function resetTheme() {
+                document.getElementById('primaryColor').value = '#6200ee';
+                document.getElementById('secondaryColor').value = '#03dac6';
+                document.getElementById('backgroundColor').value = '#ffffff';
+                document.getElementById('textColor').value = '#000000';
+                document.getElementById('accentColor').value = '#3700b3';
+                document.getElementById('errorColor').value = '#b00020';
+                document.getElementById('fontFamily').value = "'Roboto', sans-serif";
+                document.getElementById('borderRadius').value = '4';
+                document.getElementById('themeName').value = '';
+                
+                updateTheme();
+                document.getElementById('cssOutputContainer').style.display = 'none';
+            }
+            
+            function copyToClipboard() {
+                const cssOutput = document.getElementById('cssOutput');
+                cssOutput.select();
+                document.execCommand('copy');
+                
+                const copyStatus = document.getElementById('copyStatus');
+                copyStatus.textContent = 'CSS copied to clipboard!';
+                copyStatus.style.display = 'block';
+                copyStatus.className = 'alert alert-success';
+                
+                setTimeout(() => {
+                    copyStatus.style.display = 'none';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
