@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Sports Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        h1 {
+            margin: 0;
+            font-weight: 600;
+            color: #222;
+        }
+        
+        .last-updated {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .sport-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .sport-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .sport-tab.active {
+            background-color: #222;
+            color: white;
+            border-color: #222;
+        }
+        
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .game-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .game-status {
+            font-weight: 500;
+        }
+        
+        .live-status {
+            color: #d32f2f;
+            display: flex;
+            align-items: center;
+        }
+        
+        .live-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: #d32f2f;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        .teams {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .team {
+            display: flex;
+            align-items: center;
+        }
+        
+        .team-logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 12px;
+            object-fit: contain;
+        }
+        
+        .team-name {
+            flex-grow: 1;
+            font-weight: 500;
+        }
+        
+        .team-score {
+            font-weight: 600;
+            font-size: 18px;
+            min-width: 30px;
+            text-align: right;
+        }
+        
+        .game-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .refresh-btn {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #222;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .games-container {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Live Sports Scores</h1>
+            <div>
+                <button class="refresh-btn" onclick="fetchGames()">
+                    <span>Refresh</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                </button>
+                <div class="last-updated" id="lastUpdated">Last updated: Just now</div>
+            </div>
+        </header>
+        
+        <div class="sport-selector">
+            <div class="sport-tab active" onclick="filterGames('all')">All Sports</div>
+            <div class="sport-tab" onclick="filterGames('football')">Football</div>
+            <div class="sport-tab" onclick="filterGames('basketball')">Basketball</div>
+            <div class="sport-tab" onclick="filterGames('tennis')">Tennis</div>
+            <div class="sport-tab" onclick="filterGames('hockey')">Hockey</div>
+            <div class="sport-tab" onclick="filterGames('baseball')">Baseball</div>
+        </div>
+        
+        <div id="gamesContainer" class="games-container">
+            <!-- Games will be loaded here -->
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data - in a real app you would fetch from a sports API
+        const mockGames = [
+    {
+        id: 1,
+        sport: 'football',
+        league: 'Premier League',
+        homeTeam: 'Arsenal',
+        awayTeam: 'Chelsea',
+        homeScore: 2,
+        awayScore: 1,
+        status: 'live',
+        time: '72\'',
+        homeLogo: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
+        awayLogo: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg'
+    },
+    {
+        id: 2,
+        sport: 'basketball',
+        league: 'NBA',
+        homeTeam: 'Lakers',
+        awayTeam: 'Warriors',
+        homeScore: 98,
+        awayScore: 102,
+        status: 'live',
+        time: 'Q4 07:32',
+        homeLogo: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Los_Angeles_Lakers_logo.svg',
+        awayLogo: 'https://upload.wikimedia.org/wikipedia/en/0/01/Golden_State_Warriors_logo.svg'
+    },
+    {
+        id: 3,
+        sport: 'tennis',
+        league: 'ATP Masters',
+        homeTeam: 'Nadal',
+        awayTeam: 'Djokovic',
+        homeScore: 2,
+        awayScore: 1,
+        status: 'live',
+        time: '3rd Set',
+         homeLogo: 'https://upload.wikimedia.org/wikipedia/en/5/53/Arsenal_FC.svg',
+        awayLogo: 'https://upload.wikimedia.org/wikipedia/en/c/cc/Chelsea_FC.svg'
+    },
+    {
+        id: 4,
+        sport: 'hockey',
+        league: 'NHL',
+        homeTeam: 'Maple Leafs',
+        awayTeam: 'Canadiens',
+        homeScore: 3,
+        awayScore: 2,
+        status: 'final',
+        homeLogo: 'https://loodibee.com/wp-content/uploads/nhl-toronto-maple-leafs-logo.png',
+        awayLogo: 'https://loodibee.com/wp-content/uploads/nhl-montreal-canadiens-logo.png'
+    },
+    {
+        id: 5,
+        sport: 'baseball',
+        league: 'MLB',
+        homeTeam: 'Yankees',
+        awayTeam: 'Red Sox',
+        homeScore: 4,
+        awayScore: 5,
+        status: 'live',
+        time: '8th Inning',
+        homeLogo: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Los_Angeles_Lakers_logo.svg',
+        awayLogo: 'https://upload.wikimedia.org/wikipedia/en/6/6d/RedSoxPrimary_HangingSocks.svg'
+    },
+    {
+        id: 6,
+        sport: 'football',
+        league: 'La Liga',
+        homeTeam: 'Barcelona',
+        awayTeam: 'Real Madrid',
+        homeScore: 0,
+        awayScore: 0,
+        status: 'upcoming',
+        time: 'Today 20:45',
+        homeLogo: 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona_%28crest%29.svg',
+        awayLogo: 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg'
+    }
+];
+
+        let currentFilter = 'all';
+        
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchGames();
+            // Set up auto-refresh every 30 seconds
+            setInterval(fetchGames, 30000);
+        });
+        
+        function fetchGames() {
+            // In a real app, this would be an API call
+            // axios.get('https://api.sportsdata.io/v3/scores?key=YOUR_API_KEY')
+            //     .then(response => {
+            //         renderGames(response.data);
+            //         updateLastUpdated();
+            //     })
+            //     .catch(error => {
+            //         console.error('Error fetching games:', error);
+            //     });
+            
+            // For demo purposes, we'll use mock data
+            renderGames(mockGames);
+            updateLastUpdated();
+        }
+        
+        function renderGames(games) {
+            const container = document.getElementById('gamesContainer');
+            
+            // Filter games based on current sport selection
+            const filteredGames = currentFilter === 'all' 
+                ? games 
+                : games.filter(game => game.sport === currentFilter);
+            
+            if (filteredGames.length === 0) {
+                container.innerHTML = '<div class="no-games">No games available for this sport</div>';
+                return;
+            }
+            
+            container.innerHTML = filteredGames.map(game => `
+                <div class="game-card">
+                    <div class="game-header">
+                        <span class="game-league">${game.league}</span>
+                        <span class="game-status">
+                            ${game.status === 'live' ? 
+                                `<span class="live-status"><span class="live-pulse"></span>LIVE ${game.time}</span>` : 
+                              game.status === 'final' ? 'FINAL' : 
+                              game.time}
+                        </span>
+                    </div>
+                    <div class="teams">
+                        <div class="team">
+                            <img src="${game.homeLogo}" alt="${game.homeTeam}" class="team-logo">
+                            <span class="team-name">${game.homeTeam}</span>
+                            <span class="team-score">${game.homeScore}</span>
+                        </div>
+                        <div class="team">
+                            <img src="${game.awayLogo}" alt="${game.awayTeam}" class="team-logo">
+                            <span class="team-name">${game.awayTeam}</span>
+                            <span class="team-score">${game.awayScore}</span>
+                        </div>
+                    </div>
+                    <div class="game-details">
+                        ${getGameDetails(game)}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getGameDetails(game) {
+            switch(game.sport) {
+                case 'football':
+                    return `Matchday 24 • ${game.status === 'live' ? game.time + ' played' : game.status === 'upcoming' ? 'Kickoff at ' + game.time : 'Full Time'}`;
+                case 'basketball':
+                    return `Regular Season • ${game.status === 'live' ? game.time + ' remaining' : game.status === 'upcoming' ? 'Tip-off at ' + game.time : 'Game Ended'}`;
+                case 'tennis':
+                    return `Quarterfinals • ${game.status === 'live' ? 'Current set: ' + game.time : game.status === 'upcoming' ? 'Match starts at ' + game.time : 'Match Completed'}`;
+                case 'hockey':
+                    return `Regular Season • ${game.status === 'live' ? game.time + ' remaining' : game.status === 'upcoming' ? 'Puck drop at ' + game.time : 'Game Ended'}`;
+                case 'baseball':
+                    return `American League • ${game.status === 'live' ? game.time : game.status === 'upcoming' ? 'First pitch at ' + game.time : 'Game Final'}`;
+                default:
+                    return '';
+            }
+        }
+        
+        function filterGames(sport) {
+            currentFilter = sport;
+            
+            // Update active tab
+            document.querySelectorAll('.sport-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Re-render games with new filter
+            renderGames(mockGames);
+        }
+        
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('lastUpdated').textContent = `Last updated: ${timeString}`;
+        }
+    </script>
+</body>
+</html>

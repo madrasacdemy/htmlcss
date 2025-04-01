@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Podcast Summarizer</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f7fa;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .input-section {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            background-color: #ecf0f1;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab-button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 0 5px 5px 5px;
+            background-color: white;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .loading {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #transcriptText, #summaryText {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI-Powered Podcast Summarizer</h1>
+        
+        <div class="input-section">
+            <label for="podcastUrl">Podcast URL (YouTube or direct audio link):</label>
+            <input type="text" id="podcastUrl" placeholder="https://...">
+            
+            <label for="summaryType">Summary Type:</label>
+            <select id="summaryType">
+                <option value="concise">Concise Summary</option>
+                <option value="detailed">Detailed Summary</option>
+                <option value="bullet_points">Bullet Points</option>
+                <option value="key_insights">Key Insights</option>
+            </select>
+            
+            <button id="summarizeBtn" onclick="summarizePodcast()">Summarize Podcast</button>
+            <div id="errorMsg" class="error"></div>
+        </div>
+        
+        <div id="loadingSection" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing podcast... This may take a few minutes.</p>
+            <p id="statusText">Downloading audio...</p>
+        </div>
+        
+        <div id="resultSection" class="result-section">
+            <div class="tab-buttons">
+                <button class="tab-button active" onclick="openTab('summaryTab')">Summary</button>
+                <button class="tab-button" onclick="openTab('transcriptTab')">Full Transcript</button>
+            </div>
+            
+            <div id="summaryTab" class="tab-content active">
+                <h3>Podcast Summary</h3>
+                <div id="summaryText"></div>
+            </div>
+            
+            <div id="transcriptTab" class="tab-content">
+                <h3>Full Transcript</h3>
+                <div id="transcriptText"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Note: In a production environment, you would need a backend service
+        // to handle the audio processing and AI summarization.
+        // This is a frontend mockup that simulates the process.
+
+        async function summarizePodcast() {
+            const podcastUrl = document.getElementById('podcastUrl').value;
+            const summaryType = document.getElementById('summaryType').value;
+            const errorMsg = document.getElementById('errorMsg');
+            
+            if (!podcastUrl) {
+                errorMsg.textContent = "Please enter a podcast URL";
+                return;
+            }
+            
+            errorMsg.textContent = "";
+            document.getElementById('summarizeBtn').disabled = true;
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            try {
+                // Simulate the different steps of processing
+                updateStatus("Downloading audio...");
+                await simulateDelay(2000);
+                
+                updateStatus("Transcribing audio...");
+                await simulateDelay(4000);
+                
+                updateStatus("Generating summary...");
+                await simulateDelay(3000);
+                
+                // Display mock results (in a real app, these would come from an API)
+                displayResults(
+                    getMockTranscript(),
+                    getMockSummary(summaryType)
+                );
+                
+            } catch (error) {
+                errorMsg.textContent = "Error processing podcast: " + error.message;
+            } finally {
+                document.getElementById('summarizeBtn').disabled = false;
+                document.getElementById('loadingSection').style.display = 'none';
+            }
+        }
+        
+        function updateStatus(text) {
+            document.getElementById('statusText').textContent = text;
+        }
+        
+        function simulateDelay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        function displayResults(transcript, summary) {
+            document.getElementById('transcriptText').textContent = transcript;
+            document.getElementById('summaryText').innerHTML = summary;
+            document.getElementById('resultSection').style.display = 'block';
+        }
+        
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Mock data for demonstration
+        function getMockTranscript() {
+            return `[00:00:00] Host: Welcome to the AI Today podcast. Today we're discussing the latest advancements in natural language processing.
+            
+            [00:02:30] Guest: Thank you for having me. The field has indeed seen remarkable progress in recent years, particularly with transformer models.
+
+            [00:05:15] Host: Can you explain how these models differ from previous approaches?
+
+            [00:06:45] Guest: Absolutely. Traditional models processed text sequentially, while transformers analyze entire sentences at once, allowing for better context understanding...`;
+        }
+        
+        function getMockSummary(type) {
+            const summaries = {
+                concise: `<p><strong>Concise Summary:</strong> The podcast discusses advancements in NLP, focusing on transformer models that analyze entire sentences simultaneously for better context understanding compared to older sequential approaches.</p>`,
+                detailed: `<p><strong>Detailed Summary:</strong> The episode begins with an introduction to the AI Today podcast and today's topic on NLP advancements. The guest explains that the field has seen remarkable progress, particularly with transformer models. When asked about the difference from previous approaches, the guest clarifies that traditional models processed text sequentially, while transformers can analyze entire sentences at once, enabling superior context comprehension. This architectural shift has led to significant improvements in various language tasks.</p>`,
+                bullet_points: `<p><strong>Key Points:</strong></p>
+                <ul>
+                    <li>Discussion focuses on recent NLP advancements</li>
+                    <li>Transformer models represent significant progress</li>
+                    <li>Key difference from older models: parallel sentence analysis vs sequential processing</li>
+                    <li>This architecture enables better context understanding</li>
+                </ul>`,
+                key_insights: `<p><strong>Key Insights:</strong></p>
+                <p>The most important insight from this discussion is the architectural shift in NLP models from sequential processing to parallel analysis of entire sentences. This fundamental change in approach, embodied by transformer models, has enabled dramatically improved context understanding and performance across language tasks.</p>`
+            };
+            
+            return summaries[type] || summaries.concise;
+        }
+    </script>
+</body>
+</html>
