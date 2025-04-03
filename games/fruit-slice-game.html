@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ninja Fruit Slice</title>
+    <style>
+        body {
+            margin: 0;
+            background: #222;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #game {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect x="0" y="95" width="100" height="5" fill="%23333"/></svg>');
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M0 32 L32 0 M32 32 L0 0" stroke="%23fff" stroke-width="4"/></svg>') 16 16, auto;
+        }
+        .fruit {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            font-size: 24px;
+        }
+        #timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 24px;
+        }
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ff00;
+            font-size: 48px;
+            text-shadow: 0 0 10px #00ff00;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="game">
+        <div id="score">Score: 0</div>
+        <div id="timer">Time: 30</div>
+        <div id="message">NINJA MASTER!</div>
+    </div>
+
+    <script>
+        const game = document.getElementById('game');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const message = document.getElementById('message');
+        
+        let score = 0;
+        let timeLeft = 30;
+        let fruits = [];
+        const fruitTypes = ['🍎', '🍊', '🍋', '🍉', '🍇', '🍓', '🍑', '🍍'];
+        
+        function createFruit() {
+            if (timeLeft <= 0) return;
+            
+            const fruit = document.createElement('div');
+            fruit.className = 'fruit';
+            const type = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
+            fruit.textContent = type;
+            
+            // Set random color based on fruit type
+            const colors = {
+                '🍎': '#ff0000',
+                '🍊': '#ff9900',
+                '🍋': '#ffff00',
+                '🍉': '#ff0066',
+                '🍇': '#9900ff',
+                '🍓': '#ff0066',
+                '🍑': '#ffcc99',
+                '🍍': '#ffff00'
+            };
+            fruit.style.background = colors[type] || '#ffffff';
+            
+            fruit.style.left = `${Math.random() * (window.innerWidth - 60)}px`;
+            fruit.style.bottom = '-60px';
+            game.appendChild(fruit);
+            
+            // Animation
+            let position = -60;
+            const speed = Math.random() * 3 + 2;
+            const angle = Math.random() * 20 - 10;
+            let rotation = 0;
+            
+            const animate = setInterval(() => {
+                position += speed;
+                rotation += angle;
+                fruit.style.bottom = `${position}px`;
+                fruit.style.transform = `rotate(${rotation}deg)`;
+                
+                if (position > window.innerHeight) {
+                    clearInterval(animate);
+                    fruit.remove();
+                }
+            }, 20);
+            
+            // Click handler
+            fruit.addEventListener('click', () => {
+                clearInterval(animate);
+                score += 10;
+                scoreDisplay.textContent = `Score: ${score}`;
+                fruit.style.transform = 'scale(1.5)';
+                fruit.style.opacity = '0';
+                setTimeout(() => fruit.remove(), 200);
+                
+                if (score >= 200) {
+                    winGame();
+                }
+            });
+            
+            fruits.push(fruit);
+            setTimeout(createFruit, Math.random() * 800 + 200);
+        }
+        
+        // Timer
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                endGame();
+            }
+        }, 1000);
+        
+        function endGame() {
+            message.textContent = `GAME OVER! Score: ${score}`;
+            message.style.color = '#ff0000';
+            message.style.textShadow = '0 0 10px #ff0000';
+            message.style.display = 'block';
+            
+            setTimeout(() => {
+                if (confirm(`Game Over! Your score: ${score}\nPlay again?`)) {
+                    location.reload();
+                }
+            }, 1000);
+        }
+        
+        function winGame() {
+            clearInterval(timer);
+            message.style.display = 'block';
+            
+            setTimeout(() => {
+                if (confirm(`You won with ${score} points!\nPlay again?`)) {
+                    location.reload();
+                }
+            }, 1000);
+        }
+        
+        createFruit();
+    </script>
+</body>
+</html>

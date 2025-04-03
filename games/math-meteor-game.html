@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Math Meteor Shower</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+        }
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        .meteor {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff5e00, #ff0000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px #ff6600;
+            transform: rotate(45deg);
+            animation: twinkle 0.5s infinite alternate;
+        }
+        #spaceship {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 10 L90 50 L70 70 L30 70 L10 50 Z" fill="%2300ffff"/></svg>') center/contain no-repeat;
+            filter: drop-shadow(0 0 10px cyan);
+        }
+        #input-container {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        #answer-input {
+            background: rgba(0,0,0,0.7);
+            color: cyan;
+            border: 2px solid cyan;
+            padding: 10px;
+            font-size: 20px;
+            width: 200px;
+            text-align: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+        #score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: cyan;
+            text-shadow: 0 0 5px cyan;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <div id="spaceship"></div>
+        <div id="score-display">Score: 0</div>
+        <div id="input-container">
+            <input type="number" id="answer-input" placeholder="Your answer">
+        </div>
+    </div>
+
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        const answerInput = document.getElementById('answer-input');
+        const scoreDisplay = document.getElementById('score-display');
+        let score = 0;
+        let currentProblem = generateProblem();
+        
+        function generateProblem() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            const operators = ['+', '-', '*'];
+            const op = operators[Math.floor(Math.random() * operators.length)];
+            let answer;
+            
+            if (op === '+') answer = num1 + num2;
+            else if (op === '-') answer = num1 - num2;
+            else answer = num1 * num2;
+            
+            return { 
+                text: `${num1} ${op} ${num2}`, 
+                answer: answer 
+            };
+        }
+        
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            meteor.textContent = currentProblem.text;
+            
+            const startX = Math.random() * (window.innerWidth - 60);
+            meteor.style.left = `${startX}px`;
+            meteor.style.top = '-60px';
+            
+            gameContainer.appendChild(meteor);
+            
+            let position = -60;
+            const fallInterval = setInterval(() => {
+                position += 5;
+                meteor.style.top = `${position}px`;
+                
+                if (position > window.innerHeight) {
+                    clearInterval(fallInterval);
+                    meteor.remove();
+                    endGame();
+                }
+            }, 50);
+            
+            return meteor;
+        }
+        
+        answerInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const userAnswer = parseInt(answerInput.value);
+                if (userAnswer === currentProblem.answer) {
+                    score++;
+                    scoreDisplay.textContent = `Score: ${score}`;
+                    document.querySelector('.meteor').remove();
+                    currentProblem = generateProblem();
+                    createMeteor();
+                }
+                answerInput.value = '';
+            }
+        });
+        
+        function endGame() {
+            alert(`Game Over! Your score: ${score}`);
+            score = 10;
+            scoreDisplay.textContent = `Score: 0`;
+            currentProblem = generateProblem();
+            createMeteor();
+        }
+        
+        createMeteor();
+    </script>
+</body>
+</html>
