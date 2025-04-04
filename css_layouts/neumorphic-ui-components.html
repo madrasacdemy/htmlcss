@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic UI Components</title>
+    <style>
+        :root {
+            --bg-color: #e6e7ee;
+            --primary-color: #6d5dfc;
+            --text-color: #31344b;
+            --shadow-light: #ffffff;
+            --shadow-dark: #b8b9be;
+            --border-radius: 1rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Neumorphic Base Style */
+        .neumorphic {
+            background: var(--bg-color);
+            border-radius: var(--border-radius);
+            box-shadow: 8px 8px 16px var(--shadow-dark), 
+                        -8px -8px 16px var(--shadow-light);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .neumorphic-inset {
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                        inset -3px -3px 6px var(--shadow-light);
+        }
+
+        .neumorphic:hover {
+            box-shadow: 4px 4px 8px var(--shadow-dark), 
+                        -4px -4px 8px var(--shadow-light);
+        }
+
+        /* Card Component */
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        /* Button Component */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: calc(var(--border-radius) / 2);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 4px 4px 8px var(--shadow-dark), 
+                        -4px -4px 8px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            box-shadow: 2px 2px 4px var(--shadow-dark), 
+                        -2px -2px 4px var(--shadow-light);
+        }
+
+        .btn:active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), 
+                        inset -2px -2px 4px var(--shadow-light);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 4px 4px 8px var(--shadow-dark), 
+                        -4px -4px 8px var(--shadow-light),
+                        inset 2px 2px 4px rgba(255, 255, 255, 0.1),
+                        inset -2px -2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Switch Component */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-color);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                        inset -3px -3px 6px var(--shadow-light);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background: var(--bg-color);
+            box-shadow: 2px 2px 4px var(--shadow-dark), 
+                        -2px -2px 4px var(--shadow-light);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Input Component */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .neumorphic-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: var(--bg-color);
+            border-radius: calc(var(--border-radius) / 2);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), 
+                        inset -3px -3px 6px var(--shadow-light);
+            font-size: 1rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .neumorphic-input:focus {
+            outline: none;
+            box-shadow: inset 1px 1px 3px var(--shadow-dark), 
+                        inset -1px -1px 3px var(--shadow-light);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            width: 100%;
+            border-radius: 5px;
+            background: var(--bg-color);
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), 
+                        inset -2px -2px 4px var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 65%;
+            background: var(--primary-color);
+            border-radius: 5px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            transition: width 0.5s ease;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 1rem;
+            border-radius: calc(var(--border-radius) / 2);
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem;
+            text-align: center;
+            background: var(--bg-color);
+            cursor: pointer;
+            box-shadow: 2px 2px 4px var(--shadow-dark), 
+                        -2px -2px 4px var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .tab:not(:last-child) {
+            margin-right: 0.5rem;
+        }
+
+        .tab.active {
+            box-shadow: inset 2px 2px 4px var(--shadow-dark), 
+                        inset -2px -2px 4px var(--shadow-light);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Neumorphic UI Components</h1>
+    
+    <div class="container">
+        <!-- Card Component -->
+        <div class="neumorphic card">
+            <div class="neumorphic card-icon">
+                <i>📱</i>
+            </div>
+            <h3 class="card-title">Mobile Friendly</h3>
+            <p class="card-text">These neumorphic components are fully responsive and will look great on any device.</p>
+            <button class="btn btn-primary">Learn More</button>
+        </div>
+        
+        <!-- Form Component -->
+        <div class="neumorphic">
+            <h3 class="card-title" style="margin-bottom: 1.5rem;">Login Form</h3>
+            
+            <div class="input-group">
+                <label class="input-label">Username</label>
+                <input type="text" class="neumorphic-input" placeholder="Enter your username">
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">Password</label>
+                <input type="password" class="neumorphic-input" placeholder="Enter your password">
+            </div>
+            
+            <div class="switch-container">
+                <span>Remember me</span>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </div>
+        
+        <!-- Progress and Tabs -->
+        <div class="neumorphic">
+            <div class="tabs">
+                <div class="tab active" data-tab="progress">Progress</div>
+                <div class="tab" data-tab="settings">Settings</div>
+            </div>
+            
+            <div class="tab-content active" id="progress">
+                <h3 class="card-title" style="margin-bottom: 1.5rem;">Project Progress</h3>
+                
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>UI Design</span>
+                        <span>65%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Development</span>
+                        <span>40%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Testing</span>
+                        <span>15%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 15%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="settings">
+                <h3 class="card-title" style="margin-bottom: 1.5rem;">Settings</h3>
+                <p>Adjust your preferences here. Settings panel coming soon.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Simulate progress animation
+        setTimeout(() => {
+            document.querySelector('.progress-fill').style.width = '75%';
+            document.querySelector('.progress-container:nth-child(2) .progress-fill').style.width = '50%';
+            document.querySelector('.progress-container:nth-child(3) .progress-fill').style.width = '25%';
+        }, 1000);
+    </script>
+</body>
+</html>
