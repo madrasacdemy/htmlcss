@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gesture Virtual Keyboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            touch-action: manipulation;
+        }
+        
+        .header {
+            padding: 15px;
+            background-color: #6200ee;
+            color: white;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .text-area {
+            flex: 1;
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            resize: none;
+            background-color: white;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .keyboard-container {
+            background-color: #e0e0e0;
+            padding: 5px;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        
+        .key {
+            height: 48px;
+            min-width: 10%;
+            margin: 3px;
+            border-radius: 5px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            position: relative;
+            transition: transform 0.1s, background-color 0.2s;
+            touch-action: none;
+        }
+        
+        .key:active, .key.active {
+            background-color: #d0d0d0;
+            transform: scale(0.95);
+        }
+        
+        .key.space {
+            min-width: 50%;
+        }
+        
+        .key.shift, .key.backspace, .key.enter, .key.symbols {
+            background-color: #cfcfcf;
+            font-size: 16px;
+        }
+        
+        .key.special {
+            background-color: #b0b0b0;
+        }
+        
+        .gesture-path {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #6200ee;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .gesture-path.show {
+            opacity: 1;
+        }
+        
+        .keyboard-mode {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        
+        .mode-btn {
+            padding: 8px 15px;
+            margin: 0 5px;
+            background-color: #6200ee;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            border: none;
+        }
+        
+        .mode-btn.active {
+            background-color: #3700b3;
+        }
+        
+        .symbol-keyboard, .number-keyboard {
+            display: none;
+        }
+        
+        .symbol-keyboard.active, .number-keyboard.active {
+            display: block;
+        }
+        
+        .qwerty-keyboard.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .key-preview {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #6200ee;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+        
+        .key-preview.show {
+            opacity: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .key {
+                height: 42px;
+                font-size: 16px;
+            }
+            
+            .key.shift, .key.backspace, .key.enter, .key.symbols {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Gesture Virtual Keyboard</h1>
+    </div>
+    
+    <textarea class="text-area" id="textInput" placeholder="Type here using the virtual keyboard..."></textarea>
+    
+    <div class="keyboard-container">
+        <div class="keyboard-mode">
+            <button class="mode-btn active" id="btnLetters">ABC</button>
+            <button class="mode-btn" id="btnNumbers">123</button>
+            <button class="mode-btn" id="btnSymbols">#+=</button>
+        </div>
+        
+        <div class="qwerty-keyboard active" id="qwertyKeyboard">
+            <div class="keyboard-row">
+                <div class="key" data-key="q">Q</div>
+                <div class="key" data-key="w">W</div>
+                <div class="key" data-key="e">E</div>
+                <div class="key" data-key="r">R</div>
+                <div class="key" data-key="t">T</div>
+                <div class="key" data-key="y">Y</div>
+                <div class="key" data-key="u">U</div>
+                <div class="key" data-key="i">I</div>
+                <div class="key" data-key="o">O</div>
+                <div class="key" data-key="p">P</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key" data-key="a">A</div>
+                <div class="key" data-key="s">S</div>
+                <div class="key" data-key="d">D</div>
+                <div class="key" data-key="f">F</div>
+                <div class="key" data-key="g">G</div>
+                <div class="key" data-key="h">H</div>
+                <div class="key" data-key="j">J</div>
+                <div class="key" data-key="k">K</div>
+                <div class="key" data-key="l">L</div>
+                <div class="key backspace" id="backspace">⌫</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key shift" id="shift">⇧</div>
+                <div class="key" data-key="z">Z</div>
+                <div class="key" data-key="x">X</div>
+                <div class="key" data-key="c">C</div>
+                <div class="key" data-key="v">V</div>
+                <div class="key" data-key="b">B</div>
+                <div class="key" data-key="n">N</div>
+                <div class="key" data-key="m">M</div>
+                <div class="key symbols" id="btnSymbolsTrigger">#+=</div>
+                <div class="key enter" id="enter">⏎</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key special" id="changeLang">🌐</div>
+                <div class="key" data-key=",">,</div>
+                <div class="key space" data-key=" ">space</div>
+                <div class="key" data-key=".">.</div>
+                <div class="key special" id="emoji">😊</div>
+            </div>
+        </div>
+        
+        <div class="number-keyboard" id="numberKeyboard">
+            <div class="keyboard-row">
+                <div class="key" data-key="1">1</div>
+                <div class="key" data-key="2">2</div>
+                <div class="key" data-key="3">3</div>
+                <div class="key" data-key="4">4</div>
+                <div class="key" data-key="5">5</div>
+                <div class="key" data-key="6">6</div>
+                <div class="key" data-key="7">7</div>
+                <div class="key" data-key="8">8</div>
+                <div class="key" data-key="9">9</div>
+                <div class="key" data-key="0">0</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key" data-key="-">-</div>
+                <div class="key" data-key="/">/</div>
+                <div class="key" data-key=":">:</div>
+                <div class="key" data-key=";">;</div>
+                <div class="key" data-key="(">(</div>
+                <div class="key" data-key=")">)</div>
+                <div class="key" data-key="$">$</div>
+                <div class="key" data-key="&">&</div>
+                <div class="key" data-key="@">@</div>
+                <div class="key backspace">⌫</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key symbols" id="btnSymbolsFromNumbers">#+=</div>
+                <div class="key space" data-key=" ">space</div>
+                <div class="key" data-key=".">.</div>
+                <div class="key" data-key=",">,</div>
+                <div class="key enter">⏎</div>
+            </div>
+        </div>
+        
+        <div class="symbol-keyboard" id="symbolKeyboard">
+            <div class="keyboard-row">
+                <div class="key" data-key="[">[</div>
+                <div class="key" data-key="]">]</div>
+                <div class="key" data-key="{">{</div>
+                <div class="key" data-key="}">}</div>
+                <div class="key" data-key="#">#</div>
+                <div class="key" data-key="%">%</div>
+                <div class="key" data-key="^">^</div>
+                <div class="key" data-key="*">*</div>
+                <div class="key" data-key="+">+</div>
+                <div class="key" data-key="=">=</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key" data-key="_">_</div>
+                <div class="key" data-key="\">\</div>
+                <div class="key" data-key="|">|</div>
+                <div class="key" data-key="~">~</div>
+                <div class="key" data-key="<"><</div>
+                <div class="key" data-key=">">></div>
+                <div class="key" data-key="€">€</div>
+                <div class="key" data-key="£">£</div>
+                <div class="key" data-key="¥">¥</div>
+                <div class="key backspace">⌫</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key letters" id="btnLettersFromSymbols">ABC</div>
+                <div class="key space" data-key=" ">space</div>
+                <div class="key" data-key=".">.</div>
+                <div class="key" data-key="?">?</div>
+                <div class="key enter">⏎</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="key-preview" id="keyPreview"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const keyPreview = document.getElementById('keyPreview');
+            const qwertyKeyboard = document.getElementById('qwertyKeyboard');
+            const numberKeyboard = document.getElementById('numberKeyboard');
+            const symbolKeyboard = document.getElementById('symbolKeyboard');
+            const btnLetters = document.getElementById('btnLetters');
+            const btnNumbers = document.getElementById('btnNumbers');
+            const btnSymbols = document.getElementById('btnSymbols');
+            const btnSymbolsTrigger = document.getElementById('btnSymbolsTrigger');
+            const btnSymbolsFromNumbers = document.getElementById('btnSymbolsFromNumbers');
+            const btnLettersFromSymbols = document.getElementById('btnLettersFromSymbols');
+            const shiftKey = document.getElementById('shift');
+            const backspaceKey = document.getElementById('backspace');
+            const enterKey = document.getElementById('enter');
+            
+            let isShifted = false;
+            let activeKeyboard = 'qwerty';
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let currentKey = null;
+            let gesturePath = '';
+            let isGestureActive = false;
+            
+            // Keyboard mode switching
+            function setKeyboardMode(mode) {
+                qwertyKeyboard.classList.remove('active');
+                numberKeyboard.classList.remove('active');
+                symbolKeyboard.classList.remove('active');
+                btnLetters.classList.remove('active');
+                btnNumbers.classList.remove('active');
+                btnSymbols.classList.remove('active');
+                
+                if (mode === 'qwerty') {
+                    qwertyKeyboard.classList.add('active');
+                    btnLetters.classList.add('active');
+                    activeKeyboard = 'qwerty';
+                } else if (mode === 'number') {
+                    numberKeyboard.classList.add('active');
+                    btnNumbers.classList.add('active');
+                    activeKeyboard = 'number';
+                } else if (mode === 'symbol') {
+                    symbolKeyboard.classList.add('active');
+                    btnSymbols.classList.add('active');
+                    activeKeyboard = 'symbol';
+                }
+            }
+            
+            btnLetters.addEventListener('click', () => setKeyboardMode('qwerty'));
+            btnNumbers.addEventListener('click', () => setKeyboardMode('number'));
+            btnSymbols.addEventListener('click', () => setKeyboardMode('symbol'));
+            btnSymbolsTrigger.addEventListener('click', () => setKeyboardMode('symbol'));
+            btnSymbolsFromNumbers.addEventListener('click', () => setKeyboardMode('symbol'));
+            btnLettersFromSymbols.addEventListener('click', () => setKeyboardMode('qwerty'));
+            
+            // Shift key functionality
+            shiftKey.addEventListener('click', () => {
+                isShifted = !isShifted;
+                shiftKey.classList.toggle('active', isShifted);
+                updateKeyLabels();
+            });
+            
+            function updateKeyLabels() {
+                const keys = document.querySelectorAll('.key[data-key]');
+                keys.forEach(key => {
+                    const keyValue = key.getAttribute('data-key');
+                    if (activeKeyboard === 'qwerty' && isShifted && keyValue.match(/[a-z]/)) {
+                        key.textContent = keyValue.toUpperCase();
+                    } else if (activeKeyboard === 'qwerty' && !isShifted && keyValue.match(/[a-z]/)) {
+                        key.textContent = keyValue.toLowerCase();
+                    }
+                });
+            }
+            
+            // Key press handling with gesture support
+            function handleKeyPress(keyElement) {
+                const key = keyElement.getAttribute('data-key');
+                let value = key;
+                
+                if (activeKeyboard === 'qwerty') {
+                    if (isShifted && key.match(/[a-z]/)) {
+                        value = key.toUpperCase();
+                    }
+                }
+                
+                if (key === ' ') {
+                    value = ' ';
+                }
+                
+                // Insert at cursor position
+                const startPos = textInput.selectionStart;
+                const endPos = textInput.selectionEnd;
+                const currentValue = textInput.value;
+                
+                textInput.value = currentValue.substring(0, startPos) + value + currentValue.substring(endPos);
+                
+                // Move cursor position
+                const newCursorPos = startPos + value.length;
+                textInput.setSelectionRange(newCursorPos, newCursorPos);
+                
+                // Auto-return to lowercase after shift if needed
+                if (isShifted && activeKeyboard === 'qwerty' && key.match(/[a-z]/)) {
+                    isShifted = false;
+                    shiftKey.classList.remove('active');
+                    updateKeyLabels();
+                }
+                
+                textInput.focus();
+            }
+            
+            // Backspace functionality
+            function handleBackspace() {
+                const startPos = textInput.selectionStart;
+                const endPos = textInput.selectionEnd;
+                let currentValue = textInput.value;
+                
+                if (startPos === endPos && startPos > 0) {
+                    // Delete one character
+                    textInput.value = currentValue.substring(0, startPos - 1) + currentValue.substring(endPos);
+                    textInput.setSelectionRange(startPos - 1, startPos - 1);
+                } else if (startPos !== endPos) {
+                    // Delete selection
+                    textInput.value = currentValue.substring(0, startPos) + currentValue.substring(endPos);
+                    textInput.setSelectionRange(startPos, startPos);
+                }
+                
+                textInput.focus();
+            }
+            
+            // Enter key functionality
+            function handleEnter() {
+                const startPos = textInput.selectionStart;
+                const endPos = textInput.selectionEnd;
+                const currentValue = textInput.value;
+                
+                textInput.value = currentValue.substring(0, startPos) + '\n' + currentValue.substring(endPos);
+                textInput.setSelectionRange(startPos + 1, startPos + 1);
+                textInput.focus();
+            }
+            
+            // Touch event handlers for gesture support
+            function handleTouchStart(e) {
+                const touch = e.touches[0];
+                const keyElement = document.elementFromPoint(touch.clientX, touch.clientY);
+                
+                if (keyElement && keyElement.classList.contains('key')) {
+                    currentKey = keyElement;
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    isGestureActive = true;
+                    gesturePath = '';
+                    
+                    // Show key preview
+                    if (currentKey.getAttribute('data-key')) {
+                        let previewValue = currentKey.getAttribute('data-key');
+                        if (activeKeyboard === 'qwerty' && isShifted && previewValue.match(/[a-z]/)) {
+                            previewValue = previewValue.toUpperCase();
+                        }
+                        keyPreview.textContent = previewValue;
+                        keyPreview.classList.add('show');
+                        
+                        // Position preview above key
+                        const keyRect = currentKey.getBoundingClientRect();
+                        keyPreview.style.left = `${keyRect.left + keyRect.width / 2}px`;
+                        keyPreview.style.top = `${keyRect.top - 40}px`;
+                    }
+                    
+                    currentKey.classList.add('active');
+                    e.preventDefault();
+                }
+            }
+            
+            function handleTouchMove(e) {
+                if (!isGestureActive || !currentKey) return;
+                
+                const touch = e.touches[0];
+                const deltaX = touch.clientX - touchStartX;
+                const deltaY = touch.clientY - touchStartY;
+                
+                // Determine gesture direction
+                if (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20) {
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        gesturePath += deltaX > 0 ? '→' : '←';
+                    } else {
+                        gesturePath += deltaY > 0 ? '↓' : '↑';
+                    }
+                    
+                    touchStartX = touch.clientX;
+                    touchStartY = touch.clientY;
+                    
+                    // Show gesture path feedback
+                    const gestureFeedback = currentKey.querySelector('.gesture-path');
+                    if (gestureFeedback) {
+                        gestureFeedback.textContent = gesturePath;
+                        gestureFeedback.classList.add('show');
+                    }
+                }
+                
+                e.preventDefault();
+            }
+            
+            function handleTouchEnd(e) {
+                if (!isGestureActive || !currentKey) return;
+                
+                // Hide gesture feedback
+                const gestureFeedback = currentKey.querySelector('.gesture-path');
+                if (gestureFeedback) {
+                    gestureFeedback.classList.remove('show');
+                }
+                
+                // Hide key preview
+                keyPreview.classList.remove('show');
+                
+                // Process the key action based on gesture
+                if (gesturePath.length === 0) {
+                    // Simple tap
+                    if (currentKey === backspaceKey) {
+                        handleBackspace();
+                    } else if (currentKey === enterKey) {
+                        handleEnter();
+                    } else if (currentKey.getAttribute('data-key')) {
+                        handleKeyPress(currentKey);
+                    }
+                } else {
+                    // Gesture detected - could be used for alternative characters
+                    // For example, swipe up on 'e' could produce 'é'
+                    // This is a simple implementation - could be expanded
+                    if (currentKey.getAttribute('data-key')) {
+                        const baseKey = currentKey.getAttribute('data-key');
+                        let modifiedKey = baseKey;
+                        
+                        if (activeKeyboard === 'qwerty') {
+                            // Simple accent modifications for demonstration
+                            if (baseKey === 'a' && gesturePath.includes('↑')) modifiedKey = 'á';
+                            if (baseKey === 'e' && gesturePath.includes('↑')) modifiedKey = 'é';
+                            if (baseKey === 'i' && gesturePath.includes('↑')) modifiedKey = 'í';
+                            if (baseKey === 'o' && gesturePath.includes('↑')) modifiedKey = 'ó';
+                            if (baseKey === 'u' && gesturePath.includes('↑')) modifiedKey = 'ú';
+                            
+                            // Numbers on swipe down (like some mobile keyboards)
+                            if (gesturePath.includes('↓')) {
+                                if (baseKey === 'q') modifiedKey = '1';
+                                if (baseKey === 'w') modifiedKey = '2';
+                                if (baseKey === 'e') modifiedKey = '3';
+                                if (baseKey === 'r') modifiedKey = '4';
+                                if (baseKey === 't') modifiedKey = '5';
+                                if (baseKey === 'y') modifiedKey = '6';
+                                if (baseKey === 'u') modifiedKey = '7';
+                                if (baseKey === 'i') modifiedKey = '8';
+                                if (baseKey === 'o') modifiedKey = '9';
+                                if (baseKey === 'p') modifiedKey = '0';
+                            }
+                        }
+                        
+                        if (modifiedKey !== baseKey) {
+                            // Insert the modified character
+                            const startPos = textInput.selectionStart;
+                            const endPos = textInput.selectionEnd;
+                            const currentValue = textInput.value;
+                            
+                            textInput.value = currentValue.substring(0, startPos) + modifiedKey + currentValue.substring(endPos);
+                            textInput.setSelectionRange(startPos + modifiedKey.length, startPos + modifiedKey.length);
+                            textInput.focus();
+                        } else {
+                            // Default to regular key press if no gesture mapping
+                            handleKeyPress(currentKey);
+                        }
+                    }
+                }
+                
+                currentKey.classList.remove('active');
+                currentKey = null;
+                isGestureActive = false;
+                gesturePath = '';
+                
+                e.preventDefault();
+            }
+            
+            // Mouse event handlers for desktop testing
+            function handleMouseDown(e) {
+                if (e.button !== 0) return; // Only left mouse button
+                
+                const keyElement = e.target.closest('.key');
+                if (keyElement) {
+                    currentKey = keyElement;
+                    touchStartX = e.clientX;
+                    touchStartY = e.clientY;
+                    isGestureActive = true;
+                    gesturePath = '';
+                    
+                    if (currentKey.getAttribute('data-key')) {
+                        let previewValue = currentKey.getAttribute('data-key');
+                        if (activeKeyboard === 'qwerty' && isShifted && previewValue.match(/[a-z]/)) {
+                            previewValue = previewValue.toUpperCase();
+                        }
+                        keyPreview.textContent = previewValue;
+                        keyPreview.classList.add('show');
+                        
+                        const keyRect = currentKey.getBoundingClientRect();
+                        keyPreview.style.left = `${keyRect.left + keyRect.width / 2}px`;
+                        keyPreview.style.top = `${keyRect.top - 40}px`;
+                    }
+                    
+                    currentKey.classList.add('active');
+                    e.preventDefault();
+                }
+            }
+            
+            function handleMouseMove(e) {
+                if (!isGestureActive || !currentKey) return;
+                
+                const deltaX = e.clientX - touchStartX;
+                const deltaY = e.clientY - touchStartY;
+                
+                if (Math.abs(deltaX) > 20 || Math.abs(deltaY) > 20) {
+                    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                        gesturePath += deltaX > 0 ? '→' : '←';
+                    } else {
+                        gesturePath += deltaY > 0 ? '↓' : '↑';
+                    }
+                    
+                    touchStartX = e.clientX;
+                    touchStartY = e.clientY;
+                    
+                    const gestureFeedback = currentKey.querySelector('.gesture-path');
+                    if (gestureFeedback) {
+                        gestureFeedback.textContent = gesturePath;
+                        gestureFeedback.classList.add('show');
+                    }
+                }
+                
+                e.preventDefault();
+            }
+            
+            function handleMouseUp(e) {
+                if (!isGestureActive || !currentKey) return;
+                
+                const gestureFeedback = currentKey.querySelector('.gesture-path');
+                if (gestureFeedback) {
+                    gestureFeedback.classList.remove('show');
+                }
+                
+                keyPreview.classList.remove('show');
+                
+                if (gesturePath.length === 0) {
+                    if (currentKey === backspaceKey) {
+                        handleBackspace();
+                    } else if (currentKey === enterKey) {
+                        handleEnter();
+                    } else if (currentKey.getAttribute('data-key')) {
+                        handleKeyPress(currentKey);
+                    }
+                } else {
+                    if (currentKey.getAttribute('data-key')) {
+                        const baseKey = currentKey.getAttribute('data-key');
+                        let modifiedKey = baseKey;
+                        
+                        if (activeKeyboard === 'qwerty') {
+                            if (baseKey === 'a' && gesturePath.includes('↑')) modifiedKey = 'á';
+                            if (baseKey === 'e' && gesturePath.includes('↑')) modifiedKey = 'é';
+                            if (baseKey === 'i' && gesturePath.includes('↑')) modifiedKey = 'í';
+                            if (baseKey === 'o' && gesturePath.includes('↑')) modifiedKey = 'ó';
+                            if (baseKey === 'u' && gesturePath.includes('↑')) modifiedKey = 'ú';
+                            
+                            if (gesturePath.includes('↓')) {
+                                if (baseKey === 'q') modifiedKey = '1';
+                                if (baseKey === 'w') modifiedKey = '2';
+                                if (baseKey === 'e') modifiedKey = '3';
+                                if (baseKey === 'r') modifiedKey = '4';
+                                if (baseKey === 't') modifiedKey = '5';
+                                if (baseKey === 'y') modifiedKey = '6';
+                                if (baseKey === 'u') modifiedKey = '7';
+                                if (baseKey === 'i') modifiedKey = '8';
+                                if (baseKey === 'o') modifiedKey = '9';
+                                if (baseKey === 'p') modifiedKey = '0';
+                            }
+                        }
+                        
+                        if (modifiedKey !== baseKey) {
+                            const startPos = textInput.selectionStart;
+                            const endPos = textInput.selectionEnd;
+                            const currentValue = textInput.value;
+                            
+                            textInput.value = currentValue.substring(0, startPos) + modifiedKey + currentValue.substring(endPos);
+                            textInput.setSelectionRange(startPos + modifiedKey.length, startPos + modifiedKey.length);
+                            textInput.focus();
+                        } else {
+                            handleKeyPress(currentKey);
+                        }
+                    }
+                }
+                
+                currentKey.classList.remove('active');
+                currentKey = null;
+                isGestureActive = false;
+                gesturePath = '';
+                
+                e.preventDefault();
+            }
+            
+            // Add gesture path indicators to each key
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                const gesturePath = document.createElement('div');
+                gesturePath.className = 'gesture-path';
+                key.appendChild(gesturePath);
+            });
+            
+            // Event listeners
+            document.addEventListener('touchstart', handleTouchStart, { passive: false });
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd, { passive: false });
+            
+            // Mouse events for desktop testing
+            document.addEventListener('mousedown', handleMouseDown);
+            document.addEventListener('mousemove', handleMouseMove);
+            document.addEventListener('mouseup', handleMouseUp);
+            
+            // Focus the text area by default
+            textInput.focus();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CollabCode - Real-Time Collaborative Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.23.0/src-min-noconflict/ace.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <style>
+        :root {
+            --bg-dark: #1e1e1e;
+            --bg-darker: #181818;
+            --bg-light: #252526;
+            --accent-color: #007acc;
+            --text-color: #d4d4d4;
+            --text-muted: #858585;
+            --border-color: #3c3c3c;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        #toolbar {
+            background-color: var(--bg-darker);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+        
+        .logo i {
+            color: var(--accent-color);
+            margin-right: 8px;
+            font-size: 20px;
+        }
+        
+        .btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-right: 8px;
+            font-size: 13px;
+        }
+        
+        .btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn i {
+            margin-right: 6px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0062a3;
+        }
+        
+        .spacer {
+            flex-grow: 1;
+        }
+        
+        #main {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        
+        #sidebar {
+            width: 250px;
+            background-color: var(--bg-light);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 12px 16px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-header i {
+            margin-right: 8px;
+        }
+        
+        #file-explorer {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            padding: 6px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .file-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .file-item i {
+            margin-right: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        .file-item.active {
+            background-color: rgba(0, 122, 204, 0.2);
+        }
+        
+        .file-item.active i {
+            color: var(--accent-color);
+        }
+        
+        #editor-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #tabs {
+            display: flex;
+            background-color: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        
+        .tab:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        .tab.active {
+            background-color: var(--bg-dark);
+            border-top: 2px solid var(--accent-color);
+        }
+        
+        .tab-close {
+            margin-left: 8px;
+            color: var(--text-muted);
+            padding: 2px;
+            border-radius: 2px;
+        }
+        
+        .tab-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+        }
+        
+        #editor {
+            flex-grow: 1;
+        }
+        
+        #status-bar {
+            background-color: var(--accent-color);
+            padding: 4px 12px;
+            font-size: 12px;
+            display: flex;
+        }
+        
+        .status-item {
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .status-item i {
+            margin-right: 6px;
+            font-size: 12px;
+        }
+        
+        #collaborators {
+            background-color: var(--bg-light);
+            width: 200px;
+            border-left: 1px solid var(--border-color);
+            padding: 12px;
+            overflow-y: auto;
+        }
+        
+        .collaborator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .collaborator-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #4ec9b0;
+            color: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            display: none;
+        }
+        
+        .modal-content {
+            background-color: var(--bg-light);
+            padding: 20px;
+            border-radius: 4px;
+            width: 400px;
+            max-width: 90%;
+        }
+        
+        .modal-title {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-color);
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--bg-light);
+            padding: 12px 16px;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast i {
+            margin-right: 8px;
+            color: #4ec9b0;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <div class="logo">
+            <i class="fas fa-code"></i>
+            <span>CollabCode</span>
+        </div>
+        
+        <button class="btn" id="btn-new-file">
+            <i class="fas fa-file"></i>
+            <span>New File</span>
+        </button>
+        
+        <button class="btn" id="btn-save">
+            <i class="fas fa-save"></i>
+            <span>Save</span>
+        </button>
+        
+        <div class="spacer"></div>
+        
+        <button class="btn" id="btn-collaborate">
+            <i class="fas fa-users"></i>
+            <span>Start Collaboration</span>
+        </button>
+        
+        <button class="btn" id="btn-share">
+            <i class="fas fa-share-alt"></i>
+            <span>Share</span>
+        </button>
+    </div>
+    
+    <div id="main">
+        <div id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-folder-open"></i>
+                <span>EXPLORER</span>
+            </div>
+            
+            <div id="file-explorer">
+                <div class="file-item active">
+                    <i class="fas fa-file-code"></i>
+                    <span>index.html</span>
+                </div>
+                <div class="file-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>script.js</span>
+                </div>
+                <div class="file-item">
+                    <i class="fas fa-file-code"></i>
+                    <span>styles.css</span>
+                </div>
+                <div class="file-item">
+                    <i class="fas fa-folder"></i>
+                    <span>assets</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="editor-container">
+            <div id="tabs">
+                <div class="tab active">
+                    <span>index.html</span>
+                    <i class="fas fa-times tab-close"></i>
+                </div>
+                <div class="tab">
+                    <span>script.js</span>
+                    <i class="fas fa-times tab-close"></i>
+                </div>
+            </div>
+            
+            <div id="editor"></div>
+            
+            <div id="status-bar">
+                <div class="status-item">
+                    <i class="fas fa-code-branch"></i>
+                    <span>main</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-circle"></i>
+                    <span>JavaScript</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-user"></i>
+                    <span>You</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="collaborators">
+            <h4>Collaborators</h4>
+            <div class="collaborator">
+                <div class="collaborator-avatar">Y</div>
+                <span>You (Host)</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div class="modal" id="new-file-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">New File</h3>
+            <div class="form-group">
+                <label for="filename">File Name</label>
+                <input type="text" id="filename" class="form-control" placeholder="e.g., script.js">
+            </div>
+            <div class="modal-actions">
+                <button class="btn" id="btn-cancel-new">Cancel</button>
+                <button class="btn btn-primary" id="btn-create-file">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="share-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Share Project</h3>
+            <div class="form-group">
+                <label for="share-link">Invite Link</label>
+                <input type="text" id="share-link" class="form-control" readonly value="https://collabcode.app/room/abc123">
+            </div>
+            <button class="btn btn-primary" id="btn-copy-link">
+                <i class="fas fa-copy"></i>
+                <span>Copy Link</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Link copied to clipboard!</span>
+    </div>
+    
+    <script>
+        // Initialize ACE Editor
+        const editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/html");
+        editor.setOptions({
+            fontSize: "14px",
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true
+        });
+        
+        // Sample content
+        editor.setValue(`<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to CollabCode!</h1>
+        <p>Start coding collaboratively with your team in real-time.</p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>`, -1);
+        
+        // UI Interactions
+        document.getElementById('btn-new-file').addEventListener('click', () => {
+            document.getElementById('new-file-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('btn-cancel-new').addEventListener('click', () => {
+            document.getElementById('new-file-modal').style.display = 'none';
+        });
+        
+        document.getElementById('btn-share').addEventListener('click', () => {
+            document.getElementById('share-modal').style.display = 'flex';
+        });
+        
+        document.getElementById('btn-copy-link').addEventListener('click', () => {
+            const linkInput = document.getElementById('share-link');
+            linkInput.select();
+            document.execCommand('copy');
+            
+            // Show toast notification
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        });
+        
+        // Close modals when clicking outside
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // File explorer interactions
+        const fileItems = document.querySelectorAll('.file-item');
+        fileItems.forEach(item => {
+            item.addEventListener('click', () => {
+                fileItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Update tabs
+                const fileName = item.querySelector('span').textContent;
+                const tabs = document.querySelectorAll('.tab');
+                let tabExists = false;
+                
+                tabs.forEach(tab => {
+                    if (tab.querySelector('span').textContent === fileName) {
+                        tabExists = true;
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                    }
+                });
+                
+                if (!tabExists) {
+                    const newTab = document.createElement('div');
+                    newTab.className = 'tab';
+                    newTab.innerHTML = `
+                        <span>${fileName}</span>
+                        <i class="fas fa-times tab-close"></i>
+                    `;
+                    
+                    // Add click handler for the new tab
+                    newTab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        newTab.classList.add('active');
+                    });
+                    
+                    // Add close handler
+                    newTab.querySelector('.tab-close').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        newTab.remove();
+                    });
+                    
+                    document.getElementById('tabs').appendChild(newTab);
+                    tabs.forEach(t => t.classList.remove('active'));
+                    newTab.classList.add('active');
+                }
+                
+                // Change editor mode based on file extension
+                if (fileName.endsWith('.js')) {
+                    editor.session.setMode("ace/mode/javascript");
+                    document.querySelector('#status-bar .status-item:nth-child(2) span').textContent = 'JavaScript';
+                } else if (fileName.endsWith('.css')) {
+                    editor.session.setMode("ace/mode/css");
+                    document.querySelector('#status-bar .status-item:nth-child(2) span').textContent = 'CSS';
+                } else if (fileName.endsWith('.html')) {
+                    editor.session.setMode("ace/mode/html");
+                    document.querySelector('#status-bar .status-item:nth-child(2) span').textContent = 'HTML';
+                }
+            });
+        });
+        
+        // Tab interactions
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+            
+            tab.querySelector('.tab-close').addEventListener('click', (e) => {
+                e.stopPropagation();
+                tab.remove();
+            });
+        });
+        
+        // Simulate real-time collaboration with Socket.io
+        const socket = io('https://collabcode-socket-server.example.com');
+        
+        // Listen for changes from other collaborators
+        socket.on('text-change', (changes) => {
+            editor.session.applyDeltas([changes]);
+        });
+        
+        // Send changes to server
+        editor.on('change', (delta) => {
+            socket.emit('text-change', delta);
+        });
+        
+        // Handle new collaborators joining
+        socket.on('user-joined', (user) => {
+            const collaborators = document.getElementById('collaborators');
+            const collaborator = document.createElement('div');
+            collaborator.className = 'collaborator';
+            collaborator.innerHTML = `
+                <div class="collaborator-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                <span>${user.name}</span>
+            `;
+            collaborators.appendChild(collaborator);
+        });
+        
+        // Handle collaborators leaving
+        socket.on('user-left', (userId) => {
+            // In a real app, you'd have a way to identify and remove the specific user
+            console.log(`User ${userId} left the session`);
+        });
+        
+        // Initialize with a random user (you)
+        const randomColor = ['#4ec9b0', '#569cd6', '#c586c0', '#dcdcaa', '#d7ba7d'][Math.floor(Math.random() * 5)];
+        document.querySelector('.collaborator-avatar').style.backgroundColor = randomColor;
+    </script>
+</body>
+</html>
