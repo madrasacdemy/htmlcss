@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Event Scheduler</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f72585;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .ai-tag {
+            background-color: var(--accent);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: var(--secondary);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .duration-selector {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .duration-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .duration-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .participants-list {
+            margin-top: 15px;
+        }
+        
+        .participant {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .participant-email {
+            flex: 1;
+        }
+        
+        .remove-participant {
+            color: var(--warning);
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f0f5ff;
+        }
+        
+        .availability-calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .availability-calendar th, .availability-calendar td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #e1e5eb;
+        }
+        
+        .availability-calendar th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .time-slot {
+            height: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .time-slot:hover {
+            background-color: #e9f7fe;
+        }
+        
+        .time-slot.available {
+            background-color: #d4edda;
+        }
+        
+        .time-slot.best {
+            background-color: #c3e6cb;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .time-slot.best::after {
+            content: "★";
+            color: gold;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+        }
+        
+        .time-slot.unavailable {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .time-slot.selected {
+            background-color: var(--accent);
+            color: white;
+        }
+        
+        .suggestions-container {
+            margin-top: 20px;
+        }
+        
+        .suggestion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--success);
+        }
+        
+        .suggestion-info {
+            flex: 1;
+        }
+        
+        .suggestion-time {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .suggestion-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .suggestion-score {
+            background-color: var(--success);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .ai-explanation {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Event Scheduler <span class="ai-tag">AI-Powered</span></h1>
+            <div>
+                <button class="btn btn-secondary">View Calendar</button>
+            </div>
+        </header>
+        
+        <main>
+            <div class="left-column">
+                <div class="card">
+                    <h2>Schedule New Event</h2>
+                    
+                    <div class="form-group">
+                        <label for="event-title">Event Title</label>
+                        <input type="text" id="event-title" placeholder="Team meeting, 1:1, etc.">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="event-description">Description (Optional)</label>
+                        <textarea id="event-description" rows="3" placeholder="What's this meeting about?"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <div class="duration-selector">
+                            <div class="duration-btn active" data-minutes="30">30 min</div>
+                            <div class="duration-btn" data-minutes="60">60 min</div>
+                            <div class="duration-btn" data-minutes="90">90 min</div>
+                            <div class="duration-btn" data-minutes="120">120 min</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="event-timezone">Timezone</label>
+                        <select id="event-timezone">
+                            <option value="auto">Auto-detect (based on participants)</option>
+                            <option value="-12">UTC-12:00</option>
+                            <option value="-8">UTC-08:00 (PST)</option>
+                            <option value="-5">UTC-05:00 (EST)</option>
+                            <option value="0">UTC±00:00 (GMT)</option>
+                            <option value="1">UTC+01:00 (CET)</option>
+                            <option value="5.5">UTC+05:30 (IST)</option>
+                            <option value="8">UTC+08:00 (CST)</option>
+                            <option value="9">UTC+09:00 (JST)</option>
+                            <option value="12">UTC+12:00</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="participant-email">Participants</label>
+                        <div class="input-group">
+                            <input type="email" id="participant-email" placeholder="participant@company.com">
+                            <button class="btn btn-secondary" id="add-participant" style="margin-top: 8px;">Add Participant</button>
+                        </div>
+                        <div class="participants-list" id="participants-list">
+                            <!-- Participants will be added here -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="event-urgency">Urgency</label>
+                        <select id="event-urgency">
+                            <option value="flexible">Flexible (schedule whenever)</option>
+                            <option value="preferred">Preferred (this week preferred)</option>
+                            <option value="urgent">Urgent (need to schedule ASAP)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="find-times-btn">
+                        <span id="find-times-text">Find Optimal Times</span>
+                        <span id="find-times-loading" class="loading" style="display: none;"></span>
+                    </button>
+                </div>
+                
+                <div class="card" id="ai-suggestions-card" style="display: none;">
+                    <h2>AI Suggestions</h2>
+                    <div class="suggestions-container" id="suggestions-container">
+                        <!-- AI suggestions will appear here -->
+                    </div>
+                    <div class="ai-explanation" id="ai-explanation">
+                        <!-- AI explanation will appear here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-column">
+                <div class="card">
+                    <h2>Availability Overview</h2>
+                    <p style="margin-bottom: 15px; color: #6c757d;">Based on participants' calendars and preferences</p>
+                    
+                    <div class="calendar-navigation" style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <button class="btn btn-secondary" id="prev-week">← Previous</button>
+                        <h3 id="current-week">Week of June 5, 2023</h3>
+                        <button class="btn btn-secondary" id="next-week">Next →</button>
+                    </div>
+                    
+                    <table class="availability-calendar" id="availability-calendar">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Mon<br>Jun 5</th>
+                                <th>Tue<br>Jun 6</th>
+                                <th>Wed<br>Jun 7</th>
+                                <th>Thu<br>Jun 8</th>
+                                <th>Fri<br>Jun 9</th>
+                            </tr>
+                        </thead>
+                        <tbody id="calendar-body">
+                            <!-- Calendar will be generated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const durationBtns = document.querySelectorAll('.duration-btn');
+            const addParticipantBtn = document.getElementById('add-participant');
+            const participantEmailInput = document.getElementById('participant-email');
+            const participantsList = document.getElementById('participants-list');
+            const findTimesBtn = document.getElementById('find-times-btn');
+            const findTimesText = document.getElementById('find-times-text');
+            const findTimesLoading = document.getElementById('find-times-loading');
+            const aiSuggestionsCard = document.getElementById('ai-suggestions-card');
+            const suggestionsContainer = document.getElementById('suggestions-container');
+            const aiExplanation = document.getElementById('ai-explanation');
+            const prevWeekBtn = document.getElementById('prev-week');
+            const nextWeekBtn = document.getElementById('next-week');
+            const currentWeekEl = document.getElementById('current-week');
+            const calendarBody = document.getElementById('calendar-body');
+            
+            // State
+            let selectedDuration = 30;
+            let participants = [];
+            let currentWeekStart = getStartOfWeek(new Date());
+            
+            // Initialize
+            generateCalendar();
+            
+            // Event Listeners
+            durationBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    durationBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDuration = parseInt(this.dataset.minutes);
+                });
+            });
+            
+            addParticipantBtn.addEventListener('click', addParticipant);
+            participantEmailInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') addParticipant();
+            });
+            
+            findTimesBtn.addEventListener('click', findOptimalTimes);
+            prevWeekBtn.addEventListener('click', () => navigateWeek(-1));
+            nextWeekBtn.addEventListener('click', () => navigateWeek(1));
+            
+            // Functions
+            function addParticipant() {
+                const email = participantEmailInput.value.trim();
+                if (!email || !validateEmail(email)) {
+                    alert('Please enter a valid email address');
+                    return;
+                }
+                
+                if (participants.includes(email)) {
+                    alert('This participant has already been added');
+                    return;
+                }
+                
+                participants.push(email);
+                participantEmailInput.value = '';
+                
+                const participantEl = document.createElement('div');
+                participantEl.className = 'participant';
+                participantEl.innerHTML = `
+                    <div class="participant-email">${email}</div>
+                    <div class="remove-participant">×</div>
+                `;
+                
+                participantEl.querySelector('.remove-participant').addEventListener('click', function() {
+                    participants = participants.filter(p => p !== email);
+                    participantsList.removeChild(participantEl);
+                });
+                
+                participantsList.appendChild(participantEl);
+            }
+            
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+            
+            function findOptimalTimes() {
+                if (participants.length === 0) {
+                    alert('Please add at least one participant');
+                    return;
+                }
+                
+                // Show loading state
+                findTimesText.style.display = 'none';
+                findTimesLoading.style.display = 'inline-block';
+                findTimesBtn.disabled = true;
+                
+                // Simulate AI processing delay
+                setTimeout(() => {
+                    generateAISuggestions();
+                    
+                    // Hide loading state
+                    findTimesText.style.display = 'inline-block';
+                    findTimesLoading.style.display = 'none';
+                    findTimesBtn.disabled = false;
+                    
+                    // Show suggestions card
+                    aiSuggestionsCard.style.display = 'block';
+                }, 1500);
+            }
+            
+            function generateAISuggestions() {
+                // Clear previous suggestions
+                suggestionsContainer.innerHTML = '';
+                
+                // Generate fake AI suggestions (in a real app, this would come from an API)
+                const suggestions = [
+                    {
+                        date: new Date(currentWeekStart),
+                        date.setDate(currentWeekStart.getDate() + 1),
+                        time: '10:00 AM',
+                        score: 95,
+                        explanation: 'All participants are available, and this time aligns with peak productivity hours.'
+                    },
+                    {
+                        date: new Date(currentWeekStart),
+                        date.setDate(currentWeekStart.getDate() + 3),
+                        time: '2:30 PM',
+                        score: 88,
+                        explanation: 'Most participants are available, avoids lunch hours and end-of-day fatigue.'
+                    },
+                    {
+                        date: new Date(currentWeekStart),
+                        date.setDate(currentWeekStart.getDate() + 4),
+                        time: '9:00 AM',
+                        score: 82,
+                        explanation: 'Early morning slot when participants have fewer conflicts, though one participant has a slightly later start time.'
+                    }
+                ];
+                
+                // Add suggestions to DOM
+                suggestions.forEach(suggestion => {
+                    const dateStr = suggestion.date.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    
+                    const suggestionEl = document.createElement('div');
+                    suggestionEl.className = 'suggestion';
+                    suggestionEl.innerHTML = `
+                        <div class="suggestion-info">
+                            <div class="suggestion-time">${suggestion.time}</div>
+                            <div class="suggestion-date">${dateStr}</div>
+                        </div>
+                        <div class="suggestion-score">${suggestion.score}%</div>
+                    `;
+                    
+                    suggestionEl.addEventListener('click', function() {
+                        // Highlight this time in calendar (implementation would depend on your calendar setup)
+                        alert(`Selected ${suggestion.time} on ${dateStr} for your meeting`);
+                    });
+                    
+                    suggestionsContainer.appendChild(suggestionEl);
+                });
+                
+                // Add AI explanation
+                aiExplanation.innerHTML = `
+                    <strong>AI Analysis:</strong> Based on participants' calendars, working hours, and preferences, 
+                    I've prioritized times when everyone is available and when focus levels are typically highest. 
+                    The top suggestion has the fewest conflicts and aligns with most participants' preferred working hours.
+                `;
+            }
+            
+            function navigateWeek(direction) {
+                currentWeekStart.setDate(currentWeekStart.getDate() + (direction * 7));
+                updateWeekDisplay();
+                generateCalendar();
+            }
+            
+            function updateWeekDisplay() {
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                currentWeekEl.textContent = `Week of ${currentWeekStart.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`;
+            }
+            
+            function getStartOfWeek(date) {
+                const d = new Date(date);
+                const day = d.getDay();
+                const diff = d.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is Sunday
+                return new Date(d.setDate(diff));
+            }
+            
+            function generateCalendar() {
+                calendarBody.innerHTML = '';
+                
+                // Generate time slots (8AM to 6PM)
+                for (let hour = 8; hour <= 18; hour++) {
+                    for (let minute = 0; minute < 60; minute += 30) {
+                        if (hour === 18 && minute === 30) break; // Stop at 6:00 PM
+                        
+                        const timeStr = `${hour > 12 ? hour - 12 : hour}:${minute === 0 ? '00' : minute} ${hour >= 12 ? 'PM' : 'AM'}`;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `<td>${timeStr}</td>`;
+                        
+                        // Add cells for each weekday (Mon-Fri)
+                        for (let day = 0; day < 5; day++) {
+                            const cell = document.createElement('td');
+                            cell.className = 'time-slot';
+                            
+                            // Randomly generate availability (in a real app, this would come from actual data)
+                            const rand = Math.random();
+                            if (rand > 0.7) {
+                                cell.classList.add('available');
+                                if (rand > 0.9) cell.classList.add('best');
+                            } else if (rand > 0.5) {
+                                cell.classList.add('unavailable');
+                            }
+                            
+                            cell.addEventListener('click', function() {
+                                document.querySelectorAll('.time-slot.selected').forEach(el => {
+                                    el.classList.remove('selected');
+                                });
+                                this.classList.add('selected');
+                                
+                                // Show a prompt to confirm selection
+                                const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+                                const dayName = dayNames[day];
+                                alert(`Selected ${timeStr} on ${dayName} for your meeting`);
+                            });
+                            
+                            row.appendChild(cell);
+                        }
+                        
+                        calendarBody.appendChild(row);
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
