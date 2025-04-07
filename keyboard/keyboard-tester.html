@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #7f8c8d;
+            line-height: 1.5;
+        }
+        
+        .test-area {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .test-area.focused {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .keyboard {
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .key {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            padding: 10px 15px;
+            margin: 0 3px;
+            font-size: 14px;
+            text-align: center;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.1s;
+        }
+        
+        .key.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+            transform: translateY(2px);
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .key.wide {
+            min-width: 60px;
+        }
+        
+        .key.extra-wide {
+            min-width: 80px;
+        }
+        
+        .key.space {
+            min-width: 300px;
+        }
+        
+        .key .key-label {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
+            color: #7f8c8d;
+        }
+        
+        .key.active .key-label {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .key .key-code {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            font-size: 10px;
+            color: #bdc3c7;
+        }
+        
+        .key.active .key-code {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            padding: 15px;
+            flex: 1;
+            margin: 0 5px;
+            text-align: center;
+        }
+        
+        .stat-box h3 {
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .stat-box p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .key-history {
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .key-history h2 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        .history-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .history-item {
+            background-color: white;
+            border: 1px solid #bdc3c7;
+            border-radius: 3px;
+            padding: 5px 8px;
+            font-size: 12px;
+        }
+        
+        .history-item.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .key {
+                min-width: 30px;
+                height: 35px;
+                padding: 5px 8px;
+                font-size: 12px;
+                margin: 0 2px;
+            }
+            
+            .key.wide {
+                min-width: 45px;
+            }
+            
+            .key.extra-wide {
+                min-width: 60px;
+            }
+            
+            .key.space {
+                min-width: 150px;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            .stat-box {
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Keyboard Tester</h1>
+        <p class="description">
+            Press any key on your keyboard to test it. The test area will show information about the pressed key, 
+            including key code, key name, and other details. The virtual keyboard will highlight the pressed key.
+        </p>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <h3>Keys Pressed</h3>
+                <p id="keys-pressed">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>Unique Keys</h3>
+                <p id="unique-keys">0</p>
+            </div>
+            <div class="stat-box">
+                <h3>Last Key</h3>
+                <p id="last-key">None</p>
+            </div>
+        </div>
+        
+        <div class="test-area" id="test-area">
+            <div id="test-content">Press any key to start testing...</div>
+        </div>
+        
+        <div class="keyboard">
+            <div class="keyboard-row">
+                <div class="key" data-code="Escape"><span class="key-label">Esc</span>Esc</div>
+                <div class="key" data-code="F1"><span class="key-label">F1</span>F1</div>
+                <div class="key" data-code="F2"><span class="key-label">F2</span>F2</div>
+                <div class="key" data-code="F3"><span class="key-label">F3</span>F3</div>
+                <div class="key" data-code="F4"><span class="key-label">F4</span>F4</div>
+                <div class="key" data-code="F5"><span class="key-label">F5</span>F5</div>
+                <div class="key" data-code="F6"><span class="key-label">F6</span>F6</div>
+                <div class="key" data-code="F7"><span class="key-label">F7</span>F7</div>
+                <div class="key" data-code="F8"><span class="key-label">F8</span>F8</div>
+                <div class="key" data-code="F9"><span class="key-label">F9</span>F9</div>
+                <div class="key" data-code="F10"><span class="key-label">F10</span>F10</div>
+                <div class="key" data-code="F11"><span class="key-label">F11</span>F11</div>
+                <div class="key" data-code="F12"><span class="key-label">F12</span>F12</div>
+            </div>
+            
+            <div class="keyboard-row">
+                <div class="key" data-code="Backquote"><span class="key-label">`</span>`~</div>
+                <div class="key" data-code="Digit1"><span class="key-label">1</span>1!</div>
+                <div class="key" data-code="Digit2"><span class="key-label">2</span>2@</div>
+                <div class="key" data-code="Digit3"><span class="key-label">3</span>3#</div>
+                <div class="key" data-code="Digit4"><span class="key-label">4</span>4$</div>
+                <div class="key" data-code="Digit5"><span class="key-label">5</span>5%</div>
+                <div class="key" data-code="Digit6"><span class="key-label">6</span>6^</div>
+                <div class="key" data-code="Digit7"><span class="key-label">7</span>7&amp;</div>
+                <div class="key" data-code="Digit8"><span class="key-label">8</span>8*</div>
+                <div class="key" data-code="Digit9"><span class="key-label">9</span>9(</div>
+                <div class="key" data-code="Digit0"><span class="key-label">0</span>0)</div>
+                <div class="key" data-code="Minus"><span class="key-label">-</span>- _</div>
+                <div class="key" data-code="Equal"><span class="key-label">=</span>=+</div>
+                <div class="key wide" data-code="Backspace"><span class="key-label">Backspace</span>⌫</div>
+            </div>
+            
+            <div class="keyboard-row">
+                <div class="key extra-wide" data-code="Tab"><span class="key-label">Tab</span>Tab</div>
+                <div class="key" data-code="KeyQ"><span class="key-label">Q</span>Q</div>
+                <div class="key" data-code="KeyW"><span class="key-label">W</span>W</div>
+                <div class="key" data-code="KeyE"><span class="key-label">E</span>E</div>
+                <div class="key" data-code="KeyR"><span class="key-label">R</span>R</div>
+                <div class="key" data-code="KeyT"><span class="key-label">T</span>T</div>
+                <div class="key" data-code="KeyY"><span class="key-label">Y</span>Y</div>
+                <div class="key" data-code="KeyU"><span class="key-label">U</span>U</div>
+                <div class="key" data-code="KeyI"><span class="key-label">I</span>I</div>
+                <div class="key" data-code="KeyJ"><span class="key-label">J</span>J</div>
+                <div class="key" data-code="KeyK"><span class="key-label">K</span>K</div>
+                <div class="key" data-code="KeyL"><span class="key-label">L</span>L</div>
+                <div class="key" data-code="Semicolon"><span class="key-label">;</span>;:</div>
+                <div class="key" data-code="Quote"><span class="key-label">'</span>'&quot;</div>
+                <div class="key" data-code="Backslash"><span class="key-label">\</span>\|</div>
+            </div>
+            
+            <div class="keyboard-row">
+                <div class="key extra-wide" data-code="CapsLock"><span class="key-label">Caps</span>Caps Lock</div>
+                <div class="key" data-code="KeyA"><span class="key-label">A</span>A</div>
+                <div class="key" data-code="KeyS"><span class="key-label">S</span>S</div>
+                <div class="key" data-code="KeyD"><span class="key-label">D</span>D</div>
+                <div class="key" data-code="KeyF"><span class="key-label">F</span>F</div>
+                <div class="key" data-code="KeyG"><span class="key-label">G</span>G</div>
+                <div class="key" data-code="KeyH"><span class="key-label">H</span>H</div>
+                <div class="key" data-code="KeyJ"><span class="key-label">J</span>J</div>
+                <div class="key" data-code="KeyK"><span class="key-label">K</span>K</div>
+                <div class="key" data-code="KeyL"><span class="key-label">L</span>L</div>
+                <div class="key" data-code="Semicolon"><span class="key-label">;</span>;:</div>
+                <div class="key" data-code="Quote"><span class="key-label">'</span>'&quot;</div>
+                <div class="key wide" data-code="Enter"><span class="key-label">Enter</span>↩</div>
+            </div>
+            
+            <div class="keyboard-row">
+                <div class="key extra-wide" data-code="ShiftLeft"><span class="key-label">Shift</span>Shift</div>
+                <div class="key" data-code="KeyZ"><span class="key-label">Z</span>Z</div>
+                <div class="key" data-code="KeyX"><span class="key-label">X</span>X</div>
+                <div class="key" data-code="KeyY"><span class="key-label">Y</span>Y</div>
+                <div class="key" data-code="KeyV"><span class="key-label">V</span>V</div>
+                <div class="key" data-code="KeyB"><span class="key-label">B</span>B</div>
+                <div class="key" data-code="KeyN"><span class="key-label">N</span>N</div>
+                <div class="key" data-code="KeyM"><span class="key-label">M</span>M</div>
+                <div class="key" data-code="Comma"><span class="key-label">,</span>,&lt;</div>
+                <div class="key" data-code="Period"><span class="key-label">.</span>.&gt;</div>
+                <div class="key" data-code="Slash"><span class="key-label">/</span>/?</div>
+                <div class="key extra-wide" data-code="ShiftRight"><span class="key-label">Shift</span>Shift</div>
+            </div>
+            
+            <div class="keyboard-row">
+                <div class="key" data-code="ControlLeft"><span class="key-label">Ctrl</span>Ctrl</div>
+                <div class="key" data-code="MetaLeft"><span class="key-label">Win</span>⊞</div>
+                <div class="key" data-code="AltLeft"><span class="key-label">Alt</span>Alt</div>
+                <div class="key space" data-code="Space"><span class="key-label">Space</span>Space</div>
+                <div class="key" data-code="AltRight"><span class="key-label">Alt</span>Alt</div>
+                <div class="key" data-code="MetaRight"><span class="key-label">Win</span>⊞</div>
+                <div class="key" data-code="ContextMenu"><span class="key-label">Menu</span>☰</div>
+                <div class="key" data-code="ControlRight"><span class="key-label">Ctrl</span>Ctrl</div>
+            </div>
+        </div>
+        
+        <div class="key-history">
+            <h2>Recent Keys Pressed</h2>
+            <div class="history-items" id="history-items"></div>
+        </div>
+        
+        <div class="footer">
+            <p>Keyboard Tester - Press any key to test your keyboard functionality</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testArea = document.getElementById('test-area');
+            const testContent = document.getElementById('test-content');
+            const keysPressedElement = document.getElementById('keys-pressed');
+            const uniqueKeysElement = document.getElementById('unique-keys');
+            const lastKeyElement = document.getElementById('last-key');
+            const historyItemsElement = document.getElementById('history-items');
+            const allKeys = document.querySelectorAll('.key');
+            
+            let keysPressed = 0;
+            let uniqueKeysPressed = new Set();
+            let keyHistory = [];
+            const maxHistoryItems = 20;
+            
+            // Focus the test area automatically
+            testArea.tabIndex = 0;
+            testArea.focus();
+            
+            // Add focus style
+            testArea.addEventListener('focus', function() {
+                this.classList.add('focused');
+            });
+            
+            testArea.addEventListener('blur', function() {
+                this.classList.remove('focused');
+            });
+            
+            // Handle key events
+            document.addEventListener('keydown', function(e) {
+                e.preventDefault();
+                
+                // Update counters
+                keysPressed++;
+                uniqueKeysPressed.add(e.code);
+                
+                // Update UI
+                keysPressedElement.textContent = keysPressed;
+                uniqueKeysElement.textContent = uniqueKeysPressed.size;
+                lastKeyElement.textContent = e.key === ' ' ? 'Space' : e.key;
+                
+                // Display key info
+                testContent.innerHTML = `
+                    <strong>Key Pressed:</strong> ${e.key === ' ' ? 'Space' : e.key}<br>
+                    <strong>Code:</strong> ${e.code}<br>
+                    <strong>Key Code:</strong> ${e.keyCode}<br>
+                    <strong>Location:</strong> ${getKeyLocation(e.location)}<br>
+                    <strong>Modifiers:</strong> ${getModifiers(e)}
+                `;
+                
+                // Highlight the pressed key on virtual keyboard
+                highlightKey(e.code);
+                
+                // Add to history
+                addToHistory(e);
+            });
+            
+            function highlightKey(code) {
+                // Remove active class from all keys
+                allKeys.forEach(key => {
+                    key.classList.remove('active');
+                });
+                
+                // Find and highlight the pressed key
+                const keyElement = document.querySelector(`.key[data-code="${code}"]`);
+                if (keyElement) {
+                    keyElement.classList.add('active');
+                    
+                    // Add key code to the key element
+                    const keyCodeElement = keyElement.querySelector('.key-code');
+                    if (!keyCodeElement) {
+                        const codeElement = document.createElement('span');
+                        codeElement.className = 'key-code';
+                        keyElement.appendChild(codeElement);
+                    }
+                    keyElement.querySelector('.key-code').textContent = code;
+                }
+            }
+            
+            function addToHistory(event) {
+                const keyItem = {
+                    key: event.key,
+                    code: event.code,
+                    timestamp: new Date()
+                };
+                
+                keyHistory.unshift(keyItem);
+                
+                // Limit history size
+                if (keyHistory.length > maxHistoryItems) {
+                    keyHistory.pop();
+                }
+                
+                // Update history display
+                updateHistoryDisplay();
+            }
+            
+            function updateHistoryDisplay() {
+                historyItemsElement.innerHTML = '';
+                
+                keyHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    if (index === 0) historyItem.classList.add('active');
+                    
+                    historyItem.innerHTML = `
+                        <strong>${item.key === ' ' ? 'Space' : item.key}</strong>
+                        <span>${item.code}</span>
+                    `;
+                    
+                    historyItemsElement.appendChild(historyItem);
+                });
+            }
+            
+            function getKeyLocation(location) {
+                switch(location) {
+                    case 0: return 'Standard';
+                    case 1: return 'Left';
+                    case 2: return 'Right';
+                    case 3: return 'Numpad';
+                    default: return 'Unknown';
+                }
+            }
+            
+            function getModifiers(event) {
+                const modifiers = [];
+                if (event.ctrlKey) modifiers.push('Ctrl');
+                if (event.shiftKey) modifiers.push('Shift');
+                if (event.altKey) modifiers.push('Alt');
+                if (event.metaKey) modifiers.push('Meta');
+                
+                return modifiers.length > 0 ? modifiers.join(' + ') : 'None';
+            }
+            
+            // Click on test area to focus it
+            testArea.addEventListener('click', function() {
+                this.focus();
+            });
+        });
+    </script>
+</body>
+</html>

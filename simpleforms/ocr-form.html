@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OCR Form Auto-Fill</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    label {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    label i {
+      margin-right: 8px;
+      color: #0b5ed7;
+    }
+
+    input[type="text"], textarea, input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      transition: border 0.2s;
+      font-size: 14px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #0b5ed7;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #0b5ed7;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #084cb1;
+    }
+
+    .loading {
+      color: #28a745;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .input-icon {
+      font-style: normal;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>📄 OCR Form Auto-Fill</h2>
+  <p style="text-align:center;">Upload a document to extract and auto-fill form fields.</p>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <p id="loadingText" class="loading"></p>
+
+  <form>
+    <label><span class="input-icon">👤</span> Name:</label>
+    <input type="text" id="name" placeholder="Full Name">
+
+    <label><span class="input-icon">📧</span> Email:</label>
+    <input type="text" id="email" placeholder="Email Address">
+
+    <label><span class="input-icon">🏠</span> Address:</label>
+    <textarea id="address" rows="3" placeholder="Home Address"></textarea>
+  </form>
+
+  <button onclick="processOCR()">🔍 Scan & Auto-Fill</button>
+</div>
+
+<script>
+  function processOCR() {
+    const input = document.getElementById('imageInput');
+    const file = input.files[0];
+    const loadingText = document.getElementById('loadingText');
+
+    if (!file) {
+      alert("📷 Please select an image first.");
+      return;
+    }
+
+    loadingText.textContent = "🔄 Scanning... Please wait.";
+
+    const reader = new FileReader();
+    reader.onload = function () {
+      Tesseract.recognize(
+        reader.result,
+        'eng',
+        { logger: m => console.log(m) }
+      ).then(({ data: { text } }) => {
+        loadingText.textContent = "✅ Scan Complete.";
+
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+
+        const nameLine = lines.find(line => /name[:\-]/i.test(line));
+        const emailLine = lines.find(line => /\S+@\S+\.\S+/.test(line));
+        const addressLine = lines.find(line => /address[:\-]/i.test(line));
+
+        if (nameLine) {
+          document.getElementById('name').value = nameLine.split(/[:\-]/)[1]?.trim();
+        }
+
+        if (emailLine) {
+          document.getElementById('email').value = emailLine.match(/\S+@\S+\.\S+/)[0];
+        }
+
+        if (addressLine) {
+          document.getElementById('address').value = addressLine.split(/[:\-]/)[1]?.trim();
+        }
+
+      }).catch(err => {
+        console.error(err);
+        loadingText.textContent = "❌ Error during OCR.";
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+</script>
+
+</body>
+</html>

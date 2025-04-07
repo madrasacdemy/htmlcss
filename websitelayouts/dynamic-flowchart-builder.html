@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Flowchart Builder</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .toolbox {
+            width: 200px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .toolbox h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #34495e;
+            padding-bottom: 10px;
+        }
+        
+        .tool-item {
+            background-color: #34495e;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: move;
+            text-align: center;
+        }
+        
+        .canvas-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: auto;
+            background-color: white;
+            background-image: linear-gradient(#e5e5e5 1px, transparent 1px),
+                              linear-gradient(90deg, #e5e5e5 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        #flowchart-canvas {
+            width: 2000px;
+            height: 2000px;
+            position: relative;
+        }
+        
+        .node {
+            position: absolute;
+            min-width: 120px;
+            min-height: 60px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: move;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+            user-select: none;
+            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .node.process {
+            background-color: #3498db;
+        }
+        
+        .node.decision {
+            background-color: #e74c3c;
+            border-radius: 0;
+            transform: rotate(45deg);
+            width: 80px;
+            height: 80px;
+        }
+        
+        .node.decision .node-label {
+            transform: rotate(-45deg);
+        }
+        
+        .node.terminal {
+            background-color: #2ecc71;
+            border-radius: 30px;
+        }
+        
+        .node.input {
+            background-color: #f39c12;
+        }
+        
+        .connector {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background-color: #34495e;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .connector.top {
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .connector.bottom {
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .connector.left {
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .connector.right {
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .connection {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .properties-panel {
+            width: 250px;
+            background-color: #ecf0f1;
+            padding: 15px;
+            overflow-y: auto;
+            border-left: 1px solid #bdc3c7;
+        }
+        
+        .properties-panel h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 10px;
+        }
+        
+        .property-group {
+            margin-bottom: 15px;
+        }
+        
+        .property-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .property-group input, .property-group select, .property-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .toolbar {
+            background-color: #34495e;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .toolbar button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .toolbar button:hover {
+            background-color: #3d566e;
+        }
+        
+        .selected {
+            outline: 2px dashed #f1c40f;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button id="save-btn">Save</button>
+        <button id="load-btn">Load</button>
+        <button id="export-btn">Export as Image</button>
+        <button id="delete-btn">Delete Selected</button>
+        <button id="zoom-in">Zoom In</button>
+        <button id="zoom-out">Zoom Out</button>
+    </div>
+    
+    <div class="container">
+        <div class="toolbox">
+            <h2>Toolbox</h2>
+            <div class="tool-item" draggable="true" data-type="process">Process</div>
+            <div class="tool-item" draggable="true" data-type="decision">Decision</div>
+            <div class="tool-item" draggable="true" data-type="terminal">Terminal</div>
+            <div class="tool-item" draggable="true" data-type="input">Input/Output</div>
+        </div>
+        
+        <div class="canvas-container" id="canvas-container">
+            <div id="flowchart-canvas"></div>
+        </div>
+        
+        <div class="properties-panel" id="properties-panel">
+            <h2>Properties</h2>
+            <div id="node-properties" style="display: none;">
+                <div class="property-group">
+                    <label for="node-label">Label</label>
+                    <input type="text" id="node-label" placeholder="Enter node label">
+                </div>
+                <div class="property-group">
+                    <label for="node-color">Color</label>
+                    <input type="color" id="node-color" value="#3498db">
+                </div>
+                <div class="property-group">
+                    <label for="node-notes">Notes</label>
+                    <textarea id="node-notes" rows="3" placeholder="Add notes..."></textarea>
+                </div>
+            </div>
+            <div id="no-selection">
+                <p>Select a node to edit its properties.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('flowchart-canvas');
+            const canvasContainer = document.getElementById('canvas-container');
+            const toolboxItems = document.querySelectorAll('.tool-item');
+            const propertiesPanel = document.getElementById('properties-panel');
+            const nodeProperties = document.getElementById('node-properties');
+            const noSelection = document.getElementById('no-selection');
+            const nodeLabelInput = document.getElementById('node-label');
+            const nodeColorInput = document.getElementById('node-color');
+            const nodeNotesInput = document.getElementById('node-notes');
+            const saveBtn = document.getElementById('save-btn');
+            const loadBtn = document.getElementById('load-btn');
+            const exportBtn = document.getElementById('export-btn');
+            const deleteBtn = document.getElementById('delete-btn');
+            const zoomInBtn = document.getElementById('zoom-in');
+            const zoomOutBtn = document.getElementById('zoom-out');
+            
+            let selectedNode = null;
+            let isDragging = false;
+            let startX, startY;
+            let offsetX, offsetY;
+            let startConnector = null;
+            let connections = [];
+            let zoomLevel = 1;
+            
+            // Initialize the canvas with some sample nodes
+            createNode('Start', 'terminal', 300, 200);
+            createNode('Process 1', 'process', 300, 350);
+            createNode('Decision', 'decision', 300, 500);
+            createNode('End', 'terminal', 300, 700);
+            
+            // Make toolbox items draggable
+            toolboxItems.forEach(item => {
+                item.addEventListener('dragstart', function(e) {
+                    e.dataTransfer.setData('text/plain', this.dataset.type);
+                });
+            });
+            
+            // Handle drop on canvas
+            canvas.addEventListener('dragover', function(e) {
+                e.preventDefault();
+            });
+            
+            canvas.addEventListener('drop', function(e) {
+                e.preventDefault();
+                const type = e.dataTransfer.getData('text/plain');
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                let label = '';
+                switch(type) {
+                    case 'process': label = 'Process'; break;
+                    case 'decision': label = 'Decision'; break;
+                    case 'terminal': label = 'Start/End'; break;
+                    case 'input': label = 'Input/Output'; break;
+                }
+                
+                createNode(label, type, x, y);
+            });
+            
+            // Create a new node
+            function createNode(label, type, x, y) {
+                const node = document.createElement('div');
+                node.className = `node ${type}`;
+                node.innerHTML = `<div class="node-label">${label}</div>`;
+                node.style.left = `${x}px`;
+                node.style.top = `${y}px`;
+                node.dataset.label = label;
+                node.dataset.type = type;
+                
+                // Add connectors
+                if (type !== 'decision') {
+                    addConnector(node, 'top');
+                    addConnector(node, 'bottom');
+                }
+                addConnector(node, 'left');
+                addConnector(node, 'right');
+                
+                // Make node draggable
+                node.addEventListener('mousedown', startDrag);
+                
+                // Select node on click
+                node.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    selectNode(node);
+                });
+                
+                canvas.appendChild(node);
+                return node;
+            }
+            
+            // Add connector to a node
+            function addConnector(node, position) {
+                const connector = document.createElement('div');
+                connector.className = `connector ${position}`;
+                connector.dataset.position = position;
+                connector.dataset.parentId = node.dataset.id;
+                
+                connector.addEventListener('mousedown', startConnection);
+                
+                node.appendChild(connector);
+            }
+            
+            // Start dragging a node
+            function startDrag(e) {
+                if (e.target.classList.contains('connector')) return;
+                
+                isDragging = true;
+                selectedNode = this;
+                selectNode(selectedNode);
+                
+                const rect = this.getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+                
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                document.addEventListener('mousemove', dragNode);
+                document.addEventListener('mouseup', stopDrag);
+                
+                e.preventDefault();
+            }
+            
+            // Drag node
+            function dragNode(e) {
+                if (!isDragging) return;
+                
+                const x = e.clientX - offsetX - canvas.getBoundingClientRect().left;
+                const y = e.clientY - offsetY - canvas.getBoundingClientRect().top;
+                
+                selectedNode.style.left = `${x}px`;
+                selectedNode.style.top = `${y}px`;
+                
+                // Update connections
+                updateConnections();
+            }
+            
+            // Stop dragging
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener('mousemove', dragNode);
+                document.removeEventListener('mouseup', stopDrag);
+            }
+            
+            // Start creating a connection
+            function startConnection(e) {
+                e.stopPropagation();
+                startConnector = this;
+                
+                document.addEventListener('mousemove', drawTempConnection);
+                document.addEventListener('mouseup', completeConnection);
+            }
+            
+            // Draw temporary connection while dragging
+            function drawTempConnection(e) {
+                // For a real implementation, you'd draw a temporary line here
+            }
+            
+            // Complete the connection
+            function completeConnection(e) {
+                if (!startConnector) return;
+                
+                const element = document.elementFromPoint(e.clientX, e.clientY);
+                if (element && element.classList.contains('connector') {
+                    const endConnector = element;
+                    
+                    if (startConnector !== endConnector && 
+                        startConnector.parentNode !== endConnector.parentNode) {
+                        createConnection(startConnector, endConnector);
+                    }
+                }
+                
+                startConnector = null;
+                document.removeEventListener('mousemove', drawTempConnection);
+                document.removeEventListener('mouseup', completeConnection);
+            }
+            
+            // Create a connection between two connectors
+            function createConnection(startConnector, endConnector) {
+                const line = document.createElement('div');
+                line.className = 'connection';
+                
+                const startNode = startConnector.parentNode;
+                const endNode = endConnector.parentNode;
+                
+                const startRect = startConnector.getBoundingClientRect();
+                const endRect = endConnector.getBoundingClientRect();
+                const canvasRect = canvas.getBoundingClientRect();
+                
+                const startX = startRect.left + startRect.width/2 - canvasRect.left;
+                const startY = startRect.top + startRect.height/2 - canvasRect.top;
+                const endX = endRect.left + endRect.width/2 - canvasRect.left;
+                const endY = endRect.top + endRect.height/2 - canvasRect.top;
+                
+                // Calculate line position and dimensions
+                const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+                
+                line.style.width = `${length}px`;
+                line.style.left = `${startX}px`;
+                line.style.top = `${startY}px`;
+                line.style.transformOrigin = '0 0';
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.height = '2px';
+                line.style.backgroundColor = '#34495e';
+                
+                canvas.appendChild(line);
+                
+                connections.push({
+                    element: line,
+                    start: startConnector,
+                    end: endConnector
+                });
+            }
+            
+            // Update all connections
+            function updateConnections() {
+                connections.forEach(conn => {
+                    const startRect = conn.start.getBoundingClientRect();
+                    const endRect = conn.end.getBoundingClientRect();
+                    const canvasRect = canvas.getBoundingClientRect();
+                    
+                    const startX = startRect.left + startRect.width/2 - canvasRect.left;
+                    const startY = startRect.top + startRect.height/2 - canvasRect.top;
+                    const endX = endRect.left + endRect.width/2 - canvasRect.left;
+                    const endY = endRect.top + endRect.height/2 - canvasRect.top;
+                    
+                    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+                    const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+                    
+                    conn.element.style.width = `${length}px`;
+                    conn.element.style.left = `${startX}px`;
+                    conn.element.style.top = `${startY}px`;
+                    conn.element.style.transform = `rotate(${angle}deg)`;
+                });
+            }
+            
+            // Select a node
+            function selectNode(node) {
+                // Deselect previous node
+                if (selectedNode) {
+                    selectedNode.classList.remove('selected');
+                }
+                
+                selectedNode = node;
+                selectedNode.classList.add('selected');
+                
+                // Update properties panel
+                nodeProperties.style.display = 'block';
+                noSelection.style.display = 'none';
+                nodeLabelInput.value = node.dataset.label || '';
+                nodeNotesInput.value = node.dataset.notes || '';
+                
+                // Set color based on node type
+                const computedStyle = window.getComputedStyle(node);
+                const bgColor = computedStyle.backgroundColor;
+                nodeColorInput.value = rgbToHex(bgColor);
+            }
+            
+            // Convert RGB to Hex
+            function rgbToHex(rgb) {
+                if (!rgb) return '#000000';
+                
+                // Choose correct separator
+                const sep = rgb.indexOf(",") > -1 ? "," : " ";
+                // Turn "rgb(r,g,b)" into [r,g,b]
+                const parts = rgb.substr(4).split(")")[0].split(sep);
+                
+                let r = (+parts[0]).toString(16),
+                    g = (+parts[1]).toString(16),
+                    b = (+parts[2]).toString(16);
+                
+                if (r.length == 1) r = "0" + r;
+                if (g.length == 1) g = "0" + g;
+                if (b.length == 1) b = "0" + b;
+                
+                return "#" + r + g + b;
+            }
+            
+            // Deselect all nodes
+            function deselectAll() {
+                if (selectedNode) {
+                    selectedNode.classList.remove('selected');
+                    selectedNode = null;
+                }
+                nodeProperties.style.display = 'none';
+                noSelection.style.display = 'block';
+            }
+            
+            // Click on canvas to deselect
+            canvas.addEventListener('click', function(e) {
+                if (e.target === canvas) {
+                    deselectAll();
+                }
+            });
+            
+            // Update node properties when changed
+            nodeLabelInput.addEventListener('input', function() {
+                if (selectedNode) {
+                    selectedNode.dataset.label = this.value;
+                    selectedNode.querySelector('.node-label').textContent = this.value;
+                }
+            });
+            
+            nodeColorInput.addEventListener('input', function() {
+                if (selectedNode) {
+                    selectedNode.style.backgroundColor = this.value;
+                }
+            });
+            
+            nodeNotesInput.addEventListener('input', function() {
+                if (selectedNode) {
+                    selectedNode.dataset.notes = this.value;
+                }
+            });
+            
+            // Save flowchart
+            saveBtn.addEventListener('click', function() {
+                const nodes = [];
+                document.querySelectorAll('.node').forEach(node => {
+                    nodes.push({
+                        id: node.dataset.id,
+                        type: node.dataset.type,
+                        label: node.dataset.label,
+                        notes: node.dataset.notes,
+                        x: parseInt(node.style.left),
+                        y: parseInt(node.style.top),
+                        color: window.getComputedStyle(node).backgroundColor
+                    });
+                });
+                
+                const flowchartData = {
+                    nodes: nodes,
+                    connections: connections.map(conn => ({
+                        start: conn.start.parentNode.dataset.id + '-' + conn.start.dataset.position,
+                        end: conn.end.parentNode.dataset.id + '-' + conn.end.dataset.position
+                    }))
+                };
+                
+                localStorage.setItem('flowchartData', JSON.stringify(flowchartData));
+                alert('Flowchart saved to browser storage!');
+            });
+            
+            // Load flowchart
+            loadBtn.addEventListener('click', function() {
+                const savedData = localStorage.getItem('flowchartData');
+                if (!savedData) {
+                    alert('No saved flowchart found!');
+                    return;
+                }
+                
+                // Clear current canvas
+                canvas.innerHTML = '';
+                connections = [];
+                
+                const flowchartData = JSON.parse(savedData);
+                
+                // Create nodes
+                flowchartData.nodes.forEach(nodeData => {
+                    const node = createNode(nodeData.label, nodeData.type, nodeData.x, nodeData.y);
+                    node.dataset.id = nodeData.id;
+                    node.dataset.notes = nodeData.notes || '';
+                    node.style.backgroundColor = nodeData.color;
+                    
+                    if (nodeData.id) {
+                        node.dataset.id = nodeData.id;
+                    } else {
+                        node.dataset.id = 'node-' + Math.random().toString(36).substr(2, 9);
+                    }
+                });
+                
+                // Recreate connections (simplified - would need proper mapping in a real app)
+                alert('Flowchart loaded! Note: Connections not restored in this demo version.');
+            });
+            
+            // Export as image
+            exportBtn.addEventListener('click', function() {
+                alert('In a real implementation, this would export the flowchart as an image.');
+                // Real implementation would use html2canvas or similar library
+            });
+            
+            // Delete selected node
+            deleteBtn.addEventListener('click', function() {
+                if (selectedNode) {
+                    // Remove connections to/from this node
+                    connections = connections.filter(conn => {
+                        const isConnected = 
+                            conn.start.parentNode === selectedNode || 
+                            conn.end.parentNode === selectedNode;
+                        
+                        if (isConnected) {
+                            canvas.removeChild(conn.element);
+                            return false;
+                        }
+                        return true;
+                    });
+                    
+                    canvas.removeChild(selectedNode);
+                    deselectAll();
+                }
+            });
+            
+            // Zoom in
+            zoomInBtn.addEventListener('click', function() {
+                zoomLevel += 0.1;
+                canvasContainer.style.transform = `scale(${zoomLevel})`;
+            });
+            
+            // Zoom out
+            zoomOutBtn.addEventListener('click', function() {
+                if (zoomLevel > 0.2) {
+                    zoomLevel -= 0.1;
+                    canvasContainer.style.transform = `scale(${zoomLevel})`;
+                }
+            });
+            
+            // Generate unique IDs for new nodes
+            function generateId() {
+                return 'node-' + Math.random().toString(36).substr(2, 9);
+            }
+        });
+    </script>
+</body>
+</html>

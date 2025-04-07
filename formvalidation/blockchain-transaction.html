@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Transaction Viewer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            margin: 0;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .search-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .results-section {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .wallet-info {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .transactions-table th, .transactions-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .transactions-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .transactions-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .incoming {
+            color: #2ecc71;
+        }
+        
+        .outgoing {
+            color: #e74c3c;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 10px;
+            background-color: #fadbd8;
+            border-radius: 4px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .transactions-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Blockchain Transaction Viewer</h1>
+        <p>Fetch and explore cryptocurrency wallet data and transactions</p>
+    </header>
+    
+    <div class="container">
+        <div class="search-section">
+            <h2>Search Wallet</h2>
+            <div class="form-group">
+                <label for="blockchain">Blockchain Network:</label>
+                <select id="blockchain">
+                    <option value="ethereum">Ethereum (ETH)</option>
+                    <option value="bitcoin">Bitcoin (BTC)</option>
+                    <option value="binance">Binance Smart Chain (BSC)</option>
+                    <option value="polygon">Polygon (MATIC)</option>
+                    <option value="solana">Solana (SOL)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="wallet-address">Wallet Address:</label>
+                <input type="text" id="wallet-address" placeholder="Enter wallet address (0x... or bc1...)" />
+            </div>
+            
+            <button id="fetch-btn">Fetch Wallet Data</button>
+            <div class="error" id="error-message"></div>
+        </div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Fetching wallet data...</p>
+        </div>
+        
+        <div class="results-section" id="results">
+            <div class="wallet-info">
+                <h2>Wallet Information</h2>
+                <p><strong>Address:</strong> <span id="wallet-address-display"></span></p>
+                <p><strong>Network:</strong> <span id="network-display"></span></p>
+                <p><strong>Balance:</strong> <span class="balance" id="wallet-balance"></span></p>
+                <p><strong>Transaction Count:</strong> <span id="transaction-count"></span></p>
+            </div>
+            
+            <h2>Recent Transactions</h2>
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Transaction Hash</th>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="transactions-body">
+                    <!-- Transactions will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fetchBtn = document.getElementById('fetch-btn');
+            const walletAddressInput = document.getElementById('wallet-address');
+            const blockchainSelect = document.getElementById('blockchain');
+            const loadingElement = document.getElementById('loading');
+            const resultsElement = document.getElementById('results');
+            const errorElement = document.getElementById('error-message');
+            
+            fetchBtn.addEventListener('click', fetchWalletData);
+            
+            async function fetchWalletData() {
+                const walletAddress = walletAddressInput.value.trim();
+                const blockchain = blockchainSelect.value;
+                
+                // Basic validation
+                if (!walletAddress) {
+                    showError('Please enter a wallet address');
+                    return;
+                }
+                
+                // Show loading state
+                loadingElement.style.display = 'block';
+                resultsElement.style.display = 'none';
+                errorElement.style.display = 'none';
+                
+                try {
+                    // In a real app, you would call your backend API here
+                    // For this demo, we'll use mock data
+                    const walletData = await fetchMockWalletData(blockchain, walletAddress);
+                    
+                    // Display the results
+                    displayWalletData(walletData);
+                    
+                    // Show results section
+                    loadingElement.style.display = 'none';
+                    resultsElement.style.display = 'block';
+                } catch (error) {
+                    loadingElement.style.display = 'none';
+                    showError(error.message || 'Failed to fetch wallet data');
+                }
+            }
+            
+            function displayWalletData(data) {
+                document.getElementById('wallet-address-display').textContent = data.address;
+                document.getElementById('network-display').textContent = data.network;
+                document.getElementById('wallet-balance').textContent = data.balance;
+                document.getElementById('transaction-count').textContent = data.transactionCount;
+                
+                const transactionsBody = document.getElementById('transactions-body');
+                transactionsBody.innerHTML = '';
+                
+                data.transactions.forEach(tx => {
+                    const row = document.createElement('tr');
+                    
+                    // Determine if this is an incoming or outgoing transaction
+                    const isIncoming = tx.to.toLowerCase() === data.address.toLowerCase();
+                    const valueClass = isIncoming ? 'incoming' : 'outgoing';
+                    const valuePrefix = isIncoming ? '+' : '-';
+                    
+                    row.innerHTML = `
+                        <td><a href="#" onclick="window.open('${getBlockExplorerUrl(data.network, tx.hash)}', '_blank')">${shortenHash(tx.hash)}</a></td>
+                        <td>${new Date(tx.timestamp).toLocaleString()}</td>
+                        <td>${shortenAddress(tx.from)}</td>
+                        <td>${shortenAddress(tx.to)}</td>
+                        <td class="${valueClass}">${valuePrefix}${tx.value}</td>
+                        <td>${tx.status}</td>
+                    `;
+                    
+                    transactionsBody.appendChild(row);
+                });
+            }
+            
+            function showError(message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            
+            function shortenAddress(address) {
+                if (!address) return '';
+                return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+            }
+            
+            function shortenHash(hash) {
+                if (!hash) return '';
+                return `${hash.substring(0, 10)}...`;
+            }
+            
+            function getBlockExplorerUrl(network, txHash) {
+                const explorers = {
+                    'ethereum': `https://etherscan.io/tx/${txHash}`,
+                    'bitcoin': `https://www.blockchain.com/btc/tx/${txHash}`,
+                    'binance': `https://bscscan.com/tx/${txHash}`,
+                    'polygon': `https://polygonscan.com/tx/${txHash}`,
+                    'solana': `https://explorer.solana.com/tx/${txHash}`
+                };
+                return explorers[network.toLowerCase()] || '#';
+            }
+            
+            // Mock data function - in a real app, you would call a blockchain API
+            async function fetchMockWalletData(blockchain, address) {
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Validate address format (very basic check)
+                if (blockchain === 'ethereum' && !address.startsWith('0x')) {
+                    throw new Error('Invalid Ethereum address format');
+                }
+                if (blockchain === 'bitcoin' && !(address.startsWith('1') || address.startsWith('3') || address.startsWith('bc1'))) {
+                    throw new Error('Invalid Bitcoin address format');
+                }
+                
+                // Generate mock data
+                const networks = {
+                    'ethereum': 'Ethereum Mainnet',
+                    'bitcoin': 'Bitcoin Mainnet',
+                    'binance': 'Binance Smart Chain',
+                    'polygon': 'Polygon Network',
+                    'solana': 'Solana Network'
+                };
+                
+                const symbols = {
+                    'ethereum': 'ETH',
+                    'bitcoin': 'BTC',
+                    'binance': 'BNB',
+                    'polygon': 'MATIC',
+                    'solana': 'SOL'
+                };
+                
+                const networkName = networks[blockchain];
+                const symbol = symbols[blockchain];
+                const balance = (Math.random() * 10).toFixed(6);
+                const transactionCount = Math.floor(Math.random() * 100) + 5;
+                
+                // Generate mock transactions
+                const transactions = [];
+                const now = new Date();
+                const statuses = ['Confirmed', 'Pending', 'Failed'];
+                
+                for (let i = 0; i < 10; i++) {
+                    const isIncoming = Math.random() > 0.5;
+                    const daysAgo = Math.floor(Math.random() * 30);
+                    const timestamp = new Date(now);
+                    timestamp.setDate(now.getDate() - daysAgo);
+                    
+                    transactions.push({
+                        hash: `0x${Math.random().toString(16).substr(2, 64)}`,
+                        timestamp: timestamp.getTime(),
+                        from: isIncoming ? generateRandomAddress(blockchain) : address,
+                        to: isIncoming ? address : generateRandomAddress(blockchain),
+                        value: (Math.random() * 2).toFixed(6),
+                        status: statuses[Math.floor(Math.random() * statuses.length)]
+                    });
+                }
+                
+                return {
+                    address: address,
+                    network: networkName,
+                    symbol: symbol,
+                    balance: `${balance} ${symbol}`,
+                    transactionCount: transactionCount,
+                    transactions: transactions
+                };
+            }
+            
+            function generateRandomAddress(blockchain) {
+                const chars = '0123456789abcdef';
+                let result = blockchain === 'bitcoin' ? '1' : '0x';
+                
+                for (let i = 0; i < (blockchain === 'bitcoin' ? 33 : 40); i++) {
+                    result += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                
+                return result;
+            }
+        });
+    </script>
+</body>
+</html>
