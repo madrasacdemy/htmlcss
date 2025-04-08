@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🍽️ Full Recipe Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+    }
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    textarea, button {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .recipe-card {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 15px;
+    }
+    .recipe-card ul {
+      padding-left: 20px;
+    }
+    .no-recipe {
+      margin-top: 15px;
+      color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🍳 Recipe Generator</h2>
+  <p>Enter ingredients (comma-separated):</p>
+  <textarea id="ingredients" rows="3" placeholder="e.g. tomato, rice, egg"></textarea>
+  <button onclick="generateRecipe()">Generate Recipe</button>
+  <div id="result"></div>
+</div>
+
+<script>
+  const recipes = [
+    {
+      name: "Tomato Rice",
+      ingredients: ["tomato", "rice", "onion"],
+      steps: [
+        "Cook rice and keep aside.",
+        "Heat oil, sauté chopped onions and tomatoes.",
+        "Add salt, spices, and cooked rice.",
+        "Mix well and cook for 2-3 mins."
+      ]
+    },
+    {
+      name: "Egg Fried Rice",
+      ingredients: ["rice", "egg", "carrot", "onion"],
+      steps: [
+        "Scramble eggs and keep aside.",
+        "Sauté onions, carrots in oil.",
+        "Add cooked rice and mix with eggs.",
+        "Season with soy sauce and stir-fry 3 mins."
+      ]
+    },
+    {
+      name: "Lemon Rice",
+      ingredients: ["rice", "lemon", "mustard seeds"],
+      steps: [
+        "Cook and cool rice.",
+        "Heat oil, add mustard seeds, curry leaves.",
+        "Add turmeric and lemon juice.",
+        "Mix with rice and serve."
+      ]
+    },
+    {
+      name: "Veg Omelette",
+      ingredients: ["egg", "onion", "capsicum"],
+      steps: [
+        "Beat eggs with chopped onions and capsicum.",
+        "Add salt and pepper.",
+        "Pour into hot pan and cook both sides.",
+        "Serve hot with chutney or bread."
+      ]
+    }
+  ];
+
+  function generateRecipe() {
+    const input = document.getElementById('ingredients').value.toLowerCase();
+    const userIngredients = input.split(',').map(i => i.trim());
+    const resultBox = document.getElementById('result');
+
+    const matchedRecipes = recipes
+      .map(recipe => {
+        const matchCount = recipe.ingredients.filter(ing => userIngredients.includes(ing)).length;
+        return { ...recipe, matchCount };
+      })
+      .filter(r => r.matchCount > 0)
+      .sort((a, b) => b.matchCount - a.matchCount);
+
+    if (matchedRecipes.length > 0) {
+      const html = matchedRecipes.map(recipe => `
+        <div class="recipe-card">
+          <h3>${recipe.name}</h3>
+          <strong>Ingredients:</strong>
+          <ul>${recipe.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+          <strong>Steps:</strong>
+          <ol>${recipe.steps.map(step => `<li>${step}</li>`).join('')}</ol>
+          <small>Matched: ${recipe.matchCount} / ${recipe.ingredients.length}</small>
+        </div>
+      `).join('');
+      resultBox.innerHTML = html;
+    } else {
+      resultBox.innerHTML = `<p class="no-recipe">😕 No recipes found with your ingredients. Try adding common ones like rice, tomato, egg, etc.</p>`;
+    }
+  }
+</script>
+
+</body>
+</html>

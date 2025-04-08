@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Podcast Summarizer</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            text-align: center;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            margin-top: 10px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-section {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        
+        .upload-section:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(108, 92, 231, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            background-color: #5649c0;
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            background-color: #b2b2b2;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #8177d8;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--success-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .status-text {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+            text-align: center;
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .transcript {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            line-height: 1.8;
+        }
+        
+        .transcript p {
+            margin: 0 0 15px 0;
+        }
+        
+        .summary {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .key-points {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .key-points li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #d63031;
+            padding: 15px;
+            background-color: #ffebee;
+            border-radius: 6px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .highlight {
+            background-color: #fffde7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>AI Podcast Summarizer</h1>
+            <p class="subtitle">Upload any podcast episode and get AI-generated summaries</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="card">
+            <div id="upload-section" class="upload-section">
+                <div class="upload-icon">🎙️</div>
+                <h2>Upload Your Podcast</h2>
+                <p>Drag & drop an audio file or click to browse</p>
+                <p class="small">Supports MP3, WAV, and other common audio formats</p>
+                <input type="file" id="file-input" class="file-input" accept="audio/*">
+                <button id="upload-btn" class="btn">Select File</button>
+            </div>
+            
+            <div id="error-message" class="error"></div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="progress-container" class="progress-container" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress" id="progress-bar"></div>
+                </div>
+                <p class="status-text" id="status-text">Processing your podcast...</p>
+            </div>
+            
+            <div id="audio-player-container" style="display: none;">
+                <audio id="audio-player" controls class="audio-player"></audio>
+            </div>
+        </div>
+        
+        <div id="results-container" class="results-container">
+            <div class="card">
+                <h2>Podcast Analysis Results</h2>
+                
+                <div class="tabs">
+                    <div class="tab active" data-tab="summary">Summary</div>
+                    <div class="tab" data-tab="transcript">Full Transcript</div>
+                    <div class="tab" data-tab="highlights">Key Highlights</div>
+                </div>
+                
+                <div id="summary" class="tab-content active">
+                    <div class="summary">
+                        <h3>AI-Generated Summary</h3>
+                        <p id="summary-text">This is where the AI-generated summary of your podcast will appear. The summary will capture the main points and themes discussed in the episode.</p>
+                    </div>
+                    
+                    <h3>Key Points</h3>
+                    <ul class="key-points" id="key-points">
+                        <!-- Key points will be inserted here -->
+                    </ul>
+                    
+                    <div class="action-buttons">
+                        <button id="copy-summary-btn" class="btn btn-secondary">Copy Summary</button>
+                        <button id="download-transcript-btn" class="btn btn-secondary">Download Transcript</button>
+                    </div>
+                </div>
+                
+                <div id="transcript" class="tab-content">
+                    <h3>Full Transcript</h3>
+                    <div class="transcript" id="transcript-text">
+                        <!-- Transcript will be inserted here -->
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="copy-transcript-btn" class="btn btn-secondary">Copy Transcript</button>
+                        <button id="download-full-btn" class="btn">Download Full Report</button>
+                    </div>
+                </div>
+                
+                <div id="highlights" class="tab-content">
+                    <h3>Key Highlights</h3>
+                    <div class="transcript" id="highlights-text">
+                        <!-- Highlights will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // UI Elements
+        const uploadBtn = document.getElementById('upload-btn');
+        const fileInput = document.getElementById('file-input');
+        const uploadSection = document.getElementById('upload-section');
+        const loadingElement = document.getElementById('loading');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const statusText = document.getElementById('status-text');
+        const errorElement = document.getElementById('error-message');
+        const audioPlayerContainer = document.getElementById('audio-player-container');
+        const audioPlayer = document.getElementById('audio-player');
+        const resultsContainer = document.getElementById('results-container');
+        
+        // Results elements
+        const summaryText = document.getElementById('summary-text');
+        const keyPointsList = document.getElementById('key-points');
+        const transcriptText = document.getElementById('transcript-text');
+        const highlightsText = document.getElementById('highlights-text');
+        
+        // Tab elements
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Button elements
+        const copySummaryBtn = document.getElementById('copy-summary-btn');
+        const downloadTranscriptBtn = document.getElementById('download-transcript-btn');
+        const copyTranscriptBtn = document.getElementById('copy-transcript-btn');
+        const downloadFullBtn = document.getElementById('download-full-btn');
+        
+        // State variables
+        let audioFile = null;
+        let transcript = '';
+        let summary = '';
+        let keyPoints = [];
+        let highlights = [];
+        
+        // Initialize the application
+        function init() {
+            setupEventListeners();
+        }
+        
+        function setupEventListeners() {
+            // File upload
+            uploadBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            uploadSection.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadSection.style.borderColor = 'var(--primary-color)';
+                uploadSection.style.backgroundColor = 'rgba(108, 92, 231, 0.05)';
+            });
+            
+            uploadSection.addEventListener('dragleave', () => {
+                uploadSection.style.borderColor = 'var(--secondary-color)';
+                uploadSection.style.backgroundColor = '';
+            });
+            
+            uploadSection.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadSection.style.borderColor = 'var(--secondary-color)';
+                uploadSection.style.backgroundColor = '';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect({ target: fileInput });
+                }
+            });
+            
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Action buttons
+            copySummaryBtn.addEventListener('click', copySummary);
+            downloadTranscriptBtn.addEventListener('click', downloadTranscript);
+            copyTranscriptBtn.addEventListener('click', copyTranscript);
+            downloadFullBtn.addEventListener('click', downloadFullReport);
+        }
+        
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // Check if file is audio
+            if (!file.type.startsWith('audio/')) {
+                showError('Please upload an audio file (MP3, WAV, etc.)');
+                return;
+            }
+            
+            audioFile = file;
+            processAudioFile();
+        }
+        
+        async function processAudioFile() {
+            try {
+                // Reset UI
+                errorElement.style.display = 'none';
+                loadingElement.style.display = 'flex';
+                progressContainer.style.display = 'none';
+                resultsContainer.style.display = 'none';
+                
+                // Show audio player
+                audioPlayer.src = URL.createObjectURL(audioFile);
+                audioPlayerContainer.style.display = 'block';
+                
+                // Simulate processing delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Show progress
+                progressContainer.style.display = 'block';
+                loadingElement.style.display = 'none';
+                
+                // Simulate processing steps
+                await simulateProcessing();
+                
+                // Generate mock results
+                generateMockResults();
+                
+                // Display results
+                displayResults();
+                
+            } catch (error) {
+                showError('Error processing audio: ' + error.message);
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        async function simulateProcessing() {
+            const steps = [
+                { progress: 20, text: "Uploading audio file..." },
+                { progress: 40, text: "Converting audio to text..." },
+                { progress: 60, text: "Analyzing content..." },
+                { progress: 80, text: "Generating summary..." },
+                { progress: 100, text: "Finalizing results..." }
+            ];
+            
+            for (const step of steps) {
+                progressBar.style.width = `${step.progress}%`;
+                statusText.textContent = step.text;
+                await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
+            }
+        }
+        
+        function generateMockResults() {
+            // Generate mock transcript (in a real app, this would come from speech-to-text API)
+            const mockSentences = [
+                "Welcome to the Tech Today podcast, where we discuss the latest in technology and innovation.",
+                "I'm your host, Alex Johnson, and today we're talking about the impact of AI on creative industries.",
+                "With me is Dr. Sarah Chen, a leading researcher in artificial intelligence at Stanford University.",
+                "Dr. Chen, how do you see AI transforming fields like writing, art, and music composition?",
+                "Well, Alex, we're seeing AI move from being just a tool to becoming a collaborative partner in creative processes.",
+                "For example, tools like GPT-3 can help writers overcome blocks by suggesting ideas and even drafting content.",
+                "In visual arts, systems like DALL-E can generate images from text descriptions, opening new possibilities.",
+                "But there are concerns about originality and copyright when machines are creating content.",
+                "That's a valid concern, but I believe AI will augment human creativity rather than replace it.",
+                "The most exciting developments happen when humans and AI work together, each bringing their unique strengths.",
+                "Looking ahead, we'll likely see more hybrid creations where the line between human and machine contribution blurs.",
+                "Thank you, Dr. Chen, for these fascinating insights. That's all for today's episode of Tech Today.",
+                "Join us next week when we'll discuss quantum computing breakthroughs with Dr. Michael Rodriguez.",
+                "Don't forget to subscribe and leave us a review on your favorite podcast platform."
+            ];
+            
+            transcript = mockSentences.join(" ");
+            
+            // Generate mock summary
+            summary = `In this episode of Tech Today, host Alex Johnson discusses the impact of AI on creative industries with Dr. Sarah Chen from Stanford University. They explore how AI is transitioning from being just a tool to becoming a collaborative partner in creative processes like writing, art, and music composition. While there are concerns about originality and copyright, Dr. Chen believes AI will augment rather than replace human creativity, with the most exciting developments coming from human-AI collaboration. The episode concludes with a look at the future of hybrid creations where human and machine contributions blend together.`;
+            
+            // Generate mock key points
+            keyPoints = [
+                "AI is evolving from a tool to a collaborative partner in creative processes",
+                "Tools like GPT-3 assist writers with ideas and drafting content",
+                "Systems like DALL-E generate images from text descriptions",
+                "Concerns exist about originality and copyright with AI-generated content",
+                "The future lies in hybrid human-AI creative collaborations"
+            ];
+            
+            // Generate mock highlights
+            const highlightedSentences = [3, 5, 7, 9, 11];
+            highlights = mockSentences.map((sentence, index) => {
+                return highlightedSentences.includes(index) ? 
+                    `<p class="highlight">${sentence}</p>` : 
+                    `<p>${sentence}</p>`;
+            }).join("");
+        }
+        
+        function displayResults() {
+            // Display summary
+            summaryText.textContent = summary;
+            
+            // Display key points
+            keyPointsList.innerHTML = '';
+            keyPoints.forEach(point => {
+                const li = document.createElement('li');
+                li.textContent = point;
+                keyPointsList.appendChild(li);
+            });
+            
+            // Display transcript
+            transcriptText.innerHTML = transcript.split('. ').map(s => `<p>${s}.</p>`).join('');
+            
+            // Display highlights
+            highlightsText.innerHTML = highlights;
+            
+            // Show results
+            progressContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+        
+        function copySummary() {
+            navigator.clipboard.writeText(summary)
+                .then(() => alert('Summary copied to clipboard!'))
+                .catch(err => showError('Failed to copy: ' + err));
+        }
+        
+        function copyTranscript() {
+            navigator.clipboard.writeText(transcript)
+                .then(() => alert('Transcript copied to clipboard!'))
+                .catch(err => showError('Failed to copy: ' + err));
+        }
+        
+        function downloadTranscript() {
+            downloadFile(transcript, 'transcript.txt', 'text/plain');
+        }
+        
+        function downloadFullReport() {
+            const content = `Podcast Summary\n\n${summary}\n\nKey Points:\n${keyPoints.map(p => `• ${p}`).join('\n')}\n\nFull Transcript:\n\n${transcript}`;
+            downloadFile(content, 'podcast-summary.txt', 'text/plain');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function showError(message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+        
+        // Start the application
+        init();
+    </script>
+</body>
+</html>
