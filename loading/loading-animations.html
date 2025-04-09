@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Generated Loading Animations</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+        
+        .animation-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        
+        .content-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .content-btn {
+            padding: 8px 15px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .content-btn:hover {
+            background: #d0d0d0;
+        }
+        
+        .content-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .animation-container {
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Text Loading Animation */
+        .text-loader {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .text-loader span {
+            display: inline-block;
+            width: 8px;
+            height: 30px;
+            background: #3498db;
+            animation: text-wave 1.2s infinite ease-in-out;
+        }
+        
+        .text-loader span:nth-child(1) { animation-delay: 0s; }
+        .text-loader span:nth-child(2) { animation-delay: 0.1s; }
+        .text-loader span:nth-child(3) { animation-delay: 0.2s; }
+        .text-loader span:nth-child(4) { animation-delay: 0.3s; }
+        .text-loader span:nth-child(5) { animation-delay: 0.4s; }
+        
+        @keyframes text-wave {
+            0%, 40%, 100% { transform: scaleY(0.6); }
+            20% { transform: scaleY(1); }
+        }
+        
+        /* Image Loading Animation */
+        .image-loader {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+        
+        .image-loader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .image-loader::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            border: 4px solid #f3f3f3;
+            border-bottom: 4px solid #e74c3c;
+            border-radius: 50%;
+            animation: spin-reverse 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes spin-reverse {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+        
+        /* Video Loading Animation */
+        .video-loader {
+            width: 120px;
+            height: 80px;
+            background: #ecf0f1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-loader::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 40px;
+            height: 100%;
+            background: rgba(52, 152, 219, 0.3);
+            animation: video-scan 1.5s infinite ease-in-out;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-left: 25px solid #3498db;
+            border-bottom: 15px solid transparent;
+            opacity: 0.7;
+        }
+        
+        @keyframes video-scan {
+            0% { left: -40px; }
+            100% { left: 120px; }
+        }
+        
+        /* Data Loading Animation */
+        .data-loader {
+            width: 150px;
+            height: 100px;
+            position: relative;
+        }
+        
+        .data-bar {
+            position: absolute;
+            bottom: 0;
+            width: 20px;
+            background: #3498db;
+            animation: data-grow 1.5s infinite ease-in-out;
+        }
+        
+        .data-bar:nth-child(1) { left: 0px; height: 30px; animation-delay: 0s; }
+        .data-bar:nth-child(2) { left: 30px; height: 70px; animation-delay: 0.2s; }
+        .data-bar:nth-child(3) { left: 60px; height: 40px; animation-delay: 0.4s; }
+        .data-bar:nth-child(4) { left: 90px; height: 90px; animation-delay: 0.6s; }
+        .data-bar:nth-child(5) { left: 120px; height: 50px; animation-delay: 0.8s; }
+        
+        @keyframes data-grow {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.2); }
+        }
+        
+        /* AI Processing Animation */
+        .ai-loader {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+        
+        .ai-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #9b59b6;
+            border-radius: 50%;
+            animation: ai-float 2s infinite ease-in-out;
+        }
+        
+        .ai-particle:nth-child(1) { top: 0; left: 45px; animation-delay: 0s; }
+        .ai-particle:nth-child(2) { top: 15px; left: 15px; animation-delay: 0.2s; }
+        .ai-particle:nth-child(3) { top: 45px; left: 0; animation-delay: 0.4s; }
+        .ai-particle:nth-child(4) { top: 75px; left: 15px; animation-delay: 0.6s; }
+        .ai-particle:nth-child(5) { top: 90px; left: 45px; animation-delay: 0.8s; }
+        .ai-particle:nth-child(6) { top: 75px; left: 75px; animation-delay: 1s; }
+        .ai-particle:nth-child(7) { top: 45px; left: 90px; animation-delay: 1.2s; }
+        .ai-particle:nth-child(8) { top: 15px; left: 75px; animation-delay: 1.4s; }
+        
+        @keyframes ai-float {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-20px) scale(1.5); opacity: 0.5; }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .description {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .generate-btn {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 25px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .generate-btn:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI-Generated Loading Animations</h1>
+        
+        <div class="animation-section">
+            <h2>Content-Specific Loaders</h2>
+            <p>Different loading animations tailored to the type of content being loaded</p>
+            
+            <div class="content-selector">
+                <button class="content-btn active" data-type="text">Text Content</button>
+                <button class="content-btn" data-type="image">Images</button>
+                <button class="content-btn" data-type="video">Video</button>
+                <button class="content-btn" data-type="data">Data/Charts</button>
+                <button class="content-btn" data-type="ai">AI Processing</button>
+            </div>
+            
+            <div class="animation-container">
+                <!-- Text Loader (default) -->
+                <div class="text-loader" id="text-loader">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                
+                <!-- Image Loader -->
+                <div class="image-loader hidden" id="image-loader"></div>
+                
+                <!-- Video Loader -->
+                <div class="video-loader hidden" id="video-loader">
+                    <div class="play-icon"></div>
+                </div>
+                
+                <!-- Data Loader -->
+                <div class="data-loader hidden" id="data-loader">
+                    <div class="data-bar"></div>
+                    <div class="data-bar"></div>
+                    <div class="data-bar"></div>
+                    <div class="data-bar"></div>
+                    <div class="data-bar"></div>
+                </div>
+                
+                <!-- AI Loader -->
+                <div class="ai-loader hidden" id="ai-loader">
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                    <div class="ai-particle"></div>
+                </div>
+            </div>
+            
+            <div class="description" id="loader-description">
+                <strong>Text Content Loader:</strong> A wave-like animation that mimics text being typed or processed. The vertical bars represent characters being loaded, with a smooth wave pattern to indicate progress.
+            </div>
+        </div>
+        
+        <button class="generate-btn" id="generate-btn">Generate Custom Animation</button>
+        
+        <div class="animation-section hidden" id="custom-section">
+            <h2>Your Custom Animation</h2>
+            <div class="animation-container" id="custom-animation"></div>
+            <div class="description" id="custom-description"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentBtns = document.querySelectorAll('.content-btn');
+            const loaders = {
+                text: document.getElementById('text-loader'),
+                image: document.getElementById('image-loader'),
+                video: document.getElementById('video-loader'),
+                data: document.getElementById('data-loader'),
+                ai: document.getElementById('ai-loader')
+            };
+            
+            const descriptions = {
+                text: "Text Content Loader: A wave-like animation that mimics text being typed or processed. The vertical bars represent characters being loaded, with a smooth wave pattern to indicate progress.",
+                image: "Image Loader: A dual spinning circle animation that represents image data being downloaded and processed. The outer ring shows download progress while the inner ring shows processing.",
+                video: "Video Loader: Simulates a video player with a scanning effect that represents buffering. The play button icon remains static while the scanning bar moves across.",
+                data: "Data Loader: Animated bars that grow and shrink, representing data being loaded and processed. Each bar loads at a slightly different time to create a dynamic effect.",
+                ai: "AI Processing Loader: Floating particles that represent neural network activity. The particles pulse and move in a circular pattern, symbolizing complex AI computations."
+            };
+            
+            const descriptionEl = document.getElementById('loader-description');
+            
+            // Handle content type selection
+            contentBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update active button
+                    contentBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Hide all loaders
+                    Object.values(loaders).forEach(loader => loader.classList.add('hidden'));
+                    
+                    // Show selected loader
+                    const type = this.dataset.type;
+                    loaders[type].classList.remove('hidden');
+                    
+                    // Update description
+                    descriptionEl.innerHTML = descriptions[type];
+                });
+            });
+            
+            // Generate custom animation
+            const generateBtn = document.getElementById('generate-btn');
+            const customSection = document.getElementById('custom-section');
+            const customAnimation = document.getElementById('custom-animation');
+            const customDescription = document.getElementById('custom-description');
+            
+            generateBtn.addEventListener('click', function() {
+                // Show custom section
+                customSection.classList.remove('hidden');
+                
+                // Generate random animation
+                const animations = ['circle', 'dots', 'bars', 'pulse', 'neuro'];
+                const randomAnim = animations[Math.floor(Math.random() * animations.length)];
+                
+                // Clear previous animation
+                customAnimation.innerHTML = '';
+                
+                // Create new animation
+                let animationHTML = '';
+                let description = '';
+                
+                switch(randomAnim) {
+                    case 'circle':
+                        animationHTML = `
+                            <div style="width: 80px; height: 80px; border: 8px solid #f3f3f3; border-top: 8px solid #e74c3c; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        `;
+                        description = "Custom Circle Loader: A smooth spinning circle with a colored segment that represents progress. The continuous rotation indicates ongoing processing.";
+                        break;
+                    
+                    case 'dots':
+                        animationHTML = `
+                            <div style="display: flex; gap: 10px;">
+                                <div style="width: 15px; height: 15px; background: #3498db; border-radius: 50%; animation: bounce 0.6s infinite alternate;"></div>
+                                <div style="width: 15px; height: 15px; background: #e74c3c; border-radius: 50%; animation: bounce 0.6s 0.2s infinite alternate;"></div>
+                                <div style="width: 15px; height: 15px; background: #2ecc71; border-radius: 50%; animation: bounce 0.6s 0.4s infinite alternate;"></div>
+                            </div>
+                            <style>
+                                @keyframes bounce {
+                                    from { transform: translateY(0); }
+                                    to { transform: translateY(-20px); }
+                                }
+                            </style>
+                        `;
+                        description = "Custom Dots Loader: Three bouncing dots with different colors that animate in sequence. The staggered timing creates a playful, dynamic effect.";
+                        break;
+                    
+                    case 'bars':
+                        animationHTML = `
+                            <div style="display: flex; gap: 5px; height: 60px; align-items: flex-end;">
+                                <div style="width: 10px; background: #3498db; animation: grow 1s infinite ease-in-out;"></div>
+                                <div style="width: 10px; background: #e74c3c; animation: grow 1s 0.1s infinite ease-in-out;"></div>
+                                <div style="width: 10px; background: #2ecc71; animation: grow 1s 0.2s infinite ease-in-out;"></div>
+                                <div style="width: 10px; background: #f39c12; animation: grow 1s 0.3s infinite ease-in-out;"></div>
+                                <div style="width: 10px; background: #9b59b6; animation: grow 1s 0.4s infinite ease-in-out;"></div>
+                            </div>
+                            <style>
+                                @keyframes grow {
+                                    0%, 100% { height: 20px; }
+                                    50% { height: 60px; }
+                                }
+                            </style>
+                        `;
+                        description = "Custom Bars Loader: Colorful vertical bars that grow and shrink in sequence. The rainbow colors and wave pattern create an engaging visual effect.";
+                        break;
+                    
+                    case 'pulse':
+                        animationHTML = `
+                            <div style="width: 60px; height: 60px; background: #3498db; border-radius: 50%; animation: pulse 1.5s infinite ease-in-out;"></div>
+                            <style>
+                                @keyframes pulse {
+                                    0%, 100% { transform: scale(0.8); opacity: 0.7; }
+                                    50% { transform: scale(1.2); opacity: 1; }
+                                }
+                            </style>
+                        `;
+                        description = "Custom Pulse Loader: A simple but effective pulsing circle that grows and fades rhythmically. The smooth transitions create a calming effect.";
+                        break;
+                    
+                    case 'neuro':
+                        animationHTML = `
+                            <div style="position: relative; width: 100px; height: 100px;">
+                                <div style="position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; border: 3px solid #3498db; border-radius: 50%; transform: translate(-50%, -50%);"></div>
+                                <div style="position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; border: 3px solid #e74c3c; border-radius: 50%; transform: translate(-50%, -50%) rotate(0deg); animation: rotate1 4s linear infinite;"></div>
+                                <div style="position: absolute; top: 50%; left: 50%; width: 60px; height: 60px; border: 3px solid #2ecc71; border-radius: 50%; transform: translate(-50%, -50%) rotate(0deg); animation: rotate2 3s linear infinite;"></div>
+                            </div>
+                            <style>
+                                @keyframes rotate1 {
+                                    0% { transform: translate(-50%, -50%) rotate(0deg); }
+                                    100% { transform: translate(-50%, -50%) rotate(360deg); }
+                                }
+                                @keyframes rotate2 {
+                                    0% { transform: translate(-50%, -50%) rotate(0deg); }
+                                    100% { transform: translate(-50%, -50%) rotate(-360deg); }
+                                }
+                            </style>
+                        `;
+                        description = "Custom Neuro Loader: Interlocking circles that rotate in opposite directions, creating a neural network-like visual. The different colors and rotation speeds symbolize complex connections.";
+                        break;
+                }
+                
+                customAnimation.innerHTML = animationHTML;
+                customDescription.textContent = description;
+                
+                // Scroll to custom section
+                customSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

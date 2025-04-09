@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Parallax on Mouse Move</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            will-change: transform;
+        }
+
+        .layer-1 {
+            background: rgba(26, 26, 46, 0.8);
+            transform: translateZ(0);
+            z-index: 1;
+        }
+
+        .layer-2 {
+            background: rgba(22, 33, 62, 0.7);
+            transform: translateZ(-100px);
+            z-index: 2;
+        }
+
+        .layer-3 {
+            background: rgba(16, 44, 87, 0.6);
+            transform: translateZ(-200px);
+            z-index: 3;
+        }
+
+        .layer-4 {
+            background: rgba(10, 55, 112, 0.5);
+            transform: translateZ(-300px);
+            z-index: 4;
+        }
+
+        .content {
+            text-align: center;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #e94560;
+        }
+
+        p {
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #e94560;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #ff6b81;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="parallaxContainer">
+        <div class="layer layer-1">
+            <div class="content">
+                <h1>3D Parallax Effect</h1>
+                <p>Move your mouse around to experience the depth effect. Each layer responds differently to create a realistic 3D illusion.</p>
+                <a href="#" class="btn">Explore More</a>
+            </div>
+        </div>
+        <div class="layer layer-2"></div>
+        <div class="layer layer-3"></div>
+        <div class="layer layer-4"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('parallaxContainer');
+            const layers = document.querySelectorAll('.layer');
+            
+            // Center of the screen
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            document.addEventListener('mousemove', function(e) {
+                // Calculate mouse position relative to center
+                const mouseX = e.clientX - centerX;
+                const mouseY = e.clientY - centerY;
+                
+                // Calculate rotation angles based on mouse position
+                const rotateY = (mouseX / centerX) * 10; // Max 10 degrees rotation
+                const rotateX = -(mouseY / centerY) * 10; // Negative for natural feeling
+                
+                // Apply rotation to container
+                container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                
+                // Apply parallax effect to each layer based on depth
+                layers.forEach(layer => {
+                    const depth = parseInt(layer.style.transform.match(/translateZ\((-?\d+)px\)/)[1]) || 0;
+                    const moveX = (mouseX / centerX) * (depth / 10);
+                    const moveY = (mouseY / centerY) * (depth / 10);
+                    
+                    layer.style.transform = `translateZ(${depth}px) translateX(${moveX}px) translateY(${moveY}px)`;
+                });
+            });
+            
+            // Reset position when mouse leaves
+            document.addEventListener('mouseleave', function() {
+                container.style.transform = 'rotateX(0) rotateY(0)';
+                layers.forEach(layer => {
+                    const depth = parseInt(layer.style.transform.match(/translateZ\((-?\d+)px\)/)[1]) || 0;
+                    layer.style.transform = `translateZ(${depth}px) translateX(0) translateY(0)`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

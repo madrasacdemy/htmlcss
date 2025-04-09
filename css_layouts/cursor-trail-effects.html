@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cursor Trail Effects</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #121212;
+            cursor: none;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+        
+        .content {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        button.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: white;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Cursor Trail Effects</h1>
+        <p>Move your cursor around to see different particle trail effects. Use the buttons below to change the effect style.</p>
+        <div class="controls">
+            <button class="active" data-effect="bubbles">Bubbles</button>
+            <button data-effect="sparks">Sparks</button>
+            <button data-effect="fireflies">Fireflies</button>
+            <button data-effect="snowflakes">Snowflakes</button>
+            <button data-effect="stars">Stars</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('button');
+            let currentEffect = 'bubbles';
+            let particles = [];
+            let mouseX = 0;
+            let mouseY = 0;
+            let particleCount = 0;
+            const maxParticles = 100;
+            
+            // Track mouse position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                // Limit particle creation rate
+                if (particleCount < maxParticles && Math.random() > 0.3) {
+                    createParticle();
+                }
+            });
+            
+            // Handle effect selection
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    currentEffect = this.dataset.effect;
+                    
+                    // Clear existing particles when changing effect
+                    clearParticles();
+                });
+            });
+            
+            function createParticle() {
+                particleCount++;
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                document.body.appendChild(particle);
+                
+                // Set initial position
+                const size = getRandomSize();
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${mouseX}px`;
+                particle.style.top = `${mouseY}px`;
+                
+                // Set effect-specific properties
+                switch(currentEffect) {
+                    case 'bubbles':
+                        particle.style.background = `hsla(${Math.random() * 60 + 180}, 80%, 60%, 0.7)`;
+                        particle.style.boxShadow = `0 0 ${size}px ${size/2}px hsla(${Math.random() * 60 + 180}, 80%, 70%, 0.4)`;
+                        break;
+                        
+                    case 'sparks':
+                        particle.style.background = `linear-gradient(45deg, 
+                            hsl(${Math.random() * 60 + 10}, 100%, 50%), 
+                            hsl(${Math.random() * 60 + 30}, 100%, 70%))`;
+                        particle.style.borderRadius = '0';
+                        particle.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
+                        break;
+                        
+                    case 'fireflies':
+                        particle.style.background = `hsl(${Math.random() * 60 + 50}, 100%, 50%)`;
+                        particle.style.boxShadow = `0 0 ${size*2}px ${size}px hsl(${Math.random() * 60 + 50}, 100%, 50%)`;
+                        break;
+                        
+                    case 'snowflakes':
+                        particle.style.background = 'white';
+                        particle.style.borderRadius = '0';
+                        particle.style.opacity = '0.8';
+                        // Create simple snowflake shape
+                        particle.innerHTML = '❄';
+                        particle.style.fontSize = `${size}px`;
+                        particle.style.lineHeight = `${size}px`;
+                        particle.style.textAlign = 'center';
+                        break;
+                        
+                    case 'stars':
+                        particle.style.background = 'white';
+                        particle.style.borderRadius = '0';
+                        // Create star shape using CSS
+                        particle.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)';
+                        break;
+                }
+                
+                // Animation properties
+                const duration = Math.random() * 2 + 1;
+                particle.style.transition = `all ${duration}s ease-out`;
+                
+                // Random movement
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 100 + 50;
+                const targetX = mouseX + Math.cos(angle) * distance;
+                const targetY = mouseY + Math.sin(angle) * distance;
+                
+                // Animate particle
+                setTimeout(() => {
+                    particle.style.left = `${targetX}px`;
+                    particle.style.top = `${targetY}px`;
+                    particle.style.opacity = '0';
+                    particle.style.transform = `translate(-50%, -50%) scale(0.5)`;
+                    
+                    // For sparks - additional rotation
+                    if (currentEffect === 'sparks') {
+                        particle.style.transform += ` rotate(${Math.random() * 360}deg)`;
+                    }
+                }, 10);
+                
+                // Remove particle after animation
+                setTimeout(() => {
+                    particle.remove();
+                    particleCount--;
+                }, duration * 1000);
+                
+                particles.push(particle);
+            }
+            
+            function getRandomSize() {
+                switch(currentEffect) {
+                    case 'bubbles': return Math.random() * 15 + 5;
+                    case 'sparks': return Math.random() * 8 + 3;
+                    case 'fireflies': return Math.random() * 6 + 2;
+                    case 'snowflakes': return Math.random() * 20 + 10;
+                    case 'stars': return Math.random() * 12 + 6;
+                    default: return Math.random() * 10 + 5;
+                }
+            }
+            
+            function clearParticles() {
+                particles.forEach(particle => {
+                    particle.remove();
+                    particleCount--;
+                });
+                particles = [];
+            }
+            
+            // Create some initial particles for demo
+            function createInitialParticles() {
+                for (let i = 0; i < 20; i++) {
+                    mouseX = Math.random() * window.innerWidth;
+                    mouseY = Math.random() * window.innerHeight;
+                    createParticle();
+                }
+            }
+            
+            // Start with some particles
+            setTimeout(createInitialParticles, 500);
+        });
+    </script>
+</body>
+</html>

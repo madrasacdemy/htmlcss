@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive SVG Infographics</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+        
+        .infographic-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+            text-align: center;
+        }
+        
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            pointer-events: none;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+            max-width: 200px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        
+        .chart-description {
+            background: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+        
+        .tab:hover {
+            background: #d0d0d0;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive SVG Infographics</h1>
+        
+        <div class="infographic-container" id="bar-chart">
+            <h2>Global Smartphone Market Share (2023)</h2>
+            <div class="chart-container">
+                <svg id="bar-svg" width="700" height="400" viewBox="0 0 700 400"></svg>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #3498db;"></div>Samsung</div>
+                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div>Apple</div>
+                <div class="legend-item"><div class="legend-color" style="background: #2ecc71;"></div>Xiaomi</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div>Oppo</div>
+                <div class="legend-item"><div class="legend-color" style="background: #9b59b6;"></div>Vivo</div>
+            </div>
+            <div class="chart-description">
+                This interactive bar chart shows the market share percentages of the top smartphone manufacturers worldwide in 2023. Hover over each bar to see exact values and additional information.
+            </div>
+        </div>
+        
+        <div class="infographic-container hidden" id="pie-chart">
+            <h2>Global Internet Usage by Device</h2>
+            <div class="chart-container">
+                <svg id="pie-svg" width="400" height="400" viewBox="0 0 400 400"></svg>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #3498db;"></div>Mobile</div>
+                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div>Desktop</div>
+                <div class="legend-item"><div class="legend-color" style="background: #2ecc71;"></div>Tablet</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div>Other</div>
+            </div>
+            <div class="chart-description">
+                This pie chart visualization displays the distribution of internet traffic by device type. Hover over each segment to see the exact percentage and number of users.
+            </div>
+        </div>
+        
+        <div class="infographic-container hidden" id="line-graph">
+            <h2>Monthly Active Users Growth (2020-2023)</h2>
+            <div class="chart-container">
+                <svg id="line-svg" width="700" height="400" viewBox="0 0 700 400"></svg>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #3498db;"></div>Facebook</div>
+                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div>Instagram</div>
+                <div class="legend-item"><div class="legend-color" style="background: #2ecc71;"></div>TikTok</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div>Twitter</div>
+            </div>
+            <div class="chart-description">
+                This line graph tracks the growth of monthly active users for major social media platforms over a four-year period. Hover over data points to see exact user numbers.
+            </div>
+        </div>
+        
+        <div class="infographic-container hidden" id="donut-chart">
+            <h2>Energy Production Sources</h2>
+            <div class="chart-container">
+                <svg id="donut-svg" width="400" height="400" viewBox="0 0 400 400"></svg>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color" style="background: #3498db;"></div>Fossil Fuels</div>
+                <div class="legend-item"><div class="legend-color" style="background: #e74c3c;"></div>Nuclear</div>
+                <div class="legend-item"><div class="legend-color" style="background: #2ecc71;"></div>Renewables</div>
+                <div class="legend-item"><div class="legend-color" style="background: #f39c12;"></div>Hydro</div>
+                <div class="legend-item"><div class="legend-color" style="background: #9b59b6;"></div>Other</div>
+            </div>
+            <div class="chart-description">
+                This donut chart shows the distribution of global energy production by source. The interactive visualization allows you to hover over each segment for detailed information.
+            </div>
+        </div>
+        
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const infographics = {
+                bar: document.getElementById('bar-chart'),
+                pie: document.getElementById('pie-chart'),
+                line: document.getElementById('line-graph'),
+                donut: document.getElementById('donut-chart')
+            };
+            
+            const tooltip = document.getElementById('tooltip');
+            
+            // Tab switching functionality
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    Object.values(infographics).forEach(infographic => {
+                        infographic.classList.add('hidden');
+                    });
+                    
+                    infographics[this.dataset.tab].classList.remove('hidden');
+                });
+            });
+            
+            // Bar Chart Data and Rendering
+            const barData = [
+                { name: "Samsung", value: 22, color: "#3498db", info: "Samsung leads with 22% market share" },
+                { name: "Apple", value: 18, color: "#e74c3c", info: "Apple holds 18% of the market" },
+                { name: "Xiaomi", value: 12, color: "#2ecc71", info: "Xiaomi accounts for 12%" },
+                { name: "Oppo", value: 9, color: "#f39c12", info: "Oppo has 9% market share" },
+                { name: "Vivo", value: 8, color: "#9b59b6", info: "Vivo completes the top 5 with 8%" }
+            ];
+            
+            const barSvg = document.getElementById('bar-svg');
+            renderBarChart(barSvg, barData);
+            
+            // Pie Chart Data and Rendering
+            const pieData = [
+                { name: "Mobile", value: 58, color: "#3498db", info: "58% of traffic comes from mobile devices" },
+                { name: "Desktop", value: 37, color: "#e74c3c", info: "37% from desktop computers" },
+                { name: "Tablet", value: 4, color: "#2ecc71", info: "Tablets account for 4%" },
+                { name: "Other", value: 1, color: "#f39c12", info: "Other devices make up 1%" }
+            ];
+            
+            const pieSvg = document.getElementById('pie-svg');
+            renderPieChart(pieSvg, pieData);
+            
+            // Line Graph Data and Rendering
+            const lineData = [
+                { 
+                    name: "Facebook", 
+                    color: "#3498db",
+                    values: [
+                        { year: 2020, value: 2600 },
+                        { year: 2021, value: 2850 },
+                        { year: 2022, value: 2950 },
+                        { year: 2023, value: 3000 }
+                    ]
+                },
+                { 
+                    name: "Instagram", 
+                    color: "#e74c3c",
+                    values: [
+                        { year: 2020, value: 1200 },
+                        { year: 2021, value: 1400 },
+                        { year: 2022, value: 1500 },
+                        { year: 2023, value: 1600 }
+                    ]
+                },
+                { 
+                    name: "TikTok", 
+                    color: "#2ecc71",
+                    values: [
+                        { year: 2020, value: 800 },
+                        { year: 2021, value: 1200 },
+                        { year: 2022, value: 1500 },
+                        { year: 2023, value: 1800 }
+                    ]
+                },
+                { 
+                    name: "Twitter", 
+                    color: "#f39c12",
+                    values: [
+                        { year: 2020, value: 350 },
+                        { year: 2021, value: 400 },
+                        { year: 2022, value: 450 },
+                        { year: 2023, value: 550 }
+                    ]
+                }
+            ];
+            
+            const lineSvg = document.getElementById('line-svg');
+            renderLineGraph(lineSvg, lineData);
+            
+            // Donut Chart Data and Rendering
+            const donutData = [
+                { name: "Fossil Fuels", value: 60, color: "#3498db", info: "60% from fossil fuels" },
+                { name: "Nuclear", value: 10, color: "#e74c3c", info: "10% from nuclear" },
+                { name: "Renewables", value: 15, color: "#2ecc71", info: "15% from renewables" },
+                { name: "Hydro", value: 12, color: "#f39c12", info: "12% from hydro" },
+                { name: "Other", value: 3, color: "#9b59b6", info: "3% from other sources" }
+            ];
+            
+            const donutSvg = document.getElementById('donut-svg');
+            renderDonutChart(donutSvg, donutData);
+            
+            // Chart Rendering Functions
+            function renderBarChart(svg, data) {
+                svg.innerHTML = '';
+                
+                const margin = { top: 40, right: 30, bottom: 60, left: 60 };
+                const width = 700 - margin.left - margin.right;
+                const height = 400 - margin.top - margin.bottom;
+                
+                const chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                chartGroup.setAttribute("transform", `translate(${margin.left}, ${margin.top})`);
+                svg.appendChild(chartGroup);
+                
+                // X axis
+                const xScale = width / data.length;
+                for (let i = 0; i < data.length; i++) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", i * xScale + xScale / 2);
+                    text.setAttribute("y", height + 30);
+                    text.setAttribute("text-anchor", "middle");
+                    text.setAttribute("font-size", "12px");
+                    text.textContent = data[i].name;
+                    chartGroup.appendChild(text);
+                }
+                
+                // Y axis
+                const maxValue = Math.max(...data.map(d => d.value));
+                const yScale = height / maxValue;
+                
+                for (let i = 0; i <= maxValue; i += 5) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", -10);
+                    text.setAttribute("y", height - (i * yScale));
+                    text.setAttribute("text-anchor", "end");
+                    text.setAttribute("font-size", "12px");
+                    text.setAttribute("dy", "0.35em");
+                    text.textContent = i;
+                    chartGroup.appendChild(text);
+                    
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", 0);
+                    line.setAttribute("y1", height - (i * yScale));
+                    line.setAttribute("x2", width);
+                    line.setAttribute("y2", height - (i * yScale));
+                    line.setAttribute("stroke", "#eee");
+                    chartGroup.appendChild(line);
+                }
+                
+                // Bars
+                data.forEach((item, i) => {
+                    const barHeight = item.value * yScale;
+                    const bar = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+                    bar.setAttribute("x", i * xScale + 10);
+                    bar.setAttribute("y", height - barHeight);
+                    bar.setAttribute("width", xScale - 20);
+                    bar.setAttribute("height", barHeight);
+                    bar.setAttribute("fill", item.color);
+                    bar.setAttribute("rx", "4");
+                    bar.setAttribute("ry", "4");
+                    bar.setAttribute("data-tooltip", `${item.name}: ${item.value}%\n${item.info}`);
+                    chartGroup.appendChild(bar);
+                    
+                    // Add interactivity
+                    bar.addEventListener('mouseover', showTooltip);
+                    bar.addEventListener('mouseout', hideTooltip);
+                    bar.addEventListener('mousemove', moveTooltip);
+                });
+                
+                // Chart title
+                const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                title.setAttribute("x", width / 2);
+                title.setAttribute("y", -10);
+                title.setAttribute("text-anchor", "middle");
+                title.setAttribute("font-size", "14px");
+                title.setAttribute("font-weight", "bold");
+                title.textContent = "Market Share (%)";
+                chartGroup.appendChild(title);
+            }
+            
+            function renderPieChart(svg, data) {
+                svg.innerHTML = '';
+                
+                const radius = Math.min(400, 400) / 2 - 20;
+                const centerX = 200;
+                const centerY = 200;
+                
+                let cumulativePercent = 0;
+                
+                data.forEach(item => {
+                    const percent = item.value / 100;
+                    const startAngle = cumulativePercent * 2 * Math.PI;
+                    const endAngle = (cumulativePercent + percent) * 2 * Math.PI;
+                    
+                    // Calculate start and end points for the arc
+                    const x1 = centerX + radius * Math.sin(startAngle);
+                    const y1 = centerY - radius * Math.cos(startAngle);
+                    const x2 = centerX + radius * Math.sin(endAngle);
+                    const y2 = centerY - radius * Math.cos(endAngle);
+                    
+                    // Large arc flag if the angle is > 180 degrees
+                    const largeArcFlag = percent > 0.5 ? 1 : 0;
+                    
+                    // Create path for the slice
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    const pathData = `
+                        M ${centerX} ${centerY}
+                        L ${x1} ${y1}
+                        A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}
+                        Z
+                    `;
+                    path.setAttribute("d", pathData.trim());
+                    path.setAttribute("fill", item.color);
+                    path.setAttribute("data-tooltip", `${item.name}: ${item.value}%\n${item.info}`);
+                    svg.appendChild(path);
+                    
+                    // Add interactivity
+                    path.addEventListener('mouseover', showTooltip);
+                    path.addEventListener('mouseout', hideTooltip);
+                    path.addEventListener('mousemove', moveTooltip);
+                    
+                    cumulativePercent += percent;
+                });
+                
+                // Add center circle for pie chart
+                const centerCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                centerCircle.setAttribute("cx", centerX);
+                centerCircle.setAttribute("cy", centerY);
+                centerCircle.setAttribute("r", radius * 0.5);
+                centerCircle.setAttribute("fill", "white");
+                svg.appendChild(centerCircle);
+                
+                // Add total text in center
+                const totalText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                totalText.setAttribute("x", centerX);
+                totalText.setAttribute("y", centerY);
+                totalText.setAttribute("text-anchor", "middle");
+                totalText.setAttribute("dy", "0.35em");
+                totalText.setAttribute("font-size", "24px");
+                totalText.setAttribute("font-weight", "bold");
+                totalText.textContent = "100%";
+                svg.appendChild(totalText);
+            }
+            
+            function renderLineGraph(svg, data) {
+                svg.innerHTML = '';
+                
+                const margin = { top: 40, right: 30, bottom: 60, left: 60 };
+                const width = 700 - margin.left - margin.right;
+                const height = 400 - margin.top - margin.bottom;
+                
+                const chartGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                chartGroup.setAttribute("transform", `translate(${margin.left}, ${margin.top})`);
+                svg.appendChild(chartGroup);
+                
+                // X axis (years)
+                const years = [2020, 2021, 2022, 2023];
+                const xScale = width / (years.length - 1);
+                
+                for (let i = 0; i < years.length; i++) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", i * xScale);
+                    text.setAttribute("y", height + 20);
+                    text.setAttribute("text-anchor", "middle");
+                    text.setAttribute("font-size", "12px");
+                    text.textContent = years[i];
+                    chartGroup.appendChild(text);
+                }
+                
+                // Y axis
+                const maxValue = Math.max(...data.flatMap(d => d.values.map(v => v.value)));
+                const yScale = height / maxValue;
+                
+                for (let i = 0; i <= maxValue; i += 500) {
+                    const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                    text.setAttribute("x", -10);
+                    text.setAttribute("y", height - (i * yScale));
+                    text.setAttribute("text-anchor", "end");
+                    text.setAttribute("font-size", "12px");
+                    text.setAttribute("dy", "0.35em");
+                    text.textContent = i.toLocaleString();
+                    chartGroup.appendChild(text);
+                    
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", 0);
+                    line.setAttribute("y1", height - (i * yScale));
+                    line.setAttribute("x2", width);
+                    line.setAttribute("y2", height - (i * yScale));
+                    line.setAttribute("stroke", "#eee");
+                    chartGroup.appendChild(line);
+                }
+                
+                // Draw lines and points
+                data.forEach(series => {
+                    // Create path for the line
+                    let pathData = '';
+                    series.values.forEach((point, i) => {
+                        const x = i * xScale;
+                        const y = height - (point.value * yScale);
+                        if (i === 0) {
+                            pathData += `M ${x} ${y} `;
+                        } else {
+                            pathData += `L ${x} ${y} `;
+                        }
+                    });
+                    
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    path.setAttribute("d", pathData.trim());
+                    path.setAttribute("fill", "none");
+                    path.setAttribute("stroke", series.color);
+                    path.setAttribute("stroke-width", "2");
+                    chartGroup.appendChild(path);
+                    
+                    // Add points
+                    series.values.forEach((point, i) => {
+                        const x = i * xScale;
+                        const y = height - (point.value * yScale);
+                        
+                        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", x);
+                        circle.setAttribute("cy", y);
+                        circle.setAttribute("r", 5);
+                        circle.setAttribute("fill", series.color);
+                        circle.setAttribute("stroke", "white");
+                        circle.setAttribute("stroke-width", "2");
+                        circle.setAttribute("data-tooltip", `${series.name} (${point.year}): ${point.value.toLocaleString()} MAU`);
+                        chartGroup.appendChild(circle);
+                        
+                        // Add interactivity
+                        circle.addEventListener('mouseover', showTooltip);
+                        circle.addEventListener('mouseout', hideTooltip);
+                        circle.addEventListener('mousemove', moveTooltip);
+                    });
+                });
+                
+                // Chart title
+                const title = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                title.setAttribute("x", width / 2);
+                title.setAttribute("y", -10);
+                title.setAttribute("text-anchor", "middle");
+                title.setAttribute("font-size", "14px");
+                title.setAttribute("font-weight", "bold");
+                title.textContent = "Monthly Active Users (in millions)";
+                chartGroup.appendChild(title);
+            }
+            
+            function renderDonutChart(svg, data) {
+                svg.innerHTML = '';
+                
+                const radius = Math.min(400, 400) / 2 - 20;
+                const centerX = 200;
+                const centerY = 200;
+                const donutHoleRadius = radius * 0.6;
+                
+                let cumulativePercent = 0;
+                
+                data.forEach(item => {
+                    const percent = item.value / 100;
+                    const startAngle = cumulativePercent * 2 * Math.PI;
+                    const endAngle = (cumulativePercent + percent) * 2 * Math.PI;
+                    
+                    // Calculate start and end points for the arc
+                    const x1 = centerX + radius * Math.sin(startAngle);
+                    const y1 = centerY - radius * Math.cos(startAngle);
+                    const x2 = centerX + radius * Math.sin(endAngle);
+                    const y2 = centerY - radius * Math.cos(endAngle);
+                    
+                    // Large arc flag if the angle is > 180 degrees
+                    const largeArcFlag = percent > 0.5 ? 1 : 0;
+                    
+                    // Create path for the slice
+                    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    const pathData = `
+                        M ${centerX + donutHoleRadius * Math.sin(startAngle)} ${centerY - donutHoleRadius * Math.cos(startAngle)}
+                        L ${x1} ${y1}
+                        A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}
+                        L ${centerX + donutHoleRadius * Math.sin(endAngle)} ${centerY - donutHoleRadius * Math.cos(endAngle)}
+                        A ${donutHoleRadius} ${donutHoleRadius} 0 ${largeArcFlag} 0 ${centerX + donutHoleRadius * Math.sin(startAngle)} ${centerY - donutHoleRadius * Math.cos(startAngle)}
+                        Z
+                    `;
+                    path.setAttribute("d", pathData.trim());
+                    path.setAttribute("fill", item.color);
+                    path.setAttribute("data-tooltip", `${item.name}: ${item.value}%\n${item.info}`);
+                    svg.appendChild(path);
+                    
+                    // Add interactivity
+                    path.addEventListener('mouseover', showTooltip);
+                    path.addEventListener('mouseout', hideTooltip);
+                    path.addEventListener('mousemove', moveTooltip);
+                    
+                    cumulativePercent += percent;
+                });
+                
+                // Add center text
+                const totalText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                totalText.setAttribute("x", centerX);
+                totalText.setAttribute("y", centerY);
+                totalText.setAttribute("text-anchor", "middle");
+                totalText.setAttribute("dy", "0.35em");
+                totalText.setAttribute("font-size", "20px");
+                totalText.setAttribute("font-weight", "bold");
+                totalText.textContent = "Energy Mix";
+                svg.appendChild(totalText);
+            }
+            
+            // Tooltip Functions
+            function showTooltip(e) {
+                const tooltipContent = e.target.getAttribute('data-tooltip');
+                tooltip.innerHTML = tooltipContent.replace(/\n/g, '<br>');
+                tooltip.style.opacity = '1';
+            }
+            
+            function hideTooltip() {
+                tooltip.style.opacity = '0';
+            }
+            
+            function moveTooltip(e) {
+                tooltip.style.left = `${e.pageX + 10}px`;
+                tooltip.style.top = `${e.pageY + 10}px`;
+            }
+        });
+    </script>
+</body>
+</html>
