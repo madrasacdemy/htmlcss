@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Preprocessors: Sass & Less</title>
+    <style>
+        /* This would normally be in separate .scss or .less files */
+        /* Compiled CSS output shown here for demonstration */
+        
+        /* ============ SASS/SCSS FEATURES ============ */
+        /* Variables */
+        :root {
+          --primary-color: #3498db;
+          --secondary-color: #2ecc71;
+          --danger-color: #e74c3c;
+          --text-color: #2c3e50;
+          --light-bg: #ecf0f1;
+          --border-radius: 4px;
+          --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Nesting */
+        .scss-demo {
+          padding: 20px;
+          background-color: var(--light-bg);
+          border-radius: var(--border-radius);
+          margin-bottom: 30px;
+        }
+        .scss-demo .header {
+          color: var(--primary-color);
+          border-bottom: 2px solid var(--primary-color);
+          padding-bottom: 10px;
+        }
+        .scss-demo .content {
+          color: var(--text-color);
+        }
+        .scss-demo .content p {
+          margin: 10px 0;
+        }
+        .scss-demo .content p.highlight {
+          background-color: #fffacd;
+          padding: 5px;
+          border-left: 3px solid var(--secondary-color);
+        }
+        .scss-demo .footer {
+          margin-top: 15px;
+          font-size: 0.9em;
+          color: #7f8c8d;
+        }
+        
+        /* Mixins (converted to regular CSS classes for demo) */
+        .box-shadow {
+          box-shadow: var(--box-shadow);
+        }
+        .transition {
+          transition: all 0.3s ease;
+        }
+        .button {
+          display: inline-block;
+          padding: 8px 16px;
+          border-radius: var(--border-radius);
+          cursor: pointer;
+          border: none;
+          font-weight: bold;
+        }
+        .button:hover {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+        .button-primary {
+          background-color: var(--primary-color);
+          color: white;
+        }
+        .button-secondary {
+          background-color: var(--secondary-color);
+          color: white;
+        }
+        .button-danger {
+          background-color: var(--danger-color);
+          color: white;
+        }
+        
+        /* Extend/Inheritance (simulated with classes) */
+        .message, .success-message, .error-message, .warning-message {
+          padding: 15px;
+          border-radius: var(--border-radius);
+          margin: 10px 0;
+          border: 1px solid transparent;
+        }
+        .success-message {
+          background-color: #d4edda;
+          border-color: #c3e6cb;
+          color: #155724;
+        }
+        .error-message {
+          background-color: #f8d7da;
+          border-color: #f5c6cb;
+          color: #721c24;
+        }
+        .warning-message {
+          background-color: #fff3cd;
+          border-color: #ffeeba;
+          color: #856404;
+        }
+        
+        /* Operations */
+        .spacing-demo {
+          margin: 15px 0;
+        }
+        .spacing-demo .box {
+          width: calc(100% / 3 - 20px);
+          height: 60px;
+          display: inline-block;
+          margin: 10px;
+          background-color: var(--primary-color);
+          color: white;
+          text-align: center;
+          line-height: 60px;
+          border-radius: var(--border-radius);
+        }
+        
+        /* ============ LESS FEATURES ============ */
+        /* Variables */
+        .less-demo {
+          padding: 20px;
+          background-color: #f9f9f9;
+          border-radius: 4px;
+          margin-bottom: 30px;
+          border-left: 5px solid #9b59b6;
+        }
+        
+        /* Mixins */
+        .gradient-bg {
+          background: linear-gradient(to right, #9b59b6, #3498db);
+          color: white;
+        }
+        
+        /* Nesting */
+        .less-demo .header {
+          color: #9b59b6;
+          font-size: 1.5em;
+          margin-bottom: 15px;
+        }
+        .less-demo .content {
+          color: #34495e;
+        }
+        .less-demo .content p {
+          margin: 10px 0;
+        }
+        .less-demo .content p.highlight {
+          background-color: rgba(155, 89, 182, 0.1);
+          padding: 5px;
+          border-left: 3px solid #9b59b6;
+        }
+        
+        /* Color Functions */
+        .color-functions {
+          margin: 15px 0;
+        }
+        .color-functions .box {
+          width: 100px;
+          height: 60px;
+          display: inline-block;
+          margin-right: 10px;
+          color: white;
+          text-align: center;
+          line-height: 60px;
+          border-radius: 4px;
+        }
+        .color-functions .base-color {
+          background-color: #9b59b6;
+        }
+        .color-functions .lighten {
+          background-color: #b97fd1;
+        }
+        .color-functions .darken {
+          background-color: #7d3c98;
+        }
+        .color-functions .saturate {
+          background-color: #a352c4;
+        }
+        .color-functions .desaturate {
+          background-color: #8f66a3;
+        }
+        .color-functions .fade {
+          background-color: rgba(155, 89, 182, 0.7);
+        }
+        
+        /* ============ COMMON STYLES ============ */
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 1000px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+          color: #2c3e50;
+        }
+        
+        h1 {
+          text-align: center;
+          margin-bottom: 30px;
+          color: #3498db;
+        }
+        
+        .container {
+          background-color: white;
+          padding: 30px;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section {
+          margin-bottom: 40px;
+        }
+        
+        .section-title {
+          border-bottom: 2px solid #3498db;
+          padding-bottom: 5px;
+          margin-bottom: 15px;
+          color: #2c3e50;
+        }
+        
+        .code-block {
+          background-color: #f0f3f4;
+          padding: 15px;
+          border-radius: 4px;
+          font-family: 'Courier New', Courier, monospace;
+          margin: 15px 0;
+          overflow-x: auto;
+          border-left: 3px solid #3498db;
+        }
+        
+        .button-demo {
+          margin: 15px 0;
+        }
+        
+        .button-demo button {
+          margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CSS Preprocessors: Sass & Less</h1>
+        
+        <div class="section">
+            <h2 class="section-title">Sass/SCSS Features</h2>
+            
+            <div class="scss-demo box-shadow">
+                <div class="header">SCSS Demo</div>
+                <div class="content">
+                    <p>This demonstrates features that would be written in SCSS.</p>
+                    <p class="highlight">SCSS allows nesting, variables, mixins, and more.</p>
+                    <p>The compiled CSS is what actually runs in the browser.</p>
+                </div>
+                <div class="footer">This is the footer section</div>
+            </div>
+            
+            <h3>Variables</h3>
+            <div class="code-block">
+                // SCSS Variables<br>
+                $primary-color: #3498db;<br>
+                $secondary-color: #2ecc71;<br>
+                $text-color: #2c3e50;<br>
+                <br>
+                .header {<br>
+                &nbsp;&nbsp;color: $primary-color;<br>
+                }
+            </div>
+            
+            <h3>Nesting</h3>
+            <div class="code-block">
+                .scss-demo {<br>
+                &nbsp;&nbsp;padding: 20px;<br>
+                <br>
+                &nbsp;&nbsp;.header {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;color: $primary-color;<br>
+                &nbsp;&nbsp;}<br>
+                <br>
+                &nbsp;&nbsp;.content {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;p {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 10px 0;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+                &nbsp;&nbsp;}<br>
+                }
+            </div>
+            
+            <h3>Mixins</h3>
+            <div class="code-block">
+                // Define a mixin<br>
+                @mixin button($bg-color) {<br>
+                &nbsp;&nbsp;display: inline-block;<br>
+                &nbsp;&nbsp;padding: 8px 16px;<br>
+                &nbsp;&nbsp;border-radius: $border-radius;<br>
+                &nbsp;&nbsp;background-color: $bg-color;<br>
+                &nbsp;&nbsp;color: white;<br>
+                &nbsp;&nbsp;cursor: pointer;<br>
+                &nbsp;&nbsp;@include transition;<br>
+                <br>
+                &nbsp;&nbsp;&amp;:hover {<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;opacity: 0.9;<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;transform: translateY(-1px);<br>
+                &nbsp;&nbsp;}<br>
+                }<br>
+                <br>
+                // Use the mixin<br>
+                .btn-primary {<br>
+                &nbsp;&nbsp;@include button($primary-color);<br>
+                }
+            </div>
+            
+            <div class="button-demo">
+                <button class="button button-primary">Primary Button</button>
+                <button class="button button-secondary">Secondary Button</button>
+                <button class="button button-danger">Danger Button</button>
+            </div>
+            
+            <h3>Extend/Inheritance</h3>
+            <div class="code-block">
+                %message-shared {<br>
+                &nbsp;&nbsp;padding: 15px;<br>
+                &nbsp;&nbsp;border-radius: $border-radius;<br>
+                &nbsp;&nbsp;margin: 10px 0;<br>
+                &nbsp;&nbsp;border: 1px solid transparent;<br>
+                }<br>
+                <br>
+                .success-message {<br>
+                &nbsp;&nbsp;@extend %message-shared;<br>
+                &nbsp;&nbsp;background-color: #d4edda;<br>
+                &nbsp;&nbsp;border-color: #c3e6cb;<br>
+                &nbsp;&nbsp;color: #155724;<br>
+                }
+            </div>
+            
+            <div class="success-message">This is a success message!</div>
+            <div class="error-message">This is an error message!</div>
+            <div class="warning-message">This is a warning message!</div>
+            
+            <h3>Operations</h3>
+            <div class="code-block">
+                .box {<br>
+                &nbsp;&nbsp;width: 100% / 3 - 20px;<br>
+                &nbsp;&nbsp;margin: 10px;<br>
+                }
+            </div>
+            
+            <div class="spacing-demo">
+                <div class="box">Box 1</div>
+                <div class="box">Box 2</div>
+                <div class="box">Box 3</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Less Features</h2>
+            
+            <div class="less-demo">
+                <div class="header">Less Demo</div>
+                <div class="content">
+                    <p>This demonstrates features that would be written in Less.</p>
+                    <p class="highlight">Less also supports variables, mixins, nesting and more.</p>
+                    <p>Less has some different syntax and features than Sass.</p>
+                </div>
+            </div>
+            
+            <h3>Variables</h3>
+            <div class="code-block">
+                // Less Variables<br>
+                @primary-color: #9b59b6;<br>
+                @secondary-color: #3498db;<br>
+                @text-color: #34495e;<br>
+                <br>
+                .header {<br>
+                &nbsp;&nbsp;color: @primary-color;<br>
+                }
+            </div>
+            
+            <h3>Mixins</h3>
+            <div class="code-block">
+                // Define a mixin<br>
+                .gradient-bg() {<br>
+                &nbsp;&nbsp;background: linear-gradient(to right, @primary-color, @secondary-color);<br>
+                &nbsp;&nbsp;color: white;<br>
+                }<br>
+                <br>
+                // Use the mixin<br>
+                .special-box {<br>
+                &nbsp;&nbsp;.gradient-bg();<br>
+                &nbsp;&nbsp;padding: 20px;<br>
+                }
+            </div>
+            
+            <div class="button-demo">
+                <button class="button gradient-bg">Gradient Button</button>
+            </div>
+            
+            <h3>Color Functions</h3>
+            <div class="code-block">
+                .lighten-bg {<br>
+                &nbsp;&nbsp;background-color: lighten(@primary-color, 10%);<br>
+                }<br>
+                <br>
+                .darken-bg {<br>
+                &nbsp;&nbsp;background-color: darken(@primary-color, 10%);<br>
+                }<br>
+                <br>
+                .transparent-bg {<br>
+                &nbsp;&nbsp;background-color: fade(@primary-color, 70%);<br>
+                }
+            </div>
+            
+            <div class="color-functions">
+                <div class="box base-color">Base</div>
+                <div class="box lighten">Lighten</div>
+                <div class="box darken">Darken</div>
+                <div class="box saturate">Saturate</div>
+                <div class="box desaturate">Desaturate</div>
+                <div class="box fade">Fade</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2 class="section-title">Key Differences</h2>
+            
+            <div class="code-block">
+                /* Sass/SCSS */<br>
+                $variable: value;<br>
+                @mixin name { ... }<br>
+                @include name;<br>
+                @extend %placeholder;<br>
+                <br>
+                /* Less */<br>
+                @variable: value;<br>
+                .mixin() { ... }<br>
+                .mixin();<br>
+                &:extend(.class);
+            </div>
+            
+            <ul>
+                <li>Sass has more advanced control directives (@if, @for, @each, @while)</li>
+                <li>Less can be compiled in the browser (though not recommended for production)</li>
+                <li>Sass has two syntaxes: SCSS (CSS-like) and Sass (indented)</li>
+                <li>Less has built-in JavaScript evaluation</li>
+                <li>Sass has larger community and more frameworks</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEM Methodology - Scalable CSS Architecture</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --text-color: #2c3e50;
+            --light-gray: #ecf0f1;
+            --dark-gray: #95a5a6;
+            --border-radius: 4px;
+            --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --spacing-unit: 16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* BEM Implementation Starts Here */
+
+        /* BLOCK: card */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: var(--spacing-unit);
+            max-width: 400px;
+        }
+
+        /* ELEMENT: card__image */
+        .card__image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        /* ELEMENT: card__content */
+        .card__content {
+            padding: calc(var(--spacing-unit) * 1.5);
+        }
+
+        /* ELEMENT: card__title */
+        .card__title {
+            margin: 0 0 calc(var(--spacing-unit) / 2) 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        /* ELEMENT: card__text */
+        .card__text {
+            margin: 0 0 var(--spacing-unit) 0;
+            color: var(--dark-gray);
+        }
+
+        /* ELEMENT: card__footer */
+        .card__footer {
+            padding: var(--spacing-unit) calc(var(--spacing-unit) * 1.5);
+            background-color: var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* MODIFIER: card--featured */
+        .card--featured {
+            border: 2px solid var(--primary-color);
+        }
+
+        /* MODIFIER: card--dark */
+        .card--dark {
+            background-color: var(--text-color);
+            color: white;
+        }
+
+        .card--dark .card__title,
+        .card--dark .card__text {
+            color: white;
+        }
+
+        /* BLOCK: button */
+        .button {
+            display: inline-block;
+            padding: calc(var(--spacing-unit) / 2) var(--spacing-unit);
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
+        }
+
+        /* ELEMENT: button__icon */
+        .button__icon {
+            margin-right: calc(var(--spacing-unit) / 2);
+            vertical-align: middle;
+        }
+
+        /* MODIFIER: button--primary */
+        .button--primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .button--primary:hover {
+            background-color: #2980b9;
+        }
+
+        /* MODIFIER: button--secondary */
+        .button--secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .button--secondary:hover {
+            background-color: #27ae60;
+        }
+
+        /* MODIFIER: button--small */
+        .button--small {
+            font-size: 0.8rem;
+            padding: calc(var(--spacing-unit) / 4) calc(var(--spacing-unit) / 2);
+        }
+
+        /* BLOCK: alert */
+        .alert {
+            padding: var(--spacing-unit);
+            border-radius: var(--border-radius);
+            margin-bottom: var(--spacing-unit);
+            border: 1px solid transparent;
+        }
+
+        /* MODIFIER: alert--success */
+        .alert--success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        /* MODIFIER: alert--error */
+        .alert--error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        /* MODIFIER: alert--warning */
+        .alert--warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        }
+
+        /* Layout Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-unit);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-unit);
+            margin: var(--spacing-unit) 0;
+        }
+
+        .section {
+            margin: calc(var(--spacing-unit) * 2) 0;
+        }
+
+        .section__title {
+            color: var(--text-color);
+            border-bottom: 2px solid var(--light-gray);
+            padding-bottom: calc(var(--spacing-unit) / 2);
+        }
+
+        /* Demo-specific styles */
+        .bem-explanation {
+            background-color: white;
+            padding: var(--spacing-unit);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: var(--spacing-unit);
+        }
+
+        .bem-example {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f5f5f5;
+            padding: calc(var(--spacing-unit) / 2);
+            border-radius: var(--border-radius);
+            margin: calc(var(--spacing-unit) / 2) 0;
+            overflow-x: auto;
+        }
+
+        .bem-structure {
+            margin-left: var(--spacing-unit);
+        }
+
+        .bem-structure li {
+            margin-bottom: calc(var(--spacing-unit) / 2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BEM Methodology</h1>
+            <p class="subtitle">Block-Element-Modifier: A Scalable CSS Architecture</p>
+        </header>
+
+        <section class="bem-explanation">
+            <h2 class="section__title">What is BEM?</h2>
+            <p>BEM (Block, Element, Modifier) is a methodology that helps you create reusable components and code sharing in front-end development.</p>
+            
+            <h3>BEM Structure:</h3>
+            <ul class="bem-structure">
+                <li><strong>Block</strong>: Standalone component that is meaningful on its own (e.g., <code>.card</code>, <code>.button</code>)</li>
+                <li><strong>Element</strong>: Part of a block that has no standalone meaning (e.g., <code>.card__title</code>, <code>.button__icon</code>)</li>
+                <li><strong>Modifier</strong>: Flag on a block or element to change appearance or behavior (e.g., <code>.card--featured</code>, <code>.button--primary</code>)</li>
+            </ul>
+
+            <div class="bem-example">
+                /* Block component */<br>
+                .card {}<br><br>
+                
+                /* Element that depends on the block */<br>
+                .card__image {}<br><br>
+                
+                /* Modifier that changes the style of the block */<br>
+                .card--featured {}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section__title">Card Component Examples</h2>
+            
+            <div class="grid">
+                <!-- Standard Card -->
+                <div class="card">
+                    <img src="https://via.placeholder.com/400x200" alt="Placeholder" class="card__image">
+                    <div class="card__content">
+                        <h3 class="card__title">Standard Card</h3>
+                        <p class="card__text">This is a basic card component using BEM methodology.</p>
+                    </div>
+                    <div class="card__footer">
+                        <a href="#" class="button button--primary">View Details</a>
+                        <span>Updated today</span>
+                    </div>
+                </div>
+
+                <!-- Featured Card -->
+                <div class="card card--featured">
+                    <img src="https://via.placeholder.com/400x200" alt="Placeholder" class="card__image">
+                    <div class="card__content">
+                        <h3 class="card__title">Featured Card</h3>
+                        <p class="card__text">This card uses a modifier to highlight it as featured.</p>
+                    </div>
+                    <div class="card__footer">
+                        <a href="#" class="button button--secondary">View Details</a>
+                        <span>Just added</span>
+                    </div>
+                </div>
+
+                <!-- Dark Card -->
+                <div class="card card--dark">
+                    <img src="https://via.placeholder.com/400x200/2c3e50/ffffff" alt="Placeholder" class="card__image">
+                    <div class="card__content">
+                        <h3 class="card__title">Dark Theme Card</h3>
+                        <p class="card__text">This card uses a modifier to change its color scheme.</p>
+                    </div>
+                    <div class="card__footer">
+                        <a href="#" class="button button--primary">View Details</a>
+                        <span>Premium content</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section__title">Button Component Examples</h2>
+            
+            <div class="button-group">
+                <button class="button button--primary">Primary Button</button>
+                <button class="button button--secondary">Secondary Button</button>
+                <button class="button button--primary button--small">Small Button</button>
+                <button class="button">
+                    <span class="button__icon">📋</span>
+                    Button with Icon
+                </button>
+            </div>
+
+            <div class="bem-example" style="margin-top: var(--spacing-unit);">
+                /* Button block */<br>
+                .button {}<br><br>
+                
+                /* Button element (icon inside button) */<br>
+                .button__icon {}<br><br>
+                
+                /* Button modifiers */<br>
+                .button--primary {}<br>
+                .button--secondary {}<br>
+                .button--small {}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section__title">Alert Component Examples</h2>
+            
+            <div class="alert alert--success">
+                This is a success alert message! Everything worked as expected.
+            </div>
+            
+            <div class="alert alert--error">
+                This is an error alert message! Something went wrong.
+            </div>
+            
+            <div class="alert alert--warning">
+                This is a warning alert message! Please check your input.
+            </div>
+
+            <div class="bem-example" style="margin-top: var(--spacing-unit);">
+                /* Alert block */<br>
+                .alert {}<br><br>
+                
+                /* Alert modifiers */<br>
+                .alert--success {}<br>
+                .alert--error {}<br>
+                .alert--warning {}
+            </div>
+        </section>
+
+        <section class="bem-explanation">
+            <h2 class="section__title">Benefits of BEM</h2>
+            
+            <ul class="bem-structure">
+                <li><strong>Modularity</strong>: Blocks can be reused across projects</li>
+                <li><strong>Clear Structure</strong>: Easy to understand relationships between CSS and HTML</li>
+                <li><strong>Low Specificity</strong>: Avoids specificity wars with flat structure</li>
+                <li><strong>Team Scalability</strong>: Multiple developers can work without conflicts</li>
+                <li><strong>Self-documenting</strong>: Class names reveal component structure</li>
+            </ul>
+
+            <h3>BEM Naming Rules:</h3>
+            <ol class="bem-structure">
+                <li>Block names can use letters, digits, and dashes: <code>.block-name</code></li>
+                <li>Elements are delimited with double underscore: <code>.block__element</code></li>
+                <li>Modifiers are delimited with double hyphen: <code>.block--modifier</code></li>
+                <li>Element modifiers: <code>.block__element--modifier</code></li>
+                <li>Never use element selectors (div, p) in CSS - only class names</li>
+            </ol>
+        </section>
+    </div>
+</body>
+</html>

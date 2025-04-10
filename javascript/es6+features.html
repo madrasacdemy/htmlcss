@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern ES6+ Features</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #7209b7;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f0f2f5;
+            color: var(--dark);
+        }
+        
+        h1, h2, h3 {
+            color: var(--secondary);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 2.5rem;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid var(--accent);
+        }
+        
+        .feature-section {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-section:last-child {
+            border-bottom: none;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 8px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #fetchUserBtn {
+            background-color: var(--info);
+        }
+        
+        #fetchPostsBtn {
+            background-color: var(--success);
+        }
+        
+        .output-area {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 3px solid var(--accent);
+        }
+        
+        .user-card {
+            border: 1px solid #dee2e6;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .user-card img {
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 3px solid var(--accent);
+        }
+        
+        .error {
+            color: var(--danger);
+            font-weight: bold;
+            padding: 10px;
+            background-color: rgba(247, 37, 133, 0.1);
+            border-radius: 5px;
+        }
+        
+        .loading {
+            color: var(--primary);
+            font-style: italic;
+            display: flex;
+            align-items: center;
+        }
+        
+        .loading::before {
+            content: "";
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 3px solid rgba(67, 97, 238, 0.3);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .post-card {
+            background-color: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--success);
+        }
+        
+        .post-card h4 {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+        
+        .code-block {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+            border-left: 3px solid var(--warning);
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Modern JavaScript ES6+ Features</h1>
+    
+    <div class="container">
+        <div class="feature-section">
+            <h2>Arrow Functions</h2>
+            <p>Concise syntax for writing functions with lexical <code>this</code> binding.</p>
+            
+            <div class="btn-group">
+                <button id="arrowBtn">Test Arrow Function</button>
+                <button id="arrayOpsBtn">Array Operations</button>
+            </div>
+            
+            <div id="arrowOutput" class="output-area"></div>
+            <div id="arrayOutput" class="output-area"></div>
+        </div>
+        
+        <div class="feature-section">
+            <h2>Destructuring</h2>
+            <p>Elegant way to unpack values from arrays or properties from objects.</p>
+            
+            <div class="btn-group">
+                <button id="destructureBtn">Object Destructuring</button>
+                <button id="paramDestructureBtn">Parameter Destructuring</button>
+            </div>
+            
+            <div id="destructureOutput" class="output-area"></div>
+            <div id="paramDestructureOutput" class="output-area"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Async/Await with Fetch API</h2>
+        <p>Modern asynchronous programming with clean syntax and powerful HTTP requests.</p>
+        
+        <div class="btn-group">
+            <button id="fetchUserBtn">Fetch Random User</button>
+            <button id="fetchPostsBtn">Fetch Recent Posts</button>
+        </div>
+        
+        <div id="loadingIndicator" class="loading" style="display: none;">Loading data...</div>
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        <div id="apiData" class="output-area"></div>
+    </div>
+
+    <script>
+        // ======================
+        // Arrow Functions
+        // ======================
+        document.querySelector('#arrowBtn').addEventListener('click', () => {
+            // Traditional function vs arrow function
+            const traditionalFunc = function(a, b) { return a + b; };
+            const arrowFunc = (a, b) => a + b;
+            
+            // Arrow function with single parameter
+            const square = x => x * x;
+            
+            // Arrow function with implicit return
+            const greet = name => `Hello, ${name}!`;
+            
+            // Arrow function with multiple statements
+            const calculate = (x, y) => {
+                const sum = x + y;
+                const product = x * y;
+                return `Sum: ${sum}, Product: ${product}`;
+            };
+            
+            const output = `
+                <div class="code-block">// Traditional function
+                const traditionalFunc = function(a, b) { return a + b; };
+                
+                // Arrow function equivalent
+                const arrowFunc = (a, b) => a + b;</div>
+                
+                <p><strong>Results:</strong></p>
+                <ul>
+                    <li>Traditional: 3 + 4 = ${traditionalFunc(3, 4)}</li>
+                    <li>Arrow: 3 + 4 = ${arrowFunc(3, 4)}</li>
+                    <li>Square of 5: ${square(5)}</li>
+                    <li>Greeting: ${greet('Alice')}</li>
+                    <li>Calculate(2, 3): ${calculate(2, 3)}</li>
+                </ul>
+            `;
+            
+            document.querySelector('#arrowOutput').innerHTML = output;
+        });
+        
+        document.querySelector('#arrayOpsBtn').addEventListener('click', () => {
+            const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+            
+            // Array methods with arrow functions
+            const doubled = numbers.map(n => n * 2);
+            const evens = numbers.filter(n => n % 2 === 0);
+            const sum = numbers.reduce((acc, curr) => acc + curr, 0);
+            const firstEven = numbers.find(n => n % 2 === 0);
+            
+            const output = `
+                <div class="code-block">const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+                // Double each number
+                const doubled = numbers.map(n => n * 2);
+                
+                // Filter even numbers
+                const evens = numbers.filter(n => n % 2 === 0);
+                
+                // Sum all numbers
+                const sum = numbers.reduce((acc, curr) => acc + curr, 0);</div>
+                
+                <p><strong>Results:</strong></p>
+                <ul>
+                    <li>Original array: [${numbers.join(', ')}]</li>
+                    <li>Doubled: [${doubled.join(', ')}]</li>
+                    <li>Even numbers: [${evens.join(', ')}]</li>
+                    <li>Sum of all numbers: ${sum}</li>
+                    <li>First even number: ${firstEven}</li>
+                </ul>
+            `;
+            
+            document.querySelector('#arrayOutput').innerHTML = output;
+        });
+        
+        // ======================
+        // Destructuring
+        // ======================
+        document.querySelector('#destructureBtn').addEventListener('click', () => {
+            // Object destructuring
+            const person = { name: 'John', age: 30, city: 'New York' };
+            const { name, age, city } = person;
+            
+            // Array destructuring
+            const colors = ['red', 'green', 'blue'];
+            const [firstColor, secondColor, thirdColor] = colors;
+            
+            // Nested destructuring
+            const employee = {
+                id: 101,
+                personalInfo: {
+                    firstName: 'Alice',
+                    lastName: 'Smith',
+                    address: {
+                        street: '123 Main St',
+                        zip: '10001'
+                    }
+                }
+            };
+            
+            const { 
+                id, 
+                personalInfo: { 
+                    firstName, 
+                    lastName,
+                    address: { street } 
+                } 
+            } = employee;
+            
+            const output = `
+                <div class="code-block">// Object destructuring
+                const person = { name: 'John', age: 30, city: 'New York' };
+                const { name, age, city } = person;
+                
+                // Array destructuring
+                const colors = ['red', 'green', 'blue'];
+                const [firstColor, secondColor, thirdColor] = colors;
+                
+                // Nested destructuring
+                const { 
+                    id, 
+                    personalInfo: { 
+                        firstName, 
+                        lastName,
+                        address: { street } 
+                    } 
+                } = employee;</div>
+                
+                <p><strong>Results:</strong></p>
+                <ul>
+                    <li>Name: ${name}, Age: ${age}, City: ${city}</li>
+                    <li>First color: ${firstColor}, Second: ${secondColor}, Third: ${thirdColor}</li>
+                    <li>Employee ID: ${id}</li>
+                    <li>Full Name: ${firstName} ${lastName}</li>
+                    <li>Street: ${street}</li>
+                </ul>
+            `;
+            
+            document.querySelector('#destructureOutput').innerHTML = output;
+        });
+        
+        document.querySelector('#paramDestructureBtn').addEventListener('click', () => {
+            // Function with parameter destructuring
+            const displayUser = ({ name, age, email = 'N/A' }) => {
+                return `Name: ${name}, Age: ${age}, Email: ${email}`;
+            };
+            
+            const user1 = { name: 'Bob', age: 25, email: 'bob@example.com' };
+            const user2 = { name: 'Jane', age: 28 }; // email will be default
+            
+            const output = `
+                <div class="code-block">// Function with parameter destructuring
+                const displayUser = ({ name, age, email = 'N/A' }) => {
+                    return \`Name: \${name}, Age: \${age}, Email: \${email}\`;
+                };
+                
+                // Usage with complete object
+                displayUser({ name: 'Bob', age: 25, email: 'bob@example.com' });
+                
+                // Usage with missing property (uses default)
+                displayUser({ name: 'Jane', age: 28 });</div>
+                
+                <p><strong>Results:</strong></p>
+                <ul>
+                    <li>User 1: ${displayUser(user1)}</li>
+                    <li>User 2: ${displayUser(user2)} (default email used)</li>
+                </ul>
+            `;
+            
+            document.querySelector('#paramDestructureOutput').innerHTML = output;
+        });
+        
+        // ======================
+        // Async/Await and Fetch
+        // ======================
+        const loadingIndicator = document.querySelector('#loadingIndicator');
+        const errorMessage = document.querySelector('#errorMessage');
+        const apiData = document.querySelector('#apiData');
+        
+        // Helper function for API requests
+        async function fetchData(url) {
+            try {
+                loadingIndicator.style.display = 'flex';
+                errorMessage.style.display = 'none';
+                apiData.innerHTML = '';
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                errorMessage.textContent = `Error: ${error.message}`;
+                errorMessage.style.display = 'block';
+                return null;
+            } finally {
+                loadingIndicator.style.display = 'none';
+            }
+        }
+        
+        // Fetch random user
+        document.querySelector('#fetchUserBtn').addEventListener('click', async () => {
+            const data = await fetchData('https://randomuser.me/api/');
+            
+            if (data) {
+                // Destructuring the response
+                const [user] = data.results;
+                const { 
+                    name: { first, last },
+                    email,
+                    picture: { large: image },
+                    location: { city, country }
+                } = user;
+                
+                apiData.innerHTML = `
+                    <div class="user-card">
+                        <img src="${image}" alt="${first} ${last}">
+                        <h3>${first} ${last}</h3>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Location:</strong> ${city}, ${country}</p>
+                    </div>
+                    
+                    <div class="code-block">// Destructuring the API response
+                    const [user] = data.results;
+                    const { 
+                        name: { first, last },
+                        email,
+                        picture: { large: image },
+                        location: { city, country }
+                    } = user;</div>
+                `;
+            }
+        });
+        
+        // Fetch posts
+        document.querySelector('#fetchPostsBtn').addEventListener('click', async () => {
+            const data = await fetchData('https://jsonplaceholder.typicode.com/posts?_limit=5');
+            
+            if (data) {
+                let postsHTML = '<h3>Recent Posts</h3>';
+                
+                // Using array methods with arrow functions
+                data.forEach(({ id, title, body }) => {
+                    postsHTML += `
+                        <div class="post-card">
+                            <h4>#${id}: ${title}</h4>
+                            <p>${body}</p>
+                        </div>
+                    `;
+                });
+                
+                postsHTML += `
+                    <div class="code-block">// Fetching and displaying posts
+                    const data = await fetchData('https://jsonplaceholder.typicode.com/posts?_limit=5');
+                    
+                    data.forEach(({ id, title, body }) => {
+                        // Create post cards
+                    });</div>
+                `;
+                
+                apiData.innerHTML = postsHTML;
+            }
+        });
+    </script>
+</body>
+</html>

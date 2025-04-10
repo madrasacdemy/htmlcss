@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery DOM Manipulation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        :root {
+            --primary: #ee3e3e;
+            --secondary: #3a56c4;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f7fa;
+            color: var(--dark);
+        }
+        
+        h1, h2, h3 {
+            color: var(--secondary);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+        
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .demo-section {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .demo-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-1px);
+        }
+        
+        .output-area {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            border-left: 3px solid var(--primary);
+            min-height: 20px;
+        }
+        
+        .item {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            background-color: var(--warning);
+            font-weight: bold;
+        }
+        
+        .user-card {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .code-example {
+            background-color: #f0f3f9;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        
+        #dynamicList {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        #dynamicList li {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>jQuery DOM Traversal & Manipulation</h1>
+    
+    <div class="container">
+        <div class="demo-section">
+            <h2>Basic Selection & Manipulation</h2>
+            
+            <div class="code-example">$('#element') - Select elements by ID</div>
+            
+            <button id="changeHtmlBtn">Change HTML Content</button>
+            <button id="changeTextBtn">Change Text Content</button>
+            <button id="toggleClassBtn">Toggle Highlight Class</button>
+            
+            <div id="basicDemo" class="output-area">
+                This is the original content of the basic demo div.
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>DOM Traversal Methods</h2>
+            
+            <div class="code-example">.parent(), .children(), .find(), .siblings()</div>
+            
+            <button id="traverseParentBtn">Highlight Parent</button>
+            <button id="traverseChildrenBtn">Highlight Children</button>
+            <button id="traverseSiblingsBtn">Highlight Siblings</button>
+            
+            <div id="traversalDemo" class="output-area">
+                <div class="item">First child item</div>
+                <div class="item">Second child item</div>
+                <div class="item">Third child item <span class="nested">(nested)</span></div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>DOM Insertion Methods</h2>
+            
+            <div class="code-example">.append(), .prepend(), .before(), .after()</div>
+            
+            <button id="appendBtn">Append Item</button>
+            <button id="prependBtn">Prepend Item</button>
+            <button id="beforeBtn">Insert Before</button>
+            <button id="afterBtn">Insert After</button>
+            
+            <div id="insertionDemo" class="output-area">
+                <div class="item original">Original Item (middle)</div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>Dynamic List Example</h2>
+            
+            <div class="code-example">Creating elements dynamically with $()</div>
+            
+            <input type="text" id="newItemInput" placeholder="Enter new item">
+            <button id="addItemBtn">Add to List</button>
+            
+            <ul id="dynamicList"></ul>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // ======================
+            // Basic Selection & Manipulation
+            // ======================
+            $('#changeHtmlBtn').click(function() {
+                $('#basicDemo').html('<strong>New HTML content</strong> with <em>formatted</em> elements.');
+            });
+            
+            $('#changeTextBtn').click(function() {
+                $('#basicDemo').text('<strong>This will be displayed as text</strong> - tags won\'t render.');
+            });
+            
+            $('#toggleClassBtn').click(function() {
+                $('#basicDemo').toggleClass('highlight');
+            });
+            
+            // ======================
+            // DOM Traversal Methods
+            // ======================
+            $('#traverseParentBtn').click(function() {
+                $('.item').removeClass('highlight');
+                $('.item').parent().addClass('highlight');
+            });
+            
+            $('#traverseChildrenBtn').click(function() {
+                $('#traversalDemo').removeClass('highlight');
+                $('#traversalDemo').children().addClass('highlight');
+            });
+            
+            $('#traverseSiblingsBtn').click(function() {
+                $('.item').removeClass('highlight');
+                $('.item:nth-child(2)').siblings().addClass('highlight');
+            });
+            
+            // ======================
+            // DOM Insertion Methods
+            // ======================
+            $('#appendBtn').click(function() {
+                $('#insertionDemo').append('<div class="item">Appended item</div>');
+            });
+            
+            $('#prependBtn').click(function() {
+                $('#insertionDemo').prepend('<div class="item">Prepended item</div>');
+            });
+            
+            $('#beforeBtn').click(function() {
+                $('.original').before('<div class="item">Inserted before</div>');
+            });
+            
+            $('#afterBtn').click(function() {
+                $('.original').after('<div class="item">Inserted after</div>');
+            });
+            
+            // ======================
+            // Dynamic List Example
+            // ======================
+            $('#addItemBtn').click(function() {
+                const newItemText = $('#newItemInput').val().trim();
+                if (newItemText) {
+                    const listItem = $('<li></li>').text(newItemText);
+                    const deleteBtn = $('<button class="delete-btn">X</button>');
+                    
+                    deleteBtn.click(function() {
+                        $(this).parent().remove();
+                    });
+                    
+                    listItem.append(deleteBtn);
+                    $('#dynamicList').append(listItem);
+                    $('#newItemInput').val('');
+                }
+            });
+            
+            // Allow adding items with Enter key
+            $('#newItemInput').keypress(function(e) {
+                if (e.which === 13) { // Enter key
+                    $('#addItemBtn').click();
+                }
+            });
+            
+            // ======================
+            // Bonus: Chaining Example
+            // ======================
+            $('.item').first()
+                .css('color', 'green')
+                .next().css('font-style', 'italic')
+                .find('.nested').css('text-decoration', 'underline');
+        });
+    </script>
+</body>
+</html>
