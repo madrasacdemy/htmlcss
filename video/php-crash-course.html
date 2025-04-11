@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- Primary Meta Tags -->
+    <title>PHP Crash Course (Session 1): Introduction to PHP | Madras Academy</title>
+    <meta name="description" content="Start your PHP journey with this free crash course from Madras Academy. Learn why PHP powers 78% of all websites and how to begin coding in PHP today!">
+    <meta name="keywords" content="PHP tutorial, PHP crash course, web development, Madras Academy, backend programming">
+    <meta name="author" content="Madras Academy">
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="video.other">
+    <meta property="og:url" content="https://example.com/php-crash-course-session1">
+    <meta property="og:title" content="PHP Crash Course (Session 1): Introduction to PHP | Madras Academy">
+    <meta property="og:description" content="Start learning PHP with this free crash course from Madras Academy. Perfect for beginners!">
+    <meta property="og:image" content="https://img.youtube.com/vi/ScKlUjAevus/maxresdefault.jpg">
+    <meta property="og:image:width" content="1280">
+    <meta property="og:image:height" content="720">
+    <meta property="og:site_name" content="Madras Academy">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="player">
+    <meta name="twitter:site" content="@madrasacademy">
+    <meta name="twitter:creator" content="@madrasacademy">
+    <meta name="twitter:title" content="PHP Crash Course (Session 1): Introduction to PHP | Madras Academy">
+    <meta name="twitter:description" content="Start learning PHP with this free crash course from Madras Academy. Perfect for beginners!">
+    <meta name="twitter:image" content="https://img.youtube.com/vi/ScKlUjAevus/maxresdefault.jpg">
+    <meta name="twitter:player" content="https://www.youtube.com/embed/ScKlUjAevus">
+    <meta name="twitter:player:width" content="1280">
+    <meta name="twitter:player:height" content="720">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://example.com/php-crash-course-session1">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoObject",
+      "name": "PHP Crash Course (Session 1): Introduction to PHP & Why You Should Learn It",
+      "description": "Beginner-friendly introduction to PHP programming language from Madras Academy's crash course series.",
+      "thumbnailUrl": "https://img.youtube.com/vi/ScKlUjAevus/maxresdefault.jpg",
+      "uploadDate": "2023-11-15",
+      "duration": "PT15M42S",
+      "contentUrl": "https://youtu.be/ScKlUjAevus",
+      "embedUrl": "https://www.youtube.com/embed/ScKlUjAevus",
+      "interactionCount": "12543",
+      "author": {
+        "@type": "Organization",
+        "name": "Madras Academy"
+      }
+    }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.2em;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin: 30px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .course-meta {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .meta-item {
+            display: inline-block;
+            margin-right: 20px;
+            color: #2c3e50;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 10px 0;
+            transition: background-color 0.3s;
+        }
+        
+        .cta-button:hover {
+            background-color: #2980b9;
+        }
+        
+        .resources {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .resources ul {
+            padding-left: 20px;
+        }
+        
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PHP Crash Course (Session 1)</h1>
+        <p>Introduction to PHP & Why You Should Learn It! 🚀</p>
+    </header>
+    
+    <main>
+        <div class="course-meta">
+            <span class="meta-item">🎓 Course: PHP Crash Course</span>
+            <span class="meta-item">📅 Published: November 15, 2023</span>
+            <span class="meta-item">⏱ Duration: 15:42</span>
+            <span class="meta-item">👨‍🏫 Instructor: Madras Academy</span>
+        </div>
+        
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/ScKlUjAevus" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        
+        <h2>About This Session</h2>
+        <p>Welcome to Session 1 of our PHP Crash Course! In this introductory lesson, you'll learn:</p>
+        <ul>
+            <li>What PHP is and why it's still relevant today</li>
+            <li>How PHP powers 78% of all websites</li>
+            <li>Basic PHP syntax and structure</li>
+            <li>Setting up your development environment</li>
+            <li>Writing your first PHP script</li>
+        </ul>
+        
+        <a href="#resources" class="cta-button">Jump to Resources ↓</a>
+        
+        <h2>Why Learn PHP in 2023?</h2>
+        <p>PHP remains one of the most popular server-side scripting languages, powering platforms like WordPress, Facebook (originally), Wikipedia, and many more. Here's why you should learn PHP:</p>
+        <ul>
+            <li><strong>High Demand:</strong> PHP developers are consistently in demand</li>
+            <li><strong>Easy to Learn:</strong> Great first language for backend development</li>
+            <li><strong>Huge Community:</strong> Extensive documentation and support</li>
+            <li><strong>Cost Effective:</strong> Open-source with low hosting requirements</li>
+            <li><strong>Versatile:</strong> Powers everything from blogs to enterprise applications</li>
+        </ul>
+        
+        <div id="resources" class="resources">
+            <h2>Course Resources</h2>
+            <h3>Downloadable Materials</h3>
+            <ul>
+                <li><a href="#">Session 1 Slides (PDF)</a></li>
+                <li><a href="#">Code Examples (ZIP)</a></li>
+                <li><a href="#">PHP Cheat Sheet</a></li>
+            </ul>
+            
+            <h3>Recommended Tools</h3>
+            <ul>
+                <li><a href="https://www.apachefriends.org/" target="_blank">XAMPP (Local Server Environment)</a></li>
+                <li><a href="https://code.visualstudio.com/" target="_blank">VS Code (Editor)</a></li>
+                <li><a href="https://www.php.net/docs.php" target="_blank">PHP Official Documentation</a></li>
+            </ul>
+            
+            <a href="#" class="cta-button">Download All Resources</a>
+        </div>
+        
+        <h2>What's Next?</h2>
+        <p>In Session 2, we'll dive deeper into PHP fundamentals including variables, data types, and operators. Don't forget to subscribe to our channel to get notified when new sessions are released!</p>
+        
+        <div style="text-align: center; margin: 40px 0;">
+            <a href="https://youtube.com/madrasacademy" class="cta-button">Subscribe to Madras Academy</a>
+        </div>
+    </main>
+    
+    <footer>
+        <p>© 2023 Madras Academy. All rights reserved.</p>
+        <p>This PHP Crash Course is part of our Web Development Series.</p>
+    </footer>
+</body>
+</html>

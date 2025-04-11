@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Handling Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        button, .clickable {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-block;
+        }
+        
+        button:hover, .clickable:hover {
+            background-color: #2980b9;
+        }
+        
+        .hover-area {
+            width: 200px;
+            height: 100px;
+            background-color: #e74c3c;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            transition: background-color 0.3s;
+        }
+        
+        .event-log {
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 100px;
+            overflow-y: auto;
+            background-color: #fff;
+            margin-top: 10px;
+        }
+        
+        .event-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .container {
+            border: 2px dashed #7f8c8d;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .dynamic-element {
+            padding: 10px;
+            background-color: #2ecc71;
+            color: white;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Event Handling Examples</h1>
+    
+    <section class="demo-section">
+        <h2>1. Vanilla JavaScript Event Handling</h2>
+        
+        <h3>a) .onclick</h3>
+        <button id="vanillaClick">Click me (onclick)</button>
+        <p>Uses element.onclick = function()</p>
+        
+        <h3>b) .addEventListener()</h3>
+        <button id="vanillaListener">Click me (addEventListener)</button>
+        <p>Uses element.addEventListener('click', function)</p>
+        
+        <h3>c) Mouse Events</h3>
+        <div id="vanillaHover" class="hover-area">Hover over me</div>
+        <p>Uses mouseenter/mouseleave events</p>
+        
+        <div class="event-log" id="vanillaLog"></div>
+    </section>
+    
+    <section class="demo-section">
+        <h2>2. jQuery Event Handling</h2>
+        
+        <h3>a) .click()</h3>
+        <button id="jqueryClick">Click me (.click())</button>
+        <p>Uses jQuery's .click() method</p>
+        
+        <h3>b) .on()</h3>
+        <button id="jqueryOn">Click me (.on())</button>
+        <p>Uses jQuery's .on('click', function)</p>
+        
+        <h3>c) .hover()</h3>
+        <div id="jqueryHover" class="hover-area">Hover over me</div>
+        <p>Uses jQuery's .hover() method</p>
+        
+        <h3>d) .on() with Dynamic Elements</h3>
+        <div class="container" id="dynamicContainer">
+            <p>Click "Add Element" then try clicking the new elements:</p>
+            <button id="addElement">Add Element</button>
+        </div>
+        
+        <div class="event-log" id="jqueryLog"></div>
+    </section>
+    
+    <section class="demo-section">
+        <h2>3. Event Delegation</h2>
+        
+        <h3>a) Vanilla JavaScript</h3>
+        <div class="container" id="vanillaDelegate">
+            <p>Click any colored box:</p>
+            <div class="clickable">Item 1</div>
+            <div class="clickable">Item 2</div>
+            <div class="clickable">Item 3</div>
+        </div>
+        
+        <h3>b) jQuery</h3>
+        <div class="container" id="jqueryDelegate">
+            <p>Click any colored box:</p>
+            <div class="clickable">Item A</div>
+            <div class="clickable">Item B</div>
+            <div class="clickable">Item C</div>
+        </div>
+        
+        <div class="event-log" id="delegateLog"></div>
+    </section>
+    
+    <script>
+        // 1. Vanilla JavaScript Event Handling
+        
+        // a) .onclick
+        document.getElementById('vanillaClick').onclick = function() {
+            logEvent('Vanilla onclick: Button clicked', 'vanillaLog');
+        };
+        
+        // b) .addEventListener()
+        document.getElementById('vanillaListener').addEventListener('click', function() {
+            logEvent('Vanilla addEventListener: Button clicked', 'vanillaLog');
+        });
+        
+        // c) Mouse events
+        const hoverArea = document.getElementById('vanillaHover');
+        hoverArea.addEventListener('mouseenter', function() {
+            this.textContent = 'Mouse entered!';
+            this.style.backgroundColor = '#2ecc71';
+            logEvent('Vanilla: Mouse entered', 'vanillaLog');
+        });
+        
+        hoverArea.addEventListener('mouseleave', function() {
+            this.textContent = 'Hover over me';
+            this.style.backgroundColor = '#e74c3c';
+            logEvent('Vanilla: Mouse left', 'vanillaLog');
+        });
+        
+        
+        // 2. jQuery Event Handling
+        
+        // a) .click()
+        $('#jqueryClick').click(function() {
+            logEvent('jQuery .click(): Button clicked', 'jqueryLog');
+        });
+        
+        // b) .on()
+        $('#jqueryOn').on('click', function() {
+            logEvent('jQuery .on(): Button clicked', 'jqueryLog');
+        });
+        
+        // c) .hover()
+        $('#jqueryHover').hover(
+            function() { // mouseenter
+                $(this).text('Mouse entered!').css('background-color', '#2ecc71');
+                logEvent('jQuery .hover(): Mouse entered', 'jqueryLog');
+            },
+            function() { // mouseleave
+                $(this).text('Hover over me').css('background-color', '#e74c3c');
+                logEvent('jQuery .hover(): Mouse left', 'jqueryLog');
+            }
+        );
+        
+        // d) .on() with dynamic elements
+        let counter = 1;
+        $('#addElement').click(function() {
+            const newElement = $('<div class="dynamic-element">Dynamic Element ' + counter++ + '</div>');
+            $('#dynamicContainer').append(newElement);
+            logEvent('Added new dynamic element', 'jqueryLog');
+        });
+        
+        // This works for dynamically added elements
+        $('#dynamicContainer').on('click', '.dynamic-element', function() {
+            logEvent('Clicked dynamic element: ' + $(this).text(), 'jqueryLog');
+        });
+        
+        
+        // 3. Event Delegation
+        
+        // a) Vanilla JavaScript
+        document.getElementById('vanillaDelegate').addEventListener('click', function(e) {
+            if (e.target.classList.contains('clickable')) {
+                logEvent('Vanilla delegation: Clicked ' + e.target.textContent, 'delegateLog');
+            }
+        });
+        
+        // b) jQuery
+        $('#jqueryDelegate').on('click', '.clickable', function() {
+            logEvent('jQuery delegation: Clicked ' + $(this).text(), 'delegateLog');
+        });
+        
+        
+        // Helper function to log events
+        function logEvent(message, logId) {
+            const logElement = document.getElementById(logId);
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.textContent = message;
+            logElement.prepend(eventItem);
+        }
+    </script>
+</body>
+</html>

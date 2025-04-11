@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Demo - ARIA, Roles, Keyboard Nav</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .nav-item {
+            padding: 10px 15px;
+        }
+        
+        .nav-item a {
+            text-decoration: none;
+            color: #2c3e50;
+        }
+        
+        .nav-item a:focus {
+            outline: 2px solid #3498db;
+            outline-offset: 2px;
+        }
+        
+        .tabpanel {
+            display: none;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+        }
+        
+        .tabpanel.active {
+            display: block;
+        }
+        
+        button, .button {
+            padding: 8px 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:focus, .button:focus {
+            outline: 2px solid #2c3e50;
+            outline-offset: 2px;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        [role="progressbar"] {
+            width: 100%;
+            height: 20px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        [role="progressbar"] > div {
+            height: 100%;
+            width: 65%;
+            background-color: #4CAF50;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <header role="banner">
+        <h1>Accessibility Demo</h1>
+        <p>This page demonstrates ARIA attributes, roles, and keyboard navigation.</p>
+    </header>
+    
+    <nav aria-label="Main navigation">
+        <ul class="nav-menu" role="menubar">
+            <li class="nav-item" role="menuitem">
+                <a href="#aria-label" tabindex="0">ARIA Labels</a>
+            </li>
+            <li class="nav-item" role="menuitem">
+                <a href="#roles" tabindex="0">ARIA Roles</a>
+            </li>
+            <li class="nav-item" role="menuitem">
+                <a href="#keyboard" tabindex="0">Keyboard Nav</a>
+            </li>
+        </ul>
+    </nav>
+    
+    <main role="main">
+        <section id="aria-label" aria-labelledby="aria-label-heading">
+            <h2 id="aria-label-heading">ARIA Labels</h2>
+            
+            <p>ARIA labels provide accessible names for elements.</p>
+            
+            <h3>Example 1: Icon button</h3>
+            <button aria-label="Close" onclick="showAlert('Close button clicked')">
+                ×
+            </button>
+            
+            <h3>Example 2: Decorative image with informative text</h3>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWNoZWNrLWNpcmNsZSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48cGF0aCBkPSJtOCAxMiAyIDIgNCA0Ii8+PC9zdmc+" 
+                 alt=""
+                 aria-label="Task completed successfully">
+            
+            <h3>Example 3: Visually hidden label</h3>
+            <button onclick="showAlert('Search button clicked')">
+                <span class="visually-hidden">Search</span>
+                🔍
+            </button>
+        </section>
+        
+        <section id="roles" aria-labelledby="roles-heading">
+            <h2 id="roles-heading">ARIA Roles</h2>
+            
+            <p>ARIA roles define what an element is or does.</p>
+            
+            <h3>Example 1: Alert</h3>
+            <div id="dynamic-alert" role="alert" class="alert alert-success" style="display: none;">
+                This is an important alert message!
+            </div>
+            <button onclick="document.getElementById('dynamic-alert').style.display = 'block'">
+                Trigger Alert
+            </button>
+            
+            <h3>Example 2: Progress bar</h3>
+            <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">
+                <div></div>
+            </div>
+            <p>Progress: 65% complete</p>
+            
+            <h3>Example 3: Tab interface</h3>
+            <div role="tablist" aria-label="Sample tabs">
+                <button role="tab" 
+                        aria-selected="true" 
+                        aria-controls="tab1-panel" 
+                        id="tab1" 
+                        tabindex="0">
+                    Tab 1
+                </button>
+                <button role="tab" 
+                        aria-selected="false" 
+                        aria-controls="tab2-panel" 
+                        id="tab2" 
+                        tabindex="-1">
+                    Tab 2
+                </button>
+            </div>
+            
+            <div id="tab1-panel" role="tabpanel" aria-labelledby="tab1" class="tabpanel active">
+                <p>This is the content for tab 1.</p>
+            </div>
+            <div id="tab2-panel" role="tabpanel" aria-labelledby="tab2" class="tabpanel" hidden>
+                <p>This is the content for tab 2.</p>
+            </div>
+        </section>
+        
+        <section id="keyboard" aria-labelledby="keyboard-heading">
+            <h2 id="keyboard-heading">Keyboard Navigation</h2>
+            
+            <p>Ensure all interactive elements are keyboard accessible.</p>
+            
+            <h3>Example 1: Custom button</h3>
+            <div class="button" 
+                 role="button" 
+                 tabindex="0"
+                 onclick="showAlert('Custom button clicked')"
+                 onkeydown="if(event.key === 'Enter' || event.key === ' ') showAlert('Custom button activated with keyboard')">
+                Custom Button
+            </div>
+            
+            <h3>Example 2: Skip link</h3>
+            <a href="#main-content" class="visually-hidden focusable">Skip to main content</a>
+            
+            <h3>Example 3: Focus management</h3>
+            <button onclick="document.getElementById('focus-target').focus()">
+                Move focus to input
+            </button>
+            <input type="text" id="focus-target" aria-label="Sample input for focus demonstration">
+        </section>
+    </main>
+    
+    <footer role="contentinfo">
+        <p>Accessibility demo page. All examples should be fully keyboard navigable.</p>
+    </footer>
+    
+    <script>
+        function showAlert(message) {
+            alert(message);
+        }
+        
+        // Tab panel functionality
+        const tabs = document.querySelectorAll('[role="tab"]');
+        const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', e => {
+                e.preventDefault();
+                
+                // Set all tabs to unselected
+                tabs.forEach(t => {
+                    t.setAttribute('aria-selected', 'false');
+                    t.setAttribute('tabindex', '-1');
+                });
+                
+                // Set the clicked tab to selected
+                tab.setAttribute('aria-selected', 'true');
+                tab.setAttribute('tabindex', '0');
+                
+                // Hide all tab panels
+                tabPanels.forEach(panel => {
+                    panel.hidden = true;
+                });
+                
+                // Show the selected panel
+                const panelId = tab.getAttribute('aria-controls');
+                document.getElementById(panelId).hidden = false;
+            });
+            
+            // Add keyboard navigation for tabs
+            tab.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                    const direction = e.key === 'ArrowRight' ? 1 : -1;
+                    const nextTabIndex = Array.from(tabs).indexOf(tab) + direction;
+                    const nextTab = tabs[nextTabIndex];
+                    
+                    if (nextTab) {
+                        e.preventDefault();
+                        nextTab.click();
+                        nextTab.focus();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

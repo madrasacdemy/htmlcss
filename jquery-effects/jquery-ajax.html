@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery AJAX Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        
+        button {
+            padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        input, textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .response-area {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+            background-color: white;
+            min-height: 50px;
+        }
+        
+        .loading {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .success {
+            color: #2ecc71;
+        }
+        
+        .post {
+            background-color: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .user-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            background-color: white;
+        }
+    </style>
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>jQuery AJAX Examples</h1>
+    
+    <section class="demo-section">
+        <h2>1. $.ajax() - The Complete Method</h2>
+        
+        <p>The most flexible jQuery AJAX method with complete configuration options.</p>
+        
+        <button id="ajaxGetBtn">Fetch Random User</button>
+        <button id="ajaxPostBtn">Send Test Data</button>
+        
+        <div class="response-area" id="ajaxResponse">
+            Response will appear here...
+        </div>
+        
+        <h3>Sample Code:</h3>
+        <pre><code>
+$.ajax({
+    url: 'https://jsonplaceholder.typicode.com/users/1',
+    method: 'GET',
+    dataType: 'json',
+    beforeSend: function() {
+        // Show loading state
+    },
+    success: function(data) {
+        // Handle successful response
+    },
+    error: function(xhr, status, error) {
+        // Handle errors
+    },
+    complete: function() {
+        // Runs after success/error
+    }
+});
+        </code></pre>
+    </section>
+    
+    <section class="demo-section">
+        <h2>2. $.get() - Shorthand for GET Requests</h2>
+        
+        <p>Simplified method for making GET requests.</p>
+        
+        <button id="getBtn">Fetch Posts</button>
+        <input type="number" id="postId" placeholder="Enter post ID (1-100)" min="1" max="100">
+        <button id="getPostBtn">Get Specific Post</button>
+        
+        <div class="response-area" id="getResponse">
+            Posts will appear here...
+        </div>
+        
+        <h3>Sample Code:</h3>
+        <pre><code>
+// Simple GET request
+$.get('https://jsonplaceholder.typicode.com/posts', function(data) {
+    // Handle response
+});
+
+// GET request with parameters
+$.get('https://jsonplaceholder.typicode.com/posts', { id: 5 }, function(data) {
+    // Handle response
+});
+        </code></pre>
+    </section>
+    
+    <section class="demo-section">
+        <h2>3. $.post() - Shorthand for POST Requests</h2>
+        
+        <p>Simplified method for making POST requests.</p>
+        
+        <div>
+            <input type="text" id="postTitle" placeholder="Title">
+            <textarea id="postBody" placeholder="Body text"></textarea>
+            <input type="number" id="postUserId" placeholder="User ID" value="1">
+            <button id="postBtn">Create Post</button>
+        </div>
+        
+        <div class="response-area" id="postResponse">
+            POST response will appear here...
+        </div>
+        
+        <h3>Sample Code:</h3>
+        <pre><code>
+$.post(
+    'https://jsonplaceholder.typicode.com/posts',
+    {
+        title: 'My New Post',
+        body: 'This is the content of my post.',
+        userId: 1
+    },
+    function(data) {
+        // Handle response
+    }
+);
+        </code></pre>
+    </section>
+    
+    <section class="demo-section">
+        <h2>4. Practical Example: User Dashboard</h2>
+        
+        <div>
+            <button id="loadUsersBtn">Load All Users</button>
+            <input type="number" id="userId" placeholder="Enter user ID (1-10)" min="1" max="10">
+            <button id="loadUserBtn">Load User</button>
+        </div>
+        
+        <div id="userDashboard">
+            <div class="response-area" id="userResponse">
+                User data will appear here...
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        $(document).ready(function() {
+            // 1. $.ajax() examples
+            
+            // GET request
+            $('#ajaxGetBtn').click(function() {
+                $('#ajaxResponse').html('<div class="loading">Fetching user data...</div>');
+                
+                $.ajax({
+                    url: 'https://jsonplaceholder.typicode.com/users/1',
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let html = '<div class="success">User fetched successfully!</div>';
+                        html += '<div class="user-card">';
+                        html += `<h3>${data.name}</h3>`;
+                        html += `<p>Email: ${data.email}</p>`;
+                        html += `<p>Phone: ${data.phone}</p>`;
+                        html += `<p>Company: ${data.company.name}</p>`;
+                        html += '</div>';
+                        $('#ajaxResponse').html(html);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ajaxResponse').html(`<div class="error">Error: ${error}</div>`);
+                    }
+                });
+            });
+            
+            // POST request
+            $('#ajaxPostBtn').click(function() {
+                $('#ajaxResponse').html('<div class="loading">Sending data...</div>');
+                
+                $.ajax({
+                    url: 'https://jsonplaceholder.typicode.com/posts',
+                    method: 'POST',
+                    data: {
+                        title: 'Test Post',
+                        body: 'This is a test post sent via AJAX',
+                        userId: 1
+                    },
+                    success: function(data) {
+                        let html = '<div class="success">Data sent successfully!</div>';
+                        html += '<div class="post">';
+                        html += `<h3>${data.title}</h3>`;
+                        html += `<p>${data.body}</p>`;
+                        html += `<small>User ID: ${data.userId}, Post ID: ${data.id}</small>`;
+                        html += '</div>';
+                        $('#ajaxResponse').html(html);
+                    },
+                    error: function(xhr, status, error) {
+                        $('#ajaxResponse').html(`<div class="error">Error: ${error}</div>`);
+                    }
+                });
+            });
+            
+            // 2. $.get() examples
+            
+            // Get all posts
+            $('#getBtn').click(function() {
+                $('#getResponse').html('<div class="loading">Loading posts...</div>');
+                
+                $.get('https://jsonplaceholder.typicode.com/posts', function(data) {
+                    let html = `<div class="success">Loaded ${data.length} posts</div>`;
+                    html += '<p>First 5 posts:</p>';
+                    
+                    for (let i = 0; i < 5 && i < data.length; i++) {
+                        html += '<div class="post">';
+                        html += `<h4>${data[i].title}</h4>`;
+                        html += `<p>${data[i].body.substring(0, 50)}...</p>`;
+                        html += '</div>';
+                    }
+                    
+                    $('#getResponse').html(html);
+                }).fail(function() {
+                    $('#getResponse').html('<div class="error">Failed to load posts</div>');
+                });
+            });
+            
+            // Get specific post
+            $('#getPostBtn').click(function() {
+                const postId = $('#postId').val();
+                if (!postId || postId < 1 || postId > 100) {
+                    $('#getResponse').html('<div class="error">Please enter a valid ID (1-100)</div>');
+                    return;
+                }
+                
+                $('#getResponse').html(`<div class="loading">Loading post #${postId}...</div>`);
+                
+                $.get(`https://jsonplaceholder.typicode.com/posts/${postId}`, function(data) {
+                    let html = '<div class="post">';
+                    html += `<h3>${data.title}</h3>`;
+                    html += `<p>${data.body}</p>`;
+                    html += `<small>User ID: ${data.userId}, Post ID: ${data.id}</small>`;
+                    html += '</div>';
+                    $('#getResponse').html(html);
+                }).fail(function() {
+                    $('#getResponse').html('<div class="error">Failed to load post</div>');
+                });
+            });
+            
+            // 3. $.post() example
+            
+            $('#postBtn').click(function() {
+                const title = $('#postTitle').val();
+                const body = $('#postBody').val();
+                const userId = $('#postUserId').val();
+                
+                if (!title || !body || !userId) {
+                    $('#postResponse').html('<div class="error">Please fill all fields</div>');
+                    return;
+                }
+                
+                $('#postResponse').html('<div class="loading">Creating post...</div>');
+                
+                $.post('https://jsonplaceholder.typicode.com/posts', {
+                    title: title,
+                    body: body,
+                    userId: userId
+                }, function(data) {
+                    let html = '<div class="success">Post created successfully!</div>';
+                    html += '<div class="post">';
+                    html += `<h3>${data.title}</h3>`;
+                    html += `<p>${data.body}</p>`;
+                    html += `<small>User ID: ${data.userId}, Post ID: ${data.id}</small>`;
+                    html += '</div>';
+                    $('#postResponse').html(html);
+                }).fail(function() {
+                    $('#postResponse').html('<div class="error">Failed to create post</div>');
+                });
+            });
+            
+            // 4. Practical example: User dashboard
+            
+            // Load all users
+            $('#loadUsersBtn').click(function() {
+                $('#userResponse').html('<div class="loading">Loading users...</div>');
+                
+                $.get('https://jsonplaceholder.typicode.com/users', function(users) {
+                    let html = `<div class="success">Loaded ${users.length} users</div>`;
+                    html += '<div class="user-list">';
+                    
+                    users.forEach(user => {
+                        html += '<div class="user-card">';
+                        html += `<h3>${user.name}</h3>`;
+                        html += `<p>Email: ${user.email}</p>`;
+                        html += `<p>Phone: ${user.phone}</p>`;
+                        html += `<button class="view-posts" data-userid="${user.id}">View Posts</button>`;
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                    $('#userResponse').html(html);
+                    
+                    // Add click handler for dynamically created buttons
+                    $('.view-posts').click(function() {
+                        const userId = $(this).data('userid');
+                        loadUserPosts(userId);
+                    });
+                }).fail(function() {
+                    $('#userResponse').html('<div class="error">Failed to load users</div>');
+                });
+            });
+            
+            // Load specific user
+            $('#loadUserBtn').click(function() {
+                const userId = $('#userId').val();
+                if (!userId || userId < 1 || userId > 10) {
+                    $('#userResponse').html('<div class="error">Please enter a valid ID (1-10)</div>');
+                    return;
+                }
+                
+                $('#userResponse').html(`<div class="loading">Loading user #${userId}...</div>`);
+                
+                $.get(`https://jsonplaceholder.typicode.com/users/${userId}`, function(user) {
+                    let html = '<div class="user-card">';
+                    html += `<h3>${user.name}</h3>`;
+                    html += `<p>Email: ${user.email}</p>`;
+                    html += `<p>Phone: ${user.phone}</p>`;
+                    html += `<p>Address: ${user.address.street}, ${user.address.city}</p>`;
+                    html += `<button class="view-posts" data-userid="${user.id}">View Posts</button>`;
+                    html += '</div>';
+                    $('#userResponse').html(html);
+                    
+                    // Add click handler for the button
+                    $('.view-posts').click(function() {
+                        loadUserPosts(userId);
+                    });
+                }).fail(function() {
+                    $('#userResponse').html('<div class="error">Failed to load user</div>');
+                });
+            });
+            
+            // Helper function to load user posts
+            function loadUserPosts(userId) {
+                $('#userResponse').append(`<div class="loading">Loading posts for user ${userId}...</div>`);
+                
+                $.get(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`, function(posts) {
+                    let html = `<div class="success">${posts.length} posts found</div>`;
+                    html += '<div class="post-list">';
+                    
+                    posts.forEach(post => {
+                        html += '<div class="post">';
+                        html += `<h4>${post.title}</h4>`;
+                        html += `<p>${post.body.substring(0, 50)}...</p>`;
+                        html += `<button class="view-comments" data-postid="${post.id}">View Comments</button>`;
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                    $('#userResponse').append(html);
+                    
+                    // Add click handler for comment buttons
+                    $('.view-comments').click(function() {
+                        const postId = $(this).data('postid');
+                        loadPostComments(postId);
+                    });
+                }).fail(function() {
+                    $('#userResponse').append('<div class="error">Failed to load posts</div>');
+                });
+            }
+            
+            // Helper function to load post comments
+            function loadPostComments(postId) {
+                $('#userResponse').append(`<div class="loading">Loading comments for post ${postId}...</div>`);
+                
+                $.get(`https://jsonplaceholder.typicode.com/comments?postId=${postId}`, function(comments) {
+                    let html = `<div class="success">${comments.length} comments found</div>`;
+                    html += '<div class="comment-list">';
+                    
+                    comments.forEach(comment => {
+                        html += '<div style="margin: 10px 0; padding: 10px; background: #f0f0f0;">';
+                        html += `<strong>${comment.name}</strong> (${comment.email})<br>`;
+                        html += `<p>${comment.body}</p>`;
+                        html += '</div>';
+                    });
+                    
+                    html += '</div>';
+                    $('#userResponse').append(html);
+                }).fail(function() {
+                    $('#userResponse').append('<div class="error">Failed to load comments</div>');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

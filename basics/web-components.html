@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Components Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        
+        /* Styles that won't affect elements inside Shadow DOM */
+        p {
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <h1>Web Components Demo</h1>
+    
+    <section class="demo-section">
+        <h2>1. Basic Custom Element</h2>
+        <p>This is a simple custom element that extends HTMLParagraphElement:</p>
+        <fancy-paragraph>Hello from a custom element!</fancy-paragraph>
+    </section>
+    
+    <section class="demo-section">
+        <h2>2. Custom Element with Shadow DOM</h2>
+        <p>This element uses Shadow DOM to encapsulate its styles and markup:</p>
+        <shadow-counter></shadow-counter>
+        <p>Notice how the styles inside don't affect the main document and vice versa.</p>
+    </section>
+    
+    <section class="demo-section">
+        <h2>3. Using HTML Templates</h2>
+        <p>This element clones content from a template in the document:</p>
+        
+        <!-- Template that will be used by our custom element -->
+        <template id="user-card-template">
+            <style>
+                .card {
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    padding: 15px;
+                    margin: 10px 0;
+                    max-width: 300px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                }
+                .name {
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-bottom: 5px;
+                }
+                .email {
+                    color: #3498db;
+                    font-size: 0.9em;
+                }
+                .avatar {
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 50%;
+                    margin-right: 15px;
+                    float: left;
+                }
+                .clearfix::after {
+                    content: "";
+                    clear: both;
+                    display: table;
+                }
+            </style>
+            <div class="card clearfix">
+                <img class="avatar" src="" alt="User avatar">
+                <div class="name"></div>
+                <div class="email"></div>
+                <div class="bio"></div>
+            </div>
+        </template>
+        
+        <user-card 
+            name="John Doe" 
+            email="john@example.com" 
+            bio="Web Components enthusiast"
+            avatar="https://randomuser.me/api/portraits/men/42.jpg">
+        </user-card>
+        
+        <user-card 
+            name="Jane Smith" 
+            email="jane@example.com" 
+            bio="Frontend developer"
+            avatar="https://randomuser.me/api/portraits/women/42.jpg">
+        </user-card>
+    </section>
+    
+    <section class="demo-section">
+        <h2>4. Slotted Content</h2>
+        <p>This element uses slots to accept content from the light DOM:</p>
+        
+        <fancy-box>
+            <span slot="title">Important Notice</span>
+            <p>This content is passed into the custom element through slots.</p>
+            <p>The styles here are affected by the main document styles.</p>
+        </fancy-box>
+    </section>
+    
+    <script>
+        // 1. Basic Custom Element
+        class FancyParagraph extends HTMLParagraphElement {
+            constructor() {
+                super();
+                this.style.color = '#e74c3c';
+                this.style.fontWeight = 'bold';
+                this.style.fontSize = '1.2em';
+            }
+        }
+        customElements.define('fancy-paragraph', FancyParagraph, { extends: 'p' });
+        
+        // 2. Custom Element with Shadow DOM
+        class ShadowCounter extends HTMLElement {
+            constructor() {
+                super();
+                
+                // Create shadow root
+                const shadow = this.attachShadow({ mode: 'open' });
+                
+                // Create button and counter
+                const wrapper = document.createElement('div');
+                const button = document.createElement('button');
+                const counter = document.createElement('span');
+                
+                // Set initial count
+                let count = 0;
+                
+                // Style the component
+                const style = document.createElement('style');
+                style.textContent = `
+                    div {
+                        display: inline-block;
+                        border: 2px solid #3498db;
+                        border-radius: 5px;
+                        padding: 10px;
+                        font-family: Arial, sans-serif;
+                    }
+                    button {
+                        background-color: #3498db;
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        margin-right: 10px;
+                    }
+                    button:hover {
+                        background-color: #2980b9;
+                    }
+                    span {
+                        font-size: 1.2em;
+                        font-weight: bold;
+                    }
+                `;
+                
+                // Set up button
+                button.textContent = 'Click me';
+                button.addEventListener('click', () => {
+                    count++;
+                    counter.textContent = `Count: ${count}`;
+                });
+                
+                // Set up counter
+                counter.textContent = `Count: ${count}`;
+                
+                // Add elements to shadow DOM
+                wrapper.appendChild(button);
+                wrapper.appendChild(counter);
+                shadow.appendChild(style);
+                shadow.appendChild(wrapper);
+            }
+        }
+        customElements.define('shadow-counter', ShadowCounter);
+        
+        // 3. Custom Element using Template
+        class UserCard extends HTMLElement {
+            constructor() {
+                super();
+                
+                // Get template from DOM
+                const template = document.getElementById('user-card-template');
+                const templateContent = template.content;
+                
+                // Create shadow DOM and add template
+                const shadowRoot = this.attachShadow({ mode: 'open' });
+                shadowRoot.appendChild(templateContent.cloneNode(true));
+                
+                // Set up the content from attributes
+                this.updateContent();
+            }
+            
+            // List of attributes to observe for changes
+            static get observedAttributes() {
+                return ['name', 'email', 'bio', 'avatar'];
+            }
+            
+            // Called when observed attributes change
+            attributeChangedCallback(name, oldValue, newValue) {
+                this.updateContent();
+            }
+            
+            updateContent() {
+                if (this.shadowRoot) {
+                    this.shadowRoot.querySelector('.name').textContent = this.getAttribute('name') || '';
+                    this.shadowRoot.querySelector('.email').textContent = this.getAttribute('email') || '';
+                    this.shadowRoot.querySelector('.bio').textContent = this.getAttribute('bio') || '';
+                    
+                    const avatar = this.shadowRoot.querySelector('.avatar');
+                    avatar.src = this.getAttribute('avatar') || '';
+                    avatar.alt = `${this.getAttribute('name') || 'User'} avatar`;
+                }
+            }
+        }
+        customElements.define('user-card', UserCard);
+        
+        // 4. Slotted Content Example
+        class FancyBox extends HTMLElement {
+            constructor() {
+                super();
+                
+                const shadow = this.attachShadow({ mode: 'open' });
+                
+                // Create styles
+                const style = document.createElement('style');
+                style.textContent = `
+                    :host {
+                        display: block;
+                        border: 2px solid #2ecc71;
+                        border-radius: 8px;
+                        padding: 20px;
+                        margin: 20px 0;
+                    }
+                    .title {
+                        color: #2ecc71;
+                        font-size: 1.5em;
+                        margin-bottom: 15px;
+                        font-weight: bold;
+                    }
+                    ::slotted(p) {
+                        color: #7f8c8d;
+                        line-height: 1.6;
+                    }
+                `;
+                
+                // Create container
+                const container = document.createElement('div');
+                const titleSlot = document.createElement('div');
+                titleSlot.classList.add('title');
+                titleSlot.innerHTML = '<slot name="title"></slot>';
+                
+                const contentSlot = document.createElement('div');
+                contentSlot.innerHTML = '<slot></slot>';
+                
+                container.appendChild(titleSlot);
+                container.appendChild(contentSlot);
+                
+                shadow.appendChild(style);
+                shadow.appendChild(container);
+            }
+        }
+        customElements.define('fancy-box', FancyBox);
+    </script>
+</body>
+</html>
