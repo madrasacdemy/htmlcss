@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Full Add to Calendar</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .calendar-links button, .calendar-links a {
+      margin: 5px;
+      padding: 10px 15px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Event: My Awesome Event</h2>
+  <div class="calendar-links">
+    <button id="downloadICS">Download .ICS</button>
+    <a id="googleCal" target="_blank">Google Calendar</a>
+    <a id="outlookCal" target="_blank">Outlook Web</a>
+    <a id="yahooCal" target="_blank">Yahoo Calendar</a>
+  </div>
+
+  <script>
+    const eventTitle = "My Awesome Event";
+    const eventDesc = "This is an event description.";
+    const eventLocation = "123 Main St, City";
+    const startDate = "20250420T090000Z"; // UTC time in YYYYMMDDTHHmmssZ format
+    const endDate = "20250420T100000Z";
+
+    const localStart = "2025-04-20T09:00:00"; // Local format for Google/Outlook/Yahoo
+    const localEnd = "2025-04-20T10:00:00";
+
+    // ICS Download
+    $('#downloadICS').click(() => {
+      const icsContent = `
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//My App//EN
+BEGIN:VEVENT
+UID:${new Date().getTime()}@myapp.com
+DTSTAMP:${startDate}
+DTSTART:${startDate}
+DTEND:${endDate}
+SUMMARY:${eventTitle}
+DESCRIPTION:${eventDesc}
+LOCATION:${eventLocation}
+END:VEVENT
+END:VCALENDAR`.trim();
+
+      const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'event.ics';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // Google Calendar
+    const googleURL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&details=${encodeURIComponent(eventDesc)}&location=${encodeURIComponent(eventLocation)}&dates=${startDate}/${endDate}`;
+    $('#googleCal').attr('href', googleURL);
+
+    // Outlook Web
+    const outlookURL = `https://outlook.live.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(eventTitle)}&body=${encodeURIComponent(eventDesc)}&location=${encodeURIComponent(eventLocation)}&startdt=${localStart}&enddt=${localEnd}`;
+    $('#outlookCal').attr('href', outlookURL);
+
+    // Yahoo Calendar
+    const yahooURL = `https://calendar.yahoo.com/?v=60&view=d&type=20&title=${encodeURIComponent(eventTitle)}&st=${localStart.replace(/[-:]/g, '').slice(0, 15)}&et=${localEnd.replace(/[-:]/g, '').slice(0, 15)}&desc=${encodeURIComponent(eventDesc)}&in_loc=${encodeURIComponent(eventLocation)}`;
+    $('#yahooCal').attr('href', yahooURL);
+  </script>
+
+</body>
+</html>
