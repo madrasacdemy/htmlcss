@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery UI + Slick Carousel Demo</title>
+    
+    <!-- jQuery UI CSS -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            margin-bottom: 40px;
+        }
+        
+        .carousel {
+            width: 80%;
+            margin: 20px auto;
+        }
+        
+        .carousel img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        
+        .ui-widget {
+            margin: 20px 0;
+        }
+        
+        #tabs {
+            margin-top: 30px;
+        }
+        
+        #accordion {
+            margin: 30px 0;
+        }
+        
+        .progress-bar-container {
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>jQuery UI + Slick Carousel Demo</h1>
+    
+    <div class="container">
+        <h2>Slick Carousel</h2>
+        <div class="carousel">
+            <div><img src="../image/desktop-wallpaper-lake-mountains-canoe-kayak.jpg" alt="Slide 1"></div>
+            <div><img src="../image/two-white-5-petaled-flowers-wallpaper-preview.jpg" alt="Slide 2"></div>
+            <div><img src="../image/water-sampling-test-analysis.jpg" alt="Slide 3"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>jQuery UI Widgets</h2>
+        
+        <div class="ui-widget">
+            <label for="autocomplete">Search: </label>
+            <input id="autocomplete" placeholder="Type a programming language">
+        </div>
+        
+        <div class="ui-widget">
+            <label for="spinner">Select a value: </label>
+            <input id="spinner" value="5">
+        </div>
+        
+        <div class="ui-widget">
+            <label for="datepicker">Select a date: </label>
+            <input id="datepicker" type="text">
+        </div>
+        
+        <div class="progress-bar-container">
+            <div id="progressbar"></div>
+        </div>
+        
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">First</a></li>
+                <li><a href="#tabs-2">Second</a></li>
+                <li><a href="#tabs-3">Third</a></li>
+            </ul>
+            <div id="tabs-1">
+                <p>Content for the first tab.</p>
+            </div>
+            <div id="tabs-2">
+                <p>Content for the second tab.</p>
+            </div>
+            <div id="tabs-3">
+                <p>Content for the third tab.</p>
+            </div>
+        </div>
+        
+        <div id="accordion">
+            <h3>Section 1</h3>
+            <div>
+                <p>Content for section 1.</p>
+            </div>
+            <h3>Section 2</h3>
+            <div>
+                <p>Content for section 2.</p>
+            </div>
+            <h3>Section 3</h3>
+            <div>
+                <p>Content for section 3.</p>
+            </div>
+        </div>
+        
+        <button id="dialog-button" class="ui-button ui-widget ui-corner-all">Open Dialog</button>
+        <div id="dialog" title="Basic dialog">
+            <p>This is a jQuery UI dialog.</p>
+        </div>
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- jQuery UI -->
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
+    <!-- Slick Carousel JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            // Initialize Slick Carousel
+            $('.carousel').slick({
+                dots: true,
+                infinite: true,
+                speed: 300,
+                slidesToShow: 1,
+                adaptiveHeight: true,
+                autoplay: true,
+                autoplaySpeed: 2000
+            });
+            
+            // Initialize jQuery UI widgets
+            
+            // Autocomplete
+            var languages = [
+                "JavaScript",
+                "Python",
+                "Java",
+                "C#",
+                "PHP",
+                "C++",
+                "Ruby",
+                "Swift",
+                "Go",
+                "TypeScript"
+            ];
+            $("#autocomplete").autocomplete({
+                source: languages
+            });
+            
+            // Spinner
+            $("#spinner").spinner({
+                min: 0,
+                max: 10
+            });
+            
+            // Datepicker
+            $("#datepicker").datepicker();
+            
+            // Progressbar
+            $("#progressbar").progressbar({
+                value: 37
+            });
+            
+            // Tabs
+            $("#tabs").tabs();
+            
+            // Accordion
+            $("#accordion").accordion();
+            
+            // Dialog
+            $("#dialog").dialog({
+                autoOpen: false,
+                modal: true
+            });
+            
+            $("#dialog-button").on("click", function() {
+                $("#dialog").dialog("open");
+            });
+        });
+    </script>
+</body>
+</html>

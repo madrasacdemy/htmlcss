@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jQuery Deferred & Promises</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            min-height: 100px;
+        }
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        .progress {
+            background-color: #d9edf7;
+            color: #31708f;
+        }
+    </style>
+</head>
+<body>
+    <h1>jQuery Deferred & Promises</h1>
+    
+    <div class="container">
+        <h2>Basic Deferred Example</h2>
+        <button id="startTask">Start Async Task</button>
+        <div id="basicOutput"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Chaining with .then()</h2>
+        <button id="chainTasks">Run Chained Tasks</button>
+        <div id="chainOutput"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Promise with AJAX</h2>
+        <button id="fetchData">Fetch User Data</button>
+        <div id="ajaxOutput"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Combined Promises</h2>
+        <button id="combinedPromise">Run Combined Promises</button>
+        <div id="combinedOutput"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Helper function to log messages
+            function logMessage(container, message, type = 'progress') {
+                const timestamp = new Date().toLocaleTimeString();
+                const messageElement = $('<div class="status ' + type + '">' + 
+                    timestamp + ': ' + message + '</div>');
+                $(container).append(messageElement);
+            }
+            
+            // 1. Basic Deferred Example
+            $('#startTask').on('click', function() {
+                const output = $('#basicOutput');
+                output.empty();
+                
+                logMessage(output, "Creating a Deferred object...");
+                
+                // Create a Deferred object
+                const deferred = $.Deferred();
+                
+                logMessage(output, "Deferred created. Starting async operation...");
+                
+                // Simulate async operation (like AJAX call)
+                setTimeout(function() {
+                    // Randomly resolve or reject
+                    if (Math.random() > 0.3) {
+                        deferred.resolve("Operation completed successfully!");
+                    } else {
+                        deferred.reject("Operation failed!");
+                    }
+                }, 2000);
+                
+                // Set up promise handlers
+                deferred.promise()
+                    .done(function(result) {
+                        logMessage(output, "Success: " + result, 'success');
+                    })
+                    .fail(function(error) {
+                        logMessage(output, "Error: " + error, 'error');
+                    })
+                    .always(function() {
+                        logMessage(output, "Operation complete (always called)");
+                    });
+            });
+            
+            // 2. Chaining with .then()
+            $('#chainTasks').on('click', function() {
+                const output = $('#chainOutput');
+                output.empty();
+                
+                function asyncTask(name, duration, shouldFail = false) {
+                    const deferred = $.Deferred();
+                    
+                    logMessage(output, "Starting task: " + name);
+                    
+                    setTimeout(function() {
+                        if (shouldFail) {
+                            deferred.reject(name + " failed!");
+                        } else {
+                            deferred.resolve(name + " completed!");
+                        }
+                    }, duration);
+                    
+                    return deferred.promise();
+                }
+                
+                // Chain tasks using .then()
+                asyncTask("Task 1", 1000)
+                    .then(function(result) {
+                        logMessage(output, result, 'success');
+                        return asyncTask("Task 2", 1500);
+                    })
+                    .then(function(result) {
+                        logMessage(output, result, 'success');
+                        return asyncTask("Task 3", 800, true); // This one fails
+                    })
+                    .then(function(result) {
+                        logMessage(output, result, 'success');
+                    }, function(error) {
+                        logMessage(output, error, 'error');
+                        return asyncTask("Recovery Task", 500);
+                    })
+                    .then(function(result) {
+                        logMessage(output, result, 'success');
+                        logMessage(output, "All tasks finished!");
+                    });
+            });
+            
+            // 3. Promise with AJAX
+            $('#fetchData').on('click', function() {
+                const output = $('#ajaxOutput');
+                output.empty();
+                
+                logMessage(output, "Fetching user data from JSONPlaceholder...");
+                
+                // AJAX returns a promise
+                $.get('https://jsonplaceholder.typicode.com/users/1')
+                    .then(function(user) {
+                        logMessage(output, "User data received:", 'success');
+                        logMessage(output, "Name: " + user.name, 'success');
+                        logMessage(output, "Email: " + user.email, 'success');
+                        
+                        // Chain another request
+                        return $.get('https://jsonplaceholder.typicode.com/posts?userId=1');
+                    })
+                    .then(function(posts) {
+                        logMessage(output, "User posts received (" + posts.length + ")", 'success');
+                    })
+                    .catch(function(error) {
+                        logMessage(output, "Error fetching data: " + error.statusText, 'error');
+                    });
+            });
+            
+            // 4. Combined Promises
+            $('#combinedPromise').on('click', function() {
+                const output = $('#combinedOutput');
+                output.empty();
+                
+                function getRandomNumber(max) {
+                    const deferred = $.Deferred();
+                    
+                    setTimeout(function() {
+                        const num = Math.floor(Math.random() * max) + 1;
+                        deferred.resolve(num);
+                    }, Math.random() * 2000 + 500);
+                    
+                    return deferred.promise();
+                }
+                
+                logMessage(output, "Getting three random numbers...");
+                
+                // Wait for all promises to resolve
+                $.when(
+                    getRandomNumber(10),
+                    getRandomNumber(100),
+                    getRandomNumber(1000)
+                ).then(function(num1, num2, num3) {
+                    logMessage(output, "Numbers received: " + 
+                        num1 + ", " + num2 + ", " + num3, 'success');
+                    
+                    const sum = num1 + num2 + num3;
+                    logMessage(output, "Sum: " + sum, 'success');
+                    
+                    if (sum > 500) {
+                        logMessage(output, "That's a big sum!", 'success');
+                    } else {
+                        logMessage(output, "That's a modest sum.", 'success');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

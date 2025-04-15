@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced jQuery Animations Demo</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: #f5f5f5;
+    }
+    h2 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.2em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .section {
+      background-color: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+    .section:hover {
+      transform: translateY(-5px);
+    }
+    .section h3 {
+      color: #3498db;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background-color: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .box {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, dodgerblue, #6bb9f0);
+      margin-bottom: 20px;
+      display: none;
+      border-radius: 6px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    }
+    #panel {
+      background: linear-gradient(to right, lightcoral, #f2789f);
+      padding: 20px;
+      display: none;
+      margin-top: 10px;
+      border-radius: 4px;
+      color: white;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+    }
+    #complexBox {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(45deg, #9b59b6, #8e44ad);
+      margin: 20px 0;
+      border-radius: 50% 50% 0 50%;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    #colorBox {
+      width: 100px;
+      height: 100px;
+      background: #f39c12;
+      margin: 20px 0;
+      border-radius: 6px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+    }
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background-color: #ecf0f1;
+      border-radius: 15px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #2ecc71, #27ae60);
+      transition: width 1s ease;
+    }
+    .queue-container {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .queue-box {
+      width: 50px;
+      height: 50px;
+      background: #e74c3c;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Advanced jQuery Animation Demo</h2>
+
+  <div class="section">
+    <h3>Fade Effects</h3>
+    <button id="fadeBtn">Fade In Box</button>
+    <button id="fadeOutBtn">Fade Out Box</button>
+    <button id="fadeToggleBtn">Fade Toggle Box</button>
+    <div class="box" id="fadeBox"></div>
+  </div>
+
+  <div class="section">
+    <h3>Custom Animations</h3>
+    <button id="animateBtn">Animate Box</button>
+    <button id="resetBtn">Reset Animation</button>
+    <div class="box" id="animateBox" style="display:block; background: linear-gradient(135deg, seagreen, #2ecc71);"></div>
+  </div>
+
+  <div class="section">
+    <h3>Slide Effects</h3>
+    <button id="slideBtn">Toggle Panel</button>
+    <button id="slideUpBtn">Slide Up</button>
+    <button id="slideDownBtn">Slide Down</button>
+    <div id="panel">Sliding panel content goes here. You can put any content in this panel and it will slide smoothly when toggled.</div>
+  </div>
+
+  <div class="section">
+    <h3>Complex Animations</h3>
+    <button id="complexBtn">Animate Complex Shape</button>
+    <div id="complexBox"></div>
+  </div>
+
+  <div class="section">
+    <h3>Color Animations</h3>
+    <button id="colorBtn">Change Color</button>
+    <div id="colorBox"></div>
+  </div>
+
+  <div class="section">
+    <h3>Progress Animation</h3>
+    <button id="progressBtn">Start Progress</button>
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>Animation Queue</h3>
+    <button id="queueBtn">Start Queue</button>
+    <div class="queue-container">
+      <div class="queue-box" id="box1">1</div>
+      <div class="queue-box" id="box2">2</div>
+      <div class="queue-box" id="box3">3</div>
+      <div class="queue-box" id="box4">4</div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      // fadeIn()
+      $('#fadeBtn').click(function () {
+        $('#fadeBox').fadeIn(800);
+      });
+      
+      // fadeOut()
+      $('#fadeOutBtn').click(function () {
+        $('#fadeBox').fadeOut(800);
+      });
+      
+      // fadeToggle()
+      $('#fadeToggleBtn').click(function () {
+        $('#fadeBox').fadeToggle(600);
+      });
+
+      // animate()
+      $('#animateBtn').click(function () {
+        $('#animateBox').animate({
+          width: '200px',
+          height: '150px',
+          opacity: 0.6,
+          marginLeft: '50px',
+          borderRadius: '20px'
+        }, 1000);
+      });
+      
+      // reset animation
+      $('#resetBtn').click(function () {
+        $('#animateBox').animate({
+          width: '100px',
+          height: '100px',
+          opacity: 1,
+          marginLeft: '0',
+          borderRadius: '6px'
+        }, 800);
+      });
+
+      // slideToggle()
+      $('#slideBtn').click(function () {
+        $('#panel').slideToggle(600);
+      });
+      
+      // slideUp()
+      $('#slideUpBtn').click(function () {
+        $('#panel').slideUp(600);
+      });
+      
+      // slideDown()
+      $('#slideDownBtn').click(function () {
+        $('#panel').slideDown(600);
+      });
+      
+      // complex animation
+      $('#complexBtn').click(function () {
+        $('#complexBox').animate({
+          borderRadius: '50%',
+          width: '150px',
+          height: '150px',
+          marginLeft: '100px',
+          opacity: 0.8
+        }, 1000).animate({
+          borderRadius: '10px',
+          width: '200px',
+          height: '100px',
+          marginLeft: '0',
+          opacity: 1
+        }, 1000);
+      });
+      
+      // color animation
+      $('#colorBtn').click(function () {
+        $('#colorBox').animate({
+          backgroundColor: '#e74c3c',
+          width: '150px'
+        }, 500).animate({
+          backgroundColor: '#3498db',
+          height: '150px'
+        }, 500).animate({
+          backgroundColor: '#f39c12',
+          width: '100px',
+          height: '100px'
+        }, 500);
+      });
+      
+      // progress animation
+      $('#progressBtn').click(function () {
+        $('#progress').css('width', '0%').animate({
+          width: '100%'
+        }, 2000);
+      });
+      
+      // queue animation
+      $('#queueBtn').click(function () {
+        $('#box1').animate({marginTop: '50px'}, 300)
+                 .animate({marginTop: '0'}, 300);
+        
+        $('#box2').delay(300).animate({marginTop: '50px'}, 300)
+                 .animate({marginTop: '0'}, 300);
+        
+        $('#box3').delay(600).animate({marginTop: '50px'}, 300)
+                 .animate({marginTop: '0'}, 300);
+        
+        $('#box4').delay(900).animate({marginTop: '50px'}, 300)
+                 .animate({marginTop: '0'}, 300);
+      });
+    });
+  </script>
+
+</body>
+</html>
