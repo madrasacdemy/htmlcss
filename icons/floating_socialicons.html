@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floating Social Share Buttons</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    /* Main content container */
+    .content {
+      width: 80%;
+      margin: 100px auto;
+    }
+
+    .content h1 {
+      text-align: center;
+      font-size: 2.5em;
+      color: #333;
+    }
+
+    .content p {
+      font-size: 1.2em;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    .content img {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: 0 auto;
+      border-radius: 10px;
+    }
+
+    .content .section {
+      margin-bottom: 50px;
+    }
+
+    /* Floating social share container */
+    .social-share {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      z-index: 1000;
+    }
+
+    /* Individual social button styles */
+    .social-btn {
+      display: block;
+      margin-bottom: 15px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      line-height: 50px;
+      font-size: 20px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .facebook {
+      background-color: #3b5998;
+    }
+
+    .twitter {
+      background-color: #1da1f2;
+    }
+
+    .linkedin {
+      background-color: #0077b5;
+    }
+
+    .social-btn i {
+      font-size: 24px;
+    }
+
+  </style>
+  <!-- FontAwesome for social media icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+  <!-- Main Content Section -->
+  <div class="content">
+    <div class="section">
+      <h1>Welcome to Our Website!</h1>
+      <p>
+        This is a demo page to show how you can easily integrate floating social share buttons with text and images.
+        The social share buttons will remain visible on the right side of the page as you scroll down, making it
+        easy for users to share content across social media platforms.
+      </p>
+      <img src="https://via.placeholder.com/600" alt="Placeholder Image">
+    </div>
+
+    <div class="section">
+      <h2>Why Social Sharing is Important</h2>
+      <p>
+        Social sharing is one of the most effective ways to increase traffic and reach a broader audience.
+        By adding social share buttons to your website, you enable users to easily share your content with their
+        network. This can lead to higher visibility, increased engagement, and even more sales or leads.
+      </p>
+      <img src="https://via.placeholder.com/600" alt="Social Sharing">
+    </div>
+
+    <div class="section">
+      <h2>How It Works</h2>
+      <p>
+        The floating social share buttons are integrated into the website using simple HTML, CSS, and FontAwesome icons.
+        When a user clicks on one of the social media icons, they will be directed to the respective platform's share page,
+        allowing them to post your content with just a few clicks.
+      </p>
+      <img src="https://via.placeholder.com/600" alt="How It Works">
+    </div>
+  </div>
+
+  <!-- Floating Social Share Buttons -->
+  <div class="social-share">
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https://yourwebsite.com" target="_blank" class="social-btn facebook">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="https://twitter.com/intent/tweet?url=https://yourwebsite.com&text=Check%20this%20out!" target="_blank" class="social-btn twitter">
+      <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url=https://yourwebsite.com&title=Your%20Title&summary=Your%20Description" target="_blank" class="social-btn linkedin">
+      <i class="fab fa-linkedin-in"></i>
+    </a>
+  </div>
+
+</body>
+</html>
