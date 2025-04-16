@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP in JavaScript</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .output {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .instance-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .instance-card {
+            background: #eaf7fd;
+            padding: 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 250px;
+            border: 1px solid #bce0f5;
+        }
+        
+        .property-list {
+            margin-top: 10px;
+        }
+        
+        .property-item {
+            margin-bottom: 5px;
+            padding-bottom: 5px;
+            border-bottom: 1px dashed #ccc;
+        }
+        
+        .method-btn {
+            background: #2ecc71;
+            margin-right: 5px;
+        }
+        
+        .method-btn:hover {
+            background: #27ae60;
+        }
+        
+        .inheritance-diagram {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .diagram-line {
+            height: 40px;
+            width: 2px;
+            background: #3498db;
+            margin: 0 auto;
+        }
+        
+        .diagram-box {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            margin: 10px;
+            position: relative;
+        }
+        
+        .diagram-arrow {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #3498db;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Object-Oriented Programming in JavaScript</h1>
+    
+    <div class="section">
+        <h2>1. Constructor Functions (Pre-ES6)</h2>
+        <p>The original way to create objects with shared behavior using prototypes.</p>
+        
+        <div class="code-block">
+// Constructor function
+function Person(name, age) {
+    this.name = name;
+    this.age = age;
+}
+
+// Adding methods to prototype
+Person.prototype.greet = function() {
+    return `Hello, my name is ${this.name} and I'm ${this.age} years old.`;
+};
+
+// Creating instances
+const person1 = new Person('Alice', 30);
+const person2 = new Person('Bob', 25);
+        </div>
+        
+        <button onclick="demoConstructorFunction()">Run Constructor Function Example</button>
+        <div id="constructor-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. ES6 Classes</h2>
+        <p>Syntactic sugar over JavaScript's prototype-based inheritance.</p>
+        
+        <div class="code-block">
+class Animal {
+    constructor(name, species) {
+        this.name = name;
+        this.species = species;
+    }
+    
+    makeSound() {
+        return `${this.name} the ${this.species} makes a sound.`;
+    }
+}
+
+// Creating instances
+const dog = new Animal('Rex', 'Dog');
+const cat = new Animal('Whiskers', 'Cat');
+        </div>
+        
+        <button onclick="demoClass()">Run Class Example</button>
+        <div id="class-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Inheritance with Classes</h2>
+        <p>Extending classes to create specialized versions.</p>
+        
+        <div class="inheritance-diagram">
+            <div class="diagram-box">Animal</div>
+            <div class="diagram-line"></div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-box">Dog</div>
+            <div class="diagram-box">Cat</div>
+        </div>
+        
+        <div class="code-block">
+class Bird extends Animal {
+    constructor(name, species, canFly) {
+        super(name, species);
+        this.canFly = canFly;
+    }
+    
+    makeSound() {
+        return `${super.makeSound()} ${this.canFly ? 'It can fly!' : 'It cannot fly.'}`;
+    }
+    
+    fly() {
+        if (this.canFly) {
+            return `${this.name} is flying!`;
+        }
+        return `${this.name} cannot fly.`;
+    }
+}
+
+// Creating instances
+const parrot = new Bird('Polly', 'Parrot', true);
+const penguin = new Bird('Pingu', 'Penguin', false);
+        </div>
+        
+        <button onclick="demoInheritance()">Run Inheritance Example</button>
+        <div id="inheritance-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Prototypal Inheritance</h2>
+        <p>Understanding the prototype chain and how inheritance really works in JavaScript.</p>
+        
+        <div class="code-block">
+// Base object
+const vehicle = {
+    wheels: 4,
+    start() {
+        return 'Engine started.';
+    },
+    stop() {
+        return 'Engine stopped.';
+    }
+};
+
+// Create new object with vehicle as prototype
+const car = Object.create(vehicle);
+car.doors = 4;
+car.drive = function() {
+    return 'Driving the car.';
+};
+
+// Check prototype relationships
+console.log(car.__proto__ === vehicle); // true
+console.log(Object.getPrototypeOf(car) === vehicle); // true
+        </div>
+        
+        <button onclick="demoPrototype()">Run Prototype Example</button>
+        <div id="prototype-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Static Methods and Properties</h2>
+        <p>Methods and properties that belong to the class rather than instances.</p>
+        
+        <div class="code-block">
+class Calculator {
+    static PI = 3.14159;
+    
+    static add(a, b) {
+        return a + b;
+    }
+    
+    static subtract(a, b) {
+        return a - b;
+    }
+}
+
+// Using static members
+console.log(Calculator.PI); // 3.14159
+console.log(Calculator.add(5, 3)); // 8
+        </div>
+        
+        <button onclick="demoStatic()">Run Static Example</button>
+        <div id="static-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>6. Getters and Setters</h2>
+        <p>Controlled access to object properties.</p>
+        
+        <div class="code-block">
+class Temperature {
+    constructor(celsius) {
+        this.celsius = celsius;
+    }
+    
+    get fahrenheit() {
+        return this.celsius * 1.8 + 32;
+    }
+    
+    set fahrenheit(value) {
+        this.celsius = (value - 32) / 1.8;
+    }
+}
+
+const temp = new Temperature(25);
+console.log(temp.fahrenheit); // 77
+temp.fahrenheit = 100;
+console.log(temp.celsius); // 37.777...
+        </div>
+        
+        <button onclick="demoGettersSetters()">Run Getters/Setters Example</button>
+        <div id="getset-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>7. Private Class Fields (ES2022)</h2>
+        <p>True encapsulation with private fields and methods.</p>
+        
+        <div class="code-block">
+class BankAccount {
+    #balance = 0; // Private field
+    
+    constructor(initialBalance) {
+        this.#balance = initialBalance;
+    }
+    
+    deposit(amount) {
+        if (amount > 0) {
+            this.#balance += amount;
+            return this.#getFormattedBalance();
+        }
+    }
+    
+    withdraw(amount) {
+        if (amount > 0 && amount <= this.#balance) {
+            this.#balance -= amount;
+            return this.#getFormattedBalance();
+        }
+    }
+    
+    #getFormattedBalance() { // Private method
+        return `Current balance: $${this.#balance.toFixed(2)}`;
+    }
+}
+
+const account = new BankAccount(100);
+account.deposit(50); // Works
+// account.#balance = 1000000; // SyntaxError
+// account.#getFormattedBalance(); // SyntaxError
+        </div>
+        
+        <button onclick="demoPrivate()">Run Private Fields Example</button>
+        <div id="private-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>8. Polymorphism</h2>
+        <p>Different classes implementing the same method in different ways.</p>
+        
+        <div class="code-block">
+class Shape {
+    area() {
+        return 0;
+    }
+}
+
+class Circle extends Shape {
+    constructor(radius) {
+        super();
+        this.radius = radius;
+    }
+    
+    area() {
+        return Math.PI * this.radius ** 2;
+    }
+}
+
+class Square extends Shape {
+    constructor(side) {
+        super();
+        this.side = side;
+    }
+    
+    area() {
+        return this.side ** 2;
+    }
+}
+
+const shapes = [
+    new Circle(5),
+    new Square(4),
+    new Shape()
+];
+
+shapes.forEach(shape => {
+    console.log(`Area: ${shape.area()}`);
+});
+        </div>
+        
+        <button onclick="demoPolymorphism()">Run Polymorphism Example</button>
+        <div id="polymorphism-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>9. Mixins for Multiple Inheritance</h2>
+        <p>Composing objects from multiple sources since JS doesn't support multiple inheritance.</p>
+        
+        <div class="code-block">
+// Mixins
+const canSwim = {
+    swim() {
+        return `${this.name} is swimming.`;
+    }
+};
+
+const canFly = {
+    fly() {
+        return `${this.name} is flying.`;
+    }
+};
+
+class Duck {
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+// Assign mixins to Duck prototype
+Object.assign(Duck.prototype, canSwim, canFly);
+
+const donald = new Duck('Donald');
+console.log(donald.swim());
+console.log(donald.fly());
+        </div>
+        
+        <button onclick="demoMixins()">Run Mixins Example</button>
+        <div id="mixins-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>10. Class Composition vs Inheritance</h2>
+        <p>Favoring composition over inheritance for more flexible code.</p>
+        
+        <div class="code-block">
+// Behaviors as separate classes
+class Walker {
+    walk() {
+        return 'Walking...';
+    }
+}
+
+class Talker {
+    talk() {
+        return 'Hello!';
+    }
+}
+
+class Swimmer {
+    swim() {
+        return 'Swimming...';
+    }
+}
+
+// Composed class
+class Person {
+    constructor() {
+        this.walker = new Walker();
+        this.talker = new Talker();
+    }
+    
+    walk() {
+        return this.walker.walk();
+    }
+    
+    talk() {
+        return this.talker.talk();
+    }
+}
+
+// Another composed class
+class Amphibian {
+    constructor() {
+        this.walker = new Walker();
+        this.swimmer = new Swimmer();
+    }
+    
+    walk() {
+        return this.walker.walk();
+    }
+    
+    swim() {
+        return this.swimmer.swim();
+    }
+}
+        </div>
+        
+        <button onclick="demoComposition()">Run Composition Example</button>
+        <div id="composition-output" class="output"></div>
+    </div>
+
+    <script>
+        // 1. Constructor Function Example
+        function demoConstructorFunction() {
+            function Person(name, age) {
+                this.name = name;
+                this.age = age;
+            }
+
+            Person.prototype.greet = function() {
+                return `Hello, my name is ${this.name} and I'm ${this.age} years old.`;
+            };
+
+            const person1 = new Person('Alice', 30);
+            const person2 = new Person('Bob', 25);
+
+            let output = `
+                <h3>Person Instances</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>${person1.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Age:</strong> ${person1.age}</div>
+                            <div class="property-item"><strong>Greeting:</strong> ${person1.greet()}</div>
+                        </div>
+                    </div>
+                    <div class="instance-card">
+                        <h4>${person2.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Age:</strong> ${person2.age}</div>
+                            <div class="property-item"><strong>Greeting:</strong> ${person2.greet()}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><strong>Prototype Check:</strong> ${person1.greet === person2.greet}</p>
+            `;
+
+            document.getElementById('constructor-output').innerHTML = output;
+        }
+
+        // 2. Class Example
+        function demoClass() {
+            class Animal {
+                constructor(name, species) {
+                    this.name = name;
+                    this.species = species;
+                }
+                
+                makeSound() {
+                    return `${this.name} the ${this.species} makes a sound.`;
+                }
+            }
+
+            const dog = new Animal('Rex', 'Dog');
+            const cat = new Animal('Whiskers', 'Cat');
+
+            let output = `
+                <h3>Animal Instances</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>${dog.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Species:</strong> ${dog.species}</div>
+                            <div class="property-item"><strong>Sound:</strong> ${dog.makeSound()}</div>
+                        </div>
+                    </div>
+                    <div class="instance-card">
+                        <h4>${cat.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Species:</strong> ${cat.species}</div>
+                            <div class="property-item"><strong>Sound:</strong> ${cat.makeSound()}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('class-output').innerHTML = output;
+        }
+
+        // 3. Inheritance Example
+        function demoInheritance() {
+            class Animal {
+                constructor(name, species) {
+                    this.name = name;
+                    this.species = species;
+                }
+                
+                makeSound() {
+                    return `${this.name} the ${this.species} makes a sound.`;
+                }
+            }
+
+            class Bird extends Animal {
+                constructor(name, species, canFly) {
+                    super(name, species);
+                    this.canFly = canFly;
+                }
+                
+                makeSound() {
+                    return `${super.makeSound()} ${this.canFly ? 'It can fly!' : 'It cannot fly.'}`;
+                }
+                
+                fly() {
+                    if (this.canFly) {
+                        return `${this.name} is flying!`;
+                    }
+                    return `${this.name} cannot fly.`;
+                }
+            }
+
+            const parrot = new Bird('Polly', 'Parrot', true);
+            const penguin = new Bird('Pingu', 'Penguin', false);
+
+            let output = `
+                <h3>Bird Instances (Inheriting from Animal)</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>${parrot.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Species:</strong> ${parrot.species}</div>
+                            <div class="property-item"><strong>Can Fly:</strong> ${parrot.canFly}</div>
+                            <div class="property-item"><strong>Sound:</strong> ${parrot.makeSound()}</div>
+                            <div class="property-item"><strong>Fly:</strong> ${parrot.fly()}</div>
+                        </div>
+                    </div>
+                    <div class="instance-card">
+                        <h4>${penguin.name}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Species:</strong> ${penguin.species}</div>
+                            <div class="property-item"><strong>Can Fly:</strong> ${penguin.canFly}</div>
+                            <div class="property-item"><strong>Sound:</strong> ${penguin.makeSound()}</div>
+                            <div class="property-item"><strong>Fly:</strong> ${penguin.fly()}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><strong>Instance Check:</strong> ${parrot instanceof Animal} (parrot is Animal)</p>
+                <p><strong>Instance Check:</strong> ${parrot instanceof Bird} (parrot is Bird)</p>
+            `;
+
+            document.getElementById('inheritance-output').innerHTML = output;
+        }
+
+        // 4. Prototype Example
+        function demoPrototype() {
+            const vehicle = {
+                wheels: 4,
+                start() {
+                    return 'Engine started.';
+                },
+                stop() {
+                    return 'Engine stopped.';
+                }
+            };
+
+            const car = Object.create(vehicle);
+            car.doors = 4;
+            car.drive = function() {
+                return 'Driving the car.';
+            };
+
+            let output = `
+                <h3>Prototypal Inheritance</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>Vehicle (Prototype)</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>wheels:</strong> ${vehicle.wheels}</div>
+                            <div class="property-item"><strong>start():</strong> ${vehicle.start()}</div>
+                            <div class="property-item"><strong>stop():</strong> ${vehicle.stop()}</div>
+                        </div>
+                    </div>
+                    <div class="instance-card">
+                        <h4>Car (Instance)</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>doors:</strong> ${car.doors}</div>
+                            <div class="property-item"><strong>drive():</strong> ${car.drive()}</div>
+                            <div class="property-item"><strong>wheels (inherited):</strong> ${car.wheels}</div>
+                            <div class="property-item"><strong>start() (inherited):</strong> ${car.start()}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><strong>Prototype Check:</strong> ${Object.getPrototypeOf(car) === vehicle}</p>
+            `;
+
+            document.getElementById('prototype-output').innerHTML = output;
+        }
+
+        // 5. Static Example
+        function demoStatic() {
+            class Calculator {
+                static PI = 3.14159;
+                
+                static add(a, b) {
+                    return a + b;
+                }
+                
+                static subtract(a, b) {
+                    return a - b;
+                }
+            }
+
+            let output = `
+                <h3>Static Methods and Properties</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>Calculator</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>PI:</strong> ${Calculator.PI}</div>
+                            <div class="property-item"><strong>add(5, 3):</strong> ${Calculator.add(5, 3)}</div>
+                            <div class="property-item"><strong>subtract(10, 4):</strong> ${Calculator.subtract(10, 4)}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><em>Note: Static members belong to the class itself, not instances.</em></p>
+            `;
+
+            document.getElementById('static-output').innerHTML = output;
+        }
+
+        // 6. Getters/Setters Example
+        function demoGettersSetters() {
+            class Temperature {
+                constructor(celsius) {
+                    this.celsius = celsius;
+                }
+                
+                get fahrenheit() {
+                    return this.celsius * 1.8 + 32;
+                }
+                
+                set fahrenheit(value) {
+                    this.celsius = (value - 32) / 1.8;
+                }
+            }
+
+            const temp = new Temperature(25);
+            let initial = `Initial: 25°C = ${temp.fahrenheit}°F`;
+            temp.fahrenheit = 100;
+            let after = `After setting to 100°F: ${temp.celsius.toFixed(2)}°C`;
+
+            let output = `
+                <h3>Getters and Setters</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>Temperature</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>${initial}</strong></div>
+                            <div class="property-item"><strong>${after}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('getset-output').innerHTML = output;
+        }
+
+        // 7. Private Fields Example
+        function demoPrivate() {
+            class BankAccount {
+                #balance = 0;
+                
+                constructor(initialBalance) {
+                    this.#balance = initialBalance;
+                }
+                
+                deposit(amount) {
+                    if (amount > 0) {
+                        this.#balance += amount;
+                        return this.#getFormattedBalance();
+                    }
+                }
+                
+                withdraw(amount) {
+                    if (amount > 0 && amount <= this.#balance) {
+                        this.#balance -= amount;
+                        return this.#getFormattedBalance();
+                    }
+                }
+                
+                #getFormattedBalance() {
+                    return `Current balance: $${this.#balance.toFixed(2)}`;
+                }
+            }
+
+            const account = new BankAccount(100);
+            let deposit = account.deposit(50);
+            let withdraw = account.withdraw(30);
+
+            let output = `
+                <h3>Private Class Fields</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>BankAccount</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Initial balance:</strong> $100.00</div>
+                            <div class="property-item"><strong>After depositing $50:</strong> ${deposit}</div>
+                            <div class="property-item"><strong>After withdrawing $30:</strong> ${withdraw}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><em>Note: The #balance field is truly private and inaccessible from outside the class.</em></p>
+            `;
+
+            document.getElementById('private-output').innerHTML = output;
+        }
+
+        // 8. Polymorphism Example
+        function demoPolymorphism() {
+            class Shape {
+                area() {
+                    return 0;
+                }
+            }
+
+            class Circle extends Shape {
+                constructor(radius) {
+                    super();
+                    this.radius = radius;
+                }
+                
+                area() {
+                    return Math.PI * this.radius ** 2;
+                }
+            }
+
+            class Square extends Shape {
+                constructor(side) {
+                    super();
+                    this.side = side;
+                }
+                
+                area() {
+                    return this.side ** 2;
+                }
+            }
+
+            const shapes = [
+                new Circle(5),
+                new Square(4),
+                new Shape()
+            ];
+
+            let output = '<h3>Polymorphism</h3><div class="instance-container">';
+            
+            shapes.forEach((shape, index) => {
+                let type = shape instanceof Circle ? 'Circle' : 
+                           shape instanceof Square ? 'Square' : 'Shape';
+                let details = type === 'Circle' ? `Radius: ${shape.radius}` :
+                              type === 'Square' ? `Side: ${shape.side}` : 'Generic shape';
+                
+                output += `
+                    <div class="instance-card">
+                        <h4>${type}</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>${details}</strong></div>
+                            <div class="property-item"><strong>Area:</strong> ${shape.area().toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            output += '</div>';
+            document.getElementById('polymorphism-output').innerHTML = output;
+        }
+
+        // 9. Mixins Example
+        function demoMixins() {
+            const canSwim = {
+                swim() {
+                    return `${this.name} is swimming.`;
+                }
+            };
+
+            const canFly = {
+                fly() {
+                    return `${this.name} is flying.`;
+                }
+            };
+
+            class Duck {
+                constructor(name) {
+                    this.name = name;
+                }
+            }
+
+            Object.assign(Duck.prototype, canSwim, canFly);
+
+            const donald = new Duck('Donald');
+
+            let output = `
+                <h3>Mixins for Multiple Inheritance</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>Duck</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>Name:</strong> ${donald.name}</div>
+                            <div class="property-item"><strong>swim():</strong> ${donald.swim()}</div>
+                            <div class="property-item"><strong>fly():</strong> ${donald.fly()}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><em>Note: Duck class inherits behaviors from both canSwim and canFly mixins.</em></p>
+            `;
+
+            document.getElementById('mixins-output').innerHTML = output;
+        }
+
+        // 10. Composition Example
+        function demoComposition() {
+            class Walker {
+                walk() {
+                    return 'Walking...';
+                }
+            }
+
+            class Talker {
+                talk() {
+                    return 'Hello!';
+                }
+            }
+
+            class Swimmer {
+                swim() {
+                    return 'Swimming...';
+                }
+            }
+
+            class Person {
+                constructor() {
+                    this.walker = new Walker();
+                    this.talker = new Talker();
+                }
+                
+                walk() {
+                    return this.walker.walk();
+                }
+                
+                talk() {
+                    return this.talker.talk();
+                }
+            }
+
+            class Amphibian {
+                constructor() {
+                    this.walker = new Walker();
+                    this.swimmer = new Swimmer();
+                }
+                
+                walk() {
+                    return this.walker.walk();
+                }
+                
+                swim() {
+                    return this.swimmer.swim();
+                }
+            }
+
+            const person = new Person();
+            const frog = new Amphibian();
+
+            let output = `
+                <h3>Class Composition</h3>
+                <div class="instance-container">
+                    <div class="instance-card">
+                        <h4>Person</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>walk():</strong> ${person.walk()}</div>
+                            <div class="property-item"><strong>talk():</strong> ${person.talk()}</div>
+                        </div>
+                    </div>
+                    <div class="instance-card">
+                        <h4>Amphibian</h4>
+                        <div class="property-list">
+                            <div class="property-item"><strong>walk():</strong> ${frog.walk()}</div>
+                            <div class="property-item"><strong>swim():</strong> ${frog.swim()}</div>
+                        </div>
+                    </div>
+                </div>
+                <p><em>Note: Classes compose behaviors from other classes rather than inheriting.</em></p>
+            `;
+
+            document.getElementById('composition-output').innerHTML = output;
+        }
+    </script>
+</body>
+</html>

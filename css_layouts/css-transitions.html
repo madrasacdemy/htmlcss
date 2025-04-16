@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Animations & Transitions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+        }
+        
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 40px;
+        }
+        
+        /* Transition Example */
+        .transition-box {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            margin: 20px;
+            transition: all 0.5s ease-in-out;
+        }
+        
+        .transition-box:hover {
+            background-color: #e74c3c;
+            transform: scale(1.2) rotate(15deg);
+            border-radius: 20px;
+        }
+        
+        /* Transform Example */
+        .transform-box {
+            width: 100px;
+            height: 100px;
+            background-color: #2ecc71;
+            margin: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .transform-box.active {
+            transform: translateX(50px) skew(20deg) rotate(45deg);
+        }
+        
+        /* Keyframes Animation Example */
+        .animation-box {
+            width: 100px;
+            height: 100px;
+            background-color: #9b59b6;
+            margin: 20px;
+            position: relative;
+            animation: bounce 2s infinite alternate;
+        }
+        
+        @keyframes bounce {
+            0% {
+                top: 0;
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                top: 100px;
+                transform: scale(1);
+            }
+        }
+        
+        /* Complex Keyframes Example */
+        .complex-animation {
+            width: 100px;
+            height: 100px;
+            background-color: #f1c40f;
+            margin: 20px;
+            animation: colorChange 4s infinite, rotate 4s infinite linear;
+        }
+        
+        @keyframes colorChange {
+            0% { background-color: #f1c40f; }
+            25% { background-color: #e67e22; }
+            50% { background-color: #e74c3c; }
+            75% { background-color: #3498db; }
+            100% { background-color: #2ecc71; }
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2c3e50;
+        }
+        
+        .explanation {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>CSS Animations & Transitions</h1>
+    
+    <div class="explanation">
+        <h2>CSS Transitions</h2>
+        <p>Transitions allow you to change property values smoothly over a given duration. Hover over the blue box to see a transition effect.</p>
+    </div>
+    
+    <div class="transition-box"></div>
+    
+    <div class="explanation">
+        <h2>CSS Transforms</h2>
+        <p>The transform property applies a 2D or 3D transformation to an element. Click the button to transform the green box.</p>
+        <button onclick="document.querySelector('.transform-box').classList.toggle('active')">
+            Toggle Transform
+        </button>
+    </div>
+    
+    <div class="transform-box"></div>
+    
+    <div class="explanation">
+        <h2>CSS @keyframes Animations</h2>
+        <p>Keyframes animations allow you to create complex multi-step animations. The purple box is using a bounce animation defined with @keyframes.</p>
+    </div>
+    
+    <div class="animation-box"></div>
+    
+    <div class="explanation">
+        <h2>Complex Keyframes Animation</h2>
+        <p>This yellow box combines two animations: a color change and rotation, both defined with @keyframes.</p>
+    </div>
+    
+    <div class="complex-animation"></div>
+    
+    <div class="container">
+        <div>
+            <h3>Transition Properties</h3>
+            <ul style="text-align: left;">
+                <li>transition-property</li>
+                <li>transition-duration</li>
+                <li>transition-timing-function</li>
+                <li>transition-delay</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>Transform Functions</h3>
+            <ul style="text-align: left;">
+                <li>translate()</li>
+                <li>rotate()</li>
+                <li>scale()</li>
+                <li>skew()</li>
+                <li>matrix()</li>
+            </ul>
+        </div>
+        
+        <div>
+            <h3>Animation Properties</h3>
+            <ul style="text-align: left;">
+                <li>animation-name</li>
+                <li>animation-duration</li>
+                <li>animation-timing-function</li>
+                <li>animation-delay</li>
+                <li>animation-iteration-count</li>
+                <li>animation-direction</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

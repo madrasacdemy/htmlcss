@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Error Handling</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .code-block {
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 0 4px 4px 0;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        
+        .output {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .error-output {
+            background: #fde8e8;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        .error-type {
+            display: inline-block;
+            padding: 2px 6px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .success-message {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .error-hierarchy {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        
+        .error-item {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .error-item:before {
+            content: '→';
+            position: absolute;
+            left: 5px;
+        }
+        
+        .custom-error {
+            background: #f5e6ff;
+            border-left: 4px solid #9b59b6;
+        }
+    </style>
+</head>
+<body>
+    <h1>JavaScript Error Handling</h1>
+    
+    <div class="section">
+        <h2>1. Basic try/catch Block</h2>
+        <p>The fundamental structure for error handling in JavaScript.</p>
+        
+        <div class="code-block">
+try {
+    // Code that might throw an error
+    const result = riskyOperation();
+    console.log('Success:', result);
+} catch (error) {
+    // Handle the error
+    console.error('Error:', error.message);
+} finally {
+    // Code that runs regardless of success/failure
+    console.log('Operation attempted');
+}
+        </div>
+        
+        <button onclick="demoBasicTryCatch()">Run Basic try/catch Example</button>
+        <div id="basic-trycatch-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Throwing Errors</h2>
+        <p>Creating and throwing custom error messages.</p>
+        
+        <div class="code-block">
+function validateAge(age) {
+    if (typeof age !== 'number') {
+        throw new Error('Age must be a number');
+    }
+    if (age < 0) {
+        throw new Error('Age cannot be negative');
+    }
+    if (age < 18) {
+        throw new Error('Must be at least 18 years old');
+    }
+    return true;
+}
+
+try {
+    validateAge('twenty');
+} catch (error) {
+    console.error(error.message);
+}
+        </div>
+        
+        <button onclick="demoThrowingErrors()">Run Throwing Errors Example</button>
+        <div id="throwing-errors-output" class="output error-output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Built-in Error Types</h2>
+        <p>JavaScript provides several built-in error constructors.</p>
+        
+        <div class="error-hierarchy">
+            <div class="error-item"><strong>Error</strong> (base type)</div>
+            <div class="error-item"><strong>SyntaxError</strong> - Parsing errors</div>
+            <div class="error-item"><strong>ReferenceError</strong> - Undefined variables</div>
+            <div class="error-item"><strong>TypeError</strong> - Wrong type operations</div>
+            <div class="error-item"><strong>RangeError</strong> - Out of range values</div>
+            <div class="error-item"><strong>URIError</strong> - URL handling errors</div>
+            <div class="error-item"><strong>EvalError</strong> - eval() related errors</div>
+        </div>
+        
+        <div class="code-block">
+// Examples of built-in errors
+try {
+    // SyntaxError
+    eval('const x = ;');
+} catch (error) {
+    console.error(error.name + ':', error.message);
+}
+
+try {
+    // ReferenceError
+    console.log(neverDeclared);
+} catch (error) {
+    console.error(error.name + ':', error.message);
+}
+
+try {
+    // TypeError
+    null.function();
+} catch (error) {
+    console.error(error.name + ':', error.message);
+}
+
+try {
+    // RangeError
+    const arr = new Array(-1);
+} catch (error) {
+    console.error(error.name + ':', error.message);
+}
+        </div>
+        
+        <button onclick="demoBuiltInErrors()">Run Built-in Errors Example</button>
+        <div id="builtin-errors-output" class="output error-output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>4. Custom Error Classes</h2>
+        <p>Extending the Error class to create domain-specific errors.</p>
+        
+        <div class="code-block">
+class ValidationError extends Error {
+    constructor(message, field) {
+        super(message);
+        this.name = 'ValidationError';
+        this.field = field;
+        this.date = new Date();
+    }
+}
+
+class DatabaseError extends Error {
+    constructor(message, query) {
+        super(message);
+        this.name = 'DatabaseError';
+        this.query = query;
+    }
+}
+
+function saveUser(user) {
+    if (!user.name) {
+        throw new ValidationError('Name is required', 'name');
+    }
+    if (!user.email) {
+        throw new ValidationError('Email is required', 'email');
+    }
+    // Simulate database error
+    throw new DatabaseError('Connection failed', 'INSERT INTO users...');
+}
+
+try {
+    saveUser({ age: 25 });
+} catch (error) {
+    if (error instanceof ValidationError) {
+        console.error(`Validation failed for ${error.field}: ${error.message}`);
+    } else if (error instanceof DatabaseError) {
+        console.error(`Database error with query ${error.query}: ${error.message}`);
+    } else {
+        console.error('Unknown error:', error.message);
+    }
+}
+        </div>
+        
+        <button onclick="demoCustomErrors()">Run Custom Errors Example</button>
+        <div id="custom-errors-output" class="output error-output custom-error"></div>
+    </div>
+    
+    <div class="section">
+        <h2>5. Error Handling in Async Code</h2>
+        <p>Handling errors in promises and async/await.</p>
+        
+        <div class="code-block">
+// With Promises
+function fetchData() {
+    return new Promise((resolve, reject) => {
+        // Simulate random failure
+        if (Math.random() > 0.5) {
+            reject(new Error('Network request failed'));
+        } else {
+            resolve({ data: 'Successful response' });
+        }
+    });
+}
+
+fetchData()
+    .then(data => console.log('Success:', data))
+    .catch(error => console.error('Error:', error.message));
+
+// With async/await
+async function processData() {
+    try {
+        const data = await fetchData();
+        console.log('Processing:', data);
+    } catch (error) {
+        console.error('Processing failed:', error.message);
+    }
+}
+processData();
+        </div>
+        
+        <button onclick="demoAsyncErrors()">Run Async Error Example</button>
+        <div id="async-errors-output" class="output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>6. Window Error Handling</h2>
+        <p>Global error handling for uncaught exceptions.</p>
+        
+        <div class="code-block">
+// Global error handler
+window.onerror = function(message, source, lineno, colno, error) {
+    console.error('Global error:', { message, source, lineno, colno });
+    return true; // Prevent default browser error handling
+};
+
+// Unhandled promise rejections
+window.addEventListener('unhandledrejection', event => {
+    console.error('Unhandled rejection:', event.reason);
+    event.preventDefault(); // Prevent default handling
+});
+
+// Example of uncaught error
+setTimeout(() => {
+    throw new Error('This will trigger window.onerror');
+}, 1000);
+
+// Example of unhandled promise rejection
+Promise.reject(new Error('Unhandled promise rejection'));
+        </div>
+        
+        <button onclick="demoGlobalErrors()">Run Global Error Example</button>
+        <div id="global-errors-output" class="output error-output"></div>
+    </div>
+    
+    <div class="section">
+        <h2>7. Error Stack Traces</h2>
+        <p>Understanding and manipulating error stack traces.</p>
+        
+        <div class="code-block">
+function functionA() {
+    functionB();
+}
+
+function functionB() {
+    functionC();
+}
+
+function functionC() {
+    // Create an error to capture the stack
+    const error = new Error('Trace');
+    console.log('Stack trace:', error.stack);
+    
+    // Clean stack trace by removing noise
+    const cleanStack = error.stack
+        .split('\n')
+        .filter(line => !line.includes('at demoStackTraces'))
+        .join('\n');
+    console.log('Cleaned stack:', cleanStack);
+}
+
+functionA();
+        </div>
+        
+        <button onclick="demoStackTraces()">Run Stack Trace Example</button>
+        <div id="stack-trace-output" class="output"></div>
+    </div>
+    
+   
+
+    <script>
+        // 1. Basic try/catch
+        function demoBasicTryCatch() {
+            const output = document.getElementById('basic-trycatch-output');
+            output.innerHTML = '';
+            
+            function riskyOperation() {
+                if (Math.random() > 0.5) {
+                    throw new Error('Something went wrong!');
+                }
+                return 'Operation succeeded';
+            }
+            
+            try {
+                const result = riskyOperation();
+                output.innerHTML += `<p class="success-message">Success: ${result}</p>`;
+            } catch (error) {
+                output.innerHTML += `<p class="error-message">Error: ${error.message}</p>`;
+            } finally {
+                output.innerHTML += `<p>Operation attempted</p>`;
+            }
+        }
+        
+        // 2. Throwing Errors
+        function demoThrowingErrors() {
+            const output = document.getElementById('throwing-errors-output');
+            output.innerHTML = '';
+            
+            function validateAge(age) {
+                if (typeof age !== 'number') {
+                    throw new Error('Age must be a number');
+                }
+                if (age < 0) {
+                    throw new Error('Age cannot be negative');
+                }
+                if (age < 18) {
+                    throw new Error('Must be at least 18 years old');
+                }
+                return true;
+            }
+            
+            const testCases = [
+                { input: 'twenty', expected: 'Age must be a number' },
+                { input: -5, expected: 'Age cannot be negative' },
+                { input: 15, expected: 'Must be at least 18 years old' },
+                { input: 25, expected: 'Validation passed' }
+            ];
+            
+            testCases.forEach(test => {
+                try {
+                    const result = validateAge(test.input);
+                    if (result) {
+                        output.innerHTML += `<p>Input: ${test.input} → <span class="success-message">${test.expected}</span></p>`;
+                    }
+                } catch (error) {
+                    output.innerHTML += `<p>Input: ${test.input} → <span class="error-message">${error.message}</span> (expected: ${test.expected})</p>`;
+                }
+            });
+        }
+        
+        // 3. Built-in Errors
+        function demoBuiltInErrors() {
+            const output = document.getElementById('builtin-errors-output');
+            output.innerHTML = '';
+            
+            const tests = [
+                {
+                    code: 'eval("const x = ;")',
+                    error: 'SyntaxError'
+                },
+                {
+                    code: 'console.log(neverDeclared)',
+                    error: 'ReferenceError'
+                },
+                {
+                    code: 'null.function()',
+                    error: 'TypeError'
+                },
+                {
+                    code: 'new Array(-1)',
+                    error: 'RangeError'
+                },
+                {
+                    code: 'decodeURIComponent("%")',
+                    error: 'URIError'
+                }
+            ];
+            
+            tests.forEach(test => {
+                try {
+                    eval(test.code);
+                } catch (error) {
+                    output.innerHTML += `
+                        <p>
+                            <span class="error-type">${error.name}</span>
+                            <strong>${test.code}</strong> →
+                            <span class="error-message">${error.message}</span>
+                            (Expected: ${test.error})
+                        </p>`;
+                }
+            });
+        }
+        
+        // 4. Custom Errors
+        function demoCustomErrors() {
+            const output = document.getElementById('custom-errors-output');
+            output.innerHTML = '';
+            
+            class ValidationError extends Error {
+                constructor(message, field) {
+                    super(message);
+                    this.name = 'ValidationError';
+                    this.field = field;
+                    this.date = new Date();
+                }
+            }
+            
+            class DatabaseError extends Error {
+                constructor(message, query) {
+                    super(message);
+                    this.name = 'DatabaseError';
+                    this.query = query;
+                }
+            }
+            
+            function saveUser(user) {
+                if (!user.name) {
+                    throw new ValidationError('Name is required', 'name');
+                }
+                if (!user.email) {
+                    throw new ValidationError('Email is required', 'email');
+                }
+                // Simulate database error
+                throw new DatabaseError('Connection failed', 'INSERT INTO users...');
+            }
+            
+            try {
+                saveUser({ age: 25 });
+            } catch (error) {
+                if (error instanceof ValidationError) {
+                    output.innerHTML += `
+                        <p class="error-message">
+                            Validation failed for <strong>${error.field}</strong>: 
+                            ${error.message} (${error.date.toLocaleTimeString()})
+                        </p>`;
+                } else if (error instanceof DatabaseError) {
+                    output.innerHTML += `
+                        <p class="error-message">
+                            Database error with query <strong>${error.query}</strong>: 
+                            ${error.message}
+                        </p>`;
+                } else {
+                    output.innerHTML += `<p class="error-message">Unknown error: ${error.message}</p>`;
+                }
+                
+                output.innerHTML += `<p><strong>Error stack:</strong><br><small>${error.stack}</small></p>`;
+            }
+        }
+        
+        // 5. Async Errors
+        function demoAsyncErrors() {
+            const output = document.getElementById('async-errors-output');
+            output.innerHTML = '';
+            
+            function fetchData() {
+                return new Promise((resolve, reject) => {
+                    // Simulate random failure
+                    if (Math.random() > 0.5) {
+                        reject(new Error('Network request failed'));
+                    } else {
+                        resolve({ data: 'Successful response' });
+                    }
+                });
+            }
+            
+            // Promise version
+            fetchData()
+                .then(data => {
+                    output.innerHTML += `<p class="success-message">Promise Success: ${JSON.stringify(data)}</p>`;
+                })
+                .catch(error => {
+                    output.innerHTML += `<p class="error-message">Promise Error: ${error.message}</p>`;
+                });
+            
+            // Async/await version
+            (async function() {
+                try {
+                    const data = await fetchData();
+                    output.innerHTML += `<p class="success-message">Async/Await Success: ${JSON.stringify(data)}</p>`;
+                } catch (error) {
+                    output.innerHTML += `<p class="error-message">Async/Await Error: ${error.message}</p>`;
+                }
+            })();
+        }
+        
+        // 6. Global Errors
+        function demoGlobalErrors() {
+            const output = document.getElementById('global-errors-output');
+            output.innerHTML = '';
+            
+            // Store original handlers
+            const originalOnerror = window.onerror;
+            const originalOnUnhandledRejection = window.onunhandledrejection;
+            
+            // Set up our handlers
+            window.onerror = function(message, source, lineno, colno, error) {
+                output.innerHTML += `
+                    <p class="error-message">
+                        Global error caught:<br>
+                        Message: ${message}<br>
+                        Source: ${source}<br>
+                        Line: ${lineno}, Column: ${colno}
+                    </p>`;
+                return true; // Prevent default browser handling
+            };
+            
+            window.addEventListener('unhandledrejection', event => {
+                output.innerHTML += `
+                    <p class="error-message">
+                        Unhandled promise rejection:<br>
+                        ${event.reason}
+                    </p>`;
+                event.preventDefault();
+            });
+            
+            // Trigger errors
+            setTimeout(() => {
+                try {
+                    // This will trigger window.onerror
+                    throw new Error('This is a global error');
+                } finally {
+                    // Restore original handlers
+                    window.onerror = originalOnerror;
+                    window.onunhandledrejection = originalOnUnhandledRejection;
+                }
+            }, 10);
+            
+            // Trigger unhandled rejection
+            Promise.reject(new Error('This is an unhandled promise rejection'));
+        }
+        
+        // 7. Stack Traces
+        function demoStackTraces() {
+            const output = document.getElementById('stack-trace-output');
+            output.innerHTML = '';
+            
+            function functionA() {
+                functionB();
+            }
+            
+            function functionB() {
+                functionC();
+            }
+            
+            function functionC() {
+                // Create an error to capture the stack
+                const error = new Error('Trace');
+                output.innerHTML += `<p><strong>Original stack trace:</strong></p>`;
+                output.innerHTML += `<pre>${error.stack}</pre>`;
+                
+                // Clean stack trace by removing noise
+                const cleanStack = error.stack
+                    .split('\n')
+                    .filter(line => !line.includes('at demoStackTraces'))
+                    .join('\n');
+                
+                output.innerHTML += `<p><strong>Cleaned stack trace:</strong></p>`;
+                output.innerHTML += `<pre>${cleanStack}</pre>`;
+            }
+            
+            functionA();
+        }
+    </script>
+</body>
+</html>

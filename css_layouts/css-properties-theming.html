@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Custom Properties & Dynamic Theming</title>
+    <style>
+        :root {
+            /* Base theme variables */
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing variables */
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 2rem;
+            
+            /* Border variables */
+            --border-radius: 8px;
+            --border-width: 2px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: var(--space-lg);
+            transition: all 0.3s ease;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: var(--border-width) solid var(--primary-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+        
+        .theme-switcher {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        button {
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+        
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .secondary-btn {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .accent-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: var(--space-md);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Dark Theme */
+        .dark-theme {
+            --primary-color: #9b59b6;
+            --secondary-color: #1abc9c;
+            --accent-color: #f1c40f;
+            --text-color: #ecf0f1;
+            --bg-color: #2c3e50;
+            --card-bg: #34495e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* High Contrast Theme */
+        .high-contrast-theme {
+            --primary-color: #000000;
+            --secondary-color: #ffffff;
+            --accent-color: #ff0000;
+            --text-color: #000000;
+            --bg-color: #ffffff;
+            --card-bg: #f0f0f0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Pastel Theme */
+        .pastel-theme {
+            --primary-color: #a1c4fd;
+            --secondary-color: #c2e9fb;
+            --accent-color: #ffc3a0;
+            --text-color: #5a5a5a;
+            --bg-color: #fdf6f6;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px rgba(161, 196, 253, 0.3);
+        }
+        
+        /* Dynamic variable example */
+        .dynamic-example {
+            width: 100%;
+            height: 100px;
+            margin: var(--space-lg) 0;
+            background-color: var(--dynamic-bg, #f1f1f1);
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+        
+        .color-inputs {
+            display: flex;
+            gap: var(--space-md);
+            margin: var(--space-md) 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-input {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .prop-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-lg) 0;
+        }
+        
+        .prop-table th, .prop-table td {
+            padding: var(--space-sm);
+            text-align: left;
+            border-bottom: 1px solid var(--primary-color);
+        }
+        
+        .prop-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .prop-table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        code {
+            background-color: rgba(0, 0, 0, 0.1);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CSS Custom Properties & Theming</h1>
+        <div class="theme-switcher">
+            <button class="primary-btn" onclick="setTheme('default')">Default</button>
+            <button class="secondary-btn" onclick="setTheme('dark')">Dark</button>
+            <button class="accent-btn" onclick="setTheme('high-contrast')">High Contrast</button>
+            <button style="background-color: #a1c4fd;" onclick="setTheme('pastel')">Pastel</button>
+        </div>
+    </header>
+    
+    <section>
+        <h2>Dynamic Theme Switching</h2>
+        <p>Click the buttons above to change the theme. The colors, backgrounds, and shadows all update using CSS variables.</p>
+        
+        <div class="color-inputs">
+            <div class="color-input">
+                <label for="primary-color">Primary:</label>
+                <input type="color" id="primary-color" value="#3498db" onchange="updateColor('--primary-color', this.value)">
+            </div>
+            <div class="color-input">
+                <label for="secondary-color">Secondary:</label>
+                <input type="color" id="secondary-color" value="#2ecc71" onchange="updateColor('--secondary-color', this.value)">
+            </div>
+            <div class="color-input">
+                <label for="accent-color">Accent:</label>
+                <input type="color" id="accent-color" value="#e74c3c" onchange="updateColor('--accent-color', this.value)">
+            </div>
+            <div class="color-input">
+                <label for="bg-color">Background:</label>
+                <input type="color" id="bg-color" value="#f9f9f9" onchange="updateColor('--bg-color', this.value)">
+            </div>
+        </div>
+        
+        <p>Adjust individual colors using the color pickers above. This demonstrates dynamic updates to CSS variables using JavaScript.</p>
+    </section>
+    
+    <div class="dynamic-example" id="dynamicBox">
+        Dynamic Background (change with slider)
+    </div>
+    
+    <input type="range" min="0" max="360" value="180" oninput="updateDynamicBg(this.value)">
+    
+    <section>
+        <h2>Example Cards</h2>
+        <div class="card-container">
+            <div class="card">
+                <h3>Card 1</h3>
+                <p>This card's styling is completely controlled by CSS variables. Hover to see the effect.</p>
+                <button class="primary-btn">Primary Action</button>
+            </div>
+            <div class="card">
+                <h3>Card 2</h3>
+                <p>All colors, spacing, and shadows change when you switch themes.</p>
+                <button class="secondary-btn">Secondary Action</button>
+            </div>
+            <div class="card">
+                <h3>Card 3</h3>
+                <p>The border radius and padding are also controlled by variables.</p>
+                <button class="accent-btn">Accent Action</button>
+            </div>
+        </div>
+    </section>
+    
+    <section>
+        <h2>CSS Custom Properties Basics</h2>
+        
+        <table class="prop-table">
+            <thead>
+                <tr>
+                    <th>Concept</th>
+                    <th>Example</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Variable Declaration</td>
+                    <td><code>:root { --main-color: #3498db; }</code></td>
+                    <td>Declare variables in the :root selector for global scope</td>
+                </tr>
+                <tr>
+                    <td>Variable Usage</td>
+                    <td><code>color: var(--main-color);</code></td>
+                    <td>Use the var() function to access variables</td>
+                </tr>
+                <tr>
+                    <td>Fallback Value</td>
+                    <td><code>color: var(--missing-color, red);</code></td>
+                    <td>Provide a fallback for when variables aren't defined</td>
+                </tr>
+                <tr>
+                    <td>JavaScript Access</td>
+                    <td><code>getComputedStyle(element).getPropertyValue('--var')</code></td>
+                    <td>Get variable values with JavaScript</td>
+                </tr>
+                <tr>
+                    <td>JavaScript Update</td>
+                    <td><code>element.style.setProperty('--var', 'value')</code></td>
+                    <td>Change variable values with JavaScript</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+    
+    <script>
+        // Theme switching function
+        function setTheme(theme) {
+            document.body.className = theme + '-theme';
+            
+            // Update color pickers to match theme
+            const rootStyles = getComputedStyle(document.documentElement);
+            document.getElementById('primary-color').value = rootStyles.getPropertyValue('--primary-color').trim();
+            document.getElementById('secondary-color').value = rootStyles.getPropertyValue('--secondary-color').trim();
+            document.getElementById('accent-color').value = rootStyles.getPropertyValue('--accent-color').trim();
+            document.getElementById('bg-color').value = rootStyles.getPropertyValue('--bg-color').trim();
+        }
+        
+        // Update individual colors
+        function updateColor(property, value) {
+            document.documentElement.style.setProperty(property, value);
+        }
+        
+        // Update dynamic background example
+        function updateDynamicBg(hue) {
+            const dynamicBox = document.getElementById('dynamicBox');
+            dynamicBox.style.setProperty('--dynamic-bg', `hsl(${hue}, 80%, 70%)`);
+        }
+    </script>
+</body>
+</html>
