@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Components Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+        }
+        
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        /* Styles for our custom elements will be defined in their components */
+    </style>
+</head>
+<body>
+    <h1>Web Components Demo</h1>
+    
+    <section class="demo-section">
+        <h2>Custom Elements</h2>
+        <p>Creating new HTML elements with custom behavior.</p>
+        
+        <div class="container">
+            <!-- Simple custom element -->
+            <greeting-message name="World"></greeting-message>
+            
+            <!-- Custom element with properties -->
+            <click-counter></click-counter>
+            
+            <!-- Custom element with slots -->
+            <user-card>
+                <span slot="name">John Doe</span>
+                <span slot="email">john@example.com</span>
+            </user-card>
+        </div>
+    </section>
+    
+    <section class="demo-section">
+        <h2>Shadow DOM</h2>
+        <p>Encapsulated DOM and styles for components.</p>
+        
+        <div class="container">
+            <!-- Shadow DOM component -->
+            <shadow-button>Click Me</shadow-button>
+            
+            <!-- Shadow DOM with style encapsulation -->
+            <styled-box></styled-box>
+            
+            <!-- Component showing shadow DOM vs light DOM -->
+            <dom-comparison>
+                <p>This is light DOM content</p>
+            </dom-comparison>
+        </div>
+    </section>
+    
+    <section class="demo-section">
+        <h2>HTML Templates</h2>
+        <p>Declaring reusable markup templates.</p>
+        
+        <div class="container">
+            <!-- Template-based custom element -->
+            <template-card>
+                <h3 slot="title">Template Example</h3>
+                <p slot="content">This content comes from the light DOM</p>
+            </template-card>
+            
+            <!-- Dynamically stamped template -->
+            <div id="dynamic-content"></div>
+        </div>
+    </section>
+    
+    <!-- Template definitions -->
+    <template id="user-card-template">
+        <style>
+            .card {
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 16px;
+                margin: 8px;
+                width: 200px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card h3 {
+                margin-top: 0;
+                color: #2c3e50;
+            }
+            .card p {
+                margin-bottom: 0;
+                color: #7f8c8d;
+            }
+        </style>
+        <div class="card">
+            <h3><slot name="name">Default Name</slot></h3>
+            <p><slot name="email">default@example.com</slot></p>
+        </div>
+    </template>
+    
+    <template id="dom-comparison-template">
+        <style>
+            .container {
+                border: 2px dashed #3498db;
+                padding: 10px;
+                margin: 10px;
+            }
+            h3 {
+                color: #3498db;
+                margin-top: 0;
+            }
+            .shadow-content {
+                color: #e74c3c;
+                font-weight: bold;
+            }
+        </style>
+        <div class="container">
+            <h3>Shadow DOM Content:</h3>
+            <p class="shadow-content">This comes from the shadow DOM</p>
+            <slot></slot>
+        </div>
+    </template>
+    
+    <script>
+        // 1. Custom Elements
+        // Simple greeting element
+        class GreetingMessage extends HTMLElement {
+            constructor() {
+                super();
+                const name = this.getAttribute('name') || 'Guest';
+                this.innerHTML = `<p>Hello, ${name}!</p>`;
+            }
+        }
+        customElements.define('greeting-message', GreetingMessage);
+        
+        // Click counter element
+        class ClickCounter extends HTMLElement {
+            constructor() {
+                super();
+                this.count = 0;
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                    <button>Click Count: ${this.count}</button>
+                    <style>
+                        button {
+                            padding: 8px 16px;
+                            background-color: #3498db;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        }
+                        button:hover {
+                            background-color: #2980b9;
+                        }
+                    </style>
+                `;
+                
+                this.shadowRoot.querySelector('button').addEventListener('click', () => {
+                    this.count++;
+                    this.shadowRoot.querySelector('button').textContent = `Click Count: ${this.count}`;
+                });
+            }
+        }
+        customElements.define('click-counter', ClickCounter);
+        
+        // User card with slots
+        class UserCard extends HTMLElement {
+            constructor() {
+                super();
+                const template = document.getElementById('user-card-template');
+                const templateContent = template.content.cloneNode(true);
+                this.attachShadow({ mode: 'open' }).appendChild(templateContent);
+            }
+        }
+        customElements.define('user-card', UserCard);
+        
+        // 2. Shadow DOM Examples
+        // Button with shadow DOM
+        class ShadowButton extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        button {
+                            padding: 10px 20px;
+                            background: linear-gradient(to bottom, #3498db, #2980b9);
+                            color: white;
+                            border: none;
+                            border-radius: 5px;
+                            font-size: 16px;
+                            cursor: pointer;
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                            transition: all 0.3s ease;
+                        }
+                        button:hover {
+                            background: linear-gradient(to bottom, #2980b9, #3498db);
+                            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+                        }
+                    </style>
+                    <button>
+                        <slot></slot>
+                    </button>
+                `;
+            }
+        }
+        customElements.define('shadow-button', ShadowButton);
+        
+        // Styled box showing encapsulation
+        class StyledBox extends HTMLElement {
+            constructor() {
+                super();
+                this.attachShadow({ mode: 'open' });
+                this.shadowRoot.innerHTML = `
+                    <style>
+                        div {
+                            width: 100px;
+                            height: 100px;
+                            background-color: #e74c3c;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-weight: bold;
+                            border-radius: 10px;
+                        }
+                    </style>
+                    <div>Shadow DOM</div>
+                `;
+            }
+        }
+        customElements.define('styled-box', StyledBox);
+        
+        // DOM comparison
+        class DomComparison extends HTMLElement {
+            constructor() {
+                super();
+                const template = document.getElementById('dom-comparison-template');
+                const templateContent = template.content.cloneNode(true);
+                this.attachShadow({ mode: 'open' }).appendChild(templateContent);
+            }
+        }
+        customElements.define('dom-comparison', DomComparison);
+        
+        // 3. Template Examples
+        // Template-based card component
+        class TemplateCard extends HTMLElement {
+            constructor() {
+                super();
+                const shadowRoot = this.attachShadow({ mode: 'open' });
+                shadowRoot.innerHTML = `
+                    <style>
+                        .card {
+                            border: 1px solid #ddd;
+                            border-radius: 8px;
+                            padding: 16px;
+                            width: 200px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        }
+                        ::slotted(h3) {
+                            color: #2c3e50;
+                            margin-top: 0;
+                        }
+                        ::slotted(p) {
+                            color: #7f8c8d;
+                        }
+                    </style>
+                    <div class="card">
+                        <slot name="title"></slot>
+                        <slot name="content"></slot>
+                    </div>
+                `;
+            }
+        }
+        customElements.define('template-card', TemplateCard);
+        
+        // Dynamically stamp a template
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicContent = document.getElementById('dynamic-content');
+            const template = document.createElement('template');
+            
+            template.innerHTML = `
+                <style>
+                    .dynamic-item {
+                        background-color: #2ecc71;
+                        color: white;
+                        padding: 10px;
+                        margin: 5px;
+                        border-radius: 4px;
+                    }
+                </style>
+                <div class="dynamic-item">This was created dynamically from a template</div>
+            `;
+            
+            dynamicContent.appendChild(template.content.cloneNode(true));
+        });
+    </script>
+</body>
+</html>

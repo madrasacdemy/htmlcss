@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animated Navigation Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    header {
+      background-color: #2c3e50;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu-toggle {
+      cursor: pointer;
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    .menu-toggle div {
+      width: 25px;
+      height: 3px;
+      background: white;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+    }
+
+    /* Hamburger animation */
+    .menu-toggle.active div:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    .menu-toggle.active div:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-toggle.active div:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    /* Mobile Nav */
+    nav {
+      background-color: #34495e;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      width: 100%;
+      transform: translateY(-150%);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+      z-index: 999;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    nav.active {
+      transform: translateY(0);
+    }
+
+    nav ul {
+      list-style: none;
+    }
+
+    nav ul li {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.3s ease;
+    }
+
+    nav ul li:hover {
+      background-color: rgba(255,255,255,0.05);
+    }
+
+    nav ul li:last-child {
+      border-bottom: none;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: white;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: #3498db;
+    }
+
+    /* Desktop Nav */
+    @media (min-width: 768px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      nav {
+        all: unset;
+        display: flex;
+      }
+
+      nav ul {
+        display: flex;
+        gap: 15px;
+        list-style: none;
+      }
+
+      nav ul li {
+        border: none;
+        padding: 0;
+        position: relative;
+      }
+
+      nav ul li::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #3498db;
+        transition: width 0.3s ease;
+      }
+
+      nav ul li:hover::after {
+        width: 100%;
+      }
+
+      nav ul li a {
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+      }
+
+      nav ul li a:hover {
+        background-color: rgba(255,255,255,0.1);
+      }
+    }
+
+    /* Show hamburger on mobile */
+    @media (max-width: 767px) {
+      .menu-toggle {
+        display: flex;
+      }
+    }
+
+    /* Main content */
+    .content {
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .content h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    .content p {
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span>🌐</span>
+      <span>MySite</span>
+    </div>
+    <div class="menu-toggle" id="toggleBtn">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+    <nav id="mobileNav">
+      <ul>
+        <li><a href="#"><span>🏠</span> Home</a></li>
+        <li><a href="#"><span>📄</span> About</a></li>
+        <li><a href="#"><span>📷</span> Gallery</a></li>
+        <li><a href="#"><span>📞</span> Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="content">
+    <h2>Welcome to MySite</h2>
+    <p>This page features a responsive, animated navigation menu with smooth transitions and interactive elements. The menu transforms between a mobile-friendly hamburger menu and a desktop navigation bar depending on your screen size.</p>
+    <p>Try clicking the menu icon on mobile devices to see the smooth animation, or hover over the navigation items on desktop for interactive effects.</p>
+  </div>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleBtn');
+    const nav = document.getElementById('mobileNav');
+
+    toggleBtn.addEventListener('click', () => {
+      toggleBtn.classList.toggle('active');
+      nav.classList.toggle('active');
+      
+      // Prevent scrolling when menu is open
+      if (nav.classList.contains('active')) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Close menu when clicking on a link (for mobile)
+    document.querySelectorAll('nav ul li a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (window.innerWidth <= 767) {
+          toggleBtn.classList.remove('active');
+          nav.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

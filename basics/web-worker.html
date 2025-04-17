@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Web Workers Demo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 40px;
+      background: #f7f7f7;
+    }
+    .container {
+      background: white;
+      max-width: 500px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+    }
+    input[type="number"] {
+      padding: 10px;
+      width: 200px;
+      font-size: 16px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #result {
+      margin-top: 20px;
+      font-weight: bold;
+      color: #2e7d32;
+      white-space: pre-wrap;
+    }
+    #loading {
+      display: none;
+      margin-top: 15px;
+      font-style: italic;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🧠 Web Worker: Prime Calculator</h2>
+    <p>Enter a number and find all prime numbers up to that limit.</p>
+
+    <input type="number" id="limitInput" value="10000" min="2" />
+    <br>
+    <button id="startBtn">Calculate Primes</button>
+
+    <div id="loading">⏳ Working... Please wait</div>
+    <div id="result">Result will appear here...</div>
+  </div>
+
+  <script>
+    // Worker code as a string
+    const workerScript = `
+      self.onmessage = function(e) {
+        const limit = e.data;
+        const primes = [];
+
+        for (let num = 2; num <= limit; num++) {
+          let isPrime = true;
+          for (let i = 2; i <= Math.sqrt(num); i++) {
+            if (num % i === 0) {
+              isPrime = false;
+              break;
+            }
+          }
+          if (isPrime) primes.push(num);
+        }
+
+        self.postMessage(primes);
+      };
+    `;
+
+    // Convert to Web Worker blob
+    const blob = new Blob([workerScript], { type: "application/javascript" });
+    const worker = new Worker(URL.createObjectURL(blob));
+
+    const startBtn = document.getElementById('startBtn');
+    const resultDiv = document.getElementById('result');
+    const loadingDiv = document.getElementById('loading');
+    const limitInput = document.getElementById('limitInput');
+
+    startBtn.onclick = () => {
+      const limit = parseInt(limitInput.value);
+      if (isNaN(limit) || limit < 2) {
+        resultDiv.textContent = "Please enter a valid number greater than 1.";
+        return;
+      }
+
+      resultDiv.textContent = "";
+      loadingDiv.style.display = "block";
+      worker.postMessage(limit); // Start worker
+    };
+
+    worker.onmessage = function(e) {
+      loadingDiv.style.display = "none";
+      const primes = e.data;
+      resultDiv.textContent = 
+        "✅ Total primes found: " + primes.length + "\n\nFirst 10 primes: " + primes.slice(0, 10).join(', ') + " ...";
+    };
+  </script>
+
+</body>
+</html>

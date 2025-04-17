@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SPA with Hash Routing</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background: #333;
+      padding: 15px;
+      text-align: center;
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <div class="container" id="app">
+    <!-- Content will be injected here -->
+  </div>
+
+  <script>
+    const app = document.getElementById('app');
+
+    const routes = {
+      home: `
+        <h2>🏠 Welcome to the Home Page</h2>
+        <p>This is a simple SPA using JavaScript and hash-based routing.</p>
+      `,
+      about: `
+        <h2>👤 About Us</h2>
+        <p>This is the About page. We build cool web stuff using JavaScript.</p>
+      `,
+      contact: `
+        <h2>📞 Contact Us</h2>
+        <p>You can reach us at <a href="mailto:demo@example.com">demo@example.com</a>.</p>
+      `
+    };
+
+    function renderRoute() {
+      const hash = location.hash.replace('#', '') || 'home';
+      app.innerHTML = routes[hash] || '<h2>404 - Page not found</h2>';
+    }
+
+    // Initial render
+    renderRoute();
+
+    // Listen to hash change
+    window.addEventListener('hashchange', renderRoute);
+  </script>
+
+</body>
+</html>
