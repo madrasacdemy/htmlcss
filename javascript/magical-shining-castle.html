@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Shining Castle</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%);
+            overflow: hidden;
+            animation: skyAnimation 20s infinite alternate;
+        }
+        
+        @keyframes skyAnimation {
+            0% { background: linear-gradient(to bottom, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%); }
+            50% { background: linear-gradient(to bottom, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+            100% { background: linear-gradient(to bottom, #1a2a6c 0%, #b21f1f 50%, #fdbb2d 100%); }
+        }
+        
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #8BC34A 0%, #689F38 100%);
+            z-index: 1;
+        }
+        
+        .castle {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            margin-bottom: 50px;
+            z-index: 2;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+        
+        /* Main castle structure */
+        .castle-base {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #BDBDBD, #E0E0E0, #BDBDBD);
+            background-size: 200% 200%;
+            border-radius: 10px 10px 0 0;
+            box-shadow: inset 0 -20px 0 rgba(0,0,0,0.2);
+            animation: shine 4s infinite alternate;
+        }
+        
+        @keyframes shine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        /* Castle towers */
+        .tower {
+            position: absolute;
+            bottom: 200px;
+            width: 60px;
+            height: 150px;
+            background: linear-gradient(45deg, #9E9E9E, #E0E0E0, #9E9E9E);
+            background-size: 200% 200%;
+            border-radius: 10px 10px 0 0;
+            animation: shine 4s infinite alternate;
+        }
+        
+        .tower-left {
+            left: 20px;
+        }
+        
+        .tower-right {
+            right: 20px;
+        }
+        
+        .tower-center {
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 180px;
+        }
+        
+        /* Tower roofs */
+        .roof {
+            position: absolute;
+            bottom: 100%;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(45deg, #F44336, #FF9800, #F44336);
+            background-size: 200% 200%;
+            clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+            animation: roofShine 3s infinite alternate;
+        }
+        
+        @keyframes roofShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .center-roof {
+            height: 50px;
+            background: linear-gradient(45deg, #D32F2F, #FF5722, #D32F2F);
+            background-size: 200% 200%;
+        }
+        
+        /* Castle battlements */
+        .battlement {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 20px;
+            background: #9E9E9E;
+        }
+        
+        .battlement:before,
+        .battlement:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: #9E9E9E;
+        }
+        
+        .battlement:before {
+            left: -10px;
+        }
+        
+        .battlement:after {
+            right: -10px;
+        }
+        
+        /* Castle windows */
+        .window {
+            position: absolute;
+            width: 20px;
+            height: 30px;
+            background: #212121;
+            border-radius: 5px;
+            box-shadow: 0 0 10px 2px gold;
+            animation: windowGlow 2s infinite alternate;
+        }
+        
+        @keyframes windowGlow {
+            0% { box-shadow: 0 0 5px 2px gold; }
+            100% { box-shadow: 0 0 15px 5px gold; }
+        }
+        
+        .tower-window {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .tower-left .window {
+            top: 50px;
+        }
+        
+        .tower-right .window {
+            top: 50px;
+        }
+        
+        .tower-center .window {
+            top: 70px;
+            height: 40px;
+        }
+        
+        /* Main castle door */
+        .door {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 100px;
+            background: linear-gradient(to bottom, #5D4037, #3E2723);
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 0 15px rgba(255,215,0,0.7);
+        }
+        
+        .door-knob {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            background: #FFC107;
+            border-radius: 50%;
+            box-shadow: 0 0 5px 2px #FFC107;
+            animation: knobGlow 1.5s infinite alternate;
+        }
+        
+        @keyframes knobGlow {
+            0% { box-shadow: 0 0 5px 2px #FFC107; }
+            100% { box-shadow: 0 0 10px 4px #FFC107; }
+        }
+        
+        /* Castle flags */
+        .flag {
+            position: absolute;
+            top: -40px;
+            width: 30px;
+            height: 50px;
+            background: linear-gradient(45deg, #FF5722, #FF9800, #FF5722);
+            background-size: 200% 200%;
+            clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%);
+            animation: flagWave 2s infinite alternate, flagShine 3s infinite alternate;
+        }
+        
+        @keyframes flagWave {
+            0% { clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%); }
+            50% { clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%); }
+            100% { clip-path: polygon(0% 0%, 100% 0%, 100% 70%, 50% 100%, 0% 70%); }
+        }
+        
+        @keyframes flagShine {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        .flag-pole {
+            position: absolute;
+            top: -60px;
+            width: 3px;
+            height: 60px;
+            background: #795548;
+        }
+        
+        .flag-left {
+            left: 30px;
+        }
+        
+        .flag-right {
+            right: 30px;
+        }
+        
+        /* Sun */
+        .sun {
+            position: absolute;
+            top: 100px;
+            right: 100px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #FFEB3B 0%, #FFC107 70%, transparent 85%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px #FFC107;
+            animation: sunPulse 5s infinite alternate;
+        }
+        
+        @keyframes sunPulse {
+            0% { transform: scale(1); box-shadow: 0 0 40px #FFC107; }
+            50% { transform: scale(1.05); box-shadow: 0 0 60px #FFC107; }
+            100% { transform: scale(1); box-shadow: 0 0 40px #FFC107; }
+        }
+        
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            animation: cloudMove linear infinite;
+        }
+        
+        @keyframes cloudMove {
+            to { transform: translateX(100vw); }
+        }
+        
+        .cloud-1 {
+            width: 100px;
+            height: 40px;
+            top: 80px;
+            left: -100px;
+            animation-duration: 40s;
+        }
+        
+        .cloud-2 {
+            width: 150px;
+            height: 60px;
+            top: 150px;
+            right: -150px;
+            animation-duration: 50s;
+        }
+        
+        .cloud-3 {
+            width: 120px;
+            height: 50px;
+            top: 200px;
+            left: -120px;
+            animation-duration: 45s;
+        }
+        
+        /* Stars */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
+        }
+        
+        @keyframes twinkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="sun"></div>
+    
+    <!-- Stars -->
+    <div class="star" style="width: 3px; height: 3px; top: 50px; left: 50px;"></div>
+    <div class="star" style="width: 2px; height: 2px; top: 80px; left: 120px;"></div>
+    <div class="star" style="width: 3px; height: 3px; top: 30px; left: 200px;"></div>
+    <div class="star" style="width: 2px; height: 2px; top: 70px; left: 300px;"></div>
+    
+    <!-- Clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    
+    <!-- Castle -->
+    <div class="castle">
+        <div class="castle-base"></div>
+        
+        <div class="tower tower-left">
+            <div class="battlement"></div>
+            <div class="roof"></div>
+            <div class="window tower-window"></div>
+            <div class="flag-pole"></div>
+            <div class="flag flag-left"></div>
+        </div>
+        
+        <div class="tower tower-right">
+            <div class="battlement"></div>
+            <div class="roof"></div>
+            <div class="window tower-window"></div>
+            <div class="flag-pole"></div>
+            <div class="flag flag-right"></div>
+        </div>
+        
+        <div class="tower tower-center">
+            <div class="battlement"></div>
+            <div class="roof center-roof"></div>
+            <div class="window tower-window"></div>
+        </div>
+        
+        <div class="door">
+            <div class="door-knob"></div>
+        </div>
+    </div>
+    
+    <div class="ground"></div>
+</body>
+</html>
