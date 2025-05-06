@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text Morphing</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f0f0;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    .morph-text {
+      font-size: 5rem;
+      font-weight: bold;
+      background: linear-gradient(90deg, #ff8a00, #e52e71);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="morph-text" id="text">Creative</div>
+  
+  <script>
+    const textElement = document.getElementById('text');
+    const words = ['Creative', 'Dynamic', 'Interactive', 'Beautiful', 'Amazing'];
+    let currentWordIndex = 0;
+    
+    function morphText() {
+      let currentWord = words[currentWordIndex];
+      let nextWordIndex = (currentWordIndex + 1) % words.length;
+      let nextWord = words[nextWordIndex];
+      
+      let currentLetters = currentWord.split('');
+      let nextLetters = nextWord.split('');
+      
+      // Add empty spaces if next word is shorter
+      while (currentLetters.length > nextLetters.length) {
+        nextLetters.push('');
+      }
+      
+      // Morph each letter
+      let output = '';
+      for (let i = 0; i < nextLetters.length; i++) {
+        if (currentLetters[i] && currentLetters[i] !== nextLetters[i]) {
+          // Animate changing letter
+          output += `<span class="changing">${nextLetters[i] || ''}</span>`;
+        } else {
+          output += nextLetters[i] || '';
+        }
+      }
+      
+      textElement.innerHTML = output;
+      
+      // Add animation class to changing letters
+      setTimeout(() => {
+        const changingLetters = document.querySelectorAll('.changing');
+        changingLetters.forEach(letter => {
+          letter.style.display = 'inline-block';
+          letter.style.animation = 'morph 0.5s ease';
+        });
+      }, 50);
+      
+      currentWordIndex = nextWordIndex;
+    }
+    
+    // Initial call and set interval
+    morphText();
+    setInterval(morphText, 2000);
+    
+    // Add keyframe animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes morph {
+        0% { transform: scale(0.8) rotate(-10deg); opacity: 0; }
+        100% { transform: scale(1) rotate(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

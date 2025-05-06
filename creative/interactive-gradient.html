@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Interactive Gradient</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+      transition: background 0.3s ease;
+    }
+    
+    .content {
+      text-align: center;
+      color: white;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+      z-index: 1;
+    }
+    
+    h1 {
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>Move Your Mouse</h1>
+    <p>The gradient follows your cursor</p>
+  </div>
+  
+  <script>
+    const body = document.body;
+    
+    document.addEventListener('mousemove', (e) => {
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      body.style.background = `
+        radial-gradient(
+          at ${x * 100}% ${y * 100}%,
+          #ff0080, #7928ca, #0070f3
+        )
+      `;
+    });
+  </script>
+</body>
+</html>
