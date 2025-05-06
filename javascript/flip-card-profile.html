@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Magic Card Flip</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #2b5876, #4e4376);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #fff;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-size: 2.5rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .card-container {
+      perspective: 1000px;
+      margin-top: 40px;
+    }
+
+    .card {
+      width: 300px;
+      height: 400px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+      cursor: pointer;
+    }
+
+    .card.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    .card-front {
+      background: #fff;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-front h2 {
+      margin-top: 20px;
+    }
+
+    .card-front img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      border: 4px solid #4e4376;
+    }
+
+    .card-back {
+      background: #4e4376;
+      transform: rotateY(180deg);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .card-back h3 {
+      margin-bottom: 15px;
+    }
+
+    .card-back ul {
+      list-style: none;
+    }
+
+    .card-back ul li {
+      margin: 10px 0;
+    }
+
+    .card-back a {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .card-back a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>👋 Welcome to My Flip Card Profile</h1>
+
+  <div class="card-container">
+    <div class="card" id="magicCard">
+      <div class="card-face card-front">
+        <img src="https://i.pravatar.cc/150?img=3" alt="Profile Picture">
+        <h2>Smith</h2>
+        <p>Web Developer</p>
+      </div>
+      <div class="card-face card-back">
+        <h3>Skills</h3>
+        <ul>
+          <li>💻 HTML, CSS, JavaScript</li>
+          <li>⚙️ PHP & Laravel</li>
+          <li>🎨 UI/UX Design</li>
+        </ul>
+        <h3>Social</h3>
+        <ul>
+          <li><a href="#">🔗 LinkedIn</a></li>
+          <li><a href="#">🐱 GitHub</a></li>
+          <li><a href="#">📧 Email</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const card = document.getElementById('magicCard');
+    card.addEventListener('click', () => {
+      card.classList.toggle('is-flipped');
+    });
+  </script>
+</body>
+</html>
