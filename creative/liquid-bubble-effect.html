@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liquid Bubble Effect</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(20px);
+      opacity: 0.7;
+      mix-blend-mode: screen;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+    
+    function createBubble(e) {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      
+      const size = Math.random() * 200 + 50;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.background = color;
+      bubble.style.left = `${e.clientX}px`;
+      bubble.style.top = `${e.clientY}px`;
+      
+      document.body.appendChild(bubble);
+      
+      // Animate
+      const targetX = e.clientX + (Math.random() * 200 - 100);
+      const targetY = e.clientY + (Math.random() * 200 - 100);
+      
+      let opacity = 0.7;
+      const fadeOut = setInterval(() => {
+        opacity -= 0.01;
+        bubble.style.opacity = opacity;
+        
+        if (opacity <= 0) {
+          clearInterval(fadeOut);
+          bubble.remove();
+        }
+      }, 50);
+      
+      // Move bubble
+      let x = e.clientX;
+      let y = e.clientY;
+      const move = setInterval(() => {
+        x += (targetX - x) * 0.05;
+        y += (targetY - y) * 0.05;
+        bubble.style.left = `${x}px`;
+        bubble.style.top = `${y}px`;
+      }, 30);
+    }
+    
+    document.addEventListener('mousemove', createBubble);
+    
+    // Create random bubbles
+    setInterval(() => {
+      const e = {
+        clientX: Math.random() * window.innerWidth,
+        clientY: Math.random() * window.innerHeight
+      };
+      createBubble(e);
+    }, 300);
+  </script>
+</body>
+</html>

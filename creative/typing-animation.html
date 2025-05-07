@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Typing Animation</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .typing-container {
+      color: #0f0;
+      font-size: 2rem;
+      position: relative;
+    }
+    
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 2rem;
+      background: #0f0;
+      margin-left: 5px;
+      animation: blink 0.7s infinite;
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="typing-container" id="typing-text"></div>
+  <span class="cursor"></span>
+  
+  <script>
+    const texts = [
+      "Hello World!",
+      "This is a typing effect.",
+      "Creative coding is fun!",
+      "Try changing these messages.",
+      "HTML + CSS + JavaScript"
+    ];
+    
+    const typingText = document.getElementById('typing-text');
+    let textIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let typingSpeed = 150;
+    
+    function type() {
+      const currentText = texts[textIndex];
+      
+      if (isDeleting) {
+        typingText.textContent = currentText.substring(0, charIndex - 1);
+        charIndex--;
+        typingSpeed = 50;
+      } else {
+        typingText.textContent = currentText.substring(0, charIndex + 1);
+        charIndex++;
+        typingSpeed = 150;
+      }
+      
+      if (!isDeleting && charIndex === currentText.length) {
+        isDeleting = true;
+        typingSpeed = 2000; // Pause at end
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        textIndex = (textIndex + 1) % texts.length;
+        typingSpeed = 500; // Pause before typing next
+      }
+      
+      setTimeout(type, typingSpeed);
+    }
+    
+    // Start typing effect
+    setTimeout(type, 1000);
+  </script>
+</body>
+</html>

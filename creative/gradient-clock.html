@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gradient Clock</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #111;
+      font-family: 'Arial', sans-serif;
+      overflow: hidden;
+    }
+    
+    .clock {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+    
+    .time {
+      font-size: 3rem;
+      color: white;
+      text-shadow: 0 0 10px rgba(255,255,255,0.5);
+      z-index: 1;
+    }
+    
+    .gradient-bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        #ff0000, #ff7700, #ffdd00, #00ff00,
+        #0088ff, #0000ff, #9900ff, #ff00ff, #ff0000
+      );
+      animation: rotate 20s linear infinite;
+      filter: blur(20px);
+      opacity: 0.7;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .clock::after {
+      content: '';
+      position: absolute;
+      width: 90%;
+      height: 90%;
+      border-radius: 50%;
+      background: #111;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock">
+    <div class="gradient-bg"></div>
+    <div class="time" id="time"></div>
+  </div>
+  
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      
+      document.getElementById('time').textContent = `${hours}:${minutes}:${seconds}`;
+      
+      // Change gradient rotation speed based on seconds
+      const gradient = document.querySelector('.gradient-bg');
+      const speed = 20 + (now.getSeconds() / 60) * 10; // Speed up as seconds increase
+      gradient.style.animationDuration = `${speed}s`;
+    }
+    
+    updateClock();
+    setInterval(updateClock, 1000);
+    
+    // Add interactive effect
+    document.addEventListener('mousemove', (e) => {
+      const clock = document.querySelector('.clock');
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+      
+      clock.style.transform = `translate3d(${(x - 0.5) * 20}px, ${(y - 0.5) * 20}px, 0)`;
+    });
+  </script>
+</body>
+</html>

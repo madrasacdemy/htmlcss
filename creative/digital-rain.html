@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Digital Rain</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: black;
+    }
+    
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // Tamil Unicode characters (basic letters)
+    const tamil = 'அஆஇஈஉஊஎஏஐஒஓஔகஙசஜஞடணதநனபமயரறலளழவஷஸஹ';
+    // English letters
+    const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    // Numbers
+    const nums = '0123456789';
+    // Some special characters
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?/~`';
+    
+    const alphabet = tamil + latin + nums + symbols;
+    
+    const fontSize = 18;  // Slightly larger for Tamil characters
+    const columns = Math.floor(canvas.width / fontSize);
+    
+    const rainDrops = [];
+    
+    // Initialize rain drops
+    for (let x = 0; x < columns; x++) {
+      rainDrops[x] = Math.random() * -100;  // Start at random positions above canvas
+    }
+    
+    // Colors for the rain (green with some variation)
+    const colors = ['#0F0', '#0F5', '#0FA', '#5F5', '#AFA'];
+    
+    const draw = () => {
+      // Semi-transparent black overlay for trailing effect
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Set font
+      ctx.font = `bold ${fontSize}px 'Arial Unicode MS', monospace`;
+      
+      for (let i = 0; i < rainDrops.length; i++) {
+        // Random character from our combined set
+        const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+        
+        // Random green color variation
+        ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Draw the character
+        ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+        
+        // Reset drop to top when it reaches bottom, with some randomness
+        if (rainDrops[i] * fontSize > canvas.height && Math.random() > 0.95) {
+          rainDrops[i] = 0;
+        }
+        
+        // Move the drop down
+        rainDrops[i]++;
+      }
+      
+      // Request next animation frame
+      requestAnimationFrame(draw);
+    };
+    
+    // Start the animation
+    draw();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      // Recalculate columns
+      const newColumns = Math.floor(canvas.width / fontSize);
+      
+      // Adjust rainDrops array
+      if (newColumns > rainDrops.length) {
+        // Add new columns
+        for (let i = rainDrops.length; i < newColumns; i++) {
+          rainDrops[i] = Math.random() * -100;
+        }
+      } else if (newColumns < rainDrops.length) {
+        // Remove extra columns
+        rainDrops.length = newColumns;
+      }
+    });
+  </script>
+</body>
+</html>

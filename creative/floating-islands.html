@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Responsive Floating Islands</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
+      perspective: 1000px;
+      touch-action: manipulation; /* Improve touch responsiveness */
+    }
+    
+    .island {
+      position: absolute;
+      border-radius: 50%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.1s ease-out;
+      will-change: transform; /* Optimize for performance */
+    }
+    
+    .island::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      filter: blur(10px);
+    }
+    
+    /* Mobile-specific styles */
+    @media (max-width: 768px) {
+      .island {
+        transition: transform 0.2s ease-out; /* Slower transition for mobile */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3); /* Smaller shadow */
+      }
+    }
+    
+    /* Orientation-specific adjustments */
+    @media (orientation: portrait) {
+      body {
+        background: linear-gradient(to bottom, #1a2a6c, #b21f1f);
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const colors = [
+      '#4e54c8', '#8f94fb', '#d4a5a5', '#ff9a9e',
+      '#a18cd1', '#fbc2eb', '#a6c1ee', '#f093fb'
+    ];
+    
+    // Responsive sizing
+    function getIslandSize() {
+      const screenArea = window.innerWidth * window.innerHeight;
+      // Scale size based on screen area
+      const baseSize = Math.sqrt(screenArea) * 0.05;
+      return Math.min(Math.max(baseSize, 80), 300); // Min 80px, Max 300px
+    }
+    
+    // Adjust number of islands based on screen size
+    function getIslandCount() {
+      const screenArea = window.innerWidth * window.innerHeight;
+      return Math.floor(screenArea / 50000); // Approximately 1 island per 50,000px²
+    }
+    
+    function createIsland() {
+      const island = document.createElement('div');
+      island.className = 'island';
+      
+      const size = getIslandSize();
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight * 0.8;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      island.style.width = `${size}px`;
+      island.style.height = `${size * 0.3}px`;
+      island.style.background = color;
+      island.style.left = `${x}px`;
+      island.style.top = `${y}px`;
+      
+      document.body.appendChild(island);
+      return island;
+    }
+    
+    // Handle both mouse and touch events
+    function handlePointerMove(e) {
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      
+      if (!clientX || !clientY) return;
+      
+      const moveX = (clientX - window.innerWidth / 2) / (window.innerWidth / 20);
+      const moveY = (clientY - window.innerHeight / 2) / (window.innerHeight / 20);
+      
+      const islands = document.querySelectorAll('.island');
+      islands.forEach((island, i) => {
+        // Smaller movement for larger screens
+        const scaleFactor = Math.min(window.innerWidth, window.innerHeight) / 1000;
+        island.style.transform = `translate3d(${moveX * scaleFactor}px, ${moveY * scaleFactor}px, 0) 
+                                rotateX(${-moveY * 0.5}deg) 
+                                rotateY(${moveX * 0.5}deg)`;
+      });
+    }
+    
+    // Initialize islands
+    function initIslands() {
+      // Clear existing islands
+      document.querySelectorAll('.island').forEach(island => island.remove());
+      
+      // Create new islands based on current screen size
+      const islandCount = getIslandCount();
+      for (let i = 0; i < islandCount; i++) {
+        createIsland();
+      }
+    }
+    
+    // Add floating animation
+    function floatIslands() {
+      const islands = document.querySelectorAll('.island');
+      const time = Date.now() * 0.0005;
+      
+      islands.forEach((island, i) => {
+        // Adjust floating amount based on screen size
+        const floatAmount = Math.min(window.innerWidth, window.innerHeight) / 50;
+        const floatX = Math.sin(time + i) * floatAmount;
+        const floatY = Math.cos(time + i * 0.5) * floatAmount;
+        
+        // Get current transform without the floating part
+        const currentTransform = island.style.transform.replace(/translate3d\(.*?\)/, '');
+        island.style.transform = `${currentTransform} translate3d(${floatX}px, ${floatY}px, 0)`;
+      });
+      
+      requestAnimationFrame(floatIslands);
+    }
+    
+    // Initialize
+    initIslands();
+    floatIslands();
+    
+    // Event listeners
+    document.addEventListener('mousemove', handlePointerMove);
+    document.addEventListener('touchmove', handlePointerMove);
+    
+    // Responsive handling
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        initIslands();
+      }, 200);
+    });
+    
+    // Handle device orientation changes
+    window.addEventListener('orientationchange', () => {
+      setTimeout(initIslands, 100);
+    });
+  </script>
+</body>
+</html>
