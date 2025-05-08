@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parallax Scrolling Page</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .parallax {
+      background-image: url('https://picsum.photos/1600/900?grayscale');
+      height: 100vh;
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 3rem;
+    }
+
+    .content {
+      height: 100vh;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .parallax2 {
+      background-image: url('https://picsum.photos/1600/900?blur');
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="parallax">Welcome</div>
+  <div class="content">Scroll Down</div>
+  <div class="parallax2">More Content</div>
+  <div class="content">Thanks for Visiting</div>
+
+</body>
+</html>

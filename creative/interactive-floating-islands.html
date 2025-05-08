@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Floating Islands</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+      perspective: 1000px;
+      touch-action: manipulation;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .island {
+      position: absolute;
+      border-radius: 50%;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      transform-style: preserve-3d;
+      transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+      will-change: transform;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .island::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 0;
+      right: 0;
+      height: 30px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      filter: blur(15px);
+      z-index: -1;
+    }
+
+    .island-content {
+      color: white;
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
+
+    .island:hover .island-content {
+      opacity: 1;
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
+      z-index: 100;
+    }
+
+    .control-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+      font-weight: bold;
+    }
+
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+      .island {
+        transition: transform 0.3s ease-out;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .controls {
+        flex-direction: column;
+        width: 80%;
+      }
+
+      .control-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <button class="control-btn" id="addIsland">Add Island</button>
+    <button class="control-btn" id="changeBg">Change Background</button>
+    <button class="control-btn" id="toggleAnimation">Pause Animation</button>
+  </div>
+
+  <script>
+    // Enhanced color palette
+    const colors = [
+      '#4e54c8', '#8f94fb', '#d4a5a5', '#ff9a9e',
+      '#a18cd1', '#fbc2eb', '#a6c1ee', '#f093fb',
+      '#6a11cb', '#2575fc', '#12c2e9', '#f64f59',
+      '#c471f5', '#fa71cd', '#48c6ef', '#6f86d6'
+    ];
+
+    // Possible island content
+    const islandContents = [
+      "Explore", "Discover", "Adventure", "Wonder",
+      "Journey", "Horizon", "Mystery", "Escape",
+      "Serenity", "Paradise", "Dream", "Vision"
+    ];
+
+    // Background gradient options
+    const backgrounds = [
+      'linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d)',
+      'linear-gradient(135deg, #0f0c29, #302b63, #24243e)',
+      'linear-gradient(135deg, #23074d, #cc5333)',
+      'linear-gradient(135deg, #1c92d2, #f2fcfe)',
+      'linear-gradient(135deg, #00416A, #E4E5E6)',
+      'linear-gradient(135deg, #3a7bd5, #00d2ff)'
+    ];
+
+    // Configuration
+    let animationRunning = true;
+    let currentBgIndex = 0;
+
+    // Responsive sizing
+    function getIslandSize() {
+      const screenArea = window.innerWidth * window.innerHeight;
+      const baseSize = Math.sqrt(screenArea) * 0.05;
+      return Math.min(Math.max(baseSize, 80), 300);
+    }
+
+    function getIslandCount() {
+      const screenArea = window.innerWidth * window.innerHeight;
+      return Math.max(5, Math.floor(screenArea / 50000));
+    }
+
+    function createIsland(content = null) {
+      const island = document.createElement('div');
+      island.className = 'island';
+      
+      const size = getIslandSize();
+      const x = Math.random() * (window.innerWidth - size);
+      const y = Math.random() * (window.innerHeight * 0.8 - size * 0.3);
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      island.style.width = `${size}px`;
+      island.style.height = `${size * 0.3}px`;
+      island.style.background = color;
+      island.style.left = `${x}px`;
+      island.style.top = `${y}px`;
+      
+      // Add content to island
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'island-content';
+      contentDiv.textContent = content || islandContents[Math.floor(Math.random() * islandContents.length)];
+      island.appendChild(contentDiv);
+      
+      // Click interaction
+      island.addEventListener('click', () => {
+        island.style.transform += ' scale(1.1)';
+        setTimeout(() => {
+          island.style.transform = island.style.transform.replace(' scale(1.1)', '');
+        }, 300);
+      });
+      
+      document.body.appendChild(island);
+      return island;
+    }
+
+    function handlePointerMove(e) {
+      if (!animationRunning) return;
+      
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      
+      if (!clientX || !clientY) return;
+      
+      const moveX = (clientX - window.innerWidth / 2) / (window.innerWidth / 20);
+      const moveY = (clientY - window.innerHeight / 2) / (window.innerHeight / 20);
+      
+      const islands = document.querySelectorAll('.island');
+      islands.forEach((island, i) => {
+        const scaleFactor = Math.min(window.innerWidth, window.innerHeight) / 1000;
+        const rotationFactor = 0.5 + (i % 3) * 0.2; // Vary rotation slightly
+        island.style.transform = `translate3d(${moveX * scaleFactor}px, ${moveY * scaleFactor}px, 0) 
+                                rotateX(${-moveY * rotationFactor}deg) 
+                                rotateY(${moveX * rotationFactor}deg)`;
+      });
+    }
+
+    // Floating animation with varied movements
+    function floatIslands() {
+      if (!animationRunning) {
+        requestAnimationFrame(floatIslands);
+        return;
+      }
+      
+      const islands = document.querySelectorAll('.island');
+      const time = Date.now() * 0.0005;
+      
+      islands.forEach((island, i) => {
+        const floatAmount = Math.min(window.innerWidth, window.innerHeight) / 50;
+        const floatX = Math.sin(time + i * 0.7) * floatAmount;
+        const floatY = Math.cos(time * 0.8 + i) * floatAmount;
+        const floatRotate = Math.sin(time * 0.3 + i * 0.5) * 5;
+        
+        const currentTransform = island.style.transform.replace(/translate3d\(.*?\)/, '')
+                                                      .replace(/rotateX\(.*?\)/, '')
+                                                      .replace(/rotateY\(.*?\)/, '');
+        
+        island.style.transform = `${currentTransform} 
+                                translate3d(${floatX}px, ${floatY}px, 0)
+                                rotateZ(${floatRotate}deg)`;
+      });
+      
+      requestAnimationFrame(floatIslands);
+    }
+
+    function initIslands() {
+      document.querySelectorAll('.island').forEach(island => island.remove());
+      
+      const islandCount = getIslandCount();
+      for (let i = 0; i < islandCount; i++) {
+        createIsland();
+      }
+    }
+
+    function changeBackground() {
+      currentBgIndex = (currentBgIndex + 1) % backgrounds.length;
+      document.body.style.background = backgrounds[currentBgIndex];
+    }
+
+    function toggleAnimation() {
+      animationRunning = !animationRunning;
+      document.getElementById('toggleAnimation').textContent = 
+        animationRunning ? 'Pause Animation' : 'Play Animation';
+    }
+
+    // Initialize
+    initIslands();
+    floatIslands();
+    
+    // Event listeners
+    document.addEventListener('mousemove', handlePointerMove);
+    document.addEventListener('touchmove', handlePointerMove);
+    
+    // UI Controls
+    document.getElementById('addIsland').addEventListener('click', () => {
+      createIsland();
+    });
+    
+    document.getElementById('changeBg').addEventListener('click', changeBackground);
+    
+    document.getElementById('toggleAnimation').addEventListener('click', toggleAnimation);
+    
+    // Responsive handling
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        initIslands();
+      }, 200);
+    });
+    
+    window.addEventListener('orientationchange', () => {
+      setTimeout(initIslands, 100);
+    });
+  </script>
+</body>
+</html>

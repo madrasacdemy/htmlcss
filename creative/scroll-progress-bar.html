@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scroll Progress Bar</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: #ddd;
+      z-index: 9999;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #007bff;
+      transition: width 0.25s ease;
+    }
+
+    .content {
+      padding: 100px 20px;
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="content">
+    <h1>Scroll Down</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vehicula, nisl ac bibendum viverra, nisi velit finibus augue, nec efficitur diam justo a turpis. Proin porttitor... [Repeat this paragraph to add scroll]</p>
+    <p>Repeat this content many times or copy-paste to make the page scrollable...</p>
+    <!-- You can generate or duplicate content for testing scroll -->
+    <p style="margin-top: 2000px;">End of the page</p>
+  </div>
+
+  <script>
+    const progressBar = document.getElementById('progressBar');
+
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.body.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      progressBar.style.width = scrollPercent + "%";
+    });
+  </script>
+
+</body>
+</html>
