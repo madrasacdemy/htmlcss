@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieDB - Browse Films</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f171e;
+            color: #fff;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #1a242f;
+        }
+
+        h1 {
+            color: #79b8f3;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        #search-input {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: none;
+            background-color: #1a242f;
+            color: white;
+            width: 300px;
+        }
+
+        #search-btn {
+            padding: 10px 20px;
+            background-color: #1f80e0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #search-btn:hover {
+            background-color: #166dbe;
+        }
+
+        .movies-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .movie-card {
+            background-color: #1a242f;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 15px;
+        }
+
+        .movie-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-details {
+            display: flex;
+            justify-content: space-between;
+            color: #79b8f3;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: #1a242f;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .modal-movie {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .modal-poster {
+            width: 300px;
+            border-radius: 8px;
+        }
+
+        .modal-info {
+            flex: 1;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #79b8f3;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .modal-overview {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .modal-genres {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .genre {
+            background-color: #0f171e;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .modal-movie {
+                flex-direction: column;
+            }
+            
+            .modal-poster {
+                width: 100%;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            #search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MovieDB</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for movies...">
+            <button id="search-btn">Search</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="movies-container" id="movies-container">
+            <!-- Movies will be inserted here by JavaScript -->
+        </div>
+    </main>
+
+    <div class="modal" id="movie-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <div class="modal-movie">
+                <img class="modal-poster" id="modal-poster" src="" alt="Movie Poster">
+                <div class="modal-info">
+                    <h2 class="modal-title" id="modal-title"></h2>
+                    <div class="modal-meta">
+                        <span id="modal-year"></span>
+                        <span id="modal-runtime"></span>
+                        <span id="modal-rating"></span>
+                    </div>
+                    <div class="modal-genres" id="modal-genres"></div>
+                    <p class="modal-overview" id="modal-overview"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock movie data
+        const mockMovies = [
+    {
+        id: 1,
+        title: "The Shawshank Redemption",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMDFkYTc0MGEtZmNhMC00ZDIzLWFmNTEtODM1ZmRlYWMwMWFmXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX1000_.jpg",
+        release_date: "1994-09-23",
+        vote_average: 9.3,
+        overview: "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+        runtime: 142,
+        genres: [
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 2,
+        title: "The Godfather",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+        release_date: "1972-03-24",
+        vote_average: 9.2,
+        overview: "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+        runtime: 175,
+        genres: [
+            { id: 18, name: "Drama" },
+            { id: 80, name: "Crime" }
+        ]
+    },
+    {
+        id: 3,
+        title: "The Dark Knight",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMTMxNTMwODM0NF5BMl5BanBnXkFtZTcwODAyMTk2Mw@@._V1_.jpg",
+        release_date: "2008-07-16",
+        vote_average: 9.0,
+        overview: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+        runtime: 152,
+        genres: [
+            { id: 28, name: "Action" },
+            { id: 80, name: "Crime" },
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 4,
+        title: "Pulp Fiction",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+        release_date: "1994-10-14",
+        vote_average: 8.9,
+        overview: "The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.",
+        runtime: 154,
+        genres: [
+            { id: 80, name: "Crime" },
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 5,
+        title: "Fight Club",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMmEzNTkxYjQtZTc0MC00YTVjLTg5ZTEtZWMwOWVlYzY0NWIwXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg",
+        release_date: "1999-10-15",
+        vote_average: 8.8,
+        overview: "An insomniac office worker and a devil-may-care soapmaker form an underground fight club that evolves into something much, much more.",
+        runtime: 139,
+        genres: [
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 6,
+        title: "Inception",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg",
+        release_date: "2010-07-16",
+        vote_average: 8.8,
+        overview: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+        runtime: 148,
+        genres: [
+            { id: 28, name: "Action" },
+            { id: 878, name: "Science Fiction" },
+            { id: 12, name: "Adventure" }
+        ]
+    },
+    {
+        id: 7,
+        title: "The Matrix",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNzQzOTk3OTAtNDQ0Zi00ZTVkLWI0MTEtMDllZjNkYzNjNTc4L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
+        release_date: "1999-03-31",
+        vote_average: 8.7,
+        overview: "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.",
+        runtime: 136,
+        genres: [
+            { id: 28, name: "Action" },
+            { id: 878, name: "Science Fiction" }
+        ]
+    },
+    {
+        id: 8,
+        title: "Goodfellas",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BY2NkZjEzMDgtN2RjYy00YzM1LWI4ZmQtMjIwYjFjNmI3ZGEwXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg",
+        release_date: "1990-09-19",
+        vote_average: 8.7,
+        overview: "The story of Henry Hill and his life in the mob, covering his relationship with his wife Karen Hill and his mob partners Jimmy Conway and Tommy DeVito in the Italian-American crime syndicate.",
+        runtime: 146,
+        genres: [
+            { id: 80, name: "Crime" },
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 9,
+        title: "The Lord of the Rings: The Fellowship of the Ring",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_.jpg",
+        release_date: "2001-12-19",
+        vote_average: 8.8,
+        overview: "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+        runtime: 178,
+        genres: [
+            { id: 12, name: "Adventure" },
+            { id: 14, name: "Fantasy" },
+            { id: 28, name: "Action" }
+        ]
+    },
+    {
+        id: 10,
+        title: "Forrest Gump",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNWIwODRlZTUtY2U3ZS00Yzg1LWJhNzYtMmZiYmEyNmU1NjMzXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_.jpg",
+        release_date: "1994-07-06",
+        vote_average: 8.8,
+        overview: "The presidencies of Kennedy and Johnson, the events of Vietnam, Watergate, and other historical events unfold through the perspective of an Alabama man with an IQ of 75.",
+        runtime: 142,
+        genres: [
+            { id: 18, name: "Drama" },
+            { id: 10749, name: "Romance" }
+        ]
+    },
+    {
+        id: 11,
+        title: "Interstellar",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg",
+        release_date: "2014-11-07",
+        vote_average: 8.6,
+        overview: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+        runtime: 169,
+        genres: [
+            { id: 12, name: "Adventure" },
+            { id: 18, name: "Drama" },
+            { id: 878, name: "Science Fiction" }
+        ]
+    },
+    {
+        id: 12,
+        title: "The Silence of the Lambs",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNjNhZTk0ZmEtNjJhMi00YzFlLWE1MmEtYzM1M2ZmMGMwMTU4XkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
+        release_date: "1991-02-14",
+        vote_average: 8.6,
+        overview: "A young F.B.I. cadet must receive the help of an incarcerated and manipulative cannibal killer to help catch another serial killer.",
+        runtime: 118,
+        genres: [
+            { id: 80, name: "Crime" },
+            { id: 18, name: "Drama" },
+            { id: 53, name: "Thriller" }
+        ]
+    },
+    {
+        id: 13,
+        title: "Parasite",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BYWZjMjk3ZTItODQ2ZC00NTY5LWE0ZDYtZTI3MjcwN2Q5NTVkXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_.jpg",
+        release_date: "2019-05-30",
+        vote_average: 8.5,
+        overview: "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+        runtime: 132,
+        genres: [
+            { id: 18, name: "Drama" },
+            { id: 53, name: "Thriller" }
+        ]
+    },
+    {
+        id: 14,
+        title: "The Green Mile",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMTUxMzQyNjA5MF5BMl5BanBnXkFtZTYwOTU2NTY3._V1_FMjpg_UX1000_.jpg",
+        release_date: "1999-12-10",
+        vote_average: 8.5,
+        overview: "The lives of guards on Death Row are affected by one of their charges: a black man accused of child murder and rape, yet who has a mysterious gift.",
+        runtime: 189,
+        genres: [
+            { id: 18, name: "Drama" },
+            { id: 14, name: "Fantasy" }
+        ]
+    },
+    {
+        id: 15,
+        title: "The Lion King",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BYTYxNGMyZTYtMjE3MS00MzNjLWFjNmYtMDk3N2FmM2JiM2M1XkEyXkFqcGdeQXVyNjY5NDU4NzI@._V1_.jpg",
+        release_date: "1994-06-24",
+        vote_average: 8.5,
+        overview: "Lion prince Simba and his father are targeted by his bitter uncle, who wants to ascend the throne himself.",
+        runtime: 88,
+        genres: [
+            { id: 16, name: "Animation" },
+            { id: 12, name: "Adventure" },
+            { id: 10751, name: "Family" }
+        ]
+    },
+    {
+        id: 16,
+        title: "Gladiator",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMDliMmNhNDEtODUyOS00MjNlLTgxODEtN2U3NzIxMGVkZTA1L2ltYWdlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_.jpg",
+        release_date: "2000-05-05",
+        vote_average: 8.5,
+        overview: "A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.",
+        runtime: 155,
+        genres: [
+            { id: 28, name: "Action" },
+            { id: 18, name: "Drama" }
+        ]
+    },
+    {
+        id: 17,
+        title: "The Avengers",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNDYxNjQyMjAtNTdiOS00NGYwLWFmNTAtNThmYjU5ZGI2YTI1XkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_.jpg",
+        release_date: "2012-05-04",
+        vote_average: 8.0,
+        overview: "Earth's mightiest heroes must come together and learn to fight as a team if they are going to stop the mischievous Loki and his alien army from enslaving humanity.",
+        runtime: 143,
+        genres: [
+            { id: 28, name: "Action" },
+            { id: 12, name: "Adventure" },
+            { id: 878, name: "Science Fiction" }
+        ]
+    },
+    {
+        id: 18,
+        title: "Joker",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BNGVjNWI4ZGUtNzE0MS00YTJmLWE0ZDctN2ZiYTk2YmI3NTYyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg",
+        release_date: "2019-10-04",
+        vote_average: 8.4,
+        overview: "In Gotham City, mentally troubled comedian Arthur Fleck is disregarded and mistreated by society. He then embarks on a downward spiral of revolution and bloody crime.",
+        runtime: 122,
+        genres: [
+            { id: 80, name: "Crime" },
+            { id: 18, name: "Drama" },
+            { id: 53, name: "Thriller" }
+        ]
+    },
+    {
+        id: 19,
+        title: "Toy Story",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMDU2ZWJlMjktMTRhMy00ZTA5LWEzNDgtYmNmZTEwZTViZWJkXkEyXkFqcGdeQXVyNDQ2OTk4MzI@._V1_.jpg",
+        release_date: "1995-11-22",
+        vote_average: 8.3,
+        overview: "A cowboy doll is profoundly threatened and jealous when a new spaceman figure supplants him as top toy in a boy's room.",
+        runtime: 81,
+        genres: [
+            { id: 16, name: "Animation" },
+            { id: 12, name: "Adventure" },
+            { id: 10751, name: "Family" }
+        ]
+    },
+    {
+        id: 20,
+        title: "The Wolf of Wall Street",
+        poster_path: "https://m.media-amazon.com/images/M/MV5BMjIxMjgxNTk0MF5BMl5BanBnXkFtZTgwNjIyOTg2MDE@._V1_.jpg",
+        release_date: "2013-12-25",
+        vote_average: 8.2,
+        overview: "Based on the true story of Jordan Belfort, from his rise to a wealthy stock-broker living the high life to his fall involving crime, corruption and the federal government.",
+        runtime: 180,
+        genres: [
+            { id: 18, name: "Drama" },
+            { id: 35, name: "Comedy" },
+            { id: 80, name: "Crime" }
+        ]
+    }
+];
+        // DOM Elements
+        const moviesContainer = document.getElementById('movies-container');
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const movieModal = document.getElementById('movie-modal');
+        const closeModal = document.getElementById('close-modal');
+
+        // Display movies when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displayMovies(mockMovies);
+        });
+
+        // Search functionality
+        searchBtn.addEventListener('click', searchMovies);
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                searchMovies();
+            }
+        });
+
+        // Close modal when clicking X
+        closeModal.addEventListener('click', () => {
+            movieModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === movieModal) {
+                movieModal.style.display = 'none';
+            }
+        });
+
+        // Search movies in mock data
+        function searchMovies() {
+            const query = searchInput.value.trim().toLowerCase();
+            if (query === '') {
+                displayMovies(mockMovies);
+                return;
+            }
+
+            const filteredMovies = mockMovies.filter(movie => 
+                movie.title.toLowerCase().includes(query)
+            );
+            displayMovies(filteredMovies);
+        }
+
+        // Display movies in the UI
+        function displayMovies(movies) {
+            moviesContainer.innerHTML = '';
+            if (movies.length === 0) {
+                moviesContainer.innerHTML = '<p>No movies found</p>';
+                return;
+            }
+
+            movies.forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.classList.add('movie-card');
+                movieCard.innerHTML = `
+                    <img class="movie-poster" src="${movie.poster_path}" alt="${movie.title}">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <div class="movie-details">
+                            <span>${movie.release_date ? movie.release_date.substring(0, 4) : 'N/A'}</span>
+                            <span>⭐ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+
+                movieCard.addEventListener('click', () => {
+                    openMovieModal(movie);
+                });
+
+                moviesContainer.appendChild(movieCard);
+            });
+        }
+
+        // Open movie modal with details
+        function openMovieModal(movie) {
+            // Set modal content
+            document.getElementById('modal-poster').src = movie.poster_path;
+            document.getElementById('modal-title').textContent = movie.title;
+            document.getElementById('modal-year').textContent = movie.release_date ? movie.release_date.substring(0, 4) : 'N/A';
+            document.getElementById('modal-runtime').textContent = movie.runtime ? `${movie.runtime} mins` : 'N/A';
+            document.getElementById('modal-rating').textContent = `⭐ ${movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}`;
+            document.getElementById('modal-overview').textContent = movie.overview || 'No overview available';
+
+            // Display genres
+            const genresContainer = document.getElementById('modal-genres');
+            genresContainer.innerHTML = '';
+            if (movie.genres && movie.genres.length > 0) {
+                movie.genres.forEach(genre => {
+                    const genreElement = document.createElement('span');
+                    genreElement.classList.add('genre');
+                    genreElement.textContent = genre.name;
+                    genresContainer.appendChild(genreElement);
+                });
+            }
+
+            // Show modal
+            movieModal.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Examples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        
+        .animation-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: #444;
+            margin-top: 0;
+        }
+        
+        /* CSS Animation Example */
+        .css-animation-box {
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+            border-radius: 8px;
+            animation: colorChange 4s infinite;
+        }
+        
+        @keyframes colorChange {
+            0% { background-color: #3498db; transform: rotate(0deg); }
+            50% { background-color: #e74c3c; transform: rotate(180deg); }
+            100% { background-color: #3498db; transform: rotate(360deg); }
+        }
+        
+        /* Hover Animation */
+        .hover-animation-box {
+            width: 100px;
+            height: 100px;
+            background-color: #2ecc71;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .hover-animation-box:hover {
+            transform: scale(1.2) rotate(10deg);
+            background-color: #f1c40f;
+        }
+        
+        /* JavaScript Animation */
+        .js-animation-box {
+            width: 100px;
+            height: 100px;
+            background-color: #9b59b6;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        /* Canvas Animation */
+        canvas {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            display: block;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .controls {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Animation Examples</h1>
+    
+    <!-- CSS Animation Example -->
+    <div class="animation-section">
+        <h2>CSS Keyframes Animation</h2>
+        <p>This animation uses CSS @keyframes to change color and rotate continuously.</p>
+        <div class="css-animation-box"></div>
+    </div>
+    
+    <!-- Hover Animation Example -->
+    <div class="animation-section">
+        <h2>CSS Hover Animation</h2>
+        <p>Hover over the box to see the transition effect.</p>
+        <div class="hover-animation-box"></div>
+    </div>
+    
+    <!-- JavaScript Animation Example -->
+    <div class="animation-section">
+        <h2>JavaScript Animation</h2>
+        <p>Click the buttons to control the animation.</p>
+        <div class="controls">
+            <button id="startBtn">Start Animation</button>
+            <button id="stopBtn">Stop Animation</button>
+            <button id="resetBtn">Reset Position</button>
+        </div>
+        <div class="js-animation-box" id="jsBox"></div>
+    </div>
+    
+    <!-- Canvas Animation Example -->
+    <div class="animation-section">
+        <h2>Canvas Animation</h2>
+        <p>A bouncing ball animation using JavaScript and Canvas.</p>
+        <canvas id="canvas" width="400" height="200"></canvas>
+    </div>
+    
+    <script>
+        // JavaScript Animation
+        const jsBox = document.getElementById('jsBox');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        let animationId;
+        let position = 0;
+        let direction = 1;
+        let isAnimating = false;
+        
+        function animateBox() {
+            position += 2 * direction;
+            
+            if (position > 300 || position < 0) {
+                direction *= -1;
+            }
+            
+            jsBox.style.left = position + 'px';
+            animationId = requestAnimationFrame(animateBox);
+        }
+        
+        startBtn.addEventListener('click', () => {
+            if (!isAnimating) {
+                isAnimating = true;
+                animateBox();
+            }
+        });
+        
+        stopBtn.addEventListener('click', () => {
+            if (isAnimating) {
+                cancelAnimationFrame(animationId);
+                isAnimating = false;
+            }
+        });
+        
+        resetBtn.addEventListener('click', () => {
+            if (isAnimating) {
+                cancelAnimationFrame(animationId);
+                isAnimating = false;
+            }
+            position = 0;
+            jsBox.style.left = '0';
+        });
+        
+        // Canvas Animation
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let x = canvas.width / 2;
+        let y = canvas.height / 2;
+        let dx = 2;
+        let dy = -2;
+        const ballRadius = 10;
+        
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
+            
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+            if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+                dy = -dy;
+            }
+            
+            x += dx;
+            y += dy;
+            
+            requestAnimationFrame(draw);
+        }
+        
+        draw();
+    </script>
+</body>
+</html>

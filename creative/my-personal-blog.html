@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .create-post {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .create-post h2 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .posts-container {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .post {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .post-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .post-title {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .post-date {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            padding: 1.5rem;
+            white-space: pre-line;
+        }
+
+        .post-footer {
+            padding: 1rem 1.5rem;
+            background: #f9f9f9;
+            border-top: 1px solid #eee;
+        }
+
+        .comments-section {
+            margin-top: 1.5rem;
+        }
+
+        .comments-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .comments-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .comment {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-date {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .comment-text {
+            white-space: pre-line;
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        @media (max-width: 768px) {
+            .comment-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>My Personal Blog</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="create-post">
+            <h2>Create New Post</h2>
+            <form id="post-form">
+                <div class="form-group">
+                    <label for="post-title">Title</label>
+                    <input type="text" id="post-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="post-content">Content</label>
+                    <textarea id="post-content" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="post-author">Your Name</label>
+                    <input type="text" id="post-author" required>
+                </div>
+                <button type="submit">Publish Post</button>
+            </form>
+        </section>
+
+        <section class="posts-container" id="posts-container">
+            <!-- Posts will be loaded here -->
+        </section>
+    </main>
+
+    <script>
+        // DOM Elements
+        const postForm = document.getElementById('post-form');
+        const postsContainer = document.getElementById('posts-container');
+
+        // Initialize the blog
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPosts();
+        });
+
+        // Handle post submission
+        postForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const author = document.getElementById('post-author').value;
+            
+            if (title && content && author) {
+                createPost(title, content, author);
+                postForm.reset();
+            }
+        });
+
+        // Create a new post
+        function createPost(title, content, author) {
+            const posts = getPosts();
+            const newPost = {
+                id: Date.now(),
+                title,
+                content,
+                author,
+                date: new Date().toISOString(),
+                comments: []
+            };
+            
+            posts.unshift(newPost);
+            savePosts(posts);
+            loadPosts();
+        }
+
+        // Load all posts
+        function loadPosts() {
+            const posts = getPosts();
+            postsContainer.innerHTML = '';
+            
+            if (posts.length === 0) {
+                postsContainer.innerHTML = '<p>No posts yet. Be the first to create one!</p>';
+                return;
+            }
+            
+            posts.forEach(post => {
+                const postElement = document.createElement('article');
+                postElement.className = 'post';
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <h2 class="post-title">${post.title}</h2>
+                        <div class="post-meta">
+                            <span class="post-author">By ${post.author}</span>
+                            <span class="post-date">${formatDate(post.date)}</span>
+                        </div>
+                    </div>
+                    <div class="post-content">${post.content}</div>
+                    <div class="post-footer">
+                        <div class="comments-section">
+                            <h3 class="comments-title">Comments (${post.comments.length})</h3>
+                            <form class="comment-form" data-post-id="${post.id}">
+                                <input type="text" class="comment-input" placeholder="Add a comment..." required>
+                                <button type="submit">Post</button>
+                            </form>
+                            <div class="comments-list" id="comments-${post.id}">
+                                ${renderComments(post.comments)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                postsContainer.appendChild(postElement);
+            });
+            
+            // Add event listeners to all comment forms
+            document.querySelectorAll('.comment-form').forEach(form => {
+                form.addEventListener('submit', handleCommentSubmit);
+            });
+        }
+
+        // Handle comment submission
+        function handleCommentSubmit(e) {
+            e.preventDefault();
+            
+            const postId = parseInt(e.target.getAttribute('data-post-id'));
+            const commentInput = e.target.querySelector('.comment-input');
+            const commentText = commentInput.value;
+            
+            if (commentText) {
+                addComment(postId, commentText);
+                commentInput.value = '';
+            }
+        }
+
+        // Add a comment to a post
+        function addComment(postId, text) {
+            const posts = getPosts();
+            const postIndex = posts.findIndex(post => post.id === postId);
+            
+            if (postIndex !== -1) {
+                const newComment = {
+                    id: Date.now(),
+                    text,
+                    author: 'Anonymous', // Could be modified to include user names
+                    date: new Date().toISOString()
+                };
+                
+                posts[postIndex].comments.unshift(newComment);
+                savePosts(posts);
+                loadPosts();
+            }
+        }
+
+        // Render comments HTML
+        function renderComments(comments) {
+            if (comments.length === 0) {
+                return '<p>No comments yet.</p>';
+            }
+            
+            return comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.author}</span>
+                        <span class="comment-date">${formatDate(comment.date)}</span>
+                    </div>
+                    <p class="comment-text">${comment.text}</p>
+                </div>
+            `).join('');
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // LocalStorage functions
+        function getPosts() {
+            const postsJSON = localStorage.getItem('blogPosts');
+            return postsJSON ? JSON.parse(postsJSON) : [];
+        }
+
+        function savePosts(posts) {
+            localStorage.setItem('blogPosts', JSON.stringify(posts));
+        }
+    </script>
+</body>
+</html>
