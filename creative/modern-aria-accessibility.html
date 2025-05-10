@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARIA Accessibility Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a0ca3;
+      --secondary: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --success: #4cc9f0;
+      --error: #ef233c;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+      background-color: #f5f7fa;
+      padding: 0;
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header */
+    header[role="banner"] {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 2rem 0;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-weight: 600;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      animation: fadeIn 1s ease;
+    }
+
+    /* Navigation */
+    nav[role="navigation"] {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: var(--primary);
+      background: rgba(67, 97, 238, 0.1);
+      outline: none;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: var(--transition);
+      transform: translateX(-50%);
+    }
+
+    nav a:hover::after,
+    nav a:focus::after {
+      width: 100%;
+    }
+
+    /* Main Content */
+    main[role="main"] {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    section {
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    section:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    section h2 {
+      color: var(--primary-dark);
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      position: relative;
+      padding-bottom: 0.5rem;
+    }
+
+    section h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background: var(--secondary);
+    }
+
+    /* Buttons */
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 1rem;
+    }
+
+    button:hover,
+    button:focus {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      outline: none;
+    }
+
+    /* Form Styles */
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: var(--transition);
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="email"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      outline: none;
+    }
+
+    input[type="email"][aria-invalid="true"] {
+      border-color: var(--error);
+    }
+
+    /* Live Region */
+    #live-region {
+      min-height: 60px;
+      padding: 1rem;
+      background: rgba(76, 201, 240, 0.1);
+      border-radius: 4px;
+      margin-top: 1rem;
+      border-left: 4px solid var(--success);
+      transition: var(--transition);
+    }
+
+    /* Alert */
+    [role="alert"] {
+      padding: 1rem;
+      background: rgba(239, 35, 60, 0.1);
+      color: var(--error);
+      border-radius: 4px;
+      margin: 1rem 0;
+      border-left: 4px solid var(--error);
+      animation: slideIn 0.3s ease;
+    }
+
+    /* Footer */
+    footer[role="contentinfo"] {
+      text-align: center;
+      padding: 2rem;
+      background: var(--dark);
+      color: white;
+      margin-top: 3rem;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { 
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Accessibility Helpers */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Focus Styles */
+    :focus-visible {
+      outline: 3px solid var(--secondary);
+      outline-offset: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ARIA Landmarks & Roles -->
+  <header role="banner">
+    <div class="container">
+      <h1>Modern ARIA Accessibility</h1>
+      <p>Beautiful and inclusive design</p>
+    </div>
+  </header>
+
+  <!-- Navigation with ARIA -->
+  <nav role="navigation" aria-label="Main Navigation">
+    <div class="container">
+      <ul>
+        <li><a href="#home" tabindex="0">Home</a></li>
+        <li><a href="#features" tabindex="0">Features</a></li>
+        <li><a href="#about" tabindex="0">About</a></li>
+        <li><a href="#contact" tabindex="0">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main role="main" class="container">
+    <!-- ARIA Labels -->
+    <section aria-labelledby="interactive-heading">
+      <h2 id="interactive-heading">Interactive Elements</h2>
+      
+      <div class="button-group">
+        <button 
+          id="action-btn" 
+          aria-label="Press to perform a special action" 
+          role="button"
+          tabindex="0"
+        >
+          ✨ Animated Button
+        </button>
+
+        <div 
+          role="alert" 
+          id="alert-message" 
+          aria-live="assertive"
+          class="sr-only"
+        >
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Form with ARIA Validation -->
+    <section aria-labelledby="form-heading">
+      <h2 id="form-heading">Smart Form Validation</h2>
+      <form id="demo-form">
+        <label for="email">Email Address:</label>
+        <input 
+          type="email" 
+          id="email" 
+          aria-required="true" 
+          aria-describedby="email-error"
+          placeholder="user@example.com"
+          tabindex="0"
+        >
+        <span id="email-error" class="error" aria-live="polite"></span>
+
+        <button type="submit" tabindex="0">
+          <span aria-hidden="true">🚀</span> Submit Form
+        </button>
+      </form>
+    </section>
+
+    <!-- ARIA Live Regions -->
+    <section aria-labelledby="live-heading">
+      <h2 id="live-heading">Live Updates</h2>
+      <button id="live-update-btn" tabindex="0">
+        <span aria-hidden="true">🔄</span> Trigger Live Update
+      </button>
+      <div 
+        id="live-region" 
+        aria-live="polite" 
+        role="status"
+      >
+        No updates yet. Click the button above!
+      </div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="container">
+      <p>© 2023 Modern Accessibility Demo</p>
+      <p>Built with ♥ for inclusive design</p>
+    </div>
+  </footer>
+
+  <script>
+    // Button with ARIA action
+    document.getElementById('action-btn').addEventListener('click', function() {
+      const alertEl = document.getElementById('alert-message');
+      alertEl.textContent = 'Special action performed! Confetti animation would play here.';
+      alertEl.classList.remove('sr-only');
+      
+      // Visual feedback
+      this.innerHTML = '✓ Done!';
+      this.style.backgroundColor = 'var(--success)';
+      
+      setTimeout(() => {
+        alertEl.classList.add('sr-only');
+        this.innerHTML = '✨ Animated Button';
+        this.style.backgroundColor = '';
+      }, 3000);
+    });
+
+    // Form validation
+    document.getElementById('demo-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const errorEl = document.getElementById('email-error');
+
+      if (!email.includes('@')) {
+        errorEl.textContent = '❌ Please enter a valid email address with @ symbol';
+        document.getElementById('email').setAttribute('aria-invalid', 'true');
+      } else {
+        errorEl.textContent = '✅ Email looks good!';
+        document.getElementById('email').removeAttribute('aria-invalid');
+        
+        // Visual confirmation
+        errorEl.style.color = 'var(--success)';
+        setTimeout(() => {
+          errorEl.textContent = '';
+          alert('Form submitted successfully!');
+        }, 1500);
+      }
+    });
+
+    // Live region update
+    document.getElementById('live-update-btn').addEventListener('click', function() {
+      const liveRegion = document.getElementById('live-region');
+      const time = new Date().toLocaleTimeString();
+      const messages = [
+        `System updated at ${time}`,
+        `New data loaded successfully`,
+        `Background process completed`,
+        `Cache refreshed at ${time}`
+      ];
+      
+      liveRegion.innerHTML = `
+        <p>${messages[Math.floor(Math.random() * messages.length)]}</p>
+        <small>Status: <span style="color: var(--success)">Active</span></small>
+      `;
+      
+      // Visual pulse effect
+      liveRegion.style.animation = 'none';
+      void liveRegion.offsetWidth; // Trigger reflow
+      liveRegion.style.animation = 'pulse 0.5s ease';
+    });
+
+    // Keyboard navigation for nav items
+    const navLinks = document.querySelectorAll('nav a');
+    navLinks.forEach(link => {
+      link.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          link.click();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
