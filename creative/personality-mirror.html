@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personality Mirror</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: radial-gradient(circle at center, #e1f0ff, #c0d7f9);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 1em;
+      margin: 10px;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 1.3em;
+      color: #34495e;
+      background: #ecf0f1;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 400px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔮 Personality Mirror 🔮</h1>
+  <p>Enter your name or mood and see how the mirror reflects your vibe!</p>
+  <input type="text" id="userInput" placeholder="e.g., Name or Happy" />
+  <button onclick="reflectPersonality()">Reflect Me</button>
+  <div id="result"></div>
+
+  <script>
+    const reflections = [
+      "You radiate calm wisdom 🌊.",
+      "The universe senses your creative storm 🌪️.",
+      "A spark of adventure burns within you 🔥.",
+      "Your mind is a galaxy of ideas 🌌.",
+      "You carry the charm of the stars ✨.",
+      "You are a curious explorer of thoughts 🚀.",
+      "A heart full of laughter beats in you 😂.",
+      "You have a mysterious, powerful aura 🧿.",
+      "You shine with quiet confidence 🌟.",
+      "You’re a puzzle wrapped in a riddle 🧩."
+    ];
+
+    function reflectPersonality() {
+      const input = document.getElementById("userInput").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (input === "") {
+        resultDiv.textContent = "Please enter something for the mirror to reflect!";
+        return;
+      }
+
+      // Fun: customize reflection based on first letter
+      const seed = input.toLowerCase().charCodeAt(0);
+      const index = seed % reflections.length;
+
+      resultDiv.textContent = `"${input}", the mirror sees: ${reflections[index]}`;
+    }
+  </script>
+</body>
+</html>

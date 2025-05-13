@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🚨 Virus Alert</title>
+  <style>
+    body {
+      background-color: black;
+      color: red;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      margin: 0;
+    }
+    #alert {
+      font-size: 2em;
+      animation: blink 0.5s infinite;
+    }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .log {
+      margin-top: 20px;
+      text-align: left;
+      width: 90%;
+      max-width: 800px;
+      height: 200px;
+      overflow-y: auto;
+      background: #111;
+      border: 1px solid red;
+      padding: 10px;
+      box-shadow: 0 0 20px red;
+    }
+  </style>
+</head>
+<body>
+  <div id="alert">⚠️ SYSTEM ERROR: VIRUS DETECTED ⚠️</div>
+  <div class="log" id="log"></div>
+
+  <script>
+    const logBox = document.getElementById("log");
+    const fakeMessages = [
+      "Encrypting files...",
+      "Deleting system32...",
+      "Accessing webcam...",
+      "Uploading data to dark web...",
+      "Injecting trojan payload...",
+      "Mining crypto using CPU...",
+      "Disabling antivirus...",
+      "Stealing passwords...",
+      "Overclocking GPU...",
+      "Running malicious scripts..."
+    ];
+
+    function logMessage() {
+      const msg = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
+      const time = new Date().toLocaleTimeString();
+      logBox.innerHTML += `[${time}] ${msg}<br>`;
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    setInterval(logMessage, 1000);
+  </script>
+</body>
+</html>
