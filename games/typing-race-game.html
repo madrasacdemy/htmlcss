@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Typing Race Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e2f;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+    }
+
+    #quote {
+      font-size: 1.5em;
+      background: #292b3d;
+      padding: 20px;
+      border-radius: 10px;
+      width: 80%;
+      margin-bottom: 20px;
+    }
+
+    #inputArea {
+      width: 80%;
+      padding: 15px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    #timer {
+      margin: 15px 0;
+      font-size: 1.3em;
+      color: #00e0ff;
+    }
+
+    #result {
+      font-size: 1.3em;
+      color: #00ffae;
+      margin-top: 15px;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      background-color: #4c8bf5;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #366ed8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Typing Race Game</h1>
+  <div id="quote">Click "Start Game" to begin...</div>
+  <input type="text" id="inputArea" disabled placeholder="Start typing here..." />
+  <div id="timer">Time: 0.00s</div>
+  <div id="result"></div>
+  <button onclick="startGame()">Start Game</button>
+
+  <script>
+    const quotes = [
+      "The quick brown fox jumps over the lazy dog",
+      "Typing games improve your speed and accuracy",
+      "Practice makes perfect when you code every day",
+      "JavaScript powers dynamic websites and games",
+      "Creativity and logic go hand in hand in coding"
+    ];
+
+    const quoteEl = document.getElementById("quote");
+    const inputEl = document.getElementById("inputArea");
+    const timerEl = document.getElementById("timer");
+    const resultEl = document.getElementById("result");
+
+    let startTime;
+    let interval;
+    let currentQuote = "";
+
+    function startGame() {
+      currentQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteEl.textContent = currentQuote;
+      inputEl.value = "";
+      inputEl.disabled = false;
+      inputEl.focus();
+      resultEl.textContent = "";
+      startTime = null;
+      timerEl.textContent = "Time: 0.00s";
+      clearInterval(interval);
+
+      interval = setInterval(() => {
+        if (startTime) {
+          const currentTime = ((Date.now() - startTime) / 1000).toFixed(2);
+          timerEl.textContent = `Time: ${currentTime}s`;
+        }
+      }, 100);
+    }
+
+    inputEl.addEventListener("input", () => {
+      if (!startTime) {
+        startTime = Date.now();
+      }
+
+      if (inputEl.value === currentQuote) {
+        clearInterval(interval);
+        inputEl.disabled = true;
+        const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+        resultEl.textContent = `🎉 Completed in ${totalTime}s!`;
+      }
+    });
+  </script>
+</body>
+</html>

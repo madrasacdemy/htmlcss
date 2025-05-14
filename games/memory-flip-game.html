@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Memory Flip Cards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #222;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #game-board {
+      display: grid;
+      grid-template-columns: repeat(4, 100px);
+      gap: 15px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .card {
+      width: 100px;
+      height: 100px;
+      background: #444;
+      color: #222;
+      font-size: 2em;
+      line-height: 100px;
+      border-radius: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.3s;
+    }
+
+    .card.flipped {
+      background: #00c8ff;
+      color: white;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 Memory Flip Cards</h1>
+  <div id="game-board"></div>
+  <div id="status">Find all the pairs!</div>
+
+  <script>
+    const symbols = ["🍎", "🍌", "🍇", "🍉", "🍓", "🥝", "🍍", "🥥"];
+    const gameSymbols = [...symbols, ...symbols]; // duplicate for pairs
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matchedCount = 0;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function createBoard() {
+      shuffle(gameSymbols);
+      const board = document.getElementById("game-board");
+      board.innerHTML = "";
+      gameSymbols.forEach((symbol, index) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.symbol = symbol;
+        card.dataset.index = index;
+        card.addEventListener("click", flipCard);
+        board.appendChild(card);
+      });
+    }
+
+    function flipCard() {
+      if (lockBoard) return;
+      if (this === firstCard) return;
+
+      this.classList.add("flipped");
+      this.textContent = this.dataset.symbol;
+
+      if (!firstCard) {
+        firstCard = this;
+        return;
+      }
+
+      secondCard = this;
+      lockBoard = true;
+
+      if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+        matchedCount += 2;
+        resetCards(true);
+        if (matchedCount === gameSymbols.length) {
+          document.getElementById("status").textContent = "🎉 You matched all pairs!";
+        }
+      } else {
+        setTimeout(() => resetCards(false), 1000);
+      }
+    }
+
+    function resetCards(match) {
+      if (!match) {
+        firstCard.classList.remove("flipped");
+        secondCard.classList.remove("flipped");
+        firstCard.textContent = "";
+        secondCard.textContent = "";
+      }
+      firstCard = null;
+      secondCard = null;
+      lockBoard = false;
+    }
+
+    createBoard();
+  </script>
+
+</body>
+</html>

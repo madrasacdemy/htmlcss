@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>8x8 Sudoku Puzzle - Level 1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: rgb(235, 152, 152);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 40px);
+      grid-template-rows: repeat(8, 40px);
+      gap: 2px;
+      margin-bottom: 15px;
+    }
+
+    input[type="text"] {
+      width: 38px;
+      height: 38px;
+      font-size: 1.2em;
+      text-align: center;
+      background: white;
+      color: black;
+    }
+
+    input[disabled] {
+      background: #ccc;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>MINI SUDOKU</h1>
+  <h2>8x8 Puzzle – Level 1</h2>
+  <div id="board"></div>
+  <button onclick="check()">Check</button>
+  <div id="message"></div>
+
+  <script>
+    const solution = [
+      [1,2,3,4,5,6,7,8],
+      [5,6,7,8,1,2,3,4],
+      [2,1,4,3,6,5,8,7],
+      [6,5,8,7,2,1,4,3],
+      [3,4,1,2,7,8,5,6],
+      [7,8,5,6,3,4,1,2],
+      [4,3,2,1,8,7,6,5],
+      [8,7,6,5,4,3,2,1]
+    ];
+
+    const board = document.getElementById("board");
+
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const cell = document.createElement("input");
+        cell.type = "text";
+        cell.maxLength = 1;
+        cell.dataset.row = row;
+        cell.dataset.col = col;
+
+        // Prefill a few cells randomly for Level 1
+        if (Math.random() < 0.35) {
+          cell.value = solution[row][col];
+          cell.disabled = true;
+        }
+
+        board.appendChild(cell);
+      }
+    }
+
+    function check() {
+      const inputs = document.querySelectorAll("input");
+      let correct = true;
+
+      inputs.forEach(input => {
+        const row = parseInt(input.dataset.row);
+        const col = parseInt(input.dataset.col);
+        const val = parseInt(input.value);
+        if (!input.disabled && val !== solution[row][col]) {
+          correct = false;
+        }
+      });
+
+      document.getElementById("message").textContent = correct
+        ? "✅ Good job! You completed Level 1!"
+        : "❌ Try again. Some values are incorrect.";
+    }
+  </script>
+
+</body>
+</html>

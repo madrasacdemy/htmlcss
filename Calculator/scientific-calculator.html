@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scientific Calculator</title>
+  <style>
+    body {
+      background-color: #121212;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .calculator {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 25px #000;
+      width: 400px;
+    }
+
+    #display {
+      width: 100%;
+      height: 60px;
+      font-size: 22px;
+      text-align: right;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 8px;
+      background: #2e2e2e;
+      color: #fff;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+
+    button {
+      padding: 15px;
+      font-size: 16px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #666;
+    }
+
+    .wide {
+      grid-column: span 2;
+    }
+
+    .full {
+      grid-column: span 6;
+      text-align: center;
+      margin: 5px 0;
+      color: #ddd;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator">
+  <input type="text" id="display" disabled>
+  <div class="full">Mode: <span id="mode">DEG</span></div>
+  <div class="buttons">
+    <button onclick="clearDisplay()">C</button>
+    <button onclick="backspace()">←</button>
+    <button onclick="append('%')">%</button>
+    <button onclick="append('(')">(</button>
+    <button onclick="append(')')">)</button>
+    <button onclick="toggleMode()">Deg/Rad</button>
+
+    <button onclick="append('7')">7</button>
+    <button onclick="append('8')">8</button>
+    <button onclick="append('9')">9</button>
+    <button onclick="append('/')">÷</button>
+    <button onclick="sqrt()">√</button>
+    <button onclick="square()">x²</button>
+
+    <button onclick="append('4')">4</button>
+    <button onclick="append('5')">5</button>
+    <button onclick="append('6')">6</button>
+    <button onclick="append('*')">×</button>
+    <button onclick="power()">xʸ</button>
+    <button onclick="factorial()">n!</button>
+
+    <button onclick="append('1')">1</button>
+    <button onclick="append('2')">2</button>
+    <button onclick="append('3')">3</button>
+    <button onclick="append('-')">−</button>
+    <button onclick="log()">log</button>
+    <button onclick="ln()">ln</button>
+
+    <button onclick="append('0')">0</button>
+    <button onclick="append('.')">.</button>
+    <button onclick="calculate()" class="wide">=</button>
+    <button onclick="append('+')">+</button>
+    <button onclick="exp()">eˣ</button>
+    <button onclick="pi()">π</button>
+
+    <button onclick="sin()">sin</button>
+    <button onclick="cos()">cos</button>
+    <button onclick="tan()">tan</button>
+    <button onclick="memoryClear()">MC</button>
+    <button onclick="memoryRecall()">MR</button>
+    <button onclick="memoryAdd()">M+</button>
+  </div>
+</div>
+
+<script>
+  let display = document.getElementById('display');
+  let memory = 0;
+  let deg = true;
+
+  function append(value) {
+    display.value += value;
+  }
+
+  function clearDisplay() {
+    display.value = '';
+  }
+
+  function backspace() {
+    display.value = display.value.slice(0, -1);
+  }
+
+  function calculate() {
+    try {
+      display.value = eval(display.value);
+    } catch {
+      display.value = 'Error';
+    }
+  }
+
+  function toRadians(x) {
+    return deg ? x * (Math.PI / 180) : x;
+  }
+
+  function sin() {
+    display.value = Math.sin(toRadians(eval(display.value))).toFixed(6);
+  }
+
+  function cos() {
+    display.value = Math.cos(toRadians(eval(display.value))).toFixed(6);
+  }
+
+  function tan() {
+    display.value = Math.tan(toRadians(eval(display.value))).toFixed(6);
+  }
+
+  function log() {
+    display.value = Math.log10(eval(display.value)).toFixed(6);
+  }
+
+  function ln() {
+    display.value = Math.log(eval(display.value)).toFixed(6);
+  }
+
+  function exp() {
+    display.value = Math.exp(eval(display.value)).toFixed(6);
+  }
+
+  function sqrt() {
+    display.value = Math.sqrt(eval(display.value)).toFixed(6);
+  }
+
+  function square() {
+    let val = eval(display.value);
+    display.value = (val * val).toFixed(6);
+  }
+
+  function power() {
+    let base = eval(display.value);
+    let exp = prompt("Enter exponent:");
+    display.value = Math.pow(base, exp).toFixed(6);
+  }
+
+  function factorial() {
+    let n = parseInt(display.value);
+    if (n < 0 || isNaN(n)) return display.value = "Error";
+    let result = 1;
+    for (let i = 2; i <= n; i++) result *= i;
+    display.value = result;
+  }
+
+  function pi() {
+    display.value += Math.PI.toFixed(6);
+  }
+
+  function toggleMode() {
+    deg = !deg;
+    document.getElementById('mode').innerText = deg ? "DEG" : "RAD";
+  }
+
+  function memoryAdd() {
+    memory += eval(display.value);
+  }
+
+  function memoryRecall() {
+    display.value += memory;
+  }
+
+  function memoryClear() {
+    memory = 0;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Haunted Text Writer</title>
+  <style>
+    body {
+      background-color: black;
+      color: #0ff;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      color: red;
+      text-shadow: 0 0 5px red;
+    }
+    textarea {
+      width: 80%;
+      height: 150px;
+      background: #111;
+      border: 1px solid #444;
+      color: #0ff;
+      font-size: 18px;
+      padding: 10px;
+      resize: none;
+    }
+    .glitch {
+      animation: glitch 0.3s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red; }
+      50% { text-shadow: -2px 0 lime; }
+      100% { text-shadow: 2px 0 blue; }
+    }
+    .whisper {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 20px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>🕯️ Haunted Text Writer 🕯️</h1>
+  <p>Start typing... but beware.</p>
+  <textarea id="hauntedBox" placeholder="Enter your text... if you dare"></textarea>
+  <div class="whisper" id="whisper"></div>
+
+  <script>
+    const hauntedBox = document.getElementById('hauntedBox');
+    const whisper = document.getElementById('whisper');
+    const ghostPhrases = [
+      "I see you...",
+      "Bloody Sweet...",
+      "Who's typing with you?",
+      "The shadows are listening...",
+      "Don't stop now...",
+      "Behind you!",
+      "It’s not your hands typing anymore...",
+      "Run while you can...",
+      "You cant see me...",
+      "Bloody Sweet..."
+    ];
+
+    hauntedBox.addEventListener('input', () => {
+      hauntedBox.classList.add('glitch');
+
+      // Randomly replace a character
+      if (Math.random() < 0.2) {
+        let txt = hauntedBox.value;
+        let i = Math.floor(Math.random() * txt.length);
+        let replacement = String.fromCharCode(97 + Math.floor(Math.random() * 26));
+        hauntedBox.value = txt.substring(0, i) + replacement + txt.substring(i + 1);
+      }
+
+      // Show random whisper message
+      if (Math.random() < 0.3) {
+        whisper.textContent = ghostPhrases[Math.floor(Math.random() * ghostPhrases.length)];
+      } else {
+        whisper.textContent = '';
+      }
+
+      // Remove glitch effect after short delay
+      setTimeout(() => hauntedBox.classList.remove('glitch'), 500);
+    });
+  </script>
+</body>
+</html>
