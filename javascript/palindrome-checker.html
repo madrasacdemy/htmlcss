@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindrome Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        .container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 80%;
+        }
+        button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #c0392b;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            min-height: 50px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .palindrome {
+            background-color: #d5f5e3;
+            color: #27ae60;
+        }
+        .not-palindrome {
+            background-color: #fadbd8;
+            color: #e74c3c;
+        }
+        .examples {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Palindrome Checker</h1>
+        <p>Enter a word or phrase to check if it's a palindrome:</p>
+        
+        <input type="text" id="inputText" placeholder="e.g., madam, race car">
+        <br>
+        <button onclick="checkPalindrome()">Check Palindrome</button>
+        
+        <div id="result">Result will appear here</div>
+        
+        <div class="examples">
+            <p><strong>Palindrome examples:</strong></p>
+            <ul>
+                <li>madam</li>
+                <li>racecar</li>
+                <li>A man, a plan, a canal, Panama!</li>
+                <li>Was it a car or a cat I saw?</li>
+                <li>No 'x' in Nixon</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function checkPalindrome() {
+            const input = document.getElementById('inputText').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                resultDiv.textContent = "Please enter some text to check";
+                resultDiv.className = "";
+                return;
+            }
+            
+            // Clean the input: remove non-alphanumeric characters and convert to lowercase
+            const cleanedInput = input.toLowerCase().replace(/[^a-z0-9]/g, '');
+            
+            // Check if cleaned input is empty after cleaning (e.g., only symbols were entered)
+            if (!cleanedInput) {
+                resultDiv.textContent = "Please enter valid text (letters or numbers)";
+                resultDiv.className = "";
+                return;
+            }
+            
+            // Reverse the cleaned input
+            const reversedInput = cleanedInput.split('').reverse().join('');
+            
+            // Check if palindrome
+            const isPalindrome = cleanedInput === reversedInput;
+            
+            // Display result
+            if (isPalindrome) {
+                resultDiv.textContent = `"${input}" is a palindrome!`;
+                resultDiv.className = "palindrome";
+            } else {
+                resultDiv.textContent = `"${input}" is NOT a palindrome.`;
+                resultDiv.className = "not-palindrome";
+            }
+            
+            // Show the comparison
+            resultDiv.textContent += `\n\nOriginal: ${cleanedInput}\nReversed: ${reversedInput}`;
+        }
+        
+        // Allow checking by pressing Enter key
+        document.getElementById('inputText').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPalindrome();
+            }
+        });
+    </script>
+</body>
+</html>
