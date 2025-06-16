@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App - Real-time Chat App</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f5f7fb;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: white;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .search {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+            outline: none;
+        }
+        
+        .contacts {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .contact {
+            display: flex;
+            padding: 15px 20px;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .contact:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .contact.active {
+            background-color: #e9f5ff;
+        }
+        
+        .contact-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .contact-info {
+            flex: 1;
+        }
+        
+        .contact-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .contact-lastmsg {
+            font-size: 14px;
+            color: var(--gray);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .contact-meta {
+            text-align: right;
+        }
+        
+        .contact-time {
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 6px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            font-size: 12px;
+        }
+        
+        /* Chat area */
+        .chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e9ecef;
+            background: white;
+        }
+        
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .chat-name {
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .chat-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .chat-actions button {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #f5f7fb;
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .message.received {
+            justify-content: flex-start;
+        }
+        
+        .message.sent {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 60%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+        }
+        
+        .message.received .message-content {
+            background: white;
+            border-top-left-radius: 0;
+        }
+        
+        .message.sent .message-content {
+            background: var(--primary);
+            color: white;
+            border-top-right-radius: 0;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            color: var(--gray);
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .message.sent .message-time {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .input-area {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            background: white;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 15px;
+            border-radius: 20px;
+            border: 1px solid #e9ecef;
+            outline: none;
+        }
+        
+        .input-actions {
+            display: flex;
+            gap: 15px;
+            margin-left: 15px;
+        }
+        
+        .input-actions button {
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .send-button {
+            color: var(--primary) !important;
+        }
+        
+        /* Call notification */
+        .call-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .call-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .call-info {
+            flex: 1;
+        }
+        
+        .call-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .call-status {
+            font-size: 14px;
+            color: var(--gray);
+        }
+        
+        .call-actions {
+            display: flex;
+            gap: 10px;
+            margin-left: 15px;
+        }
+        
+        .call-actions button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        
+        .decline-call {
+            background-color: #ff6b6b;
+            color: white;
+        }
+        
+        .accept-call {
+            background-color: var(--success);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar with contacts -->
+    <div class="sidebar">
+        <div class="header">
+            <div class="logo">Chat App</div>
+        </div>
+        
+        <div class="search">
+            <input type="text" class="search-input" placeholder="Search contacts...">
+        </div>
+        
+        <div class="contacts">
+            <!-- Contact 1 -->
+            <div class="contact active">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="contact-avatar">
+                <div class="contact-info">
+                    <div class="contact-name">Sarah Johnson</div>
+                    <div class="contact-lastmsg">Hey, how are you doing?</div>
+                </div>
+                <div class="contact-meta">
+                    <div class="contact-time">10:30 AM</div>
+                    <div class="badge">2</div>
+                </div>
+            </div>
+            
+            <!-- Contact 2 -->
+            <div class="contact">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Profile" class="contact-avatar">
+                <div class="contact-info">
+                    <div class="contact-name">Michael Chen</div>
+                    <div class="contact-lastmsg">Let's meet tomorrow at 2pm</div>
+                </div>
+                <div class="contact-meta">
+                    <div class="contact-time">Yesterday</div>
+                </div>
+            </div>
+            
+            <!-- Contact 3 -->
+            <div class="contact">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Profile" class="contact-avatar">
+                <div class="contact-info">
+                    <div class="contact-name">Design Team</div>
+                    <div class="contact-lastmsg">Maria: I've sent the mockups</div>
+                </div>
+                <div class="contact-meta">
+                    <div class="contact-time">Mon</div>
+                    <div class="badge">5</div>
+                </div>
+            </div>
+            
+            <!-- More contacts would go here -->
+        </div>
+    </div>
+    
+    <!-- Chat area -->
+    <div class="chat">
+        <div class="chat-header">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Profile" class="chat-avatar">
+            <div class="chat-name">Sarah Johnson</div>
+            <div class="chat-actions">
+                <button>📞</button>
+                <button>🎥</button>
+                <button>⋮</button>
+            </div>
+        </div>
+        
+        <div class="messages">
+            <!-- Received message -->
+            <div class="message received">
+                <div class="message-content">
+                    Hey there! How's it going?
+                    <div class="message-time">10:30 AM</div>
+                </div>
+            </div>
+            
+            <!-- Sent message -->
+            <div class="message sent">
+                <div class="message-content">
+                    I'm doing great! Just finished that project we talked about.
+                    <div class="message-time">10:32 AM</div>
+                </div>
+            </div>
+            
+            <!-- Received message -->
+            <div class="message received">
+                <div class="message-content">
+                    That's awesome! Can you share the files with me?
+                    <div class="message-time">10:33 AM</div>
+                </div>
+            </div>
+            
+            <!-- Sent message with file -->
+            <div class="message sent">
+                <div class="message-content">
+                    Sure! Here's the document 📎 project-final.pdf
+                    <div class="message-time">10:35 AM</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" placeholder="Type a message...">
+            <div class="input-actions">
+                <button>😊</button>
+                <button>📎</button>
+                <button class="send-button">↑</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Incoming call notification -->
+    <div class="call-notification">
+        <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Profile" class="call-avatar">
+        <div class="call-info">
+            <div class="call-name">David Wilson</div>
+            <div class="call-status">Incoming video call...</div>
+        </div>
+        <div class="call-actions">
+            <button class="decline-call">✕</button>
+            <button class="accept-call">✓</button>
+        </div>
+    </div>
+</body>
+</html>
