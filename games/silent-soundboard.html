@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔊 Silent Soundboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <style>
+    .wave-bar {
+      width: 5px;
+      height: 40px;
+      background-color: #6366f1;
+      border-radius: 3px;
+      display: inline-block;
+      margin: 0 2px;
+    }
+
+    .active-key {
+      transform: scale(1.1);
+      background-color: #4338ca !important;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+    }
+
+    .key-button {
+      transition: all 0.2s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-white to-purple-100 min-h-screen flex flex-col items-center justify-center px-4 py-6">
+
+  <h1 class="text-3xl font-bold mb-6 text-gray-800">🔊 Silent Soundboard</h1>
+
+  <!-- Keys Grid -->
+  <div id="keys" class="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-3 max-w-5xl w-full justify-center mb-8">
+    <!-- Buttons will be injected here -->
+  </div>
+
+  <!-- Visualizer -->
+  <div id="visual-container" class="flex justify-center items-end h-24"></div>
+
+  <script>
+    const keyLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const keysContainer = document.getElementById('keys');
+
+    // Generate key buttons
+    keyLetters.forEach(letter => {
+      const btn = document.createElement('button');
+      btn.textContent = letter;
+      btn.className = 'key-button text-white bg-indigo-600 rounded-lg p-4 font-bold shadow hover:bg-indigo-700';
+      btn.setAttribute('data-key', letter);
+      btn.onclick = () => handleKeyPress(letter);
+      keysContainer.appendChild(btn);
+    });
+
+    // Create wave bars
+    const visualContainer = document.getElementById('visual-container');
+    const NUM_BARS = 30;
+    const bars = [];
+
+    for (let i = 0; i < NUM_BARS; i++) {
+      const bar = document.createElement("div");
+      bar.className = "wave-bar";
+      visualContainer.appendChild(bar);
+      bars.push(bar);
+    }
+
+    // Handle key press
+    function handleKeyPress(letter) {
+      const btn = document.querySelector(`button[data-key="${letter}"]`);
+      if (!btn) return;
+
+      // Animate wave
+      gsap.fromTo(
+        bars,
+        { scaleY: 1 },
+        {
+          scaleY: () => Math.random() * 2 + 0.5,
+          duration: 0.4,
+          ease: "power2.out",
+          yoyo: true,
+          repeat: 1,
+          stagger: 0.03
+        }
+      );
+
+      // Animate key
+      btn.classList.add('active-key');
+      setTimeout(() => btn.classList.remove('active-key'), 200);
+    }
+
+    // Handle physical key press
+    document.addEventListener('keydown', (e) => {
+      const key = e.key.toUpperCase();
+      if (keyLetters.includes(key)) {
+        handleKeyPress(key);
+      }
+    });
+  </script>
+</body>
+</html>
