@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ultimate Fun Fact Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #fff3e0, #e1bee7);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 50px 20px;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #4a148c;
+    }
+
+    #fact {
+      font-size: 1.2rem;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      max-width: 700px;
+      margin: 30px 0;
+      min-height: 80px;
+    }
+
+    button, select {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #7e57c2;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #5e35b1;
+    }
+
+    select {
+      background-color: #ede7f6;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧠 Ultimate Fun Fact Generator</h1>
+
+  <label for="category">Choose a category:</label>
+  <select id="category">
+    <option value="random">Random</option>
+    <option value="science">Science</option>
+    <option value="history">History</option>
+    <option value="animals">Animals</option>
+    <option value="tech">Technology</option>
+  </select>
+
+  <button onclick="getFact()">Get Fact</button>
+  <button onclick="speakFact()">🔊 Speak</button>
+
+  <div id="fact">Click the button to learn something new!</div>
+
+  <script>
+    const localFacts = {
+      science: [
+        "Water can boil and freeze at the same time.",
+        "The Eiffel Tower can grow more than 6 inches in summer.",
+        "A teaspoon of neutron star would weigh 6 billion tons.",
+      ],
+      history: [
+        "Napoleon was once attacked by a horde of bunnies.",
+        "Oxford University is older than the Aztec Empire.",
+        "Julius Caesar was once kidnapped by pirates.",
+      ],
+      animals: [
+        "Sloths can hold their breath longer than dolphins can.",
+        "Cows have best friends and get stressed when separated.",
+        "A group of flamingos is called a 'flamboyance'.",
+      ],
+      tech: [
+        "The first email was sent in 1971.",
+        "The first iPhone had less computing power than a modern smartwatch.",
+        "There are more devices connected to the internet than people on Earth.",
+      ]
+    };
+
+    const factBox = document.getElementById('fact');
+
+    function typeWriter(text, i = 0) {
+      factBox.innerHTML = '';
+      const speed = 30;
+      const interval = setInterval(() => {
+        factBox.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(interval);
+      }, speed);
+    }
+
+    async function getFact() {
+      const category = document.getElementById('category').value;
+      let fact = "";
+
+      if (category === "random") {
+        // Using BoredAPI as example – replace with any other public fact API
+        try {
+          const res = await fetch("https://www.boredapi.com/api/activity");
+          const data = await res.json();
+          fact = data.activity || "Couldn't load a fun fact. Try again!";
+        } catch {
+          fact = "There was an error fetching data.";
+        }
+      } else {
+        const facts = localFacts[category];
+        fact = facts[Math.floor(Math.random() * facts.length)];
+      }
+
+      typeWriter(fact);
+      window.currentFact = fact; // store for speech
+    }
+
+    function speakFact() {
+      if (!window.currentFact) return;
+      const utterance = new SpeechSynthesisUtterance(window.currentFact);
+      utterance.lang = 'en-US';
+      speechSynthesis.speak(utterance);
+    }
+  </script>
+
+</body>
+</html>

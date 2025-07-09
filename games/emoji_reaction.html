@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Enhanced Mood Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f8ff;
+      text-align: center;
+      padding: 50px 20px;
+      transition: background 0.5s ease;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+      font-size: 2rem;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+      max-width: 500px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+
+    .emoji {
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .emoji:hover {
+      transform: scale(1.3);
+    }
+
+    #quote {
+      margin-top: 40px;
+      font-size: 1.2rem;
+      color: #333;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: #004d40;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>How are you feeling today?</h1>
+
+  <div class="emoji-grid" id="moods">
+    <span class="emoji" data-mood="happy">😊</span>
+    <span class="emoji" data-mood="sad">😢</span>
+    <span class="emoji" data-mood="angry">😠</span>
+    <span class="emoji" data-mood="calm">😌</span>
+    <span class="emoji" data-mood="excited">🤩</span>
+    <span class="emoji" data-mood="tired">🥱</span>
+    <span class="emoji" data-mood="anxious">😰</span>
+    <span class="emoji" data-mood="confident">😎</span>
+    <span class="emoji" data-mood="bored">😐</span>
+    <span class="emoji" data-mood="in-love">😍</span>
+  </div>
+
+  <div id="quote"></div>
+
+  <script>
+    const quotes = {
+      happy: {
+        text: "Keep smiling — your joy is a light to others!",
+        color: "#FFF9C4"
+      },
+      sad: {
+        text: "It's okay to feel sad. Let it out, then let it go. 🌧️➡️☀️",
+        color: "#E1F5FE"
+      },
+      angry: {
+        text: "Take a breath. Pause. Respond with clarity, not fire.",
+        color: "#FFCDD2"
+      },
+      calm: {
+        text: "You radiate peace. Stay centered, you're doing great.",
+        color: "#C8E6C9"
+      },
+      excited: {
+        text: "Your passion is your power. Share it boldly!",
+        color: "#FFE082"
+      },
+      tired: {
+        text: "Rest is productive too. Recharge and return stronger.",
+        color: "#D7CCC8"
+      },
+      anxious: {
+        text: "Inhale. Exhale. You’ve survived 100% of your tough days so far.",
+        color: "#B3E5FC"
+      },
+      confident: {
+        text: "Own your day. You’re sharp, bold, and unstoppable.",
+        color: "#D1C4E9"
+      },
+      bored: {
+        text: "Time to spark curiosity — try something new today!",
+        color: "#EEEEEE"
+      },
+      "in-love": {
+        text: "Love is beautiful. Spread it wide and let it lift you.",
+        color: "#F8BBD0"
+      }
+    };
+
+    document.querySelectorAll('.emoji').forEach(emoji => {
+      emoji.addEventListener('click', () => {
+        const mood = emoji.getAttribute('data-mood');
+        const quote = quotes[mood];
+        document.body.style.backgroundColor = quote.color;
+        document.getElementById('quote').innerHTML = `<span class="highlight">${mood.replace('-', ' ')}</span>: ${quote.text}`;
+      });
+    });
+  </script>
+
+</body>
+</html>
