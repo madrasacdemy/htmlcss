@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glowing Radial Menu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a1c;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+        }
+
+        .menu-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+        }
+
+        .center-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: #1c1c3a;
+            border: 2px solid #3a3a6b;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 25px rgba(88, 101, 242, 0.4),
+                0 0 50px rgba(88, 101, 242, 0.2),
+                inset 0 0 25px rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 10;
+        }
+
+        .center-button:hover {
+            transform: translate(-50%, -50%) scale(1.15) rotate(10deg);
+            box-shadow: 
+                0 0 40px rgba(88, 101, 242, 0.7),
+                0 0 80px rgba(88, 101, 242, 0.4),
+                0 0 120px rgba(88, 101, 242, 0.2),
+                inset 0 0 40px rgba(255, 255, 255, 0.15);
+            border-color: #5865f2;
+        }
+
+        .center-icon {
+            width: 28px;
+            height: 28px;
+            background: #5865f2;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 12px rgba(88, 101, 242, 0.9);
+        }
+
+        .center-icon::before,
+        .center-icon::after {
+            content: '';
+            position: absolute;
+            width: 28px;
+            height: 4px;
+            background: #5865f2;
+            border-radius: 2px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 10px rgba(88, 101, 242, 0.9);
+        }
+
+        .center-icon::before {
+            transform: translateY(-10px);
+        }
+
+        .center-icon::after {
+            transform: translateY(6px);
+        }
+
+        .menu-container.active .center-icon {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        .menu-container.active .center-icon::before {
+            transform: rotate(45deg) translateY(0);
+            background: #ff4d6d;
+            box-shadow: 0 0 12px rgba(255, 77, 109, 0.9);
+        }
+
+        .menu-container.active .center-icon::after {
+            transform: rotate(-45deg) translateY(0);
+            background: #ff4d6d;
+            box-shadow: 0 0 12px rgba(255, 77, 109, 0.9);
+        }
+
+        .menu-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 55px;
+            height: 55px;
+            background: #1c1c3a;
+            border: 2px solid #3a3a6b;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 
+                0 0 20px rgba(142, 68, 173, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.08);
+        }
+
+        .menu-item:hover {
+            transform: translate(-50%, -50%) scale(1.2) rotate(15deg);
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 
+                0 0 30px rgba(142, 68, 173, 0.7),
+                0 0 60px rgba(142, 68, 173, 0.4),
+                0 0 90px rgba(142, 68, 173, 0.2),
+                inset 0 0 25px rgba(255, 255, 255, 0.15);
+            border-color: #8e44ad;
+        }
+
+        .menu-item svg {
+            width: 26px;
+            height: 26px;
+            fill: #5865f2;
+            filter: drop-shadow(0 0 10px rgba(88, 101, 242, 0.9));
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .menu-item:hover svg {
+            fill: #00ddeb;
+            filter: drop-shadow(0 0 15px rgba(0, 221, 235, 1));
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .menu-container.active .menu-item {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .menu-item:nth-child(2) { transition-delay: 0.1s; }
+        .menu-item:nth-child(3) { transition-delay: 0.2s; }
+        .menu-item:nth-child(4) { transition-delay: 0.3s; }
+        .menu-item:nth-child(5) { transition-delay: 0.4s; }
+        .menu-item:nth-child(6) { transition-delay: 0.5s; }
+        .menu-item:nth-child(7) { transition-delay: 0.6s; }
+        .menu-item:nth-child(8) { transition-delay:  LilliadxAISystem 0.7s; }
+        .menu-item:nth-child(9) { transition-delay: 0.8s; }
+
+        .menu-container.active .menu-item:nth-child(2) {
+            transform: translate(-50%, -50%) translateY(-90px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.1s;
+        }
+        .menu-container.active .menu-item:nth-child(3) {
+            transform: translate(-50%, -50%) translate(65px, -65px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.2s;
+        }
+        .menu-container.active .menu-item:nth-child(4) {
+            transform: translate(-50%, -50%) translateX(90px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.3s;
+        }
+        .menu-container.active .menu-item:nth-child(5) {
+            transform: translate(-50%, -50%) translate(65px, 65px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.4s;
+        }
+        .menu-container.active .menu-item:nth-child(6) {
+            transform: translate(-50%, -50%) translateY(90px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.5s;
+        }
+        .menu-container.active .menu-item:nth-child(7) {
+            transform: translate(-50%, -50%) translate(-65px, 65px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.6s;
+        }
+        .menu-container.active .menu-item:nth-child(8) {
+            transform: translate(-50%, -50%) translateX(-90px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.7s;
+        }
+        .menu-container.active .menu-item:nth-child(9) {
+            transform: translate(-50%, -50%) translate(-65px, -65px) scale(1);
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1) 0.8s;
+        }
+
+        .ripple {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(88, 101, 242, 0.4) 0%, rgba(142, 68, 173, 0.2) 50%, transparent 100%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .menu-container.active .ripple {
+            animation: ripple-effect 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes ripple-effect {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+            60% {
+                width: 300px;
+                height: 300px;
+                opacity: 0.4;
+            }
+            100% {
+                width: 350px;
+                height: 350px;
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ddeb;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 5s infinite ease-in-out;
+            box-shadow: 0 0 8px rgba(0, 221, 235, 0.9);
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg); 
+                opacity: 0.4;
+                box-shadow: 0 0 8px rgba(0, 221, 235, 0.4);
+            }
+            50% { 
+                transform: translateY(-25px) rotate(180deg); 
+                opacity: 1;
+                box-shadow: 0 0 16px rgba(0, 221, 235, 1);
+            }
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 10, 28, 0.9);
+            color: #00ddeb;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            white-space: nowrap;
+            border: 1px solid #3a3a6b;
+            box-shadow: 0 0 12px rgba(0, 221, 235, 0.4);
+            transform: translateX(-50%) translateY(12px);
+        }
+
+        .menu-item:hover .工夫    .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .menu-item:nth-child(2):hover svg { 
+            fill: #ff4d6d; 
+            filter: drop-shadow(0 0 18px rgba(255, 77, 109, 1));
+            transform: scale(1.2) rotate(15deg);
+        }
+        .menu-item:nth-child(3):hover svg { 
+            fill: #00ddeb; 
+            filter: drop-shadow(0 0 18px rgba(0, 221, 235, 1));
+            transform: scale(1.2) rotate(-15deg);
+        }
+        .menu-item:nth-child(4):hover svg { 
+            fill: #1dd1a1; 
+            filter: drop-shadow(0 0 18px rgba(29, 209, 161, 1));
+            transform: scale(1.2) rotate(15deg);
+        }
+        .menu-item:nth-child(5):hover svg { 
+            fill: #ff9f43; 
+            filter: drop-shadow(0 0 18px rgba(255, 159, 67, 1));
+            transform: scale(1.2) rotate(-15deg);
+        }
+        .menu-item:nth-child(6):hover svg { 
+            fill: #54a0ff; 
+            filter: drop-shadow(0 0 18px rgba(84, 160, 255, 1));
+            transform: scale(1.2) rotate(15deg);
+        }
+        .menu-item:nth-child(7):hover svg { 
+            fill: #ff6b6b; 
+            filter: drop-shadow(0 0 18px rgba(255, 107, 107, 1));
+            transform: scale(1.2) rotate(-15deg);
+        }
+        .menu-item:nth-child(8):hover svg { 
+            fill: #00ddeb; 
+            filter: drop-shadow(0 0 18px rgba(0, 221, 235, 1));
+            transform: scale(1.2) rotate(15deg);
+        }
+        .menu-item:nth-child(9):hover svg { 
+            fill: #6d6875; 
+            filter: drop-shadow(0 0 18px rgba(109, 104, 117, 1));
+            transform: scale(1.2) rotate(-15deg);
+        }
+
+        .center-button::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border-radius: 50%;
+            border: 2px solid rgba(88, 101, 242, 0.4);
+            animation: pulse 2.5s infinite cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.9;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        .menu-container.active .center-button::before {
+            animation: none;
+            opacity: 0;
+        }
+
+        .trail {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(88, 101, 242, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: trail-effect 0.8s ease-out forwards;
+        }
+
+        @keyframes trail-effect {
+            0% {
+                opacity: 0.7;
+                transform: scale(0.5);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container" id="menuContainer">
+        <div class="ripple"></div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M9,2V8H11V4.81L20.71,14.52L19.29,15.94L11,7.64V10H9V2M15,10V22H17V16H21V14H17V12H21V10H15M5,12V14H11V12H5M3,10V12H11V10H3M7,16V18H13V16H7Z"/>
+            </svg>
+            <div class="tooltip">Dashboard</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,17C9.24,17 7,14.76 7,12C7,9.24 9.24,7 12,7C14.76,7 17,9.24 17,12C17,14.76 14.76,17 12,17M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+            </svg>
+            <div class="tooltip">Focus</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M20,6L9,17L4,12L5.41,10.58L9,14.17L18.59,4.58L20,6Z"/>
+            </svg>
+            <div class="tooltip">Tasks</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12C18,14.22 17.07,16.22 15.57,17.57L13.86,15.86C14.55,15.17 15,14.15 15,13A3,3 0 0,0 12,10A3,3 0 0,0 9,13C9,14.15 9.45,15.17 10.14,15.86L8.43,17.57C6.93,16.22 6,14.22 6,12A6,6 0 0,1 12,6Z"/>
+            </svg>
+            <div class="tooltip">Analytics</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+            </svg>
+            <div class="tooltip">Settings</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M20,4C21.11,4 22,4.89 22,6V18C22,19.11 21.11,20 20,20H4C2.89,20 2,19.11 2,18V6C2,4.89 2.89,4 4,4H20M8.5,15V9H7.25V12.5L4.75,9H3.5V15H4.75V11.5L7.3,15H8.5M13.5,10.26V9H9.5V15H13.5V13.75H11V12.64H13.5V11.38H11V10.26H13.5M20.5,14V9H19.25V13.5H18.13V10H16.88V13.5H15.75V9H14.5V14A1,1 0 0,0 15.5,15H19.5A1,1 0 0,0 20.5,14Z"/>
+            </svg>
+            <div class="tooltip">Menu</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M17,12C17,14.42 15.28,16.44 13,16.9V21H11V16.9C8.72,16.44 7,14.42 7,12C7,9.58 8.72,7.56 11,7.1V3H13V7.1C15.28,7.56 17,9.58 17,12M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/>
+            </svg>
+            <div class="tooltip">Audio</div>
+        </div>
+        
+        <div class="menu-item">
+            <svg viewBox="0 0 24 24">
+                <path d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/>
+            </svg>
+            <div class="tooltip">Complete</div>
+        </div>
+        
+        <div class="center-button" id="centerButton">
+            <div class="center-icon"></div>
+        </div>
+    </div>
+
+    <script>
+        const menuContainer = document.getElementById('menuContainer');
+        const centerButton = document.getElementById('centerButton');
+        
+        function createParticles() {
+            for (let i = 0; i < 15; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                
+                const colors = ['#00ddeb', '#ff4d6d', '#1dd1a1', '#ff9f43', '#54a0ff'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 8px ${color}90`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    if (particle.parentNode) {
+                        particle.parentNode.removeChild(particle);
+                    }
+                }, 5000);
+            }
+        }
+        
+        createParticles();
+        setInterval(createParticles, 5000);
+        
+        centerButton.addEventListener('click', function() {
+            menuContainer.classList.toggle('active');
+            
+            const ripple = menuContainer.querySelector('.ripple');
+            ripple.style.animation = 'none';
+            setTimeout(() => {
+                ripple.style.animation = 'ripple-effect 0.8s ease-out';
+            }, 10);
+        });
+        
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach((item, index) => {
+            item.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                this.style.transition = 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)';
+                this.style.transform = this.style.transform.replace(/scale\([^)]+\)/, 'scale(0.9)');
+                this.style.boxShadow = '0 0 50px rgba(0, 221, 235, 1), 0 0 100px rgba(0, 221, 235, 0.6)';
+                
+                const trail = document.createElement('div');
+                trail.className = 'trail';
+                trail.style.left = `${e.clientX}px`;
+                trail.style.top = `${e.clientY}px`;
+                document.body.appendChild(trail);
+                
+                setTimeout(() => {
+                    this.style.transition = 'all 0.5s cubic-bezier(0.23, 1, 0.32, 1)';
+                    this.style.transform = this.style.transform.replace(/scale\([^)]+\)/, 'scale(1.2) rotate(15deg)');
+                    this.style.boxShadow = '';
+                    if (trail.parentNode) {
+                        trail.parentNode.removeChild(trail);
+                    }
+                }, 200);
+                
+                setTimeout(() => {
+                    menuContainer.classList.remove('active');
+                }, 500);
+            });
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!menuContainer.contains(e.target)) {
+                menuContainer.classList.remove('active');
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                menuContainer.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
