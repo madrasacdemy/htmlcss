@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UrbanBite Digital Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #4ecdc4;
+      --dark: #292f36;
+      --light: #f7fff7;
+      --accent: #ffd166;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: var(--dark);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .subtitle {
+      color: var(--dark);
+      font-weight: 300;
+      margin-bottom: 1.5rem;
+    }
+    
+    .menu-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .menu-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .section-header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-header h2 {
+      font-size: 1.5rem;
+      margin-left: 0.5rem;
+    }
+    
+    .menu-items {
+      padding: 1rem;
+    }
+    
+    .menu-item {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 1.5rem;
+    }
+    
+    .menu-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .item-image {
+      width: 100px;
+      height: 100px;
+      border-radius: 8px;
+      object-fit: cover;
+      margin-right: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .item-details {
+      flex: 1;
+    }
+    
+    .item-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--dark);
+    }
+    
+    .item-desc {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+    
+    .item-price {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .add-btn {
+      background: var(--secondary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .add-btn:hover {
+      background: #3dbeb6;
+      transform: translateY(-2px);
+    }
+    
+    .cart-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--dark);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .cart-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .cart-icon {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+    
+    .checkout-btn {
+      background: var(--accent);
+      color: var(--dark);
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .checkout-btn:hover {
+      background: #ffc233;
+      transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+      .menu-container {
+        grid-template-columns: 1fr;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>UrbanBite</h1>
+      <p class="subtitle">Artisanal flavors for the modern palate</p>
+    </header>
+    
+    <div class="menu-container">
+      <!-- Starters Section -->
+      <div class="menu-section">
+        <div class="section-header">
+          <span>🥗</span>
+          <h2>Starters</h2>
+        </div>
+        <div class="menu-items">
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200&h=200&fit=crop" alt="Bruschetta" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Bruschetta</h3>
+              <p class="item-desc">Toasted bread topped with tomatoes, garlic, and fresh basil</p>
+              <p class="item-price">$6.50</p>
+              <button class="add-btn" onclick="addToCart('Bruschetta', 6.5)">Add to Order</button>
+            </div>
+          </div>
+          
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1547592180-85f173990554?w=200&h=200&fit=crop" alt="Tomato Soup" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Tomato Soup</h3>
+              <p class="item-desc">Creamy tomato soup with a hint of basil and garlic</p>
+              <p class="item-price">$5.00</p>
+              <button class="add-btn" onclick="addToCart('Tomato Soup', 5)">Add to Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mains Section -->
+      <div class="menu-section">
+        <div class="section-header">
+          <span>🍝</span>
+          <h2>Mains</h2>
+        </div>
+        <div class="menu-items">
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=200&h=200&fit=crop" alt="Truffle Pasta" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Truffle Pasta</h3>
+              <p class="item-desc">Creamy fettuccine with black truffle oil and parmesan</p>
+              <p class="item-price">$13.00</p>
+              <button class="add-btn" onclick="addToCart('Truffle Pasta', 13)">Add to Order</button>
+            </div>
+          </div>
+          
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=200&fit=crop" alt="Margherita Pizza" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Margherita Pizza</h3>
+              <p class="item-desc">Classic pizza with tomato sauce, mozzarella, and fresh basil</p>
+              <p class="item-price">$10.00</p>
+              <button class="add-btn" onclick="addToCart('Margherita Pizza', 10)">Add to Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Desserts Section -->
+      <div class="menu-section">
+        <div class="section-header">
+          <span>🍰</span>
+          <h2>Desserts</h2>
+        </div>
+        <div class="menu-items">
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=200&h=200&fit=crop" alt="Tiramisu" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Tiramisu</h3>
+              <p class="item-desc">Layers of coffee-soaked ladyfingers and mascarpone cream</p>
+              <p class="item-price">$6.25</p>
+              <button class="add-btn" onclick="addToCart('Tiramisu', 6.25)">Add to Order</button>
+            </div>
+          </div>
+          
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=200&h=200&fit=crop" alt="Cheesecake" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Cheesecake</h3>
+              <p class="item-desc">New York-style cheesecake with berry compote</p>
+              <p class="item-price">$5.50</p>
+              <button class="add-btn" onclick="addToCart('Cheesecake', 5.5)">Add to Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Drinks Section -->
+      <div class="menu-section">
+        <div class="section-header">
+          <span>🥤</span>
+          <h2>Drinks</h2>
+        </div>
+        <div class="menu-items">
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1603569283847-aa295f0d016a?w=200&h=200&fit=crop" alt="Orange Juice" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Orange Juice</h3>
+              <p class="item-desc">Freshly squeezed orange juice</p>
+              <p class="item-price">$3.00</p>
+              <button class="add-btn" onclick="addToCart('Orange Juice', 3)">Add to Order</button>
+            </div>
+          </div>
+          
+          <div class="menu-item">
+            <img src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=200&h=200&fit=crop" alt="Espresso" class="item-image">
+            <div class="item-details">
+              <h3 class="item-name">Espresso</h3>
+              <p class="item-desc">Strong Italian-style espresso</p>
+              <p class="item-price">$2.50</p>
+              <button class="add-btn" onclick="addToCart('Espresso', 2.5)">Add to Order</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="cart-bar">
+    <div class="cart-info">
+      <span class="cart-icon">🛒</span>
+      <span id="cart-items">0 items</span>
+      <span> • </span>
+      <span id="cart-total">$0.00</span>
+    </div>
+    <button class="checkout-btn">Checkout</button>
+  </div>
+
+  <script>
+    let cart = [];
+    let total = 0;
+    
+    function addToCart(itemName, price) {
+      cart.push({name: itemName, price: price});
+      total += price;
+      
+      // Update cart display
+      document.getElementById('cart-items').textContent = cart.length + (cart.length === 1 ? ' item' : ' items');
+      document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+      
+      // Show animation feedback
+      const btn = event.target;
+      btn.textContent = 'Added!';
+      btn.style.backgroundColor = '#4CAF50';
+      setTimeout(() => {
+        btn.textContent = 'Add to Order';
+        btn.style.backgroundColor = '#4ecdc4';
+      }, 1000);
+    }
+  </script>
+</body>
+</html>
