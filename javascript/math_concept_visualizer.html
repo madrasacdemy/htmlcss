@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quadratic Equation Visualizer</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin: 10px 0;
+      font-size: 1.8em;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 20px;
+      height: calc(100% - 60px); /* accounting for h1 */
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
+
+    .controls {
+      flex: 1;
+      min-width: 300px;
+      max-height: 100%;
+      overflow-y: auto;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .graph-container {
+      flex: 2;
+      min-width: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .slider-container {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .value-display {
+      text-align: center;
+      font-family: monospace;
+      font-size: 1.2em;
+      margin-top: 5px;
+    }
+
+    .equation {
+      font-size: 1.3em;
+      text-align: center;
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #e8f4f8;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .roots, .vertex {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .roots {
+      background-color: #e8f8f0;
+    }
+
+    .vertex {
+      background-color: #f8e8f0;
+    }
+
+    .explanation {
+      margin-top: 20px;
+      font-size: 0.95em;
+      line-height: 1.5;
+    }
+
+    canvas {
+      width: 100% !important;
+      height: 300px !important;
+      max-height: 300px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+      }
+
+      .graph-container {
+        order: -1;
+      }
+
+      canvas {
+        height: 250px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Quadratic Equation Visualizer</h1>
+  <div class="container">
+    <div class="graph-container">
+      <canvas id="graph"></canvas>
+    </div>
+
+    <div class="controls">
+      <div class="slider-container">
+        <label for="a">Coefficient a: <span id="a-value">1</span></label>
+        <input type="range" id="a" min="-5" max="5" step="0.1" value="1">
+      </div>
+      <div class="slider-container">
+        <label for="b">Coefficient b: <span id="b-value">0</span></label>
+        <input type="range" id="b" min="-10" max="10" step="0.1" value="0">
+      </div>
+      <div class="slider-container">
+        <label for="c">Coefficient c: <span id="c-value">0</span></label>
+        <input type="range" id="c" min="-10" max="10" step="0.1" value="0">
+      </div>
+      
+      <div class="equation" id="equation">
+        f(x) = 1x² + 0x + 0
+      </div>
+      
+      <div class="roots" id="roots">
+        <strong>Roots:</strong> x = 0 (double root)
+      </div>
+      
+      <div class="vertex" id="vertex">
+        <strong>Vertex:</strong> (0, 0)
+      </div>
+      
+      <div class="explanation">
+        <h3>How It Works:</h3>
+        <p>The quadratic equation has the form f(x) = ax² + bx + c.</p>
+        <p>• The parabola opens <strong>upwards</strong> if a > 0 and <strong>downwards</strong> if a < 0.</p>
+        <p>• The vertex is the turning point of the parabola.</p>
+        <p>• The roots are where the parabola crosses the x-axis.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const aSlider = document.getElementById('a');
+    const bSlider = document.getElementById('b');
+    const cSlider = document.getElementById('c');
+    const aValue = document.getElementById('a-value');
+    const bValue = document.getElementById('b-value');
+    const cValue = document.getElementById('c-value');
+    const equationEl = document.getElementById('equation');
+    const rootsEl = document.getElementById('roots');
+    const vertexEl = document.getElementById('vertex');
+
+    const ctx = document.getElementById('graph').getContext('2d');
+    let chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        datasets: [{
+          label: 'Quadratic Function',
+          borderColor: 'rgb(75, 192, 192)',
+          borderWidth: 3,
+          pointRadius: 0,
+          fill: false,
+          tension: 0.1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'center',
+            title: {
+              display: true,
+              text: 'x-axis'
+            },
+            min: -10,
+            max: 10
+          },
+          y: {
+            type: 'linear',
+            title: {
+              display: true,
+              text: 'y-axis'
+            },
+            min: -10,
+            max: 10
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        }
+      }
+    });
+
+    function updateGraph() {
+      const a = parseFloat(aSlider.value);
+      const b = parseFloat(bSlider.value);
+      const c = parseFloat(cSlider.value);
+
+      aValue.textContent = a;
+      bValue.textContent = b;
+      cValue.textContent = c;
+
+      equationEl.innerHTML = `f(x) = ${formatCoefficient(a)}x² ${formatSignedCoefficient(b)}x ${formatSignedCoefficient(c)}`;
+
+      const data = [];
+      for (let x = -10; x <= 10; x += 0.1) {
+        data.push({ x: x, y: a * x * x + b * x + c });
+      }
+
+      chart.data.datasets[0].data = data;
+      chart.update();
+
+      const discriminant = b * b - 4 * a * c;
+      let rootsText;
+
+      if (discriminant > 0) {
+        const root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        const root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        rootsText = `Roots: x = ${root1.toFixed(2)} and x = ${root2.toFixed(2)}`;
+      } else if (discriminant === 0) {
+        const root = -b / (2 * a);
+        rootsText = `Root: x = ${root.toFixed(2)} (double root)`;
+      } else {
+        rootsText = "No real roots (parabola doesn't cross x-axis)";
+      }
+
+      rootsEl.innerHTML = `<strong>${rootsText}</strong>`;
+
+      const vertexX = -b / (2 * a);
+      const vertexY = a * vertexX * vertexX + b * vertexX + c;
+      vertexEl.innerHTML = `<strong>Vertex:</strong> (${vertexX.toFixed(2)}, ${vertexY.toFixed(2)})`;
+    }
+
+    function formatCoefficient(coeff) {
+      if (coeff === 1) return '';
+      if (coeff === -1) return '-';
+      return coeff;
+    }
+
+    function formatSignedCoefficient(coeff) {
+      if (coeff >= 0) return `+ ${coeff}`;
+      return `- ${Math.abs(coeff)}`;
+    }
+
+    aSlider.addEventListener('input', updateGraph);
+    bSlider.addEventListener('input', updateGraph);
+    cSlider.addEventListener('input', updateGraph);
+
+    updateGraph();
+  </script>
+</body>
+</html>

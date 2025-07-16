@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Virtual Terrarium</title>
+    <style>
+        :root {
+            --day-bg: linear-gradient(to bottom, #87CEEB 0%, #E0F7FA 100%);
+            --night-bg: linear-gradient(to bottom, #0F2027 0%, #203A43 50%, #2C5364 100%);
+            --day-ground: #8BC34A;
+            --night-ground: #4b6f44;
+            --day-terrarium: #8D6E63;
+            --night-terrarium: #5D4037;
+            --text-primary: #212121;
+            --text-secondary: #424242;
+            --text-contrast: #FFFFFF;
+            --control-bg: rgba(255, 255, 255, 0.9);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            color: var(--text-primary);
+            transition: background-color 2s ease;
+        }
+        
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #sky {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: background-image 2s ease;
+        }
+        
+        #terrarium {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            background-color: var(--day-terrarium);
+            border-top: 15px solid #5D4037;
+            transition: background-color 2s ease, border-color 2s ease;
+        }
+        
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            background-color: var(--day-ground);
+            border-top: 5px solid #689F38;
+            transition: background-color 2s ease, border-color 2s ease;
+        }
+        
+        .plant {
+            position: absolute;
+            bottom: 30%;
+            transform-origin: bottom center;
+            transition: transform 0.5s ease;
+            z-index: 2;
+        }
+        
+        .stem {
+            position: relative;
+            width: 10px;
+            margin: 0 auto;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            background: linear-gradient(to right, #4CAF50, #4CAF5080);
+            transition: background 2s ease;
+        }
+        
+        .leaf {
+            position: absolute;
+            border-radius: 50% 0 50% 0;
+            transform-origin: left center;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            background-color: #4CAF50;
+            transition: background-color 2s ease;
+        }
+        
+        .flower {
+            position: absolute;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .petal {
+            position: absolute;
+            border-radius: 50%;
+            transition: background-color 2s ease;
+        }
+        
+        .center {
+            position: relative;
+            border-radius: 50%;
+            z-index: 2;
+            background-color: #FFD700;
+        }
+        
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: var(--control-bg);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            max-width: 90%;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: clamp(14px, 2vw, 16px);
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #388E3C;
+        }
+        
+        #stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--control-bg);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            max-width: 90%;
+        }
+        
+        #sun-moon {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #FFEB3B 30%, rgba(255, 235, 59, 0) 70%);
+            box-shadow: 0 0 50px #FFEB3B;
+            transition: background 2s ease, box-shadow 2s ease;
+            z-index: 1;
+        }
+        
+        #water-drop {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(66, 165, 245, 0.7);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+            transition: opacity 0.3s ease, top 1s ease;
+        }
+        
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--control-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            text-align: center;
+            display: none;
+            z-index: 100;
+            max-width: 80%;
+        }
+        
+        #close-message {
+            margin-top: 10px;
+        }
+        
+        #time-display {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--control-bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            font-weight: bold;
+            z-index: 10;
+            font-size: clamp(14px, 2vw, 16px);
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        
+        .cloud {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+        
+        #weather-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--control-bg);
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .decoration {
+            position: absolute;
+            z-index: 1;
+        }
+        
+        .rock {
+            background-color: #757575;
+            border-radius: 50%;
+        }
+        
+        .mushroom {
+            position: relative;
+        }
+        
+        .mushroom-cap {
+            position: absolute;
+            border-radius: 50% 50% 0 0;
+            background-color: #E53935;
+        }
+        
+        .mushroom-stem {
+            position: absolute;
+            border-radius: 5px;
+            background-color: #EFEBE9;
+        }
+        
+        #plant-grid {
+            position: absolute;
+            bottom: 30%;
+            width: 90%;
+            left: 5%;
+            height: 60%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            z-index: 1;
+        }
+        
+        .grid-cell {
+            position: relative;
+            border: 1px dashed rgba(0,0,0,0.2);
+            border-radius: 5px;
+            transition: border-color 2s ease;
+        }
+        
+        #toggle-grid {
+            margin-top: 10px;
+        }
+        
+        h1, h2, h3 {
+            color: var(--text-primary);
+            margin-top: 0;
+        }
+        
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            #controls, #stats {
+                position: static;
+                margin: 10px auto;
+                width: 90%;
+            }
+            
+            #plant-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            #weather-controls {
+                bottom: 10px;
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="sky"></div>
+        <div id="sun-moon"></div>
+        
+        <div id="stars"></div>
+        <div id="clouds"></div>
+        
+        <div id="terrarium"></div>
+        <div id="ground"></div>
+        
+        <div id="decorations"></div>
+        <div id="plant-grid"></div>
+        
+        <div id="controls">
+            <h2>Virtual Terrarium</h2>
+            <button id="add-plant">Add Plant</button>
+            <button id="water">Water Plants</button>
+            <button id="toggle-sun">Toggle Auto Day/Night (ON)</button>
+            <button id="help">Help</button>
+            <button id="toggle-grid">Toggle Grid</button>
+        </div>
+        
+        <div id="stats">
+            <h3>Ecosystem Stats</h3>
+            <p>Plants: <span id="plant-count">0</span>/18</p>
+            <p>Health: <span id="health">100%</span></p>
+            <p>Growth: <span id="growth">0%</span></p>
+            <p>Time: <span id="time-ratio">Day 1</span></p>
+        </div>
+        
+        <div id="time-display">12:00 PM</div>
+        
+        <div id="weather-controls">
+            <button id="weather-clear">Clear</button>
+            <button id="weather-rain">Rain</button>
+            <button id="weather-storm">Storm</button>
+        </div>
+        
+        <div id="water-drop"></div>
+        
+        <div id="message">
+            <h2>🌿 Enhanced Virtual Terrarium 🌿</h2>
+            <p>• Click "Add Plant" to add a new plant (max 18)</p>
+            <p>• Click "Water Plants" to keep them healthy</p>
+            <p>• Enable Auto Day/Night for realistic light cycles</p>
+            <p>• Try different weather effects with the buttons below</p>
+            <p>• Use the grid to organize your plants</p>
+            <p>• Plants grow better during their preferred time</p>
+            <button id="close-message">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Game State
+        const state = {
+            plants: [],
+            time: {
+                cycle: true,
+                isDay: true,
+                hour: 12,
+                minute: 0,
+                dayCount: 1,
+                speed: 100 // ms per minute
+            },
+            weather: 'clear',
+            gridVisible: true,
+            lastWatered: Date.now(),
+            health: 100,
+            growth: 0,
+            plantCount: 0,
+            maxPlants: 18,
+            celestialBody: {
+                radius: Math.max(window.innerWidth, window.innerHeight) * 0.6,
+                centerX: window.innerWidth / 2,
+                centerY: -100
+            }
+        };
+        
+        // DOM elements
+        const container = document.getElementById('container');
+        const sky = document.getElementById('sky');
+        const terrarium = document.getElementById('terrarium');
+        const ground = document.getElementById('ground');
+        const sunMoon = document.getElementById('sun-moon');
+        const stars = document.getElementById('stars');
+        const clouds = document.getElementById('clouds');
+        const decorations = document.getElementById('decorations');
+        const plantGrid = document.getElementById('plant-grid');
+        const addPlantBtn = document.getElementById('add-plant');
+        const waterBtn = document.getElementById('water');
+        const toggleSunBtn = document.getElementById('toggle-sun');
+        const helpBtn = document.getElementById('help');
+        const messageDiv = document.getElementById('message');
+        const closeMessageBtn = document.getElementById('close-message');
+        const waterDrop = document.getElementById('water-drop');
+        const plantCountEl = document.getElementById('plant-count');
+        const healthEl = document.getElementById('health');
+        const growthEl = document.getElementById('growth');
+        const timeDisplay = document.getElementById('time-display');
+        const timeRatioEl = document.getElementById('time-ratio');
+        const toggleGridBtn = document.getElementById('toggle-grid');
+        const weatherClearBtn = document.getElementById('weather-clear');
+        const weatherRainBtn = document.getElementById('weather-rain');
+        const weatherStormBtn = document.getElementById('weather-storm');
+        
+        // Plant types with preferences
+        const plantTypes = [
+            { 
+                name: 'Fern', 
+                color: '#4CAF50', 
+                nightColor: '#2E7D32',
+                maxHeight: 200, 
+                leafSize: 30,
+                prefers: 'day',
+                growthRate: 1
+            },
+            { 
+                name: 'Succulent', 
+                color: '#8BC34A', 
+                nightColor: '#689F38',
+                maxHeight: 150, 
+                leafSize: 25,
+                prefers: 'day',
+                growthRate: 0.8
+            },
+            { 
+                name: 'Moonflower', 
+                color: '#E91E63', 
+                nightColor: '#9C27B0',
+                maxHeight: 180, 
+                leafSize: 20, 
+                hasFlower: true,
+                prefers: 'night',
+                growthRate: 1.2,
+                flowerColor: '#FFFFFF',
+                nightFlowerColor: '#E1BEE7'
+            },
+            { 
+                name: 'Cactus', 
+                color: '#689F38', 
+                nightColor: '#33691E',
+                maxHeight: 250, 
+                leafSize: 15,
+                prefers: 'day',
+                growthRate: 0.5
+            },
+            { 
+                name: 'Nightshade', 
+                color: '#3F51B5', 
+                nightColor: '#1A237E',
+                maxHeight: 220, 
+                leafSize: 35,
+                prefers: 'night',
+                growthRate: 1.5,
+                hasFlower: true,
+                flowerColor: '#7C4DFF',
+                nightFlowerColor: '#B388FF'
+            }
+        ];
+        
+        // Initialize
+        function init() {
+            // Set initial celestial body position
+            updateCelestialPosition();
+            
+            // Create grid cells
+            createGridCells();
+            
+            // Add decorations
+            addDecorations();
+            
+            // Create stars and clouds
+            createStars();
+            createClouds();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Start game loops
+            startGameLoops();
+            
+            // Initial render
+            updateDayNight();
+        }
+        
+        function updateCelestialPosition() {
+            // Calculate based on window size
+            state.celestialBody.radius = Math.max(window.innerWidth, window.innerHeight) * 0.6;
+            state.celestialBody.centerX = window.innerWidth / 2;
+            state.celestialBody.centerY = -100;
+        }
+        
+        function createGridCells() {
+            plantGrid.innerHTML = '';
+            const columns = Math.min(6, Math.floor(window.innerWidth / 150));
+            
+            plantGrid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+            
+            for (let i = 0; i < state.maxPlants; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.dataset.index = i;
+                plantGrid.appendChild(cell);
+            }
+        }
+        
+        function addDecorations() {
+            decorations.innerHTML = '';
+            
+            // Add rocks
+            for (let i = 0; i < 5; i++) {
+                const rock = document.createElement('div');
+                rock.className = 'decoration rock';
+                rock.style.width = `${Math.random() * 40 + 20}px`;
+                rock.style.height = `${Math.random() * 30 + 15}px`;
+                rock.style.bottom = '30%';
+                rock.style.left = `${Math.random() * 90 + 5}%`;
+                decorations.appendChild(rock);
+            }
+            
+            // Add mushrooms
+            for (let i = 0; i < 3; i++) {
+                const mushroom = document.createElement('div');
+                mushroom.className = 'decoration mushroom';
+                
+                const stem = document.createElement('div');
+                stem.className = 'mushroom-stem';
+                stem.style.width = '10px';
+                stem.style.height = '20px';
+                stem.style.bottom = '0';
+                
+                const cap = document.createElement('div');
+                cap.className = 'mushroom-cap';
+                cap.style.width = '25px';
+                cap.style.height = '15px';
+                cap.style.bottom = '20px';
+                cap.style.left = '-7.5px';
+                
+                mushroom.appendChild(stem);
+                mushroom.appendChild(cap);
+                mushroom.style.bottom = '30%';
+                mushroom.style.left = `${Math.random() * 90 + 5}%`;
+                
+                decorations.appendChild(mushroom);
+            }
+        }
+        
+        function createStars() {
+            stars.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = `${Math.random() * 3 + 1}px`;
+                star.style.height = star.style.width;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 70}%`;
+                stars.appendChild(star);
+            }
+        }
+        
+        function createClouds() {
+            clouds.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.width = `${Math.random() * 100 + 50}px`;
+                cloud.style.height = `${Math.random() * 30 + 20}px`;
+                cloud.style.left = `${Math.random() * 100}%`;
+                cloud.style.top = `${Math.random() * 30 + 10}%`;
+                clouds.appendChild(cloud);
+            }
+        }
+        
+        function setupEventListeners() {
+            addPlantBtn.addEventListener('click', addPlant);
+            waterBtn.addEventListener('click', waterPlants);
+            toggleSunBtn.addEventListener('click', toggleTimeCycle);
+            helpBtn.addEventListener('click', showHelp);
+            closeMessageBtn.addEventListener('click', hideHelp);
+            container.addEventListener('mousemove', trackMouse);
+            toggleGridBtn.addEventListener('click', toggleGrid);
+            weatherClearBtn.addEventListener('click', () => setWeather('clear'));
+            weatherRainBtn.addEventListener('click', () => setWeather('rain'));
+            weatherStormBtn.addEventListener('click', () => setWeather('storm'));
+            window.addEventListener('resize', handleResize);
+        }
+        
+        function startGameLoops() {
+            // Start time
+            updateTime();
+            setInterval(updateTime, state.time.speed);
+            
+            // Game loop
+            setInterval(updatePlants, 1000);
+        }
+        
+        function handleResize() {
+            updateCelestialPosition();
+            createGridCells();
+            updateCelestialPosition();
+        }
+        
+        function addPlant() {
+            if (state.plantCount >= state.maxPlants) {
+                alert(`Maximum ${state.maxPlants} plants allowed!`);
+                return;
+            }
+            
+            // Find empty grid cells
+            const gridCells = Array.from(document.querySelectorAll('.grid-cell'));
+            const emptyCells = gridCells.filter(cell => !cell.hasChildNodes());
+            
+            if (emptyCells.length === 0) return;
+            
+            // Select random empty cell
+            const cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const type = plantTypes[Math.floor(Math.random() * plantTypes.length)];
+            
+            const plant = document.createElement('div');
+            plant.className = 'plant';
+            
+            const stem = document.createElement('div');
+            stem.className = 'stem';
+            stem.style.height = '20px';
+            stem.style.background = state.time.isDay 
+                ? `linear-gradient(to right, ${type.color}, ${type.color}80)`
+                : `linear-gradient(to right, ${type.nightColor}, ${type.nightColor}80)`;
+            
+            // Add leaves
+            const leafCount = Math.floor(Math.random() * 3) + 2;
+            for (let i = 0; i < leafCount; i++) {
+                const leaf = document.createElement('div');
+                leaf.className = 'leaf';
+                leaf.style.width = `${type.leafSize}px`;
+                leaf.style.height = `${type.leafSize}px`;
+                leaf.style.left = `${Math.random() > 0.5 ? 5 : -type.leafSize + 5}px`;
+                leaf.style.top = `${(i / leafCount) * 20}px`;
+                leaf.style.backgroundColor = state.time.isDay ? type.color : type.nightColor;
+                stem.appendChild(leaf);
+            }
+            
+            // Add flower if applicable
+            if (type.hasFlower) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.style.width = '30px';
+                flower.style.height = '30px';
+                flower.style.top = '0px';
+                
+                // Petals
+                for (let i = 0; i < 5; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'petal';
+                    petal.style.width = '15px';
+                    petal.style.height = '15px';
+                    petal.style.backgroundColor = state.time.isDay ? type.flowerColor : type.nightFlowerColor;
+                    
+                    const angle = (i / 5) * 360;
+                    petal.style.transform = `rotate(${angle}deg) translateX(20px) rotate(${-angle}deg)`;
+                    flower.appendChild(petal);
+                }
+                
+                // Center
+                const center = document.createElement('div');
+                center.className = 'center';
+                center.style.width = '10px';
+                center.style.height = '10px';
+                flower.appendChild(center);
+                
+                stem.appendChild(flower);
+            }
+            
+            plant.appendChild(stem);
+            cell.appendChild(plant);
+            
+            // Store plant data
+            state.plants.push({
+                element: plant,
+                stem: stem,
+                type: type,
+                height: 20,
+                health: 100,
+                cell: cell,
+                lastGrowth: Date.now()
+            });
+            
+            state.plantCount++;
+            updateStats();
+        }
+        
+        function waterPlants() {
+            state.lastWatered = Date.now();
+            
+            // Animate water drop
+            waterDrop.style.opacity = '1';
+            waterDrop.style.top = '0px';
+            waterDrop.style.left = `${Math.random() * 80 + 10}%`;
+            
+            setTimeout(() => {
+                waterDrop.style.top = '100vh';
+                waterDrop.style.opacity = '0';
+            }, 1000);
+            
+            // Improve plant health
+            state.plants.forEach(plant => {
+                plant.health = Math.min(100, plant.health + 20);
+            });
+            
+            state.health = Math.min(100, state.health + 10);
+            updateStats();
+        }
+        
+        function toggleTimeCycle() {
+            state.time.cycle = !state.time.cycle;
+            toggleSunBtn.textContent = state.time.cycle 
+                ? 'Toggle Auto Day/Night (ON)' 
+                : 'Toggle Auto Day/Night (OFF)';
+        }
+        
+        function trackMouse(e) {
+            if (!state.time.isDay || !state.time.cycle) return;
+            
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Make plants lean toward light
+            state.plants.forEach(plant => {
+                const plantRect = plant.cell.getBoundingClientRect();
+                const plantX = plantRect.left + plantRect.width / 2;
+                const distance = x - plantX;
+                const lean = Math.min(30, Math.max(-30, distance / 10));
+                plant.element.style.transform = `rotate(${lean}deg)`;
+            });
+        }
+        
+        function updatePlants() {
+            const now = Date.now();
+            const timeSinceWater = (now - state.lastWatered) / 1000; // in seconds
+            
+            // Update each plant
+            state.plants.forEach(plant => {
+                // Health decreases over time without water
+                if (timeSinceWater > 30) {
+                    plant.health -= 2;
+                } else if (timeSinceWater > 60) {
+                    plant.health -= 5;
+                }
+                
+                // Plants grow when healthy and in preferred time
+                const isPreferredTime = (plant.type.prefers === 'day' && state.time.isDay) || 
+                                       (plant.type.prefers === 'night' && !state.time.isDay);
+                
+                const growthMultiplier = isPreferredTime ? plant.type.growthRate : plant.type.growthRate * 0.5;
+                
+                if (plant.health > 50 && now - plant.lastGrowth > 5000) {
+                    plant.height = Math.min(
+                        plant.type.maxHeight, 
+                        plant.height + (5 * growthMultiplier)
+                    );
+                    plant.stem.style.height = `${plant.height}px`;
+                    plant.lastGrowth = now;
+                }
+            });
+            
+            // Calculate overall stats
+            if (state.plants.length > 0) {
+                state.health = state.plants.reduce((sum, plant) => sum + plant.health, 0) / state.plants.length;
+                state.growth = state.plants.reduce((sum, plant) => sum + (plant.height / plant.type.maxHeight * 100), 0) / state.plants.length;
+            } else {
+                state.health = 100;
+                state.growth = 0;
+            }
+            
+            updateStats();
+            
+            // Remove dead plants
+            state.plants = state.plants.filter(plant => {
+                if (plant.health <= 0) {
+                    plant.cell.removeChild(plant.element);
+                    state.plantCount--;
+                    return false;
+                }
+                return true;
+            });
+        }
+        
+        function updateStats() {
+            plantCountEl.textContent = `${state.plantCount}/${state.maxPlants}`;
+            healthEl.textContent = `${Math.round(state.health)}%`;
+            growthEl.textContent = `${Math.round(state.growth)}%`;
+            timeRatioEl.textContent = `Day ${state.time.dayCount}`;
+            
+            // Color code health
+            if (state.health < 30) {
+                healthEl.style.color = '#F44336';
+            } else if (state.health < 70) {
+                healthEl.style.color = '#FF9800';
+            } else {
+                healthEl.style.color = '#4CAF50';
+            }
+        }
+        
+        function updateTime() {
+            if (state.time.cycle) {
+                state.time.minute += 1;
+                
+                if (state.time.minute >= 60) {
+                    state.time.minute = 0;
+                    state.time.hour += 1;
+                    
+                    if (state.time.hour >= 24) {
+                        state.time.hour = 0;
+                        state.time.dayCount += 1;
+                    }
+                }
+                
+                // Check for day/night transition
+                const wasDay = state.time.isDay;
+                state.time.isDay = state.time.hour >= 6 && state.time.hour < 18;
+                
+                if (wasDay !== state.time.isDay) {
+                    updateDayNight();
+                }
+                
+                updateCelestialPosition();
+            }
+            
+            // Update time display
+            updateTimeDisplay();
+        }
+        
+        function updateCelestialPosition() {
+            if (!state.time.cycle) return;
+            
+            // Calculate position along elliptical path
+            const progress = (state.time.hour * 60 + state.time.minute) / 1440;
+            const angle = progress * 2 * Math.PI;
+            const x = Math.sin(angle) * state.celestialBody.radius;
+            const y = Math.cos(angle) * state.celestialBody.radius * 0.5; // Flatten the ellipse
+            
+            sunMoon.style.left = `${state.celestialBody.centerX + x}px`;
+            sunMoon.style.top = `${state.celestialBody.centerY + y}px`;
+        }
+        
+        function updateTimeDisplay() {
+            const ampm = state.time.hour >= 12 ? 'PM' : 'AM';
+            const displayHour = state.time.hour % 12 || 12;
+            timeDisplay.textContent = `${displayHour}:${state.time.minute.toString().padStart(2, '0')} ${ampm}`;
+        }
+        
+        function updateDayNight() {
+            if (state.time.isDay) {
+                // Day mode
+                document.documentElement.style.setProperty('--text-primary', '#212121');
+                document.documentElement.style.setProperty('--text-secondary', '#424242');
+                sky.style.background = 'var(--day-bg)';
+                terrarium.style.backgroundColor = 'var(--day-terrarium)';
+                terrarium.style.borderTopColor = '#5D4037';
+                ground.style.backgroundColor = 'var(--day-ground)';
+                ground.style.borderTopColor = '#689F38';
+                sunMoon.style.background = 'radial-gradient(circle, #FFEB3B 30%, rgba(255, 235, 59, 0) 70%)';
+                sunMoon.style.boxShadow = '0 0 50px #FFEB3B';
+                
+                // Hide stars, show clouds
+                stars.style.opacity = '0';
+                clouds.style.opacity = '0.8';
+            } else {
+                // Night mode
+                document.documentElement.style.setProperty('--text-primary', '#FFFFFF');
+                document.documentElement.style.setProperty('--text-secondary', '#E0E0E0');
+                sky.style.background = 'var(--night-bg)';
+                terrarium.style.backgroundColor = 'var(--night-terrarium)';
+                terrarium.style.borderTopColor = '#3E2723';
+                ground.style.backgroundColor = 'var(--night-ground)';
+                ground.style.borderTopColor = '#33691E';
+                sunMoon.style.background = 'radial-gradient(circle, #E0E0E0 20%, rgba(224, 224, 224, 0) 70%)';
+                sunMoon.style.boxShadow = '0 0 30px #E0E0E0';
+                
+                // Show stars, hide clouds
+                stars.style.opacity = '0.8';
+                clouds.style.opacity = '0';
+            }
+        }
+        
+        function toggleGrid() {
+            state.gridVisible = !state.gridVisible;
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                cell.style.border = state.gridVisible ? '1px dashed rgba(0,0,0,0.2)' : 'none';
+            });
+            toggleGridBtn.textContent = state.gridVisible ? 'Hide Grid' : 'Show Grid';
+        }
+        
+        function setWeather(type) {
+            state.weather = type;
+            container.style.backgroundImage = 'none';
+            
+            switch (type) {
+                case 'rain':
+                    container.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px)';
+                    container.style.backgroundSize = '5px 5px';
+                    break;
+                case 'storm':
+                    container.style.backgroundImage = 'linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px)';
+                    container.style.backgroundSize = '3px 3px';
+                    break;
+            }
+        }
+        
+        function showHelp() {
+            messageDiv.style.display = 'block';
+        }
+        
+        function hideHelp() {
+            messageDiv.style.display = 'none';
+        }
+        
+        // Start the game
+        init();
+    </script>
+</body>
+</html>
