@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typewriter Text Effect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .typewriter-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .typewriter-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 70%
+            );
+            animation: shine 8s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        h1 {
+            color: #00ff88;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 10px #00ff88,
+                         0 0 20px #00ff88,
+                         0 0 30px #00ff88;
+            position: relative;
+            z-index: 1;
+        }
+
+        .typewriter {
+            font-size: 2rem;
+            color: #ffffff;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .typewriter-text {
+            border-right: 3px solid #00ff88;
+            padding-right: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                border-color: #00ff88;
+            }
+            51%, 100% {
+                border-color: transparent;
+            }
+        }
+
+        .controls {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .control-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .control-btn.active {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+        }
+
+        .speed-slider {
+            width: 150px;
+            height: 5px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #00ff88;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .speed-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px #00ff88;
+        }
+
+        .phrases-container {
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .phrases-title {
+            color: #00ff88;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .phrases-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .phrase-tag {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .phrase-tag:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            color: white;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            33% {
+                transform: translateY(-20px) rotate(1deg);
+            }
+            66% {
+                transform: translateY(20px) rotate(-1deg);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .typewriter {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .speed-control {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .typewriter-container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .typewriter {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="container">
+        <div class="typewriter-container">
+            <h1><i class="fas fa-keyboard"></i> Typewriter Effect</h1>
+            
+            <div class="typewriter">
+                <span class="typewriter-text" id="typewriterText"></span>
+            </div>
+            
+            <div class="controls">
+                <button class="control-btn active" id="playPauseBtn">
+                    <i class="fas fa-pause"></i>
+                    <span>Pause</span>
+                </button>
+                
+                <button class="control-btn" id="restartBtn">
+                    <i class="fas fa-redo"></i>
+                    <span>Restart</span>
+                </button>
+                
+                <div class="speed-control">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <input type="range" class="speed-slider" id="speedSlider" min="20" max="200" value="100">
+                    <span id="speedValue">100</span>
+                </div>
+            </div>
+            
+            <div class="phrases-container">
+                <h3 class="phrases-title">Current Phrases:</h3>
+                <div class="phrases-list" id="phrasesList"></div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="currentPhrase">1</span>
+                    <span>Current Phrase</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="totalPhrases">5</span>
+                    <span>Total Phrases</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="cycles">0</span>
+                    <span>Cycles</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TypewriterEffect {
+            constructor() {
+                this.phrases = [
+                    "Welcome to the Typewriter Effect!",
+                    "This text is being typed in real-time.",
+                    "You can control the speed and pause it.",
+                    "Try changing the phrases below.",
+                    "Built with HTML, CSS, and JavaScript!"
+                ];
+                
+                this.currentPhraseIndex = 0;
+                this.currentCharIndex = 0;
+                this.isDeleting = false;
+                this.isPaused = false;
+                this.typeSpeed = 100;
+                this.deleteSpeed = 50;
+                this.pauseTime = 2000;
+                this.cycles = 0;
+                
+                this.typewriterText = document.getElementById('typewriterText');
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.restartBtn = document.getElementById('restartBtn');
+                this.speedSlider = document.getElementById('speedSlider');
+                this.speedValue = document.getElementById('speedValue');
+                this.phrasesList = document.getElementById('phrasesList');
+                this.currentPhraseEl = document.getElementById('currentPhrase');
+                this.totalPhrasesEl = document.getElementById('totalPhrases');
+                this.cyclesEl = document.getElementById('cycles');
+                
+                this.init();
+            }
+            
+            init() {
+                this.updatePhrasesList();
+                this.updateStats();
+                this.startTyping();
+                
+                // Event listeners
+                this.playPauseBtn.addEventListener('click', () => this.togglePlayPause());
+                this.restartBtn.addEventListener('click', () => this.restart());
+                this.speedSlider.addEventListener('input', (e) => this.updateSpeed(e.target.value));
+            }
+            
+            startTyping() {
+                if (this.isPaused) return;
+                
+                const currentPhrase = this.phrases[this.currentPhraseIndex];
+                
+                if (!this.isDeleting) {
+                    // Typing
+                    this.typewriterText.textContent = currentPhrase.substring(0, this.currentCharIndex + 1);
+                    this.currentCharIndex++;
+                    
+                    if (this.currentCharIndex === currentPhrase.length) {
+                        // Finished typing, pause before deleting
+                        this.isDeleting = true;
+                        setTimeout(() => this.startTyping(), this.pauseTime);
+                        return;
+                    }
+                } else {
+                    // Deleting
+                    this.typewriterText.textContent = currentPhrase.substring(0, this.currentCharIndex - 1);
+                    this.currentCharIndex--;
+                    
+                    if (this.currentCharIndex === 0) {
+                        // Finished deleting, move to next phrase
+                        this.isDeleting = false;
+                        this.currentPhraseIndex = (this.currentPhraseIndex + 1) % this.phrases.length;
+                        
+                        if (this.currentPhraseIndex === 0) {
+                            this.cycles++;
+                            this.updateStats();
+                        }
+                        
+                        this.updateStats();
+                        setTimeout(() => this.startTyping(), 500);
+                        return;
+                    }
+                }
+                
+                const speed = this.isDeleting ? this.deleteSpeed : this.typeSpeed;
+                setTimeout(() => this.startTyping(), speed);
+            }
+            
+            togglePlayPause() {
+                this.isPaused = !this.isPaused;
+                
+                if (this.isPaused) {
+                    this.playPauseBtn.innerHTML = '<i class="fas fa-play"></i><span>Play</span>';
+                    this.playPauseBtn.classList.remove('active');
+                } else {
+                    this.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i><span>Pause</span>';
+                    this.playPauseBtn.classList.add('active');
+                    this.startTyping();
+                }
+            }
+            
+            restart() {
+                this.currentPhraseIndex = 0;
+                this.currentCharIndex = 0;
+                this.isDeleting = false;
+                this.cycles = 0;
+                this.typewriterText.textContent = '';
+                this.updateStats();
+                
+                if (this.isPaused) {
+                    this.togglePlayPause();
+                } else {
+                    this.startTyping();
+                }
+            }
+            
+            updateSpeed(value) {
+                this.typeSpeed = 250 - value; // Invert so higher value = faster
+                this.deleteSpeed = Math.floor(this.typeSpeed * 0.5);
+                this.speedValue.textContent = value;
+            }
+            
+            updatePhrasesList() {
+                this.phrasesList.innerHTML = this.phrases.map((phrase, index) => 
+                    `<span class="phrase-tag">${index + 1}. ${phrase}</span>`
+                ).join('');
+            }
+            
+            updateStats() {
+                this.currentPhraseEl.textContent = this.currentPhraseIndex + 1;
+                this.totalPhrasesEl.textContent = this.phrases.length;
+                this.cyclesEl.textContent = this.cycles;
+            }
+        }
+        
+        // Initialize the typewriter effect
+        const typewriter = new TypewriterEffect();
+    </script>
+</body>
+</html>

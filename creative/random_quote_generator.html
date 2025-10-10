@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Quote Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.05) 50%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            animation: shine 15s linear infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        .quote-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        .quote-container.fade-out {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .quote-container.fade-in {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .quote-text {
+            font-size: 1.8rem;
+            line-height: 1.6;
+            color: #2d3748;
+            margin-bottom: 20px;
+            position: relative;
+            padding: 0 30px;
+        }
+
+        .quote-text::before {
+            content: '"';
+            position: absolute;
+            left: -10px;
+            top: -20px;
+            font-size: 4rem;
+            color: #667eea;
+            opacity: 0.3;
+        }
+
+        .quote-text::after {
+            content: '"';
+            position: absolute;
+            right: -10px;
+            bottom: -40px;
+            font-size: 4rem;
+            color: #764ba2;
+            opacity: 0.3;
+        }
+
+        .quote-author {
+            font-size: 1.3rem;
+            color: #667eea;
+            text-align: right;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        .quote-author::before {
+            content: '— ';
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-twitter {
+            background: #1da1f2;
+        }
+
+        .btn-twitter:hover {
+            box-shadow: 0 10px 30px rgba(29, 161, 242, 0.4);
+        }
+
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #4a5568;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .category-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .quote-text {
+                font-size: 1.4rem;
+                padding: 0 20px;
+            }
+
+            .quote-text::before,
+            .quote-text::after {
+                font-size: 3rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 200px;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quote-container {
+                padding: 30px 20px;
+            }
+
+            .quote-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-quote-left"></i> Random Quotes</h1>
+            <p class="subtitle">Inspiration at your fingertips</p>
+        </div>
+
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">All</button>
+            <button class="category-btn" data-category="motivational">Motivational</button>
+            <button class="category-btn" data-category="life">Life</button>
+            <button class="category-btn" data-category="success">Success</button>
+            <button class="category-btn" data-category="wisdom">Wisdom</button>
+        </div>
+
+        <div class="quote-container" id="quoteContainer">
+            <div class="loading" id="loading">
+                <i class="fas fa-spinner"></i>
+            </div>
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-author" id="quoteAuthor"></div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" id="newQuoteBtn">
+                <i class="fas fa-sync-alt"></i>
+                New Quote
+            </button>
+            <button class="btn btn-twitter" id="tweetBtn">
+                <i class="fab fa-twitter"></i>
+                Tweet
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const quotes = [
+            {
+                text: "The only way to do great work is to love what you do.",
+                author: "Steve Jobs",
+                category: "motivational"
+            },
+            {
+                text: "Innovation distinguishes between a leader and a follower.",
+                author: "Steve Jobs",
+                category: "success"
+            },
+            {
+                text: "Life is what happens to you while you're busy making other plans.",
+                author: "John Lennon",
+                category: "life"
+            },
+            {
+                text: "The future belongs to those who believe in the beauty of their dreams.",
+                author: "Eleanor Roosevelt",
+                category: "motivational"
+            },
+            {
+                text: "It is during our darkest moments that we must focus to see the light.",
+                author: "Aristotle",
+                category: "wisdom"
+            },
+            {
+                text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+                author: "Winston Churchill",
+                category: "success"
+            },
+            {
+                text: "The only impossible journey is the one you never begin.",
+                author: "Tony Robbins",
+                category: "motivational"
+            },
+            {
+                text: "In the end, we will remember not the words of our enemies, but the silence of our friends.",
+                author: "Martin Luther King Jr.",
+                category: "wisdom"
+            },
+            {
+                text: "Life is either a daring adventure or nothing at all.",
+                author: "Helen Keller",
+                category: "life"
+            },
+            {
+                text: "The way to get started is to quit talking and begin doing.",
+                author: "Walt Disney",
+                category: "success"
+            },
+            {
+                text: "Don't watch the clock; do what it does. Keep going.",
+                author: "Sam Levenson",
+                category: "motivational"
+            },
+            {
+                text: "The purpose of our lives is to be happy.",
+                author: "Dalai Lama",
+                category: "life"
+            },
+            {
+                text: "Only a life lived for others is a life worthwhile.",
+                author: "Albert Einstein",
+                category: "wisdom"
+            },
+            {
+                text: "Success is not how high you have climbed, but how you make a positive difference to the world.",
+                author: "Roy T. Bennett",
+                category: "success"
+            },
+            {
+                text: "Believe you can and you're halfway there.",
+                author: "Theodore Roosevelt",
+                category: "motivational"
+            }
+        ];
+
+        class QuoteGenerator {
+            constructor() {
+                this.currentCategory = 'all';
+                this.currentQuote = null;
+                this.quoteContainer = document.getElementById('quoteContainer');
+                this.quoteText = document.getElementById('quoteText');
+                this.quoteAuthor = document.getElementById('quoteAuthor');
+                this.newQuoteBtn = document.getElementById('newQuoteBtn');
+                this.tweetBtn = document.getElementById('tweetBtn');
+                this.loading = document.getElementById('loading');
+                this.categoryBtns = document.querySelectorAll('.category-btn');
+
+                this.init();
+            }
+
+            init() {
+                this.newQuoteBtn.addEventListener('click', () => this.generateQuote());
+                this.tweetBtn.addEventListener('click', () => this.tweetQuote());
+
+                this.categoryBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.categoryBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentCategory = btn.dataset.category;
+                        this.generateQuote();
+                    });
+                });
+
+                // Generate initial quote
+                this.generateQuote();
+            }
+
+            getFilteredQuotes() {
+                if (this.currentCategory === 'all') {
+                    return quotes;
+                }
+                return quotes.filter(quote => quote.category === this.currentCategory);
+            }
+
+            generateQuote() {
+                // Show loading
+                this.loading.classList.add('show');
+                this.quoteText.style.display = 'none';
+                this.quoteAuthor.style.display = 'none';
+
+                // Simulate loading delay for better UX
+                setTimeout(() => {
+                    const filteredQuotes = this.getFilteredQuotes();
+                    const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
+                    this.currentQuote = filteredQuotes[randomIndex];
+
+                    // Fade out
+                    this.quoteContainer.classList.add('fade-out');
+
+                    setTimeout(() => {
+                        // Update content
+                        this.quoteText.textContent = this.currentQuote.text;
+                        this.quoteAuthor.textContent = this.currentQuote.author;
+
+                        // Hide loading and show content
+                        this.loading.classList.remove('show');
+                        this.quoteText.style.display = 'block';
+                        this.quoteAuthor.style.display = 'block';
+
+                        // Fade in
+                        this.quoteContainer.classList.remove('fade-out');
+                        this.quoteContainer.classList.add('fade-in');
+                    }, 300);
+                }, 500);
+            }
+
+            tweetQuote() {
+                if (!this.currentQuote) return;
+
+                const tweetText = `"${this.currentQuote.text}" — ${this.currentQuote.author}`;
+                const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+                
+                window.open(tweetUrl, '_blank');
+            }
+        }
+
+        // Initialize the quote generator
+        const quoteGenerator = new QuoteGenerator();
+    </script>
+</body>
+</html>
