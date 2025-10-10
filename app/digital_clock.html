@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .clock-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 40px 60px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                            0 0 20px rgba(100, 200, 255, 0.3);
+            }
+            to {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                            inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                            0 0 30px rgba(100, 200, 255, 0.5);
+            }
+        }
+
+        .time-display {
+            font-size: 5rem;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88,
+                         0 0 20px #00ff88,
+                         0 0 30px #00ff88;
+            letter-spacing: 0.1em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .time-display:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 15px #00ff88,
+                         0 0 30px #00ff88,
+                         0 0 45px #00ff88;
+        }
+
+        .date-display {
+            font-size: 1.5rem;
+            color: #88ccff;
+            text-align: center;
+            text-shadow: 0 0 5px #88ccff;
+            margin-bottom: 10px;
+        }
+
+        .day-display {
+            font-size: 1.2rem;
+            color: #ffaa00;
+            text-align: center;
+            text-shadow: 0 0 5px #ffaa00;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .seconds {
+            color: #ff6b6b;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .colon {
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% {
+                opacity: 1;
+            }
+            50%, 100% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .clock-container {
+                padding: 30px 40px;
+            }
+            
+            .time-display {
+                font-size: 3.5rem;
+            }
+            
+            .date-display {
+                font-size: 1.2rem;
+            }
+            
+            .day-display {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .clock-container {
+                padding: 20px 30px;
+            }
+            
+            .time-display {
+                font-size: 2.5rem;
+            }
+            
+            .date-display {
+                font-size: 1rem;
+            }
+            
+            .day-display {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Background Animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.05),
+                transparent
+            );
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="clock-container">
+        <div class="date-display" id="date"></div>
+        <div class="time-display" id="time">
+            <span id="hours">00</span>
+            <span class="colon">:</span>
+            <span id="minutes">00</span>
+            <span class="colon">:</span>
+            <span class="seconds" id="seconds">00</span>
+        </div>
+        <div class="day-display" id="day"></div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            
+            // Get time components
+            let hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Format hours (12-hour format with AM/PM)
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Add leading zeros
+            const formattedHours = hours.toString().padStart(2, '0');
+            const formattedMinutes = minutes.toString().padStart(2, '0');
+            const formattedSeconds = seconds.toString().padStart(2, '0');
+            
+            // Update time display
+            document.getElementById('hours').textContent = formattedHours;
+            document.getElementById('minutes').textContent = formattedMinutes;
+            document.getElementById('seconds').textContent = formattedSeconds;
+            
+            // Get date components
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            const dayName = days[now.getDay()];
+            const monthName = months[now.getMonth()];
+            const date = now.getDate();
+            const year = now.getFullYear();
+            
+            // Update date display
+            document.getElementById('date').textContent = `${monthName} ${date}, ${year}`;
+            document.getElementById('day').textContent = dayName;
+        }
+        
+        // Update clock immediately and then every second
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Add click effect to time display
+        document.querySelector('.time-display').addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1.05)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            }, 100);
+        });
+    </script>
+</body>
+</html>
