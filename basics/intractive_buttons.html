@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Hover Effects Showcase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .effects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .effect-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .effect-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Base button styles */
+        .btn {
+            position: relative;
+            padding: 15px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: inline-block;
+            z-index: 1;
+        }
+
+        /* Effect 1: Fill from Left - FIXED */
+        .btn-fill-left {
+            background: #667eea;
+        }
+
+        .btn-fill-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #764ba2;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-fill-left:hover::before {
+            transform: translateX(0);
+        }
+
+        /* Effect 2: Fill from Right - FIXED */
+        .btn-fill-right {
+            background: #667eea;
+        }
+
+        .btn-fill-right::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #764ba2;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-fill-right:hover::before {
+            transform: translateX(0);
+        }
+
+        /* Effect 3: Fill from Top - FIXED */
+        .btn-fill-top {
+            background: #667eea;
+        }
+
+        .btn-fill-top::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #764ba2;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-fill-top:hover::before {
+            transform: translateY(0);
+        }
+
+        /* Effect 4: Fill from Bottom - FIXED */
+        .btn-fill-bottom {
+            background: #667eea;
+        }
+
+        .btn-fill-bottom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #764ba2;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-fill-bottom:hover::before {
+            transform: translateY(0);
+        }
+
+        /* Effect 5: Diagonal Fill - FIXED */
+        .btn-diagonal {
+            background: #667eea;
+        }
+
+        .btn-diagonal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #764ba2;
+            transform: translateX(-100%) skewX(-20deg);
+            transform-origin: top left;
+            transition: transform 0.5s ease;
+            z-index: -1;
+        }
+
+        .btn-diagonal:hover::before {
+            transform: translateX(0) skewX(-20deg);
+        }
+
+        /* Effect 6: 3D Flip */
+        .btn-3d {
+            background: #667eea;
+            perspective: 1000px;
+        }
+
+        .btn-3d-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .btn-3d:hover .btn-3d-inner {
+            transform: rotateY(180deg);
+        }
+
+        .btn-3d-front, .btn-3d-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+        }
+
+        .btn-3d-back {
+            background: #764ba2;
+            transform: rotateY(180deg);
+        }
+
+        /* Effect 7: Border Animation */
+        .btn-border {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: #667eea;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-border:hover::before {
+            width: 100%;
+        }
+
+        .btn-border:hover {
+            color: white;
+        }
+
+        /* Effect 8: Shadow Grow */
+        .btn-shadow {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-shadow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Effect 9: Icon Slide In */
+        .btn-icon {
+            background: #667eea;
+            padding-left: 50px;
+        }
+
+        .btn-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-icon:hover {
+            padding-left: 15px;
+            padding-right: 50px;
+        }
+
+        .btn-icon:hover i {
+            left: auto;
+            right: 15px;
+        }
+
+        /* Effect 10: Gradient Shift */
+        .btn-gradient {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-size: 200% 200%;
+            transition: background-position 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            background-position: 100% 0;
+        }
+
+        /* Effect 11: Ripple Effect */
+        .btn-ripple {
+            background: #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-ripple:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Effect 12: Pulse Effect */
+        .btn-pulse {
+            background: #667eea;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
+            }
+        }
+
+        .btn-pulse:hover {
+            animation: none;
+            background: #764ba2;
+        }
+
+        /* Effect 13: Skew Effect */
+        .btn-skew {
+            background: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .btn-skew:hover {
+            transform: skew(-10deg);
+            background: #764ba2;
+        }
+
+        /* Effect 14: Glow Effect */
+        .btn-glow {
+            background: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px #667eea, 0 0 40px #667eea;
+            background: #764ba2;
+        }
+
+        /* Effect 15: Bounce Effect */
+        .btn-bounce {
+            background: #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .btn-bounce:hover {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Effect 16: Underline from Left */
+        .btn-underline {
+            background: transparent;
+            color: #667eea;
+            border: none;
+            position: relative;
+        }
+
+        .btn-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+        }
+
+        .btn-underline:hover::after {
+            width: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .effects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Button Hover Effects Showcase</h1>
+        <p class="subtitle">Hover over each button to see the effect in action</p>
+    </header>
+
+    <main class="effects-grid">
+        <div class="effect-card">
+            <h3 class="effect-title">Fill from Left</h3>
+            <button class="btn btn-fill-left">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Fill from Right</h3>
+            <button class="btn btn-fill-right">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Fill from Top</h3>
+            <button class="btn btn-fill-top">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Fill from Bottom</h3>
+            <button class="btn btn-fill-bottom">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Diagonal Fill</h3>
+            <button class="btn btn-diagonal">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">3D Flip</h3>
+            <button class="btn btn-3d">
+                <div class="btn-3d-inner">
+                    <div class="btn-3d-front">Hover Me</div>
+                    <div class="btn-3d-back">Surprise!</div>
+                </div>
+            </button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Border Animation</h3>
+            <button class="btn btn-border">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Shadow Grow</h3>
+            <button class="btn btn-shadow">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Icon Slide In</h3>
+            <button class="btn btn-icon">
+                <i class="fas fa-arrow-right"></i>
+                Hover Me
+            </button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Gradient Shift</h3>
+            <button class="btn btn-gradient">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Ripple Effect</h3>
+            <button class="btn btn-ripple">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Pulse Effect</h3>
+            <button class="btn btn-pulse">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Skew Effect</h3>
+            <button class="btn btn-skew">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Glow Effect</h3>
+            <button class="btn btn-glow">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Bounce Effect</h3>
+            <button class="btn btn-bounce">Hover Me</button>
+        </div>
+
+        <div class="effect-card">
+            <h3 class="effect-title">Underline from Left</h3>
+            <button class="btn btn-underline">Hover Me</button>
+        </div>
+    </main>
+</body>
+</html>
