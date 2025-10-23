@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Compass</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        .compass-wrapper {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .compass {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .compass-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2c3e50 0%, #34495e 100%);
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .direction-markers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .marker {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .marker span {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .marker:nth-child(1) { transform: rotate(0deg); }
+        .marker:nth-child(2) { transform: rotate(90deg); }
+        .marker:nth-child(3) { transform: rotate(180deg); }
+        .marker:nth-child(4) { transform: rotate(270deg); }
+
+        .degree-markers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .degree-marker {
+            position: absolute;
+            width: 1px;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.3);
+            left: 50%;
+            top: 5px;
+            transform-origin: center 145px;
+        }
+
+        .needle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .needle-body {
+            position: absolute;
+            width: 6px;
+            height: 120px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -100%);
+            background: linear-gradient(to bottom, #e74c3c 0%, #c0392b 50%, #ecf0f1 50%, #bdc3c7 100%);
+            border-radius: 3px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .needle-center {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #34495e;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .direction-display {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+
+        .degrees-display {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .manual-control {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .manual-control.active {
+            display: block;
+        }
+
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        @media (max-width: 480px) {
+            .compass-wrapper {
+                width: 250px;
+                height: 250px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .direction-display {
+                font-size: 2.5rem;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Digital Compass</h1>
+        <p class="subtitle">Find your direction with precision</p>
+        
+        <div class="compass-wrapper">
+            <div class="compass" id="compass">
+                <div class="compass-face">
+                    <div class="direction-markers">
+                        <div class="marker"><span>N</span></div>
+                        <div class="marker"><span>E</span></div>
+                        <div class="marker"><span>S</span></div>
+                        <div class="marker"><span>W</span></div>
+                    </div>
+                    <div class="degree-markers" id="degreeMarkers"></div>
+                </div>
+                <div class="needle" id="needle">
+                    <div class="needle-body"></div>
+                    <div class="needle-center"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="direction-display" id="directionDisplay">N</div>
+            <div class="degrees-display" id="degreesDisplay">0°</div>
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startCompass()">Start Compass</button>
+            <button id="stopBtn" onclick="stopCompass()" style="display: none;">Stop Compass</button>
+            <button id="manualBtn" onclick="toggleManualMode()">Manual Mode</button>
+            <button onclick="calibrateCompass()">Calibrate</button>
+        </div>
+        
+        <div class="manual-control" id="manualControl">
+            <div class="slider-container">
+                <label for="manualSlider">Adjust Direction:</label>
+                <input type="range" id="manualSlider" min="0" max="360" value="0" oninput="updateManualDirection(this.value)">
+            </div>
+        </div>
+        
+        <div class="status" id="status">Click "Start Compass" to begin</div>
+    </div>
+
+    <script>
+        let compassActive = false;
+        let manualMode = false;
+        let currentHeading = 0;
+        let calibrationOffset = 0;
+
+        // Initialize degree markers
+        function initDegreeMarkers() {
+            const container = document.getElementById('degreeMarkers');
+            for (let i = 0; i < 360; i += 10) {
+                const marker = document.createElement('div');
+                marker.className = 'degree-marker';
+                marker.style.transform = `translateX(-50%) rotate(${i}deg)`;
+                if (i % 30 === 0) {
+                    marker.style.height = '15px';
+                    marker.style.width = '2px';
+                }
+                container.appendChild(marker);
+            }
+        }
+
+        // Get direction name from degrees
+        function getDirectionName(degrees) {
+            const directions = [
+                { name: 'N', min: 348.75, max: 11.25 },
+                { name: 'NNE', min: 11.25, max: 33.75 },
+                { name: 'NE', min: 33.75, max: 56.25 },
+                { name: 'ENE', min: 56.25, max: 78.75 },
+                { name: 'E', min: 78.75, max: 101.25 },
+                { name: 'ESE', min: 101.25, max: 123.75 },
+                { name: 'SE', min: 123.75, max: 146.25 },
+                { name: 'SSE', min: 146.25, max: 168.75 },
+                { name: 'S', min: 168.75, max: 191.25 },
+                { name: 'SSW', min: 191.25, max: 213.75 },
+                { name: 'SW', min: 213.75, max: 236.25 },
+                { name: 'WSW', min: 236.25, max: 258.75 },
+                { name: 'W', min: 258.75, max: 281.25 },
+                { name: 'WNW', min: 281.25, max: 303.75 },
+                { name: 'NW', min: 303.75, max: 326.25 },
+                { name: 'NNW', min: 326.25, max: 348.75 }
+            ];
+
+            for (let dir of directions) {
+                if (degrees >= dir.min && degrees < dir.max) {
+                    return dir.name;
+                }
+            }
+            return 'N';
+        }
+
+        // Update compass display
+        function updateCompass(heading) {
+            currentHeading = (heading + calibrationOffset + 360) % 360;
+            
+            const needle = document.getElementById('needle');
+            const directionDisplay = document.getElementById('directionDisplay');
+            const degreesDisplay = document.getElementById('degreesDisplay');
+            
+            needle.style.transform = `rotate(${currentHeading}deg)`;
+            directionDisplay.textContent = getDirectionName(currentHeading);
+            degreesDisplay.textContent = `${Math.round(currentHeading)}°`;
+        }
+
+        // Handle device orientation
+        function handleOrientation(event) {
+            if (!compassActive || manualMode) return;
+            
+            let heading = null;
+            
+            // Try different browser implementations
+            if (event.webkitCompassHeading) {
+                // iOS Safari
+                heading = event.webkitCompassHeading;
+            } else if (event.alpha !== null) {
+                // Android/Chrome
+                heading = 360 - event.alpha;
+            }
+            
+            if (heading !== null && !isNaN(heading)) {
+                updateCompass(heading);
+                updateStatus('Compass active - Point your device north to calibrate');
+            }
+        }
+
+        // Start compass
+        function startCompass() {
+            if (manualMode) {
+                toggleManualMode();
+            }
+            
+            if ('DeviceOrientationEvent' in window) {
+                // Check if permission is needed (iOS 13+)
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(response => {
+                            if (response == 'granted') {
+                                initCompass();
+                            } else {
+                                updateStatus('Permission denied. Please enable device orientation in settings.');
+                            }
+                        })
+                        .catch(console.error);
+                } else {
+                    initCompass();
+                }
+            } else {
+                updateStatus('Device orientation not supported. Use Manual Mode instead.');
+                toggleManualMode();
+            }
+        }
+
+        function initCompass() {
+            window.addEventListener('deviceorientation', handleOrientation);
+            compassActive = true;
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
+            updateStatus('Compass starting... Move your device in a figure-8 pattern to calibrate');
+        }
+
+        // Stop compass
+        function stopCompass() {
+            window.removeEventListener('deviceorientation', handleOrientation);
+            compassActive = false;
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+            updateStatus('Compass stopped');
+        }
+
+        // Toggle manual mode
+        function toggleManualMode() {
+            manualMode = !manualMode;
+            const manualControl = document.getElementById('manualControl');
+            const manualBtn = document.getElementById('manualBtn');
+            
+            if (manualMode) {
+                manualControl.classList.add('active');
+                manualBtn.textContent = 'Exit Manual';
+                if (compassActive) {
+                    stopCompass();
+                }
+                updateStatus('Manual mode active - Use the slider to adjust direction');
+            } else {
+                manualControl.classList.remove('active');
+                manualBtn.textContent = 'Manual Mode';
+                updateStatus('Manual mode disabled');
+            }
+        }
+
+        // Update manual direction
+        function updateManualDirection(value) {
+            updateCompass(parseFloat(value));
+        }
+
+        // Calibrate compass
+        function calibrateCompass() {
+            calibrationOffset = 0;
+            updateStatus('Calibration reset. Point your device north and press Calibrate again.');
+            
+            // Simple calibration - assume current heading is north
+            setTimeout(() => {
+                calibrationOffset = -currentHeading;
+                updateCompass(currentHeading);
+                updateStatus('Calibration complete');
+            }, 3000);
+        }
+
+        // Update status message
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initDegreeMarkers();
+            
+            // Check for device orientation support
+            if (!('DeviceOrientationEvent' in window)) {
+                updateStatus('Device orientation not supported. Use Manual Mode instead.');
+                setTimeout(() => toggleManualMode(), 1000);
+            }
+        };
+
+        // Handle page visibility change
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && compassActive) {
+                stopCompass();
+            }
+        });
+    </script>
+</body>
+</html>
