@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Invoice #001</title>
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --paper:#ffffff;
+    --ink:#0f172a;
+    --muted:#475569;
+    --line:#e2e8f0;
+    --brand:#2563eb;
+    --accent:#10b981;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);}
+  body{font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+
+  .wrap{max-width:900px;margin:24px auto;padding:0 16px 48px;}
+  .sheet{background:var(--paper);border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 10px 30px rgba(2,6,23,.08);padding:28px;}
+
+  header{display:flex;justify-content:space-between;align-items:flex-start;
+    border-bottom:2px solid var(--line);padding-bottom:18px;gap:20px;}
+
+  .brand{display:flex;align-items:center;gap:14px;}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--brand),#7dd3fc);
+    display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;}
+
+  .meta{text-align:right;}
+  .meta .title{font-size:24px;font-weight:800;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;
+    margin-top:4px;font-weight:600;border:1px solid var(--line);}
+  .badge.unpaid{color:#ef4444;border-color:#ef4444;background:#fee2e2;}
+  .badge.paid{color:#10b981;border-color:#10b981;background:#d1fae5;}
+
+  .kv{margin-top:8px;color:var(--muted);}
+  .kv div{display:flex;justify-content:space-between;}
+  .kv b{color:var(--ink);}
+
+  table{width:100%;border-collapse:collapse;margin-top:14px;border:1px solid var(--line);}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);}
+  th{background:#f8fafc;color:var(--muted);font-size:12px;text-transform:uppercase;}
+  .num{text-align:right;white-space:nowrap;}
+
+  .totals{margin-top:16px;border:1px solid var(--line);border-radius:12px;}
+  .row{display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px dashed var(--line);}
+  .row:last-child{border-bottom:none;}
+  .row.grand{background:#f8fafc;font-weight:800;}
+
+  .actions{display:flex;gap:10px;justify-content:flex-end;margin:12px 0;}
+  .btn{border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:8px;
+    cursor:pointer;font-weight:600;}
+  .btn.brand{background:var(--brand);color:#fff;border:none;}
+  .btn:hover{filter:brightness(.97);}
+
+  .watermark{position:fixed;inset:0;display:grid;place-items:center;
+    font-size:100px;font-weight:900;opacity:.06;transform:rotate(-18deg);
+    pointer-events:none;color:#ef4444;transition:color .4s ease;}
+  .paidWM{color:#10b981;opacity:.05;}
+
+  footer{margin-top:24px;border-top:2px solid var(--line);padding-top:12px;
+    color:var(--muted);font-size:12px;display:flex;justify-content:space-between;}
+
+  @media print{
+    body{background:#fff;}
+    .actions{display:none;}
+    .sheet{box-shadow:none;border:none;padding:0;}
+    .wrap{margin:0;padding:0;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="actions">
+    <button class="btn" onclick="window.print()">🖨️ Print</button>
+    <button class="btn brand" onclick="togglePaid()">💰 Toggle Paid/Unpaid</button>
+  </div>
+
+  <div class="watermark" id="wm">UNPAID</div>
+
+  <section class="sheet">
+    <header>
+      <div class="brand">
+        <div class="logo">IN</div>
+        <div>
+          <h1>Invoice Inc.</h1>
+          <small>123 Market Street, Newtown, USA</small><br>
+          <small>hello@invoiceinc.com • +1 234 567 8901</small>
+        </div>
+      </div>
+      <div class="meta">
+        <div class="title">INVOICE</div>
+        <div id="badge" class="badge unpaid">UNPAID</div>
+        <div class="kv">
+          <div><span>Invoice No.</span><b>#001</b></div>
+          <div><span>Date</span><b>24 Oct 2025</b></div>
+        </div>
+      </div>
+    </header>
+
+    <table>
+      <thead>
+        <tr><th>Description</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Website Design Package</td><td class="num">1</td><td class="num">$500</td><td class="num">$500</td></tr>
+        <tr><td>Domain Registration (1 Year)</td><td class="num">1</td><td class="num">$15</td><td class="num">$15</td></tr>
+        <tr><td>Hosting (12 Months)</td><td class="num">1</td><td class="num">$120</td><td class="num">$120</td></tr>
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div class="row"><span>Subtotal</span><b>$635</b></div>
+      <div class="row"><span>Tax (10%)</span><b>$63.50</b></div>
+      <div class="row grand"><span>Total</span><b>$698.50</b></div>
+    </div>
+
+    <footer>
+      <div>&copy; 2025 Invoice Inc.</div>
+      <div>Thank you for your business!</div>
+    </footer>
+  </section>
+</div>
+
+<script>
+  let paid = false;
+  function togglePaid(){
+    paid = !paid;
+    const wm = document.getElementById("wm");
+    const badge = document.getElementById("badge");
+
+    if(paid){
+      wm.textContent = "PAID";
+      wm.classList.add("paidWM");
+      badge.textContent = "PAID";
+      badge.classList.remove("unpaid");
+      badge.classList.add("paid");
+    }else{
+      wm.textContent = "UNPAID";
+      wm.classList.remove("paidWM");
+      badge.textContent = "UNPAID";
+      badge.classList.remove("paid");
+      badge.classList.add("unpaid");
+    }
+  }
+</script>
+</body>
+</html>

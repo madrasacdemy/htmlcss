@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fitness Dashboard • Step Tracker Mockup</title>
+<style>
+  :root{
+    --bg:#0b1220;         /* deep navy */
+    --panel:#0f172a;      /* slate-900 */
+    --muted:#94a3b8;      /* slate-400 */
+    --ink:#e2e8f0;        /* slate-200 */
+    --line:#1f2a44;       /* subtle borders */
+    --ring1:#22d3ee;      /* cyan */
+    --ring2:#a78bfa;      /* violet */
+    --ring3:#f59e0b;      /* amber */
+    --ring4:#10b981;      /* emerald */
+    --accent:#38bdf8;     /* sky */
+    --good:#22c55e;
+    --warn:#f59e0b;
+    --bad:#ef4444;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:14px/1.5 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+  a{color:inherit}
+
+  .wrap{max-width:1200px;margin:auto;padding:20px}
+  header{
+    display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:18px
+  }
+  .title{display:flex;gap:12px;align-items:center}
+  .logo{
+    width:40px;height:40px;border-radius:12px;
+    background:linear-gradient(135deg,var(--accent),#7dd3fc);
+    display:grid;place-items:center;font-weight:900;color:#001825;box-shadow:inset 0 0 0 2px rgba(255,255,255,.2)
+  }
+  h1{margin:0;font-size:18px;letter-spacing:.4px}
+  .date{color:var(--muted);font-size:13px}
+
+  /* Layout */
+  .grid{
+    display:grid;gap:16px;
+    grid-template-columns: repeat(12,1fr);
+  }
+
+  /* Rings panel */
+  .panel{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px
+  }
+  .panel h2{margin:0 0 8px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+
+  .rings{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px
+  }
+
+  .ring-card{display:grid;place-items:center;gap:10px;padding:10px}
+  .ring{
+    --size:140px;
+    --track:#0b1220;
+    --val:0; /* 0..100 */
+    width:var(--size);height:var(--size);border-radius:50%;
+    background:
+      conic-gradient(var(--color) calc(var(--val)*1%), transparent 0),
+      conic-gradient(var(--track) 0 100%);
+    position:relative;display:grid;place-items:center;
+  }
+  .ring::before{
+    content:""; position:absolute; inset:8px; border-radius:50%; background:var(--panel);
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  .ring .label{
+    position:relative; text-align:center;
+  }
+  .ring .label .big{font-size:22px;font-weight:800}
+  .ring .label .sub{font-size:12px;color:var(--muted)}
+
+  /* Stats cards */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px
+  }
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;
+    display:grid;gap:10px
+  }
+  .kpi{
+    display:flex;align-items:baseline;gap:8px
+  }
+  .kpi .value{font-size:24px;font-weight:800}
+  .kpi .unit{color:var(--muted);font-size:12px}
+  .trend{font-size:12px}
+  .trend.good{color:var(--good)} .trend.warn{color:var(--warn)} .trend.bad{color:var(--bad)}
+
+  /* Weekly bars */
+  .weekly{
+    display:grid;grid-template-columns:repeat(7,1fr);align-items:end;gap:10px;height:120px;margin-top:6px
+  }
+  .bar{
+    background:linear-gradient(180deg, var(--accent), #155e75);
+    border-radius:8px 8px 4px 4px; width:100%; min-height:6px; box-shadow:0 6px 16px rgba(0,0,0,.2);
+  }
+  .dow{font-size:11px;color:var(--muted);text-align:center;margin-top:6px}
+
+  /* Goals list */
+  .goals{display:grid;gap:10px;margin-top:6px}
+  .goal{display:flex;justify-content:space-between;align-items:center;padding:8px;border:1px dashed var(--line);border-radius:10px}
+  .pill{font-size:11px;border:1px solid var(--line);color:var(--muted);padding:2px 8px;border-radius:999px}
+
+  /* Placement in grid */
+  .rings-panel{grid-column:span 8}
+  .today-panel{grid-column:span 4}
+  .weekly-panel{grid-column:span 8}
+  .goals-panel{grid-column:span 4}
+
+  /* Footer actions */
+  .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  .btn{
+    background:#0b1220;border:1px solid var(--line);color:var(--ink);
+    padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700
+  }
+  .btn.primary{background:linear-gradient(135deg,#2dd4bf,#60a5fa);color:#08111f;border:none}
+
+  /* Responsive */
+  @media (max-width:1000px){
+    .rings{grid-template-columns:repeat(2,1fr)}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .rings-panel,.today-panel,.weekly-panel,.goals-panel{grid-column:span 12}
+  }
+  @media (max-width:520px){
+    .rings{grid-template-columns:1fr}
+    .stats{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="title">
+      <div class="logo">FT</div>
+      <div>
+        <h1>Fitness Dashboard</h1>
+        <div class="date">Today • Fri, 24 Oct 2025</div>
+      </div>
+    </div>
+    <div class="date">Goal: 10,000 steps</div>
+  </header>
+
+  <section class="grid">
+    <!-- Rings -->
+    <div class="panel rings-panel">
+      <h2>Activity Rings</h2>
+      <div class="rings">
+        <div class="ring-card">
+          <div class="ring" style="--color:var(--ring1)" data-value="72">
+            <div class="label">
+              <div class="big" id="stepsPct">72%</div>
+              <div class="sub">Steps</div>
+            </div>
+          </div>
+          <div class="muted">7,240 / 10,000</div>
+        </div>
+
+        <div class="ring-card">
+          <div class="ring" style="--color:var(--ring2)" data-value="58">
+            <div class="label">
+              <div class="big" id="calPct">58%</div>
+              <div class="sub">Move (kcal)</div>
+            </div>
+          </div>
+          <div class="muted">580 / 1,000 kcal</div>
+        </div>
+
+        <div class="ring-card">
+          <div class="ring" style="--color:var(--ring3)" data-value="90">
+            <div class="label">
+              <div class="big" id="exPct">90%</div>
+              <div class="sub">Exercise (min)</div>
+            </div>
+          </div>
+          <div class="muted">45 / 50 min</div>
+        </div>
+
+        <div class="ring-card">
+          <div class="ring" style="--color:var(--ring4)" data-value="40">
+            <div class="label">
+              <div class="big" id="standPct">40%</div>
+              <div class="sub">Stand (hrs)</div>
+            </div>
+          </div>
+          <div class="muted">8 / 20 hrs</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Today stats -->
+    <div class="panel today-panel">
+      <h2>Today</h2>
+      <div class="stats">
+        <div class="card">
+          <div class="muted">Steps</div>
+          <div class="kpi"><span class="value">7,240</span><span class="unit">steps</span></div>
+          <div class="trend good">+1,120 vs. yesterday</div>
+        </div>
+        <div class="card">
+          <div class="muted">Distance</div>
+          <div class="kpi"><span class="value">5.6</span><span class="unit">km</span></div>
+          <div class="trend">Avg pace 11'20"/km</div>
+        </div>
+        <div class="card">
+          <div class="muted">Active Minutes</div>
+          <div class="kpi"><span class="value">46</span><span class="unit">min</span></div>
+          <div class="trend good">Goal nearly hit</div>
+        </div>
+        <div class="card">
+          <div class="muted">Calories</div>
+          <div class="kpi"><span class="value">1,820</span><span class="unit">kcal</span></div>
+          <div class="trend warn">Lunch spike +22%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly -->
+    <div class="panel weekly-panel">
+      <h2>Weekly Steps</h2>
+      <div class="weekly">
+        <div>
+          <div class="bar" style="height: 60%"></div>
+          <div class="dow">Mon</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 72%"></div>
+          <div class="dow">Tue</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 48%"></div>
+          <div class="dow">Wed</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 85%"></div>
+          <div class="dow">Thu</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 92%"></div>
+          <div class="dow">Fri</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 40%"></div>
+          <div class="dow">Sat</div>
+        </div>
+        <div>
+          <div class="bar" style="height: 55%"></div>
+          <div class="dow">Sun</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals -->
+    <div class="panel goals-panel">
+      <h2>Goals</h2>
+      <div class="goals">
+        <div class="goal">
+          <div>Daily Steps: <b>10,000</b></div>
+          <span class="pill">72% done</span>
+        </div>
+        <div class="goal">
+          <div>Exercise Minutes: <b>50</b></div>
+          <span class="pill">90% done</span>
+        </div>
+        <div class="goal">
+          <div>Stand Hours: <b>20</b></div>
+          <span class="pill">40% done</span>
+        </div>
+        <div class="goal">
+          <div>Move Calories: <b>1,000</b></div>
+          <span class="pill">58% done</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button class="btn" id="simulate">+ Simulate 500 Steps</button>
+    <button class="btn primary" onclick="window.print()">🖨️ Print</button>
+  </div>
+</div>
+
+<script>
+  // Animate rings on load from 0 -> target (data-value)
+  const rings = [...document.querySelectorAll('.ring')];
+  rings.forEach(ring => {
+    const target = +ring.dataset.value || 0;
+    let cur = 0;
+    const step = () => {
+      cur += Math.max(1, Math.round((target - cur) / 10));
+      ring.style.setProperty('--val', cur);
+      if (cur < target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  });
+
+  // Simple "simulate steps" to show UI reacting
+  const simulateBtn = document.getElementById('simulate');
+  simulateBtn.addEventListener('click', () => {
+    // Update steps numeric
+    const stepsCard = document.querySelector('.stats .card .value');
+    let steps = parseInt(stepsCard.textContent.replace(/,/g,''), 10);
+    steps += 500;
+    stepsCard.textContent = steps.toLocaleString();
+
+    // Update steps ring percent and label
+    const ring = document.querySelector('.ring-card .ring');
+    const label = document.getElementById('stepsPct');
+    const goal = 10000;
+    const pct = Math.min(100, Math.round(steps / goal * 100));
+
+    ring.dataset.value = pct;
+    // animate from current --val to new
+    const current = parseInt(getComputedStyle(ring).getPropertyValue('--val')) || 0;
+    const target = pct;
+    let v = current;
+    const tick = () => {
+      v += Math.sign(target - v) * Math.max(1, Math.round(Math.abs(target - v)/12));
+      ring.style.setProperty('--val', v);
+      label.textContent = v + '%';
+      if ((target > current && v < target) || (target < current && v > target)) {
+        requestAnimationFrame(tick);
+      } else {
+        ring.style.setProperty('--val', target);
+        label.textContent = target + '%';
+      }
+    };
+    requestAnimationFrame(tick);
+  });
+</script>
+</body>
+</html>
