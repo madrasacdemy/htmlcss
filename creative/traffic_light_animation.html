@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Traffic Light Animation (CSS)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Timings (Green 4s → Yellow 1s → Red 4s = 9s loop) */
+    --t-green: 4s;
+    --t-yellow: 1s;
+    --t-red: 4s;
+    --cycle: 9s;
+
+    /* Colors */
+    --housing: #1b1f2a;
+    --rim: #0d111a;
+    --frame: #101520;
+    --bg: radial-gradient(1200px 700px at 20% 10%, #0b1220 0 60%, #060a12 60% 100%);
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    margin:0;
+    min-height:100svh;
+    display:grid;
+    place-items:center;
+    background: var(--bg);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color:#dfe7f3;
+  }
+
+  .stage{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+
+  .mast{
+    width: 18px; height: 180px; background: #10161f;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1px #1e2a3a, 0 16px 38px rgba(0,0,0,.35);
+  }
+
+  .box{
+    width: 160px;
+    padding: 14px 14px 20px;
+    border-radius: 22px;
+    background: linear-gradient(180deg,#121827,#0c111c 75%, #0a0f18);
+    box-shadow:
+      inset 0 0 0 2px #202b3d,
+      0 28px 60px rgba(0,0,0,.45);
+    position: relative;
+  }
+
+  .visor{
+    position:absolute; left:50%; transform:translateX(-50%);
+    top:-22px; width: 120px; height: 22px;
+    background:#0b1018; border-radius: 12px 12px 0 0;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  .ring{
+    background: var(--frame);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: inset 0 0 0 2px #202a3a, inset 0 -10px 20px rgba(0,0,0,.35);
+  }
+
+  .stack{ display:grid; gap: 14px; }
+
+  .lamp{
+    width: 104px; height: 104px; border-radius: 50%;
+    margin: 0 auto;
+    background: #0a0f16 radial-gradient(120px 120px at 30% 30%, rgba(255,255,255,.05), transparent 60%);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 6px 12px rgba(0,0,0,.65), inset 0 0 0 2px #1b2433;
+    filter: saturate(1.15);
+    opacity: .2;               /* off by default */
+    transform: translateZ(0);  /* enable GPU */
+  }
+
+  /* ON-state glow is applied when animated keyframes set opacity to 1 */
+  .lamp::after{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:50%;
+    mix-blend-mode:screen;
+    opacity:0;
+    transition: opacity .2s;
+  }
+
+  .red{
+    background:
+      radial-gradient(120px 120px at 32% 28%, rgba(255,255,255,.08), transparent 60%),
+      radial-gradient(100px 100px at 50% 60%, #5b0d0f, #2a0708 70%, #120305);
+  }
+  .red::after{
+    background: radial-gradient(80px 80px at 50% 55%, #ff6767, #ff1e1e 40%, rgba(255,0,0,.2) 65%, transparent 70%);
+    box-shadow: 0 0 40px 18px rgba(255,50,50,.25), 0 0 120px 24px rgba(255,50,50,.18);
+  }
+
+  .yellow{
+    background:
+      radial-gradient(120px 120px at 32% 28%, rgba(255,255,255,.08), transparent 60%),
+      radial-gradient(100px 100px at 50% 60%, #5b4a0d, #2b2206 70%, #120d03);
+  }
+  .yellow::after{
+    background: radial-gradient(80px 80px at 50% 55%, #ffe680, #ffd233 40%, rgba(255,200,0,.2) 65%, transparent 70%);
+    box-shadow: 0 0 40px 18px rgba(255,200,0,.25), 0 0 120px 24px rgba(255,200,0,.18);
+  }
+
+  .green{
+    background:
+      radial-gradient(120px 120px at 32% 28%, rgba(255,255,255,.08), transparent 60%),
+      radial-gradient(100px 100px at 50% 60%, #0d5b2b, #062b15 70%, #031209);
+  }
+  .green::after{
+    background: radial-gradient(80px 80px at 50% 55%, #8af7c3, #2ff58f 40%, rgba(0,255,170,.18) 65%, transparent 70%);
+    box-shadow: 0 0 40px 18px rgba(0,255,170,.22), 0 0 120px 24px rgba(0,255,170,.16);
+  }
+
+  /* -------- Animation --------
+     Cycle order: RED → GREEN → YELLOW → RED
+     Duration: 9s (4s + 4s + 1s)
+  -------------------------------- */
+  .red  { animation: redCycle var(--cycle) linear infinite; }
+  .green{ animation: greenCycle var(--cycle) linear infinite; }
+  .yellow{ animation: yellowCycle var(--cycle) linear infinite; }
+
+  /* Use precise percentages so the segments match 4s/4s/1s in 9s */
+  @keyframes redCycle {
+    /* ON during first 4s (0–44.444%), OFF otherwise */
+    0%         { opacity:1 }
+    44.444%    { opacity:1 }
+    44.445%    { opacity:.2 }
+    100%       { opacity:.2 }
+  }
+  @keyframes greenCycle {
+    /* ON during next 4s (44.444–88.888%) */
+    0%         { opacity:.2 }
+    44.444%    { opacity:.2 }
+    44.445%    { opacity:1 }
+    88.888%    { opacity:1 }
+    88.889%    { opacity:.2 }
+    100%       { opacity:.2 }
+  }
+  @keyframes yellowCycle {
+    /* ON during last 1s (88.888–100%) */
+    0%         { opacity:.2 }
+    88.888%    { opacity:.2 }
+    88.889%    { opacity:1 }
+    100%       { opacity:1 }
+  }
+
+  /* Make the "glow layer" visible only while the lamp is ON */
+  .red    { --is-on: 0; }
+  .green  { --is-on: 0; }
+  .yellow { --is-on: 0; }
+  .red[style*="opacity: 1"], .green[style*="opacity: 1"], .yellow[style*="opacity: 1"] { }
+  /* Fallback: mirror opacity to glow with filters (JS-free) */
+  .lamp { will-change: opacity; }
+  .lamp { transition: opacity .15s linear; }
+  .red   { }
+  .yellow{ }
+  .green { }
+
+  /* We can't read computed opacity in CSS to drive ::after.
+     So boost glow whenever lamp is relatively bright using filter */
+  .lamp { filter: saturate(1.1) brightness(1); }
+  .lamp[style]::after{ opacity:.85; } /* progressive enhancement (see JS below) */
+
+  /* Accessibility: reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    .red, .yellow, .green { animation: none; opacity: .2; }
+    .red { opacity: 1; } /* show red steady */
+  }
+</style>
+</head>
+<body>
+  <div class="stage" role="img" aria-label="Animated traffic signal: red, green, yellow sequence">
+    <div class="mast"></div>
+    <div class="box" aria-hidden="true">
+      <div class="visor"></div>
+      <div class="ring">
+        <div class="stack">
+          <div class="lamp red"    id="lampRed"></div>
+          <div class="lamp yellow" id="lampYellow"></div>
+          <div class="lamp green"  id="lampGreen"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      Small helper to reflect "ON state" to ::after glow smoothly.
+      It samples the computed opacity on each frame and toggles a data-on flag.
+      You can delete this script if you’re okay with just the base animation.
+    */
+    const lamps = [...document.querySelectorAll('.lamp')];
+
+    function tick(){
+      lamps.forEach(el=>{
+        const op = parseFloat(getComputedStyle(el).opacity);
+        // When visibly ON, raise the glow
+        el.style.setProperty('--_on', op > 0.6 ? 1 : 0);
+        el.style.setProperty('boxShadow', op > 0.6
+          ? 'inset 0 6px 12px rgba(0,0,0,.55), inset 0 0 0 2px #1b2433, 0 0 32px rgba(255,255,255,.08)'
+          : 'inset 0 6px 12px rgba(0,0,0,.65), inset 0 0 0 2px #1b2433');
+        el.style.setProperty('--glowOpacity', op > 0.6 ? .9 : 0);
+        el.style.opacity = op; // keep current
+        el.style.setProperty('transition', 'opacity .12s linear');
+        el.style.setProperty('filter', op > 0.6 ? 'saturate(1.25) brightness(1.05)' : 'saturate(1.1) brightness(1)');
+        el.style.setProperty('--glow', op);
+      });
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

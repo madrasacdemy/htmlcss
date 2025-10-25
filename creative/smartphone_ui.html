@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smartphone UI Mockup</title>
+
+  <!-- Icons (Bootstrap Icons) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --device-w: 380px;     /* overall device width */
+      --device-h: 780px;     /* overall device height */
+      --radius: 44px;        /* outer corner radius */
+      --bezel: 12px;         /* black border thickness */
+      --screen-radius: 34px; /* inner screen radius */
+      --status-h: 26px;
+      --dock-h: 74px;
+      --icon-size: 54px;
+      --gap: 16px;
+      --text: #e9eef5;
+      --muted: #9fb0c3;
+      --bezel-color: #0d1015;
+      --glass: rgba(255,255,255,.06);
+      --glass-stroke: rgba(255,255,255,.14);
+      --shadow: 0 20px 60px rgba(10,14,30,.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body{
+      min-height:100svh;
+      margin:0;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, #0b1220 0 60%, #060a12 60% 100%),
+        linear-gradient(180deg,#0a0f18,#05070c);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text);
+    }
+
+    .device{
+      width: var(--device-w);
+      height: var(--device-h);
+      border-radius: var(--radius);
+      background: var(--bezel-color);
+      position: relative;
+      box-shadow: var(--shadow);
+      padding: var(--bezel);
+      display: grid;
+      place-items: stretch;
+      isolation: isolate;
+    }
+
+    /* side buttons (decorative) */
+    .btn-volume, .btn-power{
+      position:absolute;
+      width:4px; border-radius:3px; background:#191f2a;
+      filter: drop-shadow(0 1px 0 rgba(255,255,255,.06));
+    }
+    .btn-volume{ left:-2px; top:130px; height:70px; }
+    .btn-power{ right:-2px; top:210px; height:50px; }
+
+    .screen{
+      position: relative;
+      border-radius: var(--screen-radius);
+      overflow: hidden;
+      background:
+        radial-gradient(900px 700px at 80% -10%, #1d57ff22 0 60%, transparent 60% 100%),
+        radial-gradient(800px 600px at -20% 110%, #ff3f8e22 0 60%, transparent 60% 100%),
+        conic-gradient(from 220deg at 70% 30%, #18233a, #0f1a2e, #121e34, #17243a, #18233a);
+      outline: 1px solid #1f2d45;
+    }
+
+    /* subtle glass sheen */
+    .glass{
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.04), transparent 35%, transparent 65%, rgba(255,255,255,.03));
+      pointer-events: none;
+    }
+
+    /* notch */
+    .notch{
+      position:absolute;
+      top: 8px; left:50%;
+      transform:translateX(-50%);
+      width: 160px; height: 28px;
+      background:#0b0f16;
+      border-bottom-left-radius: 18px;
+      border-bottom-right-radius: 18px;
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.05) inset,
+        0 10px 24px rgba(0,0,0,.45);
+    }
+    .camera-dot, .speaker{
+      position:absolute; top: 8px;
+      background:#0e1522;
+    }
+    .camera-dot{
+      right: 18px; width: 10px; height:10px; border-radius:50%;
+      box-shadow: 0 0 0 2px #0a0f16, 0 0 0 4px #0b0f16;
+    }
+    .speaker{
+      left: 18px; width: 56px; height: 6px; border-radius: 4px;
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,.05);
+    }
+
+    /* status bar */
+    .statusbar{
+      position:absolute; top: 6px; left:0; right:0;
+      height: var(--status-h);
+      padding: 0 14px 0 16px;
+      display:flex; align-items:center; justify-content:space-between;
+      font-size: 12px; letter-spacing:.3px;
+      color: var(--text);
+      text-shadow: 0 1px 2px rgba(0,0,0,.4);
+      pointer-events:none;
+      user-select:none;
+    }
+    .status-left, .status-right{
+      display:flex; align-items:center; gap:10px;
+    }
+    .status-right i{ font-size: 14px; color: var(--text); opacity:.95; }
+    .battery{
+      display:flex; align-items:center; gap:6px;
+    }
+    .battery .level{
+      width: 26px; height: 12px;
+      border:1.6px solid var(--text);
+      border-radius: 3px; position:relative; padding:1px;
+      opacity: .92;
+    }
+    .battery .level::after{
+      content:""; position:absolute; right:-4px; top: 2.6px;
+      width:3px; height:6px; background: var(--text); border-radius: 1px;
+      opacity:.85;
+    }
+    .battery .fill{
+      height:100%; width: 78%;
+      background: linear-gradient(180deg, #a4ff9a, #62d45a);
+      border-radius:2px;
+    }
+
+    /* app grid area */
+    .content{
+      position:absolute; inset: 46px 12px 100px 12px;
+      display:grid;
+      grid-template-rows: auto 1fr;
+      gap: 14px;
+    }
+
+    .widgets{
+      display:grid; gap:12px;
+      grid-template-columns: 1.3fr 1fr;
+    }
+
+    .widget{
+      min-height: 96px;
+      background: var(--glass);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 16px;
+      padding: 12px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,.12) inset;
+    }
+    .widget h4{ margin:0 0 8px; font-size: 13px; color:#d7e2f0; font-weight:600 }
+    .widget p{ margin:0; color: var(--muted); font-size:12px; line-height:1.4 }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap);
+      align-content:start;
+    }
+
+    .app{
+      display:grid; justify-items:center; gap:8px;
+      text-align:center; text-decoration:none; color: var(--text);
+      transition: transform .08s ease, filter .2s ease;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+      user-select:none;
+    }
+    .app:active{ transform: scale(.96); }
+    .icon{
+      width: var(--icon-size); height: var(--icon-size);
+      border-radius: 16px;
+      display:grid; place-items:center;
+      font-size: 26px; color: white;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.25),
+        0 10px 18px rgba(0,0,0,.25);
+    }
+    .label{
+      font-size: 11.5px; color:#d9e5f7; opacity:.96;
+      text-shadow: 0 1px 1px rgba(0,0,0,.35);
+      line-height: 1.1;
+    }
+
+    /* colorful icon backgrounds */
+    .bg-phone{ background: linear-gradient(135deg, #00c853, #00e676); }
+    .bg-msg{ background: linear-gradient(135deg, #00b0ff, #2979ff); }
+    .bg-photos{ background: linear-gradient(135deg, #ff6d00, #ffab00); }
+    .bg-camera{ background: linear-gradient(135deg, #5e35b1, #7e57c2); }
+    .bg-mail{ background: linear-gradient(135deg, #e53935, #ff5252); }
+    .bg-music{ background: linear-gradient(135deg, #7c4dff, #651fff); }
+    .bg-maps{ background: linear-gradient(135deg, #2ecc71, #1abc9c); }
+    .bg-browser{ background: linear-gradient(135deg, #00bcd4, #0097a7); }
+    .bg-store{ background: linear-gradient(135deg, #ef5350, #ec407a); }
+    .bg-clock{ background: linear-gradient(135deg, #37474f, #263238); }
+    .bg-settings{ background: linear-gradient(135deg, #90a4ae, #607d8b); }
+    .bg-chat{ background: linear-gradient(135deg, #25d366, #128c7e); } /* realistic chat color */
+    .bg-video{ background: linear-gradient(135deg, #ff3d3d, #c62828); }
+    .bg-notes{ background: linear-gradient(135deg, #ffd54f, #ffb300); }
+    .bg-files{ background: linear-gradient(135deg, #42a5f5, #1e88e5); }
+    .bg-pay{ background: linear-gradient(135deg, #1a73e8, #0b57d0); }
+
+    /* dock */
+    .dock{
+      position:absolute; left:12px; right:12px; bottom: 14px;
+      height: var(--dock-h);
+      border-radius: 22px;
+      background: var(--glass);
+      border:1px solid var(--glass-stroke);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display:grid; grid-template-columns: repeat(4, 1fr);
+      align-items:center; justify-items:center;
+      gap: 10px; padding: 10px 12px;
+      box-shadow: 0 8px 26px rgba(0,0,0,.22);
+    }
+
+    /* helper footer */
+    .hint{
+      margin-top: 18px;
+      color: #8ea2b7;
+      font-size: 12.5px;
+      text-align:center;
+      opacity:.9;
+    }
+
+    /* responsiveness: scale down on small screens */
+    @media (max-width: 420px){
+      :root{ --device-w: 92vw; --device-h: calc(92vw * 2.05); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="device" role="img" aria-label="Smartphone UI mockup device">
+    <div class="btn-volume"></div>
+    <div class="btn-power"></div>
+
+    <div class="screen">
+      <div class="notch">
+        <div class="speaker"></div>
+        <div class="camera-dot"></div>
+      </div>
+
+      <div class="statusbar" aria-hidden="true">
+        <div class="status-left">
+          <span id="timeText">9:41</span>
+        </div>
+        <div class="status-right">
+          <i class="bi bi-reception-4"></i>
+          <i class="bi bi-wifi"></i>
+          <div class="battery">
+            <div class="level"><div class="fill" id="batteryFill" style="width:78%"></div></div>
+            <span id="batteryText">78%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Widgets row -->
+        <div class="widgets">
+          <div class="widget">
+            <h4>Up Next</h4>
+            <p>Design review at <strong>11:00</strong> • Meet #UI-Squad</p>
+          </div>
+          <div class="widget">
+            <h4>Weather</h4>
+            <p>28°C • Partly cloudy • Light breeze</p>
+          </div>
+        </div>
+
+        <!-- App grid -->
+        <div class="grid">
+          <a class="app" href="#">
+            <div class="icon bg-phone"><i class="bi bi-telephone-fill"></i></div>
+            <div class="label">Phone</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-msg"><i class="bi bi-chat-dots-fill"></i></div>
+            <div class="label">Messages</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-photos"><i class="bi bi-image-fill"></i></div>
+            <div class="label">Photos</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-camera"><i class="bi bi-camera-fill"></i></div>
+            <div class="label">Camera</div>
+          </a>
+
+          <a class="app" href="#">
+            <div class="icon bg-mail"><i class="bi bi-envelope-fill"></i></div>
+            <div class="label">Mail</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-music"><i class="bi bi-music-note-beamed"></i></div>
+            <div class="label">Music</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-maps"><i class="bi bi-geo-alt-fill"></i></div>
+            <div class="label">Maps</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-browser"><i class="bi bi-globe2"></i></div>
+            <div class="label">Browser</div>
+          </a>
+
+          <a class="app" href="#">
+            <div class="icon bg-store"><i class="bi bi-bag-fill"></i></div>
+            <div class="label">App Store</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-clock"><i class="bi bi-alarm-fill"></i></div>
+            <div class="label">Clock</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-settings"><i class="bi bi-gear-fill"></i></div>
+            <div class="label">Settings</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-chat"><i class="bi bi-whatsapp"></i></div>
+            <div class="label">Chat</div>
+          </a>
+
+          <a class="app" href="#">
+            <div class="icon bg-video"><i class="bi bi-youtube"></i></div>
+            <div class="label">Video</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-notes"><i class="bi bi-stickies-fill"></i></div>
+            <div class="label">Notes</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-files"><i class="bi bi-folder-fill"></i></div>
+            <div class="label">Files</div>
+          </a>
+          <a class="app" href="#">
+            <div class="icon bg-pay"><i class="bi bi-cash-stack"></i></div>
+            <div class="label">Pay</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- dock -->
+      <div class="dock" aria-label="Dock">
+        <a class="app" href="#" aria-label="Phone in dock">
+          <div class="icon bg-phone"><i class="bi bi-telephone-fill"></i></div>
+        </a>
+        <a class="app" href="#" aria-label="Messages in dock">
+          <div class="icon bg-msg"><i class="bi bi-chat-dots-fill"></i></div>
+        </a>
+        <a class="app" href="#" aria-label="Browser in dock">
+          <div class="icon bg-browser"><i class="bi bi-globe2"></i></div>
+        </a>
+        <a class="app" href="#" aria-label="Camera in dock">
+          <div class="icon bg-camera"><i class="bi bi-camera-fill"></i></div>
+        </a>
+      </div>
+
+      <div class="glass"></div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Tip: Duplicate an <strong>.app</strong> to add more icons. Adjust colors by changing the <strong>.bg-*</strong> class.
+  </div>
+
+  <script>
+    // Live time in status bar
+    function updateTime(){
+      const el = document.getElementById('timeText');
+      const now = new Date();
+      const h = now.getHours();
+      const m = now.getMinutes().toString().padStart(2,'0');
+      el.textContent = `${h}:${m}`;
+    }
+    updateTime();
+    setInterval(updateTime, 15_000); // update every 15s
+
+    // Mock battery drain animation (optional)
+    let level = 78;
+    setInterval(() => {
+      level = Math.max(3, level - 0.1);
+      document.getElementById('batteryText').textContent = `${Math.round(level)}%`;
+      document.getElementById('batteryFill').style.width = `${level}%`;
+    }, 3000);
+  </script>
+</body>
+</html>
