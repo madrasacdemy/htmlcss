@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Liquid Fill Loader (CSS waves + clip-path)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --size: 220px;             /* circle size */
+    --ring: 10px;              /* ring thickness */
+    --bg: #0b1220;
+    --rim: #1b2a3e;
+    --fill1: #2de2e6;          /* main liquid color */
+    --fill2: #7afcff;          /* highlight liquid color */
+    --text: #eaf3ff;
+    --muted: #87a0c0;
+    --progress: 64;            /* 0–100 (will be set by JS) */
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    margin:0;
+    min-height:100svh;
+    display:grid;
+    place-items:center;
+    gap: 22px;
+    background:
+      radial-gradient(1200px 700px at 15% 10%, #0a1220 0 60%, #060a12 60% 100%),
+      linear-gradient(180deg, #060a12, #060910);
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    color: var(--text);
+  }
+
+  /* ---------- Loader ---------- */
+  .loader{
+    --sz: var(--size);
+    width: var(--sz);
+    height: var(--sz);
+    position: relative;
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,.35));
+  }
+
+  /* circular progress ring using conic-gradient + mask */
+  .ring{
+    position:absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      conic-gradient(var(--fill1) calc(var(--progress) * 1%), #1a2434 0);
+    -webkit-mask:
+      radial-gradient(circle calc(50% - var(--ring)) at 50% 50%, transparent 98%, #000 100%),
+      radial-gradient(circle 50% at 50% 50%, #000 100%, #000 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    /* inner subtle rim */
+    box-shadow: inset 0 0 0 1px var(--rim), 0 0 0 1px transparent;
+  }
+
+  .dial{
+    position:absolute;
+    inset: calc(var(--ring) + 4px);
+    border-radius: 50%;
+    background: radial-gradient(120% 140% at 20% 0%, #122036 0 30%, transparent 30% 100%),
+                radial-gradient(160% 120% at 120% 120%, #0e1a2c 0 35%, transparent 35% 100%),
+                var(--bg);
+    overflow: hidden; /* mask liquid to the circle */
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.06),
+      inset 0 -20px 50px rgba(0,0,0,.45);
+  }
+
+  /* Base fill area that grows with progress */
+  .fill{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height: calc(var(--progress) * 1%); /* progress drives height */
+    background: linear-gradient(180deg, color-mix(in lab, var(--fill1) 70%, #ffffff 10%), var(--fill1));
+  }
+
+  /* Two wave layers (pseudo-elements) at the top edge of the fill */
+  .fill::before,
+  .fill::after{
+    content:"";
+    position:absolute;
+    left: -25%;
+    width: 150%;
+    height: 42px;
+    top: -22px;                  /* sits slightly above the fill */
+    border-radius: 50%;
+    background: var(--fill2);
+    opacity:.7;
+    /* A sine-like cap using clip-path polygon (approximated) */
+    clip-path: polygon(
+      0% 60%, 5% 55%, 10% 60%, 15% 65%, 20% 60%,
+      25% 55%, 30% 60%, 35% 65%, 40% 60%, 45% 55%,
+      50% 60%, 55% 65%, 60% 60%, 65% 55%, 70% 60%,
+      75% 65%, 80% 60%, 85% 55%, 90% 60%, 95% 65%, 100% 60%,
+      100% 100%, 0% 100%
+    );
+    animation: wave 4.2s linear infinite;
+  }
+  .fill::after{
+    top: -16px;
+    height: 36px;
+    background: color-mix(in oklab, var(--fill1) 85%, #ffffff 10%);
+    opacity:.95;
+    animation: wave2 6.5s linear infinite;
+    filter: blur(.2px);
+  }
+
+  /* Bubbles for vibe */
+  .bubbles{
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+    border-radius:50%;
+  }
+  .bubbles span{
+    position:absolute; bottom:-12px;
+    width:8px; height:8px; border-radius:50%;
+    background: #bffcff;
+    opacity:.18;
+    animation: rise var(--t,6s) linear infinite;
+    left: var(--x,50%);
+    filter: blur(.2px);
+  }
+
+  /* Percentage text */
+  .percent{
+    position:absolute;
+    inset:0;
+    display:grid; place-items:center;
+    font-weight: 700;
+    font-size: 42px;
+    letter-spacing:.02em;
+    text-shadow: 0 2px 10px rgba(0,0,0,.35);
+    color: var(--text);
+  }
+  .label{
+    position:absolute; bottom: 14px; left:0; right:0;
+    text-align:center; font-size:12px; color: var(--muted); letter-spacing:.12em;
+  }
+
+  /* Animations */
+  @keyframes wave {
+    from { transform: translateX(0); }
+    to   { transform: translateX(50%); }
+  }
+  @keyframes wave2 {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes rise {
+    0%   { transform: translateY(0) scale(.9); opacity:.0; }
+    10%  { opacity:.18; }
+    100% { transform: translateY(-110%) scale(1.05); opacity:0; }
+  }
+
+  /* Demo controls (optional) */
+  .controls{
+    position: fixed;
+    bottom: 20px;
+    inset-inline: 20px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+    color:#c9d7ef;
+    user-select:none;
+  }
+  input[type="range"]{
+    width:min(520px, 80vw);
+  }
+
+  /* Reduced motion: keep static waves */
+  @media (prefers-reduced-motion: reduce){
+    .fill::before, .fill::after, .bubbles span { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div class="loader" data-progress="64" id="loader">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="dial">
+      <div class="fill"></div>
+      <div class="bubbles" aria-hidden="true">
+        <!-- a few lightweight bubbles -->
+        <span style="--x:18%; --t:6.2s;"></span>
+        <span style="--x:32%; --t:7.0s;"></span>
+        <span style="--x:46%; --t:5.4s;"></span>
+        <span style="--x:58%; --t:6.8s;"></span>
+        <span style="--x:74%; --t:7.6s;"></span>
+        <span style="--x:86%; --t:6.0s;"></span>
+      </div>
+      <div class="percent" id="percent">64%</div>
+      <div class="label">LIQUID FILL</div>
+    </div>
+  </div>
+
+  <!-- Demo slider (you can remove this block) -->
+  <div class="controls" aria-label="Demo controls">
+    <span>0%</span>
+    <input type="range" min="0" max="100" value="64" id="range" />
+    <span>100%</span>
+  </div>
+
+<script>
+  // Drive progress using CSS variable + ring + text
+  (function(){
+    const root = document.documentElement;
+    const loader = document.getElementById('loader');
+    const range  = document.getElementById('range');
+    const percentEl = document.getElementById('percent');
+
+    function setProgress(p){
+      p = Math.max(0, Math.min(100, Math.round(p)));
+      root.style.setProperty('--progress', p);
+      loader.setAttribute('data-progress', p);
+      percentEl.textContent = p + '%';
+    }
+
+    // initialize from data attribute
+    const start = parseInt(loader.getAttribute('data-progress') || '64', 10);
+    setProgress(start);
+    range.value = start;
+
+    // demo: hook up the slider
+    range.addEventListener('input', e => setProgress(e.target.value));
+  })();
+</script>
+</body>
+</html>
