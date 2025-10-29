@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Tunnel Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: black;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas to full screen
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Animation parameters
+        let cameraZ = 0;
+        const ringSpacing = 200;
+        const ringRadius = 50;
+        const focalLength = 300;
+        const clipDist = 1000;
+        const numRings = 20;
+        const lineWidth = 3;
+        const glowSize = 30;
+        const speed = 8;
+        const hueSpeed = 0.5; // Speed of color cycling for neon effect
+
+        function draw() {
+            // Clear canvas with black
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Save context and translate to center
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.globalCompositeOperation = 'lighter'; // Additive blending for glow
+
+            // Calculate starting ring index
+            let startRing = Math.floor(cameraZ / ringSpacing);
+
+            // Draw rings
+            for (let k = 0; k < numRings; k++) {
+                let ringZ = (startRing + k) * ringSpacing;
+                let dist = ringZ - cameraZ;
+
+                // Skip if behind camera or too far
+                if (dist < 0.1 || dist > clipDist) continue;
+
+                // Perspective scale
+                let scale = focalLength / dist;
+                let radius = ringRadius * scale;
+
+                // Skip if off-screen
+                if (radius > Math.max(canvas.width, canvas.height) / 2) continue;
+
+                // Opacity for fading
+                let alpha = Math.max(0, 1 - (dist / clipDist));
+
+                // Color: cycling neon hues (blues, cyans, pinks, purples)
+                let colorHue = ((ringZ * hueSpeed) % 360 + 180) % 360; // Offset for neon palette
+                ctx.globalAlpha = alpha;
+                ctx.strokeStyle = `hsla(${colorHue}, 100%, 60%, ${alpha})`;
+                ctx.lineWidth = lineWidth * scale;
+                ctx.shadowColor = `hsla(${colorHue}, 100%, 60%, 1)`;
+                ctx.shadowBlur = glowSize * scale;
+
+                // Draw ring
+                ctx.beginPath();
+                ctx.arc(0, 0, radius, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+
+            // Update camera position
+            cameraZ += speed;
+            requestAnimationFrame(draw);
+        }
+
+        // Start animation
+        draw();
+    </script>
+</body>
+</html>
