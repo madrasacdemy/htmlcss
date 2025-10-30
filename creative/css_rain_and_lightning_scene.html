@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Rain & Lightning Scene</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    height: 100vh;
+    background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+    overflow: hidden;
+    position: relative;
+    font-family: system-ui, sans-serif;
+  }
+
+  /* 🌧️ Sky overlay */
+  .scene {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.05), transparent 60%);
+    overflow: hidden;
+  }
+
+  /* 🌧️ Raindrop layer */
+  .rain {
+    position: absolute;
+    width: 2px;
+    height: 15vh;
+    background: rgba(255, 255, 255, 0.4);
+    top: -20vh;
+    animation: rain linear infinite;
+  }
+
+  /* ⚡ Lightning flashes */
+  .lightning {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.8);
+    opacity: 0;
+    animation: lightning 6s infinite;
+    mix-blend-mode: screen;
+  }
+
+  /* 🌫️ Ground reflection */
+  .ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30vh;
+    background: linear-gradient(to top, rgba(255,255,255,0.15), transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  /* 🌧️ Raindrop animation */
+  @keyframes rain {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(120vh);
+    }
+  }
+
+  /* ⚡ Lightning animation */
+  @keyframes lightning {
+    0%, 97%, 100% { opacity: 0; }
+    98% { opacity: 1; }
+    99% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+  <div class="scene" id="scene"></div>
+  <div class="lightning"></div>
+  <div class="ground"></div>
+
+  <script>
+    // ☔ Create raindrops dynamically
+    const scene = document.getElementById('scene');
+    const numDrops = 120;
+
+    for (let i = 0; i < numDrops; i++) {
+      const drop = document.createElement('div');
+      drop.classList.add('rain');
+      drop.style.left = Math.random() * 100 + 'vw';
+      drop.style.animationDuration = 0.5 + Math.random() * 0.7 + 's';
+      drop.style.animationDelay = Math.random() * 2 + 's';
+      drop.style.opacity = 0.2 + Math.random() * 0.6;
+      scene.appendChild(drop);
+    }
+  </script>
+</body>
+</html>

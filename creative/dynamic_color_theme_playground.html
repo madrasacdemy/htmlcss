@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Color Theme Playground</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1f2937;
+      --accent: #6366f1;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 60%);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .app {
+      background: rgba(2, 6, 23, 0.4);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      backdrop-filter: blur(18px);
+      width: min(1100px, 100%);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .topbar {
+      background: linear-gradient(120deg, rgba(99,102,241,.2), rgba(14,165,233,.1));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .brand-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, .6);
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      margin: 0;
+    }
+    .brand span {
+      font-size: .65rem;
+      color: var(--muted);
+    }
+
+    .user-pill {
+      background: rgba(15,23,42,.4);
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 999px;
+      padding: .4rem .9rem;
+      font-size: .7rem;
+      display: flex;
+      gap: .4rem;
+      align-items: center;
+      cursor: pointer;
+      transition: .2s;
+    }
+    .user-pill:hover {
+      background: rgba(15,23,42,.7);
+    }
+    .user-avatar {
+      width: 22px;
+      height: 22px;
+      background: #fef3c7;
+      color: #0f172a;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: .6rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 460px;
+    }
+
+    .sidebar {
+      background: rgba(15,23,42,.2);
+      border-right: 1px solid rgba(148, 163, 184, 0.05);
+      padding: 1.1rem 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar h2 {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin: 0 0 .5rem;
+      color: var(--muted);
+    }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(54px, 1fr));
+      gap: .5rem;
+    }
+
+    .swatch {
+      height: 48px;
+      border-radius: 14px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: .2s;
+      display: grid;
+      place-items: center;
+      color: rgba(15,23,42,.3);
+      font-size: .6rem;
+      font-weight: 700;
+    }
+    .swatch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,.2);
+    }
+    .swatch.active {
+      border-color: rgba(255,255,255,.7);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.05);
+    }
+
+    .swatch small {
+      background: rgba(15,23,42,.3);
+      padding: .05rem .45rem .2rem;
+      border-radius: 999px;
+      color: white;
+    }
+
+    .main {
+      background: radial-gradient(circle at 40% 10%, rgba(99,102,241,.05), rgba(15,23,42,0) 50%), rgba(15,23,42,.1);
+      padding: 1.3rem 1.3rem 1.3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    .section-title h2 {
+      margin: 0;
+      font-size: 1rem;
+    }
+    .section-title p {
+      margin: 0;
+      font-size: .7rem;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: rgba(15,23,42,.35);
+      border: 1px solid rgba(148, 163, 184, 0.05);
+      border-radius: 18px;
+      padding: .85rem .9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      transition: .2s;
+    }
+    .card:hover {
+      border-color: rgba(148,163,184,.3);
+    }
+
+    .card-label {
+      font-size: .65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .card-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      gap: .35rem;
+      align-items: center;
+      font-size: .6rem;
+      padding: .15rem .6rem .25rem;
+      border-radius: 999px;
+      background: rgba(22,163,74,.15);
+      color: #bbf7d0;
+      width: fit-content;
+    }
+
+    .actions {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--accent);
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      padding: .55rem 1.05rem .65rem;
+      color: white;
+      font-weight: 600;
+      font-size: .7rem;
+      display: inline-flex;
+      gap: .45rem;
+      align-items: center;
+      cursor: pointer;
+      transition: .15s;
+      box-shadow: 0 10px 25px rgba(0,0,0,.2);
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(0,0,0,.22);
+    }
+
+    .btn.ghost {
+      background: rgba(15,23,42,.3);
+      border: 1px solid rgba(148,163,184,.1);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .bottom {
+      background: rgba(15,23,42,.2);
+      border: 1px solid rgba(148, 163, 184, 0.03);
+      border-radius: 14px;
+      padding: .8rem .7rem;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: .6rem;
+    }
+
+    .list h3 {
+      margin: 0 0 .3rem;
+      font-size: .75rem;
+    }
+
+    .log {
+      background: rgba(15,23,42,.35);
+      border: 1px solid rgba(148, 163, 184, 0.05);
+      border-radius: 10px;
+      font-size: .6rem;
+      max-height: 110px;
+      overflow-y: auto;
+    }
+    .log-item {
+      padding: .3rem .5rem .35rem;
+      border-bottom: 1px solid rgba(148,163,184,.03);
+    }
+    .log-item:last-child {
+      border-bottom: none;
+    }
+    .log-time {
+      color: var(--muted);
+      font-size: .58rem;
+    }
+
+    @media (max-width: 850px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      .swatch-grid {
+        grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+      }
+      .bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .topbar {
+        flex-wrap: wrap;
+      }
+      .actions {
+        width: 100%;
+      }
+      .cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <div>
+          <h1>Dynamic Theme Playground</h1>
+          <span>Click a swatch to recolor the UI</span>
+        </div>
+      </div>
+      <div class="user-pill">
+        <div class="user-avatar">MA</div>
+        <span>Madras Academy</span>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div>
+          <h2>Theme Swatches</h2>
+          <div class="swatch-grid" id="swatchGrid">
+            <!-- swatches from JS -->
+          </div>
+        </div>
+        <div>
+          <h2>Current</h2>
+          <p id="currentTheme" style="font-size:.72rem;color:var(--text);margin:0;">Default Indigo</p>
+        </div>
+      </aside>
+      <main class="main">
+        <div class="section-title">
+          <div>
+            <h2>Dashboard Overview</h2>
+            <p>Colors below react to theme variables.</p>
+          </div>
+          <div class="actions">
+            <button class="btn" id="primaryBtn">
+              <span>+ New Project</span>
+            </button>
+            <button class="btn ghost">Download Theme</button>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <span class="card-label">Active Users</span>
+            <span class="card-value" id="metric1">2,471</span>
+            <span class="badge">+14.7% vs last week</span>
+          </div>
+          <div class="card">
+            <span class="card-label">Revenue</span>
+            <span class="card-value">₹1,08,900</span>
+            <p style="margin:0;font-size:.63rem;color:var(--muted);">From Tamil courses & HTML projects</p>
+          </div>
+          <div class="card">
+            <span class="card-label">Sessions</span>
+            <span class="card-value">12,349</span>
+          </div>
+        </div>
+
+        <div class="bottom">
+          <div class="list">
+            <h3>Recent Components</h3>
+            <p style="font-size:.65rem;color:var(--muted);margin:0 0 .6rem;">These blocks will use the accent.</p>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap;">
+              <span class="btn ghost" style="font-size:.6rem;">Traffic Light Animation</span>
+              <span class="btn ghost" style="font-size:.6rem;">Neon Tunnel</span>
+              <span class="btn ghost" style="font-size:.6rem;">Magnetic Button</span>
+              <span class="btn ghost" style="font-size:.6rem;">Morphing Blob</span>
+            </div>
+          </div>
+          <div>
+            <h3 style="margin:0 0 .35rem;font-size:.75rem;">Theme Change Log</h3>
+            <div class="log" id="logBox">
+              <!-- log gets added here -->
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // ✅ Define your themes
+    const THEMES = [
+      {
+        name: "Indigo Breeze",
+        accent: "#6366f1",
+        bg: "#0f172a",
+        surface: "rgba(15,23,42,.4)",
+        text: "#e2e8f0",
+        muted: "#94a3b8",
+      },
+      {
+        name: "Mint Splash",
+        accent: "#22c55e",
+        bg: "#052e16",
+        surface: "rgba(3,105,161,.08)",
+        text: "#ecfdf3",
+        muted: "#9caea5",
+      },
+      {
+        name: "Sunset Coral",
+        accent: "#fb7185",
+        bg: "#0f172a",
+        surface: "rgba(248,113,113,.05)",
+        text: "#ffe4e6",
+        muted: "#fda4af",
+      },
+      {
+        name: "Royal Gold",
+        accent: "#facc15",
+        bg: "#0f172a",
+        surface: "rgba(250,204,21,.05)",
+        text: "#fefce8",
+        muted: "#fef9c3",
+      },
+      {
+        name: "Cyber Neon",
+        accent: "#22d3ee",
+        bg: "#020617",
+        surface: "rgba(34,211,238,.05)",
+        text: "#ecfeff",
+        muted: "#67e8f9",
+      },
+      {
+        name: "Deep Violet",
+        accent: "#a855f7",
+        bg: "#1e1036",
+        surface: "rgba(168,85,247,.07)",
+        text: "#f3e8ff",
+        muted: "#d8b4fe",
+      },
+    ];
+
+    const swatchGrid = document.getElementById("swatchGrid");
+    const currentTheme = document.getElementById("currentTheme");
+    const logBox = document.getElementById("logBox");
+
+    // create swatches
+    THEMES.forEach((t, idx) => {
+      const div = document.createElement("div");
+      div.className = "swatch" + (idx === 0 ? " active" : "");
+      div.style.background = `radial-gradient(circle at 0 0, ${t.accent}, ${t.bg})`;
+      div.dataset.index = idx;
+      div.innerHTML = `<small>${idx+1}</small>`;
+      swatchGrid.appendChild(div);
+    });
+
+    function setTheme(theme) {
+      document.documentElement.style.setProperty("--bg", theme.bg);
+      document.documentElement.style.setProperty("--surface", theme.surface);
+      document.documentElement.style.setProperty("--accent", theme.accent);
+      document.documentElement.style.setProperty("--text", theme.text);
+      document.documentElement.style.setProperty("--muted", theme.muted);
+      currentTheme.textContent = theme.name;
+
+      // log it
+      const item = document.createElement("div");
+      item.className = "log-item";
+      const time = new Date().toLocaleTimeString();
+      item.innerHTML = `<div>${theme.name} applied.</div><div class="log-time">${time}</div>`;
+      logBox.prepend(item);
+    }
+
+    // initial
+    setTheme(THEMES[0]);
+
+    swatchGrid.addEventListener("click", (e) => {
+      const target = e.target.closest(".swatch");
+      if (!target) return;
+      // remove active
+      document.querySelectorAll(".swatch").forEach(s => s.classList.remove("active"));
+      target.classList.add("active");
+      const theme = THEMES[target.dataset.index];
+      setTheme(theme);
+    });
+  </script>
+</body>
+</html>
