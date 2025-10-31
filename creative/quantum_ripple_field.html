@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>quantum_ripple_field</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: radial-gradient(circle at center, #0f172a 0%, #020617 55%, #000 100%);
+      --ripple-color: rgba(93, 255, 255, 0.8);
+      --ripple-soft: rgba(93, 255, 255, 0);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #000;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    .field {
+      position: relative;
+      width: min(880px, 95vw);
+      aspect-ratio: 16 / 9;
+      background:
+        radial-gradient(circle, rgba(255, 255, 255, 0.02) 0, rgba(0,0,0,0) 55%),
+        var(--bg);
+      border: 1px solid rgba(148, 163, 184, 0.1);
+      border-radius: 26px;
+      overflow: hidden;
+      isolation: isolate;
+      box-shadow: 0 0 60px rgba(0,0,0,0.4);
+      cursor: pointer;
+    }
+
+    /* core ripples layer — we’ll animate scale/opacity */
+    .ripples {
+      position: absolute;
+      inset: -18%;
+      background:
+        /* closest ripple */
+        radial-gradient(circle, rgba(71, 255, 252, 0.45) 0 10%, rgba(71, 255, 252, 0) 45%) 50% 50% / 35% 35% no-repeat,
+        /* mid */
+        radial-gradient(circle, rgba(71, 255, 252, 0.25) 0 10%, rgba(71, 255, 252, 0) 70%) 50% 50% / 65% 65% no-repeat,
+        /* far */
+        radial-gradient(circle, rgba(71, 255, 252, 0.12) 0 10%, rgba(71, 255, 252, 0) 100%) 50% 50% / 105% 105% no-repeat;
+      filter: drop-shadow(0 0 20px rgba(71, 255, 252, 0.32));
+      animation: breathing 6s ease-in-out infinite;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* “quantum grid” to make it look techy */
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, rgba(148,163,184,0.04) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(148,163,184,0.035) 1px, transparent 1px);
+      background-size: 42px 42px;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    /* title / overlay */
+    .label {
+      position: absolute;
+      top: 18px;
+      left: 20px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.55);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      backdrop-filter: blur(6px);
+      color: #e2e8f0;
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* hover effect: tighten the ripples + brighten */
+    .field:hover .ripples {
+      transform: scale(0.9);
+      opacity: 1;
+      animation-duration: 2.6s;
+    }
+
+    /* subtle ambient movement */
+    @keyframes breathing {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.85;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.55;
+      }
+    }
+
+    /* optional: fancy corners */
+    .corner {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border: 1px solid rgba(148,163,184,0.15);
+    }
+    .c1 { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+    .c2 { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+    .c3 { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+    .c4 { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+    /* mobile */
+    @media (max-width: 600px) {
+      .field {
+        aspect-ratio: 4 / 5;
+      }
+      .ripples {
+        inset: -25%;
+      }
+    }
+	.field::before {
+	  content: "";
+	  position: absolute;
+	  inset: -20%;
+	  background:
+		radial-gradient(circle, rgba(168,85,247,0.4) 0 10%, rgba(168,85,247,0) 40%) 50% 50% / 55% 55% no-repeat;
+	  mix-blend-mode: screen;
+	  filter: blur(16px);
+	  animation: breathing 5s ease-in-out infinite;
+	  pointer-events: none;
+	}
+  </style>
+</head>
+<body>
+  <div class="field" id="quantum-field">
+    <div class="label">Quantum Ripple Field</div>
+    <div class="grid"></div>
+    <div class="ripples" id="ripples"></div>
+    <div class="corner c1"></div>
+    <div class="corner c2"></div>
+    <div class="corner c3"></div>
+    <div class="corner c4"></div>
+  </div>
+
+  <script>
+    // ✨ pointer-reactive ripple origin (still CSS-first)
+    const field = document.getElementById('quantum-field');
+    const ripples = document.getElementById('ripples');
+
+    field.addEventListener('pointermove', (e) => {
+      const rect = field.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+      // shift radial gradients toward pointer
+      ripples.style.backgroundPosition = `
+        ${x}% ${y}%,
+        ${x}% ${y}%,
+        ${x}% ${y}%
+      `;
+    });
+
+    field.addEventListener('pointerleave', () => {
+      ripples.style.backgroundPosition = '50% 50%, 50% 50%, 50% 50%';
+    });
+  </script>
+</body>
+</html>

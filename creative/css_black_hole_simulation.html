@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>css_black_hole_simulation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: radial-gradient(circle at top, #020617 0%, #000 55%, #000 100%);
+      --hole-size: 180px;
+      --accretion-size: 320px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .scene {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 0 30px rgba(0,0,0,0.9));
+    }
+
+    /* central black hole (event horizon) */
+    .hole {
+      width: var(--hole-size);
+      height: var(--hole-size);
+      background: radial-gradient(circle at 30% 30%, #000 0%, #000 30%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+      position: relative;
+      z-index: 5;
+      box-shadow: 0 0 60px rgba(0,0,0,1);
+    }
+
+    /* accretion disk: swirling conic gradient */
+    .disk {
+      position: absolute;
+      width: var(--accretion-size);
+      height: var(--accretion-size);
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(255,160,90,0.1) 0deg,
+          rgba(255,210,160,0.4) 35deg,
+          rgba(85,255,240,0.45) 95deg,
+          rgba(6,182,212,0.0) 130deg,
+          rgba(0,0,0,0) 200deg,
+          rgba(255,160,90,0.1) 360deg
+        );
+      filter: blur(12px);
+      animation: swirl 6s linear infinite;
+      z-index: 3;
+      mix-blend-mode: screen;
+    }
+
+    /* glow ring to make it hot near the hole */
+    .inner-glow {
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(255,231,188,0.4) 0%, rgba(255,119,0,0) 68%);
+      filter: blur(18px);
+      z-index: 6;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* lensing ring (thin) */
+    .lensing-ring {
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.05);
+      filter: blur(3px);
+      animation: pulse 4s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    /* swirling background dust/particles */
+    .particles {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, #ffffff 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      filter: blur(1px);
+      animation: fall 6s linear infinite;
+      opacity: 0.7;
+    }
+
+    /* different tracks (you can add more) */
+    .p1 { top: 6%; left: 15%; animation-duration: 8s; }
+    .p2 { top: 9%; right: 10%; animation-duration: 7s; }
+    .p3 { bottom: 5%; left: 7%; animation-duration: 9s; }
+    .p4 { bottom: 15%; right: 4%; animation-duration: 6.5s; }
+    .p5 { top: 40%; left: 2%; animation-duration: 5.5s; }
+    .p6 { top: 55%; right: 14%; animation-duration: 10s; }
+
+    /* small far stars */
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.35) 1px, transparent 1px),
+        radial-gradient(circle, rgba(88,199,255,0.25) 1px, transparent 1px);
+      background-size: 180px 180px, 260px 260px;
+      background-position: 0 0, 50px 50px;
+      opacity: 0.5;
+      filter: blur(1px);
+    }
+
+    @keyframes swirl {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* particles spiral inward (fake with scale + translate) */
+    @keyframes fall {
+      0% {
+        transform: translate(0,0) scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: translate(-20px, 10px) scale(0.6);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(0,0) scale(0.15);
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.12;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.25;
+      }
+    }
+
+    /* optional: slow camera drift */
+    .scene::after {
+      content: "";
+      position: absolute;
+      inset: -10%;
+      background: radial-gradient(circle, rgba(0,0,0,0) 30%, rgba(0,0,0,0.5) 80%, #000 100%);
+      animation: drift 20s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes drift {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.05) rotate(3deg); }
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --hole-size: 140px;
+        --accretion-size: 260px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="stars"></div>
+
+    <div class="disk"></div>
+    <div class="lensing-ring"></div>
+    <div class="inner-glow"></div>
+    <div class="hole"></div>
+
+    <div class="particles">
+      <div class="particle p1"></div>
+      <div class="particle p2"></div>
+      <div class="particle p3"></div>
+      <div class="particle p4"></div>
+      <div class="particle p5"></div>
+      <div class="particle p6"></div>
+    </div>
+  </div>
+</body>
+</html>
