@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotating City Billboard Ad | CSS 3D Cube</title>
+  <style>
+    /* ---------- RESET ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at bottom, #0a0a0a, #000);
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+      color: #fff;
+    }
+
+    /* ---------- 3D SCENE ---------- */
+    .scene {
+      width: 250px;
+      height: 250px;
+      perspective: 1000px;
+      position: relative;
+    }
+
+    /* ---------- CUBE ---------- */
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: rotate 10s linear infinite;
+      cursor: pointer;
+      transition: transform 1s;
+    }
+
+    .cube:hover {
+      animation-play-state: paused;
+      transform: scale(1.05);
+    }
+
+    /* ---------- FACES ---------- */
+    .face {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border: 2px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .front  { transform: translateZ(125px); background-image: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=500&q=60'); }
+    .back   { transform: rotateY(180deg) translateZ(125px); background-image: url('https://images.unsplash.com/photo-1504386106331-3e4e71712b38?auto=format&fit=crop&w=500&q=60'); }
+    .right  { transform: rotateY(90deg) translateZ(125px); background-image: url('https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=500&q=60'); }
+    .left   { transform: rotateY(-90deg) translateZ(125px); background-image: url('https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=500&q=60'); }
+    .top    { transform: rotateX(90deg) translateZ(125px); background-image: url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=500&q=60'); }
+    .bottom { transform: rotateX(-90deg) translateZ(125px); background-image: url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=500&q=60'); }
+
+    /* Optional label text on ads */
+    .face::after {
+      content: "Your Ad Here";
+      position: absolute;
+      bottom: 15px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 14px;
+      background: rgba(0,0,0,0.5);
+      padding: 6px 0;
+    }
+
+    /* ---------- ANIMATION ---------- */
+    @keyframes rotate {
+      0%   { transform: rotateX(0) rotateY(0); }
+      100% { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    /* ---------- GROUND REFLECTION ---------- */
+    .reflection {
+      position: absolute;
+      width: 250px;
+      height: 50px;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.1), transparent 70%);
+      bottom: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(4px);
+    }
+
+    /* ---------- TITLE ---------- */
+    h1 {
+      position: absolute;
+      top: 40px;
+      text-align: center;
+      width: 100%;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: #fff;
+      text-shadow: 0 2px 5px rgba(255,255,255,0.3);
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 10px #00eaff; }
+      50% { text-shadow: 0 0 25px #00eaff; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Rotating City Billboard Ad 🏙️</h1>
+
+  <div class="scene">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+    <div class="reflection"></div>
+  </div>
+
+</body>
+</html>

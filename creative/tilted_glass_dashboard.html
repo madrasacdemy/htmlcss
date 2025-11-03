@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tilted Glass Dashboard – Refraction UI</title>
+<style>
+  /* ====== RESET ====== */
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color: #eaf2ff;
+    /* City/tech gradient + texture background */
+    --bg-image: url('https://images.unsplash.com/photo-1508057198894-247b23fe5ade?q=80&w=1600&auto=format&fit=crop');
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(0,180,255,.35), transparent 60%),
+      radial-gradient(1000px 700px at -10% 110%, rgba(255,0,120,.25), transparent 50%),
+      linear-gradient(180deg, #070b12 0%, #0c1220 100%),
+      var(--bg-image) center/cover no-repeat fixed;
+    background-blend-mode: screen, screen, normal, overlay;
+    overflow-x: hidden;
+  }
+
+  /* ====== HEADER ====== */
+  .wrap {
+    min-height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  header {
+    position: relative;
+    padding: clamp(16px, 2vw, 28px);
+    display: flex; gap: 16px; align-items: center; justify-content: space-between;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 14px;
+    letter-spacing: .5px; font-weight: 700;
+  }
+  .brand .logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: conic-gradient(from 210deg, #63f 0 25%, #0ff 0 55%, #ff3ea5 0 85%, #63f 0);
+    filter: drop-shadow(0 6px 18px rgba(99,102,241,.45));
+  }
+  .brand span { opacity: .9 }
+  .actions { display: flex; gap: 10px; }
+  .btn {
+    padding: 10px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,.15);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+    color: #eaf2ff; text-decoration: none; font-weight: 600;
+    backdrop-filter: blur(6px) saturate(130%);
+    box-shadow: 0 8px 24px rgba(0,0,0,.25) inset, 0 1px 0 rgba(255,255,255,.12);
+  }
+  .btn.primary {
+    border-color: rgba(0,225,255,.45);
+    box-shadow: 0 0 0 1px rgba(0,225,255,.25) inset, 0 10px 24px rgba(0,225,255,.12);
+  }
+
+  /* ====== STAGE w/ PERSPECTIVE ====== */
+  .stage {
+    --persp: 1200px;
+    padding: clamp(14px, 2vw, 24px);
+    perspective: var(--persp);
+  }
+
+  /* ====== GRID ====== */
+  .grid {
+    display: grid;
+    gap: clamp(14px, 2.2vw, 22px);
+    grid-template-columns: repeat(12, 1fr);
+  }
+  @media (max-width: 1100px) {
+    .grid { grid-template-columns: repeat(8, 1fr); }
+  }
+  @media (max-width: 720px) {
+    .grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* ====== TILTED GLASS PANEL ====== */
+  .panel {
+    position: relative;
+    min-height: 180px;
+    grid-column: span 4;
+    border-radius: 18px;
+    overflow: hidden;
+    /* Glass layer (semi-transparent so backdrop-filter can show) */
+    background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    border: 1px solid rgba(255,255,255,.14);
+    box-shadow:
+      0 25px 60px rgba(0,0,0,.45),
+      0 1px 0 rgba(255,255,255,.12) inset,
+      0 0 0 1px rgba(255,255,255,.06) inset;
+    backdrop-filter: blur(14px) saturate(145%);
+    transform-style: preserve-3d;
+    /* Tilt & skew for the dashboard vibe */
+    transform: rotateY(-18deg) rotateX(6deg) skewX(-6deg) translateZ(0);
+    transition: transform .65s cubic-bezier(.2,.8,.2,1), box-shadow .5s, border-color .5s;
+  }
+  .panel.large { grid-column: span 8; min-height: 260px; }
+  .panel.tall { min-height: 280px; }
+
+  /* Neon edges */
+  .panel::after {
+    content: "";
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(120deg, rgba(0,225,255,.35), transparent 35%),
+      linear-gradient(-120deg, rgba(255,62,165,.35), transparent 35%);
+    mix-blend-mode: screen; opacity: .65;
+    mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+    padding: 1px; border-radius: 18px;
+  }
+
+  /* ====== FAUX REFRACTION LAYER ======
+     Pulls the page background INSIDE the card and offsets/blur it to look refracted. */
+  .panel > .refract {
+    position: absolute; inset: -20px; z-index: 0;
+    background: inherit;           /* same as body background stack */
+    background-attachment: fixed;  /* crucial: makes movement feel glassy when scrolling */
+    filter: blur(10px) saturate(160%) contrast(105%);
+    opacity: .35;
+    transform: translate3d(6px, -8px, 0) scale(1.06) rotate(.25deg);
+    /* mask so edges glow but center stays readable */
+    -webkit-mask: radial-gradient(120% 120% at 20% 10%, rgba(0,0,0,.85) 30%, rgba(0,0,0,.7) 55%, transparent 85%);
+            mask: radial-gradient(120% 120% at 20% 10%, rgba(0,0,0,.85) 30%, rgba(0,0,0,.7) 55%, transparent 85%);
+  }
+
+  /* Light streak on top (glass highlight) */
+  .panel .shine {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0) 35%),
+      linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,0) 40%);
+    mix-blend-mode: screen;
+    opacity: .7;
+  }
+
+  /* Panel content sits above */
+  .content {
+    position: relative; z-index: 2;
+    padding: 18px clamp(14px, 2vw, 22px);
+  }
+  .title {
+    font-weight: 800; font-size: 18px; letter-spacing: .3px;
+    text-shadow: 0 2px 14px rgba(0,0,0,.35);
+    margin-bottom: 8px;
+  }
+  .kpi {
+    display: flex; align-items: baseline; gap: 8px;
+    font-weight: 800; letter-spacing: .4px;
+  }
+  .kpi .big { font-size: clamp(24px, 4vw, 38px); line-height: 1; }
+  .kpi .trend.up { color: #7ef9a9; }
+  .kpi .trend.down { color: #ff8db0; }
+
+  .muted { opacity: .7; font-size: 13px; }
+
+  /* Hover/Focus: reduce tilt a bit, pop forward */
+  .panel:hover, .panel:focus-within {
+    transform: rotateY(-10deg) rotateX(3deg) skewX(-3deg) translateZ(22px) scale(1.01);
+    border-color: rgba(0,225,255,.55);
+    box-shadow:
+      0 40px 90px rgba(0,0,0,.55),
+      0 0 0 1px rgba(0,225,255,.18) inset,
+      0 1px 0 rgba(255,255,255,.2) inset;
+  }
+
+  /* Small helper pills */
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 10px; border-radius: 999px;
+    font-size: 12px; letter-spacing: .2px; opacity: .9;
+    border: 1px solid rgba(255,255,255,.16);
+    background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+    backdrop-filter: blur(6px) saturate(130%);
+  }
+  .pill.dot::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%;
+    background: currentColor; display: inline-block;
+  }
+  .pill.green { color: #7ef9a9; border-color: rgba(126,249,169,.35); }
+  .pill.cyan { color: #6ff; border-color: rgba(0,225,255,.35); }
+  .pill.pink { color: #ff8db0; border-color: rgba(255,141,176,.35); }
+
+  /* Footer watermark */
+  footer {
+    text-align: center; padding: 16px; opacity: .6; font-size: 12px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo"></div>
+        <span>Tilted Glass Dashboard</span>
+      </div>
+      <div class="actions">
+        <a class="btn" href="#">Docs</a>
+        <a class="btn primary" href="#">Export</a>
+      </div>
+    </header>
+
+    <main class="stage">
+      <section class="grid">
+        <!-- Large KPI -->
+        <article class="panel large">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Revenue</div>
+            <div class="kpi">
+              <span class="big">$128.4K</span>
+              <span class="pill green dot">+12.6% MoM</span>
+            </div>
+            <p class="muted">Updated 5 mins ago • FY 2025 Q3</p>
+          </div>
+        </article>
+
+        <!-- Two mediums -->
+        <article class="panel">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Active Users</div>
+            <div class="kpi"><span class="big">24,870</span> <span class="pill cyan dot">+3.1% WoW</span></div>
+            <p class="muted">7-day rolling average</p>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Churn</div>
+            <div class="kpi"><span class="big">2.3%</span> <span class="pill pink dot">-0.4% MoM</span></div>
+            <p class="muted">Customer offboarding rate</p>
+          </div>
+        </article>
+
+        <!-- Tall card -->
+        <article class="panel tall">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Uptime</div>
+            <div class="kpi"><span class="big">99.982%</span></div>
+            <p class="muted">Last 30 days • SLA Tier 1</p>
+          </div>
+        </article>
+
+        <!-- Large insights -->
+        <article class="panel large">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Top Markets</div>
+            <p class="muted">IN • US • SG • AE • DE</p>
+            <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+              <span class="pill cyan">APAC +9.2%</span>
+              <span class="pill green">EMEA +4.7%</span>
+              <span class="pill pink">AMER +2.1%</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Medium -->
+        <article class="panel">
+          <div class="refract"></div>
+          <div class="shine"></div>
+          <div class="content">
+            <div class="title">Conversion</div>
+            <div class="kpi"><span class="big">5.6%</span> <span class="pill green dot">↑ steady</span></div>
+            <p class="muted">Sitewide / last 14 days</p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>© 2025 Tilted Glass UI • CSS-only • Glass + Refraction</footer>
+  </div>
+</body>
+</html>
