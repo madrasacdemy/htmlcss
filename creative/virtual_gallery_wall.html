@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Virtual Gallery Room – 3D CSS Art Exhibition</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: radial-gradient(circle at center, #0a0a0f 0%, #000 100%);
+    height: 100vh;
+    overflow: hidden;
+    perspective: 1200px;
+    color: #fff;
+  }
+
+  .gallery-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .gallery-room {
+    width: 90%;
+    max-width: 1400px;
+    height: 80vh;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateX(5deg);
+    transition: transform 1s cubic-bezier(.19,1,.22,1);
+  }
+
+  /* Walls */
+  .wall {
+    position: absolute;
+    background: linear-gradient(to bottom, #fafafa, #e8e8e8);
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.15);
+    padding: 40px;
+    display: grid;
+    gap: 30px;
+    transform-style: preserve-3d;
+    border-radius: 10px;
+  }
+
+  .back-wall {
+    width: 100%;
+    height: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    transform: translateZ(-400px);
+  }
+
+  .left-wall, .right-wall {
+    width: 400px;
+    height: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .left-wall {
+    left: -200px;
+    transform: rotateY(90deg) translateZ(-200px);
+  }
+  .right-wall {
+    right: -200px;
+    transform: rotateY(-90deg) translateZ(-200px);
+  }
+
+  /* Artwork Frames */
+  .artwork-frame {
+    position: relative;
+    background: #7b3f00;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    transform-style: preserve-3d;
+  }
+
+  .artwork-frame:hover {
+    transform: translateZ(25px) scale(1.05);
+    box-shadow: 0 0 40px rgba(255,255,255,0.3);
+  }
+
+  .artwork {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 4px;
+  }
+
+  .artwork img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .artwork-frame:hover img {
+    transform: scale(1.1);
+  }
+
+  /* Info label */
+  .artwork-info {
+    position: absolute;
+    bottom: -45px;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    padding: 6px 10px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+  }
+  .artwork-frame:hover .artwork-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Floor & Ceiling */
+  .floor, .ceiling {
+    position: absolute;
+    left: 0; right: 0;
+    height: 200px;
+    transform-origin: center;
+  }
+  .floor {
+    bottom: 0;
+    background: linear-gradient(to top, #1d1d1f 0%, #2a2a2a 100%);
+    transform: rotateX(90deg) translateZ(-100px);
+    box-shadow: 0 -20px 80px rgba(0,255,255,0.1) inset;
+  }
+  .ceiling {
+    top: 0;
+    background: linear-gradient(to bottom, #f0f0f0 0%, #d0d0d0 100%);
+    transform: rotateX(-90deg) translateZ(100px);
+    box-shadow: inset 0 40px 60px rgba(0,0,0,0.2);
+  }
+
+  /* Spotlights */
+  .spotlight {
+    position: absolute;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(255,255,255,0.7) 0%, transparent 70%);
+    pointer-events: none;
+    opacity: 0.5;
+    filter: blur(25px);
+    animation: glowMove 4s ease-in-out infinite alternate;
+  }
+  .spotlight-1 { top: -50px; left: 25%; }
+  .spotlight-2 { top: -50px; right: 25%; }
+  @keyframes glowMove {
+    0% { transform: translateZ(200px) translateY(0); opacity: 0.4; }
+    100% { transform: translateZ(200px) translateY(20px); opacity: 0.8; }
+  }
+
+  /* Room title overlay */
+  .gallery-title {
+    position: absolute;
+    top: 20px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(0,255,255,0.6);
+  }
+
+  /* Controls */
+  .controls {
+    position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 100;
+  }
+  .control-btn {
+    padding: 12px 24px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  .control-btn:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .modal.active { display: flex; opacity: 1; }
+
+  .modal-content {
+    position: relative;
+    max-width: 80%;
+    max-height: 80%;
+    transform: scale(0.85);
+    transition: transform 0.4s ease;
+  }
+  .modal.active .modal-content { transform: scale(1); }
+
+  .modal img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border: 15px solid #7b3f00;
+    border-radius: 10px;
+    box-shadow: 0 0 60px rgba(0,255,255,0.4);
+  }
+
+  .modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    font-size: 30px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .modal-close:hover { transform: rotate(90deg); }
+
+  .modal-info {
+    position: absolute;
+    bottom: -55px;
+    left: 0;
+    right: 0;
+    text-align: center;
+  }
+  .modal-info h3 { font-size: 22px; margin-bottom: 5px; }
+  .modal-info p { font-size: 15px; opacity: 0.8; }
+
+  @media (max-width: 768px) {
+    .left-wall, .right-wall { display: none; }
+    .back-wall { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+    .gallery-title { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="gallery-container">
+  <div class="gallery-room" id="galleryRoom">
+    <h2 class="gallery-title">Virtual Gallery Wall</h2>
+
+    <!-- Back Wall -->
+    <div class="wall back-wall">
+      <div class="artwork-frame" data-title="Starry Night" data-artist="Van Gogh">
+        <div class="artwork"><img src="https://picsum.photos/seed/starry/400/300" alt=""></div>
+        <div class="artwork-info"><strong>Starry Night</strong><br>Van Gogh</div>
+      </div>
+      <div class="artwork-frame" data-title="The Persistence of Memory" data-artist="Dali">
+        <div class="artwork"><img src="https://picsum.photos/seed/memory/400/300" alt=""></div>
+        <div class="artwork-info"><strong>The Persistence of Memory</strong><br>Dali</div>
+      </div>
+      <div class="artwork-frame" data-title="Girl with a Pearl Earring" data-artist="Vermeer">
+        <div class="artwork"><img src="https://picsum.photos/seed/pearl/400/300" alt=""></div>
+        <div class="artwork-info"><strong>Girl with a Pearl Earring</strong><br>Vermeer</div>
+      </div>
+      <div class="artwork-frame" data-title="The Scream" data-artist="Munch">
+        <div class="artwork"><img src="https://picsum.photos/seed/scream/400/300" alt=""></div>
+        <div class="artwork-info"><strong>The Scream</strong><br>Munch</div>
+      </div>
+      <div class="artwork-frame" data-title="Guernica" data-artist="Picasso">
+        <div class="artwork"><img src="https://picsum.photos/seed/guernica/400/300" alt=""></div>
+        <div class="artwork-info"><strong>Guernica</strong><br>Picasso</div>
+      </div>
+      <div class="artwork-frame" data-title="The Birth of Venus" data-artist="Botticelli">
+        <div class="artwork"><img src="https://picsum.photos/seed/venus/400/300" alt=""></div>
+        <div class="artwork-info"><strong>The Birth of Venus</strong><br>Botticelli</div>
+      </div>
+    </div>
+
+    <!-- Side Walls -->
+    <div class="wall left-wall">
+      <div class="artwork-frame" data-title="Water Lilies" data-artist="Monet">
+        <div class="artwork"><img src="https://picsum.photos/seed/lilies/300/400" alt=""></div>
+        <div class="artwork-info"><strong>Water Lilies</strong><br>Monet</div>
+      </div>
+      <div class="artwork-frame" data-title="Sunflowers" data-artist="Van Gogh">
+        <div class="artwork"><img src="https://picsum.photos/seed/sunflowers/300/400" alt=""></div>
+        <div class="artwork-info"><strong>Sunflowers</strong><br>Van Gogh</div>
+      </div>
+    </div>
+
+    <div class="wall right-wall">
+      <div class="artwork-frame" data-title="The Last Supper" data-artist="Da Vinci">
+        <div class="artwork"><img src="https://picsum.photos/seed/supper/300/400" alt=""></div>
+        <div class="artwork-info"><strong>The Last Supper</strong><br>Da Vinci</div>
+      </div>
+      <div class="artwork-frame" data-title="The Creation of Adam" data-artist="Michelangelo">
+        <div class="artwork"><img src="https://picsum.photos/seed/adam/300/400" alt=""></div>
+        <div class="artwork-info"><strong>The Creation of Adam</strong><br>Michelangelo</div>
+      </div>
+    </div>
+
+    <div class="floor"></div>
+    <div class="ceiling"></div>
+    <div class="spotlight spotlight-1"></div>
+    <div class="spotlight spotlight-2"></div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="control-btn" onclick="rotateRoom('left')">← Rotate Left</button>
+  <button class="control-btn" onclick="rotateRoom('reset')">Reset</button>
+  <button class="control-btn" onclick="rotateRoom('right')">Rotate Right →</button>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="artModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <img id="modalImage" src="" alt="">
+    <div class="modal-info">
+      <h3 id="modalTitle"></h3>
+      <p id="modalArtist"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentRotation = 0;
+const galleryRoom = document.getElementById('galleryRoom');
+const modal = document.getElementById('artModal');
+const modalImage = document.getElementById('modalImage');
+const modalTitle = document.getElementById('modalTitle');
+const modalArtist = document.getElementById('modalArtist');
+
+/* Artwork click */
+document.querySelectorAll('.artwork-frame').forEach(frame => {
+  frame.addEventListener('click', () => {
+    modalImage.src = frame.querySelector('img').src;
+    modalTitle.textContent = frame.dataset.title;
+    modalArtist.textContent = frame.dataset.artist;
+    modal.classList.add('active');
+  });
+});
+function closeModal() { modal.classList.remove('active'); }
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+/* Rotation Controls */
+function rotateRoom(direction) {
+  if (direction === 'left') currentRotation -= 45;
+  else if (direction === 'right') currentRotation += 45;
+  else currentRotation = 0;
+  galleryRoom.style.transform = `rotateX(5deg) rotateY(${currentRotation}deg)`;
+}
+
+/* Drag to rotate */
+let isDragging = false, startX = 0, startRotation = 0;
+galleryRoom.addEventListener('mousedown', e => {
+  isDragging = true; startX = e.clientX; startRotation = currentRotation;
+  galleryRoom.style.cursor = 'grabbing';
+});
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const deltaX = e.clientX - startX;
+  currentRotation = startRotation + deltaX * 0.4;
+  galleryRoom.style.transform = `rotateX(5deg) rotateY(${currentRotation}deg)`;
+});
+document.addEventListener('mouseup', () => { isDragging = false; galleryRoom.style.cursor = 'grab'; });
+
+/* Keyboard shortcuts */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowLeft') rotateRoom('left');
+  if (e.key === 'ArrowRight') rotateRoom('right');
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
