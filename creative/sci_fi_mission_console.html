@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sci-Fi Mission Console</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .console-container {
+            width: 100%;
+            max-width: 1400px;
+            height: 90vh;
+            background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 100%);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3),
+                        inset 0 0 30px rgba(0, 255, 0, 0.1);
+            display: grid;
+            grid-template-columns: 1fr 400px 1fr;
+            grid-template-rows: 80px 1fr 150px;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+
+        .mission-title {
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .mission-status {
+            font-size: 18px;
+            color: #00ff00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .status-lights {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .status-lights h3 {
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 16px;
+            color: #00ff00;
+        }
+
+        .light-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .status-light {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .light {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .light-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .light.green {
+            background: #00ff00;
+            animation: blink-green 1.5s infinite;
+        }
+
+        .light.yellow {
+            background: #ffff00;
+            animation: blink-yellow 2s infinite;
+        }
+
+        .light.red {
+            background: #ff0000;
+            animation: blink-red 0.8s infinite;
+        }
+
+        .light.blue {
+            background: #0080ff;
+            animation: blink-blue 1.2s infinite;
+        }
+
+        @keyframes blink-green {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes blink-yellow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes blink-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        @keyframes blink-blue {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .radar-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 50%;
+            position: relative;
+            width: 360px;
+            height: 360px;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5),
+                        inset 0 0 30px rgba(0, 255, 0, 0.2);
+        }
+
+        .radar-screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .radar-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .radar-circle {
+            position: absolute;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .radar-circle:nth-child(1) { width: 100%; height: 100%; }
+        .radar-circle:nth-child(2) { width: 75%; height: 75%; }
+        .radar-circle:nth-child(3) { width: 50%; height: 50%; }
+        .radar-circle:nth-child(4) { width: 25%; height: 25%; }
+
+        .radar-line {
+            position: absolute;
+            width: 1px;
+            height: 50%;
+            background: rgba(0, 255, 0, 0.3);
+            left: 50%;
+            top: 0;
+        }
+
+        .radar-line:nth-child(5) { transform: rotate(0deg); }
+        .radar-line:nth-child(6) { transform: rotate(45deg); }
+        .radar-line:nth-child(7) { transform: rotate(90deg); }
+        .radar-line:nth-child(8) { transform: rotate(135deg); }
+
+        .radar-sweep {
+            position: absolute;
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #00ff00);
+            left: 50%;
+            top: 50%;
+            transform-origin: left center;
+            animation: sweep 4s linear infinite;
+        }
+
+        .radar-sweep::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 255, 0, 0.2), transparent);
+            top: -50px;
+            left: 0;
+        }
+
+        @keyframes sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .radar-blip {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0000;
+            animation: blip 2s infinite;
+        }
+
+        @keyframes blip {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .system-info {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 20px;
+        }
+
+        .system-info h3 {
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #00ff00;
+        }
+
+        .system-logs {
+            grid-column: 1 / -1;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-y: auto;
+            max-height: 150px;
+        }
+
+        .system-logs h3 {
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        .log-container {
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .log-timestamp {
+            color: #666;
+            margin-right: 10px;
+        }
+
+        .log-level {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .log-level.info { color: #00ff00; }
+        .log-level.warning { color: #ffff00; }
+        .log-level.error { color: #ff0000; }
+        .log-level.success { color: #0080ff; }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .control-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Scrollbar styling */
+        .system-logs::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .system-logs::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .system-logs::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="console-container">
+        <header class="header">
+            <h1 class="mission-title">Mission Control</h1>
+            <div class="mission-status">
+                <div class="status-indicator"></div>
+                <span>SYSTEM ONLINE</span>
+            </div>
+        </header>
+
+        <div class="left-panel">
+            <div class="status-lights">
+                <h3>System Status</h3>
+                <div class="light-grid">
+                    <div class="status-light">
+                        <div class="light green"></div>
+                        <span class="light-label">Power</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light green"></div>
+                        <span class="light-label">Comms</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light yellow"></div>
+                        <span class="light-label">Shields</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light green"></div>
+                        <span class="light-label">Engines</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light blue"></div>
+                        <span class="light-label">Sensors</span>
+                    </div>
+                    <div class="status-light">
+                        <div class="light red"></div>
+                        <span class="light-label">Alert</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-info">
+                <h3>Ship Systems</h3>
+                <div class="info-item">
+                    <span>Hull Integrity</span>
+                    <span class="info-value">98%</span>
+                </div>
+                <div class="info-item">
+                    <span>Shield Power</span>
+                    <span class="info-value">75%</span>
+                </div>
+                <div class="info-item">
+                    <span>Energy Core</span>
+                    <span class="info-value">92%</span>
+                </div>
+                <div class="info-item">
+                    <span>Oxygen Level</span>
+                    <span class="info-value">100%</span>
+                </div>
+                <div class="info-item">
+                    <span>Warp Drive</span>
+                    <span class="info-value">Ready</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="radar-container">
+            <div class="radar-screen">
+                <div class="radar-grid">
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle"></div>
+                    <div class="radar-circle"></div>
+                    <div class="radar-line"></div>
+                    <div class="radar-line"></div>
+                    <div class="radar-line"></div>
+                    <div class="radar-line"></div>
+                </div>
+                <div class="radar-sweep"></div>
+                <div class="radar-blip" style="top: 30%; left: 60%;"></div>
+                <div class="radar-blip" style="top: 70%; left: 40%;"></div>
+                <div class="radar-blip" style="top: 50%; left: 80%;"></div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <div class="system-info">
+                <h3>Mission Data</h3>
+                <div class="info-item">
+                    <span>Coordinates</span>
+                    <span class="info-value">X: 4287 Y: 9123</span>
+                </div>
+                <div class="info-item">
+                    <span>Velocity</span>
+                    <span class="info-value">0.7c</span>
+                </div>
+                <div class="info-item">
+                    <span>Distance</span>
+                    <span class="info-value">2.4 AU</span>
+                </div>
+                <div class="info-item">
+                    <span>ETA</span>
+                    <span class="info-value">04:32:18</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" onclick="scanArea()">Scan</button>
+                <button class="control-btn" onclick="engageShields()">Shields</button>
+                <button class="control-btn" onclick="warpJump()">Warp</button>
+            </div>
+        </div>
+
+        <div class="system-logs">
+            <h3>System Logs</h3>
+            <div class="log-container" id="logContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        // System log messages
+        const logMessages = [
+            { level: 'info', message: 'System initialization complete' },
+            { level: 'success', message: 'Navigation systems online' },
+            { level: 'info', message: 'Life support systems nominal' },
+            { level: 'warning', message: 'Minor fluctuations in shield power' },
+            { level: 'info', message: 'Long-range sensors activated' },
+            { level: 'error', message: 'Unidentified energy signature detected' },
+            { level: 'info', message: 'Warp core stability at 98%' },
+            { level: 'success', message: 'Communication array synchronized' },
+            { level: 'warning', message: 'Asteroid field ahead - adjusting course' },
+            { level: 'info', message: 'All systems functioning within parameters' }
+        ];
+
+        // Add initial logs
+        function addLog(level, message) {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span>
+                <span class="log-level ${level}">${level.toUpperCase()}</span>
+                <span>${message}</span>
+            `;
+            
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            
+            // Remove old logs if too many
+            if (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.firstChild);
+            }
+        }
+
+        // Initialize with some logs
+        setTimeout(() => addLog('info', 'Mission console initialized'), 500);
+        setTimeout(() => addLog('success', 'All systems green'), 1000);
+        setTimeout(() => addLog('info', 'Awaiting commands'), 1500);
+
+        // Add random logs periodically
+        setInterval(() => {
+            const randomLog = logMessages[Math.floor(Math.random() * logMessages.length)];
+            addLog(randomLog.level, randomLog.message);
+        }, 5000);
+
+        // Control functions
+        function scanArea() {
+            addLog('info', 'Initiating deep space scan...');
+            setTimeout(() => addLog('success', 'Scan complete - 3 objects detected'), 2000);
+            
+            // Add new radar blip
+            const radarScreen = document.querySelector('.radar-screen');
+            const blip = document.createElement('div');
+            blip.className = 'radar-blip';
+            blip.style.top = Math.random() * 80 + 10 + '%';
+            blip.style.left = Math.random() * 80 + 10 + '%';
+            radarScreen.appendChild(blip);
+            
+            setTimeout(() => blip.remove(), 10000);
+        }
+
+        function engageShields() {
+            addLog('info', 'Engaging defensive shields...');
+            setTimeout(() => addLog('success', 'Shields at 100% power'), 1500);
+            
+            // Change shield status light
+            const shieldLight = document.querySelectorAll('.light')[2];
+            shieldLight.classList.remove('yellow');
+            shieldLight.classList.add('green');
+        }
+
+        function warpJump() {
+            addLog('warning', 'Initiating warp sequence...');
+            setTimeout(() => addLog('info', 'Warp core charging...'), 1000);
+            setTimeout(() => addLog('info', 'Navigation lock confirmed'), 2000);
+            setTimeout(() => addLog('success', 'Engaging warp drive!'), 3000);
+            setTimeout(() => addLog('info', 'Warp jump complete'), 4000);
+        }
+
+        // Animate radar blips
+        setInterval(() => {
+            const blips = document.querySelectorAll('.radar-blip');
+            blips.forEach(blip => {
+                const currentTop = parseFloat(blip.style.top);
+                const currentLeft = parseFloat(blip.style.left);
+                
+                // Random movement
+                const newTop = Math.max(10, Math.min(90, currentTop + (Math.random() - 0.5) * 2));
+                const newLeft = Math.max(10, Math.min(90, currentLeft + (Math.random() - 0.5) * 2));
+                
+                blip.style.top = newTop + '%';
+                blip.style.left = newLeft + '%';
+            });
+        }, 2000);
+    </script>
+</body>
+</html>
