@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space Mission Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #0ff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 50%, #001122 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, #001133 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, #000011 0%, transparent 50%);
+        }
+
+        .control-panel {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border: 2px solid #0ff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                0 0 50px rgba(0, 255, 255, 0.3),
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            width: 900px;
+            max-width: 95vw;
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .panel-title {
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px #0ff;
+            animation: titleGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 20px #0ff; }
+            50% { text-shadow: 0 0 30px #0ff, 0 0 40px #0ff; }
+        }
+
+        .mission-status {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #001122;
+            padding: 5px 15px;
+            border-radius: 15px;
+            border: 1px solid #0ff;
+            font-size: 12px;
+            animation: statusBlink 1s ease-in-out infinite;
+        }
+
+        @keyframes statusBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .control-section {
+            background: rgba(0, 20, 40, 0.5);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #0ff;
+            letter-spacing: 2px;
+        }
+
+        /* Toggle Switches */
+        .toggle-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-label {
+            font-size: 12px;
+            color: #88ccff;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #222;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #444;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #666;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .toggle-switch.active {
+            background: #0ff;
+            border-color: #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .toggle-switch.active::before {
+            left: 32px;
+            background: #fff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+
+        /* Rocker Switches */
+        .rocker-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .rocker-switch {
+            width: 80px;
+            height: 40px;
+            background: #111;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            border: 2px solid #333;
+            transition: all 0.3s;
+        }
+
+        .rocker-switch::before {
+            content: '';
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(145deg, #444, #222);
+            border-radius: 50%;
+            top: 0;
+            left: 0;
+            transition: all 0.3s;
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.5),
+                0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .rocker-switch.right::before {
+            left: 40px;
+            background: linear-gradient(145deg, #0ff, #088);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.5),
+                0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        .rocker-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* Warning Lights */
+        .warning-lights {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .warning-light {
+            text-align: center;
+        }
+
+        .light-bulb {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .light-bulb::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .light-bulb.green {
+            background: #003300;
+            border: 2px solid #006600;
+        }
+
+        .light-bulb.green.active {
+            background: #00ff00;
+            border-color: #00ff00;
+            box-shadow: 0 0 30px #00ff00;
+            animation: lightPulse 1s ease-in-out infinite;
+        }
+
+        .light-bulb.yellow {
+            background: #333300;
+            border: 2px solid #666600;
+        }
+
+        .light-bulb.yellow.active {
+            background: #ffff00;
+            border-color: #ffff00;
+            box-shadow: 0 0 30px #ffff00;
+            animation: lightPulse 0.8s ease-in-out infinite;
+        }
+
+        .light-bulb.red {
+            background: #330000;
+            border: 2px solid #660000;
+        }
+
+        .light-bulb.red.active {
+            background: #ff0000;
+            border-color: #ff0000;
+            box-shadow: 0 0 40px #ff0000;
+            animation: criticalBlink 0.5s ease-in-out infinite;
+        }
+
+        @keyframes lightPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        @keyframes criticalBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .light-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #88ccff;
+        }
+
+        /* Display Screen */
+        .display-screen {
+            background: #001122;
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen-content {
+            font-size: 14px;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .screen-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .screen-line:nth-child(1) { animation-delay: 0.1s; }
+        .screen-line:nth-child(2) { animation-delay: 0.2s; }
+        .screen-line:nth-child(3) { animation-delay: 0.3s; }
+        .screen-line:nth-child(4) { animation-delay: 0.4s; }
+
+        .screen-value {
+            color: #0ff;
+            font-weight: bold;
+        }
+
+        .scanlines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 255, 0.03) 2px,
+                rgba(0, 255, 255, 0.03) 4px
+            );
+            pointer-events: none;
+        }
+
+        /* Emergency Button */
+        .emergency-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .emergency-btn {
+            background: #ff0000;
+            color: #fff;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .emergency-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+        }
+
+        .emergency-btn:active {
+            transform: scale(0.95);
+        }
+
+        .emergency-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .emergency-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .panel-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <div class="panel-header">
+            <h1 class="panel-title">Mission Control</h1>
+            <div class="mission-status">ACTIVE</div>
+        </div>
+
+        <div class="control-grid">
+            <!-- System Controls -->
+            <div class="control-section">
+                <h2 class="section-title">System Controls</h2>
+                <div class="toggle-container">
+                    <div class="toggle-item">
+                        <span class="toggle-label">Main Power</span>
+                        <div class="toggle-switch active" data-toggle="power"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span class="toggle-label">Life Support</span>
+                        <div class="toggle-switch active" data-toggle="life-support"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span class="toggle-label">Navigation</span>
+                        <div class="toggle-switch" data-toggle="navigation"></div>
+                    </div>
+                    <div class="toggle-item">
+                        <span class="toggle-label">Communications</span>
+                        <div class="toggle-switch active" data-toggle="comms"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thruster Controls -->
+            <div class="control-section">
+                <h2 class="section-title">Thruster Controls</h2>
+                <div class="rocker-container">
+                    <div>
+                        <div class="rocker-switch" data-rocker="thruster1"></div>
+                        <div class="rocker-labels">
+                            <span>OFF</span>
+                            <span>ON</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="rocker-switch right" data-rocker="thruster2"></div>
+                        <div class="rocker-labels">
+                            <span>OFF</span>
+                            <span>ON</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="rocker-switch" data-rocker="thruster3"></div>
+                        <div class="rocker-labels">
+                            <span>OFF</span>
+                            <span>ON</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Warning Lights -->
+            <div class="control-section">
+                <h2 class="section-title">System Status</h2>
+                <div class="warning-lights">
+                    <div class="warning-light">
+                        <div class="light-bulb green active" data-light="oxygen"></div>
+                        <div class="light-label">Oxygen</div>
+                    </div>
+                    <div class="warning-light">
+                        <div class="light-bulb yellow" data-light="temp"></div>
+                        <div class="light-label">Temperature</div>
+                    </div>
+                    <div class="warning-light">
+                        <div class="light-bulb green active" data-light="pressure"></div>
+                        <div class="light-label">Pressure</div>
+                    </div>
+                    <div class="warning-light">
+                        <div class="light-bulb red" data-light="hull"></div>
+                        <div class="light-label">Hull Integrity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Display Screen -->
+        <div class="display-screen">
+            <div class="scanlines"></div>
+            <div class="screen-content">
+                <div class="screen-line">
+                    <span>Altitude:</span>
+                    <span class="screen-value" id="altitude">408,000 km</span>
+                </div>
+                <div class="screen-line">
+                    <span>Velocity:</span>
+                    <span class="screen-value" id="velocity">7.8 km/s</span>
+                </div>
+                <div class="screen-line">
+                    <span>Fuel:</span>
+                    <span class="screen-value" id="fuel">78%</span>
+                </div>
+                <div class="screen-line">
+                    <span>Mission Time:</span>
+                    <span class="screen-value" id="mission-time">00:42:18</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Emergency Button -->
+        <div class="emergency-section">
+            <button class="emergency-btn" id="emergency-btn">Emergency Stop</button>
+        </div>
+    </div>
+
+    <script>
+        // Toggle switches functionality
+        document.querySelectorAll('.toggle-switch').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const system = this.dataset.toggle;
+                console.log(`${system} toggled:`, this.classList.contains('active'));
+            });
+        });
+
+        // Rocker switches functionality
+        document.querySelectorAll('.rocker-switch').forEach(rocker => {
+            rocker.addEventListener('click', function() {
+                this.classList.toggle('right');
+                const thruster = this.dataset.rocker;
+                console.log(`${thruster} switched:`, this.classList.contains('right') ? 'ON' : 'OFF');
+            });
+        });
+
+        // Warning lights functionality
+        document.querySelectorAll('.light-bulb').forEach(light => {
+            light.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const system = this.dataset.light;
+                console.log(`${system} light:`, this.classList.contains('active') ? 'ON' : 'OFF');
+            });
+        });
+
+        // Emergency button
+        document.getElementById('emergency-btn').addEventListener('click', function() {
+            // Flash all red lights
+            document.querySelectorAll('.light-bulb.red').forEach(light => {
+                light.classList.add('active');
+            });
+            
+            // Turn off all systems
+            document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                toggle.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.rocker-switch').forEach(rocker => {
+                rocker.classList.remove('right');
+            });
+            
+            // Update display
+            document.getElementById('altitude').textContent = 'EMERGENCY';
+            document.getElementById('velocity').textContent = 'STOPPED';
+            document.getElementById('fuel').textContent = 'CRITICAL';
+            document.getElementById('mission-time').textContent = 'ABORT';
+            
+            // Flash emergency button
+            this.style.animation = 'criticalBlink 0.3s ease-in-out 5';
+            setTimeout(() => {
+                this.style.animation = '';
+            }, 1500);
+        });
+
+        // Simulate mission data updates
+        setInterval(() => {
+            const altitude = document.getElementById('altitude');
+            const currentAlt = parseInt(altitude.textContent.replace(/[^0-9]/g, ''));
+            const newAlt = currentAlt + Math.floor(Math.random() * 100) - 50;
+            altitude.textContent = `${newAlt.toLocaleString()} km`;
+            
+            const velocity = document.getElementById('velocity');
+            const currentVel = parseFloat(velocity.textContent);
+            const newVel = (currentVel + (Math.random() * 0.2 - 0.1)).toFixed(1);
+            velocity.textContent = `${newVel} km/s`;
+            
+            const fuel = document.getElementById('fuel');
+            const currentFuel = parseInt(fuel.textContent);
+            const newFuel = Math.max(0, currentFuel - Math.floor(Math.random() * 2));
+            fuel.textContent = `${newFuel}%`;
+            
+            const missionTime = document.getElementById('mission-time');
+            const timeParts = missionTime.textContent.split(':');
+            let seconds = parseInt(timeParts[2]) + 1;
+            let minutes = parseInt(timeParts[1]);
+            let hours = parseInt(timeParts[0]);
+            
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+            }
+            if (minutes >= 60) {
+                minutes = 0;
+                hours++;
+            }
+            
+            missionTime.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+
+        // Random warning light activation
+        setInterval(() => {
+            const lights = document.querySelectorAll('.light-bulb');
+            const randomLight = lights[Math.floor(Math.random() * lights.length)];
+            if (Math.random() > 0.7) {
+                randomLight.classList.toggle('active');
+            }
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retro VHS Tape Player</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    .vhs-player {
+      background: linear-gradient(145deg, #2d2d2d 0%, #1a1a1a 100%);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1);
+      position: relative;
+      width: 600px;
+      height: 400px;
+      overflow: hidden;
+    }
+
+    .vhs-player::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+      border-radius: 20px;
+      z-index: -1;
+      opacity: 0.3;
+      animation: glowShift 4s ease-in-out infinite;
+    }
+
+    @keyframes glowShift {
+      0%, 100% {
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    .tape-section {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-bottom: 30px;
+      height: 180px;
+      position: relative;
+    }
+
+    .reel {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, #333 30%, #222 31%, #111 35%, #000 100%);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8),
+        0 5px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reel::before {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #111;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.8);
+    }
+
+    .reel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: repeating-conic-gradient(
+        from 0deg at 50% 50%,
+        #444 0deg 10deg,
+        #333 10deg 20deg
+      );
+      opacity: 0.5;
+    }
+
+    .reel.spinning::after {
+      animation: spinReel 2s linear infinite;
+    }
+
+    @keyframes spinReel {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .tape {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 200px;
+      height: 40px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(139, 69, 19, 0.3) 10%,
+        rgba(139, 69, 19, 0.5) 50%,
+        rgba(139, 69, 19, 0.3) 90%,
+        transparent 100%
+      );
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .tape-flicker {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 100%
+      );
+      opacity: 0;
+    }
+
+    .playing .tape-flicker {
+      animation: flicker 0.15s linear infinite;
+      opacity: 1;
+    }
+
+    @keyframes flicker {
+      from {
+        transform: translateX(-100%);
+      }
+      to {
+        transform: translateX(100%);
+      }
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .control-btn {
+      width: 60px;
+      height: 60px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 2px 5px rgba(255, 255, 255, 0.1);
+    }
+
+    .control-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(0, 0, 0, 0.4),
+        inset 0 2px 5px rgba(255, 255, 255, 0.2);
+    }
+
+    .play-btn {
+      background: linear-gradient(145deg, #4ecdc4, #45b7d1);
+      overflow: hidden;
+    }
+
+    .play-btn.glowing {
+      animation: glowPulse 2s ease-in-out infinite;
+      box-shadow: 0 0 30px rgba(78, 205, 196, 0.6),
+        0 0 60px rgba(78, 205, 196, 0.4);
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        box-shadow: 0 0 30px rgba(78, 205, 196, 0.6),
+          0 0 60px rgba(78, 205, 196, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 45px rgba(78, 205, 196, 0.8),
+          0 0 80px rgba(78, 205, 196, 0.6);
+      }
+    }
+
+    .display {
+      background: #000;
+      border: 2px solid #333;
+      border-radius: 5px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .display-text {
+      color: #0f0;
+      font-size: 18px;
+      text-shadow: 0 0 10px #0f0;
+      letter-spacing: 2px;
+      animation: displayFlicker 3s ease-in-out infinite;
+    }
+
+    @keyframes displayFlicker {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.8;
+      }
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      );
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .playing .scanlines {
+      opacity: 1;
+    }
+
+    .brand {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .time-display {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #888;
+      font-size: 14px;
+      letter-spacing: 1px;
+      transition: color 0.3s ease;
+    }
+
+    .time-display.playing {
+      color: #4ecdc4;
+      text-shadow: 0 0 5px rgba(78, 205, 196, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="vhs-player" id="vhsPlayer">
+    <div class="brand">RETRO-VHS</div>
+
+    <div class="tape-section">
+      <div class="reel" id="leftReel"></div>
+      <div class="tape"><div class="tape-flicker"></div></div>
+      <div class="reel" id="rightReel"></div>
+    </div>
+
+    <div class="controls">
+      <button class="control-btn" id="ejectBtn">⏏</button>
+      <button class="control-btn" id="stopBtn">⏹</button>
+      <button class="control-btn play-btn" id="playBtn">▶</button>
+      <button class="control-btn" id="pauseBtn">⏸</button>
+      <button class="control-btn" id="ffBtn">⏩</button>
+    </div>
+
+    <div class="display">
+      <div class="scanlines"></div>
+      <div class="display-text" id="displayText">READY</div>
+    </div>
+
+    <div class="time-display" id="timeDisplay">00:00:00</div>
+  </div>
+
+  <script>
+    const vhsPlayer = document.getElementById('vhsPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const ejectBtn = document.getElementById('ejectBtn');
+    const ffBtn = document.getElementById('ffBtn');
+    const leftReel = document.getElementById('leftReel');
+    const rightReel = document.getElementById('rightReel');
+    const displayText = document.getElementById('displayText');
+    const timeDisplay = document.getElementById('timeDisplay');
+
+    let isPlaying = false;
+    let isPaused = false;
+    let currentTime = 0;
+    let playInterval;
+
+    function startPlaying() {
+      if (isPlaying) return;
+      isPlaying = true;
+      isPaused = false;
+      vhsPlayer.classList.add('playing');
+      playBtn.classList.add('glowing');
+      leftReel.classList.add('spinning');
+      rightReel.classList.add('spinning');
+      displayText.textContent = 'PLAYING';
+      timeDisplay.classList.add('playing');
+
+      clearInterval(playInterval);
+      playInterval = setInterval(() => {
+        currentTime++;
+        updateTimeDisplay();
+      }, 1000);
+    }
+
+    function pausePlaying() {
+      if (!isPlaying) return;
+      isPaused = true;
+      vhsPlayer.classList.remove('playing');
+      playBtn.classList.remove('glowing');
+      leftReel.classList.remove('spinning');
+      rightReel.classList.remove('spinning');
+      displayText.textContent = 'PAUSED';
+      clearInterval(playInterval);
+    }
+
+    function stopPlaying() {
+      isPlaying = false;
+      isPaused = false;
+      vhsPlayer.classList.remove('playing');
+      playBtn.classList.remove('glowing');
+      leftReel.classList.remove('spinning');
+      rightReel.classList.remove('spinning');
+      displayText.textContent = 'STOPPED';
+      timeDisplay.classList.remove('playing');
+      currentTime = 0;
+      updateTimeDisplay();
+      clearInterval(playInterval);
+    }
+
+    function ejectTape() {
+      stopPlaying();
+      displayText.textContent = 'EJECTING...';
+      setTimeout(() => (displayText.textContent = 'READY'), 2000);
+    }
+
+    function fastForward() {
+      if (!isPlaying) return;
+      displayText.textContent = 'FF >>';
+      leftReel.style.animationDuration = '0.5s';
+      rightReel.style.animationDuration = '0.5s';
+      setTimeout(() => {
+        leftReel.style.animationDuration = '2s';
+        rightReel.style.animationDuration = '2s';
+        displayText.textContent = 'PLAYING';
+      }, 2000);
+    }
+
+    function updateTimeDisplay() {
+      const hours = Math.floor(currentTime / 3600);
+      const minutes = Math.floor((currentTime % 3600) / 60);
+      const seconds = currentTime % 60;
+      timeDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes
+        .toString()
+        .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    playBtn.addEventListener('click', startPlaying);
+    pauseBtn.addEventListener('click', () => {
+      if (isPlaying && !isPaused) pausePlaying();
+      else if (isPaused) startPlaying();
+    });
+    stopBtn.addEventListener('click', stopPlaying);
+    ejectBtn.addEventListener('click', ejectTape);
+    ffBtn.addEventListener('click', fastForward);
+
+    // Random display flicker
+    setInterval(() => {
+      if (isPlaying && Math.random() > 0.95) {
+        displayText.style.opacity = '0.5';
+        setTimeout(() => (displayText.style.opacity = '1'), 100);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
