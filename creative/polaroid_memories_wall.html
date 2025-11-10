@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polaroid Memories Wall</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kalam', cursive;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #d0d0d0 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Wall texture overlay */
+        .wall-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(0,0,0,.03) 35px, rgba(0,0,0,.03) 70px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Polaroid container */
+        .polaroid-wall {
+            position: relative;
+            min-height: calc(100vh - 200px);
+            padding: 20px;
+            z-index: 2;
+        }
+
+        /* Individual Polaroid */
+        .polaroid {
+            position: absolute;
+            background: white;
+            padding: 15px 15px 50px 15px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.2),
+                0 1px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center bottom;
+        }
+
+        .polaroid:hover {
+            transform: scale(1.1) translateY(-10px) rotate(0deg) !important;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .polaroid img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            filter: saturate(1.1) contrast(1.05);
+        }
+
+        .polaroid-caption {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.4;
+            min-height: 30px;
+        }
+
+        .polaroid-date {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        /* Tape effect */
+        .polaroid::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
+        }
+
+        /* Add memory button */
+        .add-memory-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #ff6b6b;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .add-memory-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-family: 'Kalam', cursive;
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 400;
+            font-size: 1.1rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Kalam', cursive;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Kalam', cursive;
+        }
+
+        .submit-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* View mode */
+        .view-mode {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .view-btn {
+            background: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Kalam', cursive;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .polaroid-wall.grid-view .polaroid {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+            transform: rotate(0deg) !important;
+        }
+
+        .polaroid-wall.grid-view {
+            text-align: center;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .polaroid img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .polaroid {
+                padding: 10px 10px 40px 10px;
+            }
+            
+            .polaroid-caption {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Wall texture -->
+    <div class="wall-texture"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1><i class="fas fa-camera-retro"></i> Polaroid Memories Wall</h1>
+        <p>Capture moments that last forever</p>
+    </header>
+
+    <!-- View mode toggle -->
+    <div class="view-mode">
+        <button class="view-btn" onclick="toggleView()">
+            <i class="fas fa-th"></i> Grid View
+        </button>
+    </div>
+
+    <!-- Polaroid Wall -->
+    <div class="polaroid-wall" id="polaroidWall">
+        <!-- Sample Polaroids will be generated by JavaScript -->
+    </div>
+
+    <!-- Add Memory Button -->
+    <button class="add-memory-btn" onclick="openModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal" id="memoryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Memory</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="memoryForm" onsubmit="addMemory(event)">
+                <div class="form-group">
+                    <label for="memoryCaption">Memory Caption</label>
+                    <input type="text" id="memoryCaption" required placeholder="What's this memory about?">
+                </div>
+                <div class="form-group">
+                    <label for="memoryDate">Date</label>
+                    <input type="date" id="memoryDate" required>
+                </div>
+                <button type="submit" class="submit-btn">Add to Wall</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample memories data
+        const sampleMemories = [
+            { caption: "Sunset at the beach", date: "2024-01-15", seed: "sunset1" },
+            { caption: "Coffee with friends", date: "2024-02-20", seed: "coffee2" },
+            { caption: "Mountain adventure", date: "2024-03-10", seed: "mountain3" },
+            { caption: "City lights at night", date: "2024-04-05", seed: "city4" },
+            { caption: "Garden morning walk", date: "2024-05-12", seed: "garden5" },
+            { caption: "Road trip memories", date: "2024-06-18", seed: "road6" },
+            { caption: "Birthday celebration", date: "2024-07-22", seed: "birthday7" },
+            { caption: "Autumn in the park", date: "2024-08-30", seed: "autumn8" },
+            { caption: "Weekend getaway", date: "2024-09-14", seed: "getaway9" },
+            { caption: "Starry night sky", date: "2024-10-25", seed: "stars10" },
+            { caption: "Beach vacation", date: "2024-11-08", seed: "beach11" },
+            { caption: "Family reunion", date: "2024-12-01", seed: "family12" }
+        ];
+
+        // Generate random position and rotation
+        function getRandomPosition() {
+            const wall = document.getElementById('polaroidWall');
+            const maxX = wall.offsetWidth - 250;
+            const maxY = wall.offsetHeight - 300;
+            
+            return {
+                x: Math.random() * maxX,
+                y: Math.random() * maxY,
+                rotation: (Math.random() - 0.5) * 30 // -15 to 15 degrees
+            };
+        }
+
+        // Create Polaroid element
+        function createPolaroid(memory, index) {
+            const polaroid = document.createElement('div');
+            polaroid.className = 'polaroid';
+            
+            const position = getRandomPosition();
+            polaroid.style.left = position.x + 'px';
+            polaroid.style.top = position.y + 'px';
+            polaroid.style.transform = `rotate(${position.rotation}deg)`;
+            polaroid.style.animationDelay = `${index * 0.1}s`;
+            
+            const formattedDate = new Date(memory.date).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric' 
+            });
+            
+            polaroid.innerHTML = `
+                <img src="https://picsum.photos/seed/${memory.seed}/200/200.jpg" alt="${memory.caption}">
+                <div class="polaroid-caption">${memory.caption}</div>
+                <div class="polaroid-date">${formattedDate}</div>
+            `;
+            
+            return polaroid;
+        }
+
+        // Initialize wall with sample memories
+        function initializeWall() {
+            const wall = document.getElementById('polaroidWall');
+            sampleMemories.forEach((memory, index) => {
+                const polaroid = createPolaroid(memory, index);
+                wall.appendChild(polaroid);
+            });
+        }
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('memoryModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            // Set today's date as default
+            document.getElementById('memoryDate').valueAsDate = new Date();
+        }
+
+        function closeModal() {
+            document.getElementById('memoryModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('memoryForm').reset();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('memoryModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Add new memory
+        function addMemory(event) {
+            event.preventDefault();
+            
+            const caption = document.getElementById('memoryCaption').value;
+            const date = document.getElementById('memoryDate').value;
+            const seed = 'memory' + Date.now();
+            
+            const newMemory = { caption, date, seed };
+            const polaroid = createPolaroid(newMemory, sampleMemories.length);
+            
+            // Add entrance animation
+            polaroid.style.animation = 'fadeIn 0.5s ease';
+            
+            document.getElementById('polaroidWall').appendChild(polaroid);
+            sampleMemories.push(newMemory);
+            
+            closeModal();
+        }
+
+        // Toggle view mode
+        let isGridView = false;
+        function toggleView() {
+            const wall = document.getElementById('polaroidWall');
+            const viewBtn = document.querySelector('.view-btn');
+            
+            isGridView = !isGridView;
+            
+            if (isGridView) {
+                wall.classList.add('grid-view');
+                viewBtn.innerHTML = '<i class="fas fa-random"></i> Scatter View';
+            } else {
+                wall.classList.remove('grid-view');
+                viewBtn.innerHTML = '<i class="fas fa-th"></i> Grid View';
+                
+                // Re-apply random positions
+                const polaroids = wall.querySelectorAll('.polaroid');
+                polaroids.forEach((polaroid, index) => {
+                    const position = getRandomPosition();
+                    polaroid.style.left = position.x + 'px';
+                    polaroid.style.top = position.y + 'px';
+                    polaroid.style.transform = `rotate(${position.rotation}deg)`;
+                });
+            }
+        }
+
+        // Reposition polaroids on window resize
+        window.addEventListener('resize', () => {
+            if (!isGridView) {
+                const polaroids = document.querySelectorAll('.polaroid');
+                polaroids.forEach((polaroid) => {
+                    const position = getRandomPosition();
+                    polaroid.style.left = position.x + 'px';
+                    polaroid.style.top = position.y + 'px';
+                });
+            }
+        });
+
+        // Initialize
+        initializeWall();
+    </script>
+</body>
+</html>

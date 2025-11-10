@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Journal - Capture Your Nightly Adventures</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 25%, #fd79a8 50%, #a29bfe 75%, #74b9ff 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Moon phases section */
+        .moon-phases {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .moon-phases h2 {
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .phases-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .moon-phase {
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .moon-phase:hover {
+            transform: scale(1.1);
+        }
+
+        .moon-icon {
+            font-size: 2.5rem;
+            color: #ffeaa7;
+            text-shadow: 0 0 20px rgba(255, 234, 167, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .moon-phase.active .moon-icon {
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+        }
+
+        .moon-label {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Add dream button */
+        .add-dream-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fd79a8, #a29bfe);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .add-dream-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dream entries container */
+        .dreams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        /* Dream entry card */
+        .dream-entry {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            animation: floatEntry 6s ease-in-out infinite;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dream-entry:nth-child(2n) {
+            animation-delay: -2s;
+        }
+
+        .dream-entry:nth-child(3n) {
+            animation-delay: -4s;
+        }
+
+        @keyframes floatEntry {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .dream-entry:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .dream-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .dream-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .dream-mood {
+            font-size: 1.5rem;
+        }
+
+        .dream-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .dream-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .dream-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #a29bfe;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .mood-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .mood-option {
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .mood-option:hover {
+            background: #f0f0f0;
+            transform: scale(1.2);
+        }
+
+        .mood-option.selected {
+            background: #a29bfe;
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #fd79a8, #a29bfe);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .phases-container {
+                justify-content: center;
+            }
+            
+            .moon-icon {
+                font-size: 2rem;
+            }
+            
+            .dreams-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1><i class="fas fa-moon"></i> Dream Journal</h1>
+            <p>Capture the magic of your nightly adventures</p>
+        </header>
+
+        <!-- Moon Phases -->
+        <section class="moon-phases">
+            <h2>Moon Phases</h2>
+            <div class="phases-container">
+                <div class="moon-phase" data-phase="new">
+                    <div class="moon-icon">🌑</div>
+                    <div class="moon-label">New Moon</div>
+                </div>
+                <div class="moon-phase" data-phase="waxing">
+                    <div class="moon-icon">🌒</div>
+                    <div class="moon-label">Waxing</div>
+                </div>
+                <div class="moon-phase active" data-phase="full">
+                    <div class="moon-icon">🌕</div>
+                    <div class="moon-label">Full Moon</div>
+                </div>
+                <div class="moon-phase" data-phase="waning">
+                    <div class="moon-icon">🌖</div>
+                    <div class="moon-label">Waning</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dream Entries -->
+        <div class="dreams-container" id="dreamsContainer">
+            <!-- Sample dream entries -->
+            <div class="dream-entry">
+                <div class="dream-header">
+                    <span class="dream-date">Nov 15, 2024</span>
+                    <span class="dream-mood">😊</span>
+                </div>
+                <h3 class="dream-title">Flying Over Rainbow Mountains</h3>
+                <p class="dream-content">I was soaring through the sky above mountains made of rainbows. The air felt warm and magical, and I could hear music coming from the clouds below...</p>
+                <div class="dream-tags">
+                    <span class="tag">flying</span>
+                    <span class="tag">colorful</span>
+                    <span class="tag">peaceful</span>
+                </div>
+            </div>
+
+            <div class="dream-entry">
+                <div class="dream-header">
+                    <span class="dream-date">Nov 14, 2024</span>
+                    <span class="dream-mood">😮</span>
+                </div>
+                <h3 class="dream-title">Underwater City Adventure</h3>
+                <p class="dream-content">Discovered a hidden city beneath the ocean waves. Fish were flying through the streets like cars, and the buildings were made of crystal...</p>
+                <div class="dream-tags">
+                    <span class="tag">adventure</span>
+                    <span class="tag">underwater</span>
+                    <span class="tag">mysterious</span>
+                </div>
+            </div>
+
+            <div class="dream-entry">
+                <div class="dream-header">
+                    <span class="dream-date">Nov 13, 2024</span>
+                    <span class="dream-mood">🌙</span>
+                </div>
+                <h3 class="dream-title">Moonlit Garden Party</h3>
+                <p class="dream-content">Attended a magical garden party under the full moon. The flowers glowed with soft light, and fairies danced among the trees...</p>
+                <div class="dream-tags">
+                    <span class="tag">magical</span>
+                    <span class="tag">nature</span>
+                    <span class="tag">social</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Dream Button -->
+    <button class="add-dream-btn" onclick="openModal()">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal" id="dreamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Dream Entry</h2>
+                <button class="close-btn" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="dreamForm" onsubmit="addDream(event)">
+                <div class="form-group">
+                    <label for="dreamTitle">Dream Title</label>
+                    <input type="text" id="dreamTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="dreamContent">Describe Your Dream</label>
+                    <textarea id="dreamContent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Mood</label>
+                    <div class="mood-selector">
+                        <span class="mood-option" data-mood="😊">😊</span>
+                        <span class="mood-option" data-mood="😮">😮</span>
+                        <span class="mood-option" data-mood="😔">😔</span>
+                        <span class="mood-option" data-mood="😴">😴</span>
+                        <span class="mood-option" data-mood="🌙">🌙</span>
+                        <span class="mood-option" data-mood="✨">✨</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="dreamTags">Tags (comma separated)</label>
+                    <input type="text" id="dreamTags" placeholder="e.g., flying, colorful, peaceful">
+                </div>
+                <button type="submit" class="submit-btn">Save Dream</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Moon phase selection
+        document.querySelectorAll('.moon-phase').forEach(phase => {
+            phase.addEventListener('click', function() {
+                document.querySelectorAll('.moon-phase').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Mood selection
+        let selectedMood = '😊';
+        document.querySelectorAll('.mood-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedMood = this.dataset.mood;
+            });
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('dreamModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('dreamModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('dreamForm').reset();
+            document.querySelectorAll('.mood-option').forEach(o => o.classList.remove('selected'));
+            document.querySelector('.mood-option').classList.add('selected');
+            selectedMood = '😊';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('dreamModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Add new dream
+        function addDream(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('dreamTitle').value;
+            const content = document.getElementById('dreamContent').value;
+            const tags = document.getElementById('dreamTags').value;
+            const date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            const dreamEntry = document.createElement('div');
+            dreamEntry.className = 'dream-entry';
+            dreamEntry.style.animation = 'fadeIn 0.5s ease';
+            
+            const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const tagsHTML = tagsArray.map(tag => `<span class="tag">${tag}</span>`).join('');
+            
+            dreamEntry.innerHTML = `
+                <div class="dream-header">
+                    <span class="dream-date">${date}</span>
+                    <span class="dream-mood">${selectedMood}</span>
+                </div>
+                <h3 class="dream-title">${title}</h3>
+                <p class="dream-content">${content}</p>
+                <div class="dream-tags">${tagsHTML}</div>
+            `;
+            
+            document.getElementById('dreamsContainer').insertBefore(dreamEntry, document.getElementById('dreamsContainer').firstChild);
+            closeModal();
+        }
+
+        // Initialize
+        createParticles();
+        document.querySelector('.mood-option').classList.add('selected');
+    </script>
+</body>
+</html>
