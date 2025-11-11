@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Bookshelf Organizer</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .library-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            max-width: 500px;
+            margin: 30px auto;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 30px;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8B4513;
+            font-size: 1.2rem;
+        }
+
+        .bookshelf {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            padding: 20px;
+        }
+
+        .shelf {
+            background: linear-gradient(to bottom, #654321 0%, #4a3018 100%);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            position: relative;
+            min-height: 400px;
+        }
+
+        .shelf::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(to bottom, #8B6F47 0%, #654321 100%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        .shelf::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(to bottom, #4a3018 0%, #2f1f0f 100%);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .shelf-title {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .book-stack {
+            position: relative;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .book {
+            width: 180px;
+            height: 40px;
+            margin: 2px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .book::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .book:hover {
+            transform: translateX(60px) translateY(-10px) rotate(-5deg);
+            box-shadow: 8px 8px 20px rgba(0,0,0,0.4);
+            z-index: 10;
+        }
+
+        .book-spine {
+            flex: 1;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .book-color-1 { background: linear-gradient(135deg, #FF6B6B 0%, #C44569 100%); }
+        .book-color-2 { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); }
+        .book-color-3 { background: linear-gradient(135deg, #45B7D1 0%, #2196F3 100%); }
+        .book-color-4 { background: linear-gradient(135deg, #96CEB4 0%, #88D8A3 100%); }
+        .book-color-5 { background: linear-gradient(135deg, #FECA57 0%, #FF9FF3 100%); }
+        .book-color-6 { background: linear-gradient(135deg, #A29BFE 0%, #6C5CE7 100%); }
+        .book-color-7 { background: linear-gradient(135deg, #FD79A8 0%, #E84393 100%); }
+        .book-color-8 { background: linear-gradient(135deg, #FDCB6E 0%, #E17055 100%); }
+
+        .book-details {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 500px;
+            width: 90%;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .book-details.active {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .book-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .book-details h2 {
+            color: #333;
+            font-size: 1.8rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .book-info {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .book-info p {
+            margin-bottom: 10px;
+        }
+
+        .book-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .read-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .read-btn:hover {
+            background: #45a049;
+        }
+
+        .favorite-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .favorite-btn:hover {
+            background: #da190b;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            color: #fff;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .bookshelf {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .book:hover {
+                transform: translateX(30px) translateY(-5px) rotate(-3deg);
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="library-container">
+        <div class="header">
+            <h1><i class="fas fa-book-open"></i> Library Bookshelf Organizer</h1>
+            <p>Hover over books to slide them out and explore your collection</p>
+        </div>
+
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search books by title or author..." id="searchInput">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+
+        <div class="bookshelf" id="bookshelf">
+            <!-- Fiction Shelf -->
+            <div class="shelf">
+                <h3 class="shelf-title">Fiction</h3>
+                <div class="book-stack">
+                    <div class="book book-color-1" data-title="The Great Adventure" data-author="Jane Smith" data-year="2023">
+                        <span class="book-spine">The Great Adventure</span>
+                    </div>
+                    <div class="book book-color-2" data-title="Mystery of the Old House" data-author="John Doe" data-year="2022">
+                        <span class="book-spine">Mystery of the Old House</span>
+                    </div>
+                    <div class="book book-color-3" data-title="Love in Paris" data-author="Emma Wilson" data-year="2023">
+                        <span class="book-spine">Love in Paris</span>
+                    </div>
+                    <div class="book book-color-4" data-title="The Last Dragon" data-author="Robert Brown" data-year="2021">
+                        <span class="book-spine">The Last Dragon</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Science Shelf -->
+            <div class="shelf">
+                <h3 class="shelf-title">Science</h3>
+                <div class="book-stack">
+                    <div class="book book-color-5" data-title="Quantum Physics" data-author="Dr. Albert" data-year="2023">
+                        <span class="book-spine">Quantum Physics</span>
+                    </div>
+                    <div class="book book-color-6" data-title="Biology Basics" data-author="Prof. Lisa" data-year="2022">
+                        <span class="book-spine">Biology Basics</span>
+                    </div>
+                    <div class="book book-color-7" data-title="Chemistry 101" data-author="Dr. Watson" data-year="2023">
+                        <span class="book-spine">Chemistry 101</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Shelf -->
+            <div class="shelf">
+                <h3 class="shelf-title">History</h3>
+                <div class="book-stack">
+                    <div class="book book-color-8" data-title="Ancient Civilizations" data-author="Mark Johnson" data-year="2022">
+                        <span class="book-spine">Ancient Civilizations</span>
+                    </div>
+                    <div class="book book-color-1" data-title="World Wars" data-author="Sarah Davis" data-year="2021">
+                        <span class="book-spine">World Wars</span>
+                    </div>
+                    <div class="book book-color-2" data-title="Modern History" data-author="Tom Anderson" data-year="2023">
+                        <span class="book-spine">Modern History</span>
+                    </div>
+                    <div class="book book-color-3" data-title="The Renaissance" data-author="Nina Patel" data-year="2022">
+                        <span class="book-spine">The Renaissance</span>
+                    </div>
+                    <div class="book book-color-4" data-title="Medieval Times" data-author="Chris Lee" data-year="2021">
+                        <span class="book-spine">Medieval Times</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technology Shelf -->
+            <div class="shelf">
+                <h3 class="shelf-title">Technology</h3>
+                <div class="book-stack">
+                    <div class="book book-color-5" data-title="AI Revolution" data-author="David Kim" data-year="2023">
+                        <span class="book-spine">AI Revolution</span>
+                    </div>
+                    <div class="book book-color-6" data-title="Web Development" data-author="Amy Chen" data-year="2022">
+                        <span class="book-spine">Web Development</span>
+                    </div>
+                    <div class="book book-color-7" data-title="Data Science" data-author="Mike Ross" data-year="2023">
+                        <span class="book-spine">Data Science</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalBooks">15</span>
+                <span class="stat-label">Total Books</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="readBooks">8</span>
+                <span class="stat-label">Books Read</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="favoriteBooks">5</span>
+                <span class="stat-label">Favorites</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Details Modal -->
+    <div class="overlay" id="overlay"></div>
+    <div class="book-details" id="bookDetails">
+        <div class="book-details-header">
+            <h2 id="modalTitle">Book Title</h2>
+            <button class="close-btn" onclick="closeBookDetails()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="book-info">
+            <p><strong>Author:</strong> <span id="modalAuthor"></span></p>
+            <p><strong>Year:</strong> <span id="modalYear"></span></p>
+            <p><strong>Genre:</strong> <span id="modalGenre"></span></p>
+            <p><strong>Description:</strong> This is a fascinating book that explores deep themes and captivating stories. Perfect for readers who enjoy thought-provoking content.</p>
+        </div>
+        <div class="book-actions">
+            <button class="action-btn read-btn" onclick="markAsRead()">
+                <i class="fas fa-check"></i> Mark as Read
+            </button>
+            <button class="action-btn favorite-btn" onclick="addToFavorites()">
+                <i class="fas fa-heart"></i> Add to Favorites
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Book data
+        const books = document.querySelectorAll('.book');
+        const overlay = document.getElementById('overlay');
+        const bookDetails = document.getElementById('bookDetails');
+        const searchInput = document.getElementById('searchInput');
+        
+        let currentBook = null;
+        let readBooks = new Set();
+        let favoriteBooks = new Set();
+
+        // Add click event to books
+        books.forEach(book => {
+            book.addEventListener('click', function() {
+                showBookDetails(this);
+            });
+        });
+
+        // Show book details
+        function showBookDetails(bookElement) {
+            currentBook = bookElement;
+            const title = bookElement.dataset.title;
+            const author = bookElement.dataset.author;
+            const year = bookElement.dataset.year;
+            const genre = bookElement.closest('.shelf').querySelector('.shelf-title').textContent;
+
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalAuthor').textContent = author;
+            document.getElementById('modalYear').textContent = year;
+            document.getElementById('modalGenre').textContent = genre;
+
+            overlay.classList.add('active');
+            bookDetails.classList.add('active');
+        }
+
+        // Close book details
+        function closeBookDetails() {
+            overlay.classList.remove('active');
+            bookDetails.classList.remove('active');
+        }
+
+        // Close modal when clicking overlay
+        overlay.addEventListener('click', closeBookDetails);
+
+        // Mark as read
+        function markAsRead() {
+            if (currentBook && !readBooks.has(currentBook.dataset.title)) {
+                readBooks.add(currentBook.dataset.title);
+                currentBook.style.opacity = '0.7';
+                updateStats();
+                showNotification('Book marked as read!');
+            }
+        }
+
+        // Add to favorites
+        function addToFavorites() {
+            if (currentBook && !favoriteBooks.has(currentBook.dataset.title)) {
+                favoriteBooks.add(currentBook.dataset.title);
+                currentBook.style.border = '3px solid #f44336';
+                updateStats();
+                showNotification('Added to favorites!');
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('readBooks').textContent = readBooks.size;
+            document.getElementById('favoriteBooks').textContent = favoriteBooks.size;
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #4CAF50;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 5px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                z-index: 2000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Search functionality
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            books.forEach(book => {
+                const title = book.dataset.title.toLowerCase();
+                const author = book.dataset.author.toLowerCase();
+                
+                if (title.includes(searchTerm) || author.includes(searchTerm)) {
+                    book.style.display = 'flex';
+                } else {
+                    book.style.display = 'none';
+                }
+            });
+        });
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize with some read and favorite books
+        readBooks.add('The Great Adventure');
+        readBooks.add('Quantum Physics');
+        readBooks.add('Ancient Civilizations');
+        readBooks.add('AI Revolution');
+        readBooks.add('Mystery of the Old House');
+        readBooks.add('Biology Basics');
+        readBooks.add('World Wars');
+        readBooks.add('Web Development');
+
+        favoriteBooks.add('The Great Adventure');
+        favoriteBooks.add('Quantum Physics');
+        favoriteBooks.add('Ancient Civilizations');
+        favoriteBooks.add('AI Revolution');
+        favoriteBooks.add('Love in Paris');
+
+        // Apply initial styles
+        books.forEach(book => {
+            if (readBooks.has(book.dataset.title)) {
+                book.style.opacity = '0.7';
+            }
+            if (favoriteBooks.has(book.dataset.title)) {
+                book.style.border = '3px solid #f44336';
+            }
+        });
+
+        updateStats();
+    </script>
+</body>
+</html>

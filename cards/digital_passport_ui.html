@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Passport - Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .passport-container {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            position: relative;
+        }
+
+        .passport {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.6s;
+        }
+
+        .passport-cover {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%);
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .passport-cover.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+        }
+
+        .passport-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            opacity: 0;
+            transition: opacity 0.6s;
+            z-index: 5;
+        }
+
+        .passport-inner.visible {
+            opacity: 1;
+        }
+
+        .passport-left, .passport-right {
+            width: 50%;
+            height: 100%;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .passport-left {
+            border-radius: 10px 0 0 10px;
+            border-right: none;
+        }
+
+        .passport-right {
+            border-radius: 0 10px 10px 0;
+            border-left: none;
+        }
+
+        .cover-content {
+            text-align: center;
+            color: gold;
+        }
+
+        .cover-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .cover-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .cover-emblem {
+            width: 80px;
+            height: 80px;
+            background: gold;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .cover-emblem i {
+            font-size: 2rem;
+            color: #1a237e;
+        }
+
+        .profile-section {
+            padding: 30px;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-photo {
+            width: 120px;
+            height: 150px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-upload {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .profile-photo:hover .photo-upload {
+            opacity: 1;
+        }
+
+        .profile-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .stamps-section {
+            padding: 30px;
+        }
+
+        .stamps-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stamps-header h3 {
+            color: #1a237e;
+            margin-bottom: 5px;
+        }
+
+        .stamps-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stamp {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stamp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .stamp::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+            opacity: 0;
+        }
+
+        .stamp:hover::before {
+            opacity: 1;
+        }
+
+        .stamp-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #1a237e;
+        }
+
+        .stamp-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .stamp-date {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .add-stamp-btn {
+            background: #1a237e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .add-stamp-btn:hover {
+            background: #3949ab;
+        }
+
+        .nav-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-dot.active {
+            background: gold;
+        }
+
+        .flip-hint {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        .edit-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .edit-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.1);
+            border: none;
+            color: #333;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background 0.3s;
+            z-index: 15;
+        }
+
+        .close-btn:hover {
+            background: rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .passport-container {
+                height: 500px;
+            }
+            
+            .cover-title {
+                font-size: 2rem;
+            }
+            
+            .stamps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-section, .stamps-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="passport-container">
+        <div class="passport" id="passport">
+            <!-- Passport Cover -->
+            <div class="passport-cover" id="passportCover">
+                <button class="edit-btn" onclick="editProfile()">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <div class="cover-content">
+                    <div class="cover-emblem">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="cover-title">DIGITAL PASSPORT</div>
+                    <div class="cover-subtitle">Global Citizen Profile</div>
+                </div>
+                <div class="flip-hint">
+                    <i class="fas fa-hand-pointer"></i> Click to open
+                </div>
+            </div>
+
+            <!-- Passport Inner Pages -->
+            <div class="passport-inner" id="passportInner">
+                <!-- Left Page - Profile -->
+                <div class="passport-left">
+                    <div class="profile-section">
+                        <div class="profile-header">
+                            <h3 style="color: #1a237e; margin-bottom: 20px;">PERSONAL DETAILS</h3>
+                            <div class="profile-photo">
+                                <img src="https://picsum.photos/seed/passport-photo/120/150.jpg" alt="Profile Photo" id="profileImg">
+                                <div class="photo-upload" onclick="uploadPhoto()">
+                                    <i class="fas fa-camera"></i> Change Photo
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-info">
+                            <div class="info-row">
+                                <span class="info-label">Full Name</span>
+                                <span class="info-value" id="fullName">Alexandra Chen</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Nationality</span>
+                                <span class="info-value" id="nationality">Global Citizen</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date of Birth</span>
+                                <span class="info-value" id="dob">March 15, 1992</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Passport Number</span>
+                                <span class="info-value" id="passportNumber">DG2024-0892</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Member Since</span>
+                                <span class="info-value" id="memberSince">January 2020</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Status</span>
+                                <span class="info-value" style="color: #4caf50; font-weight: 600;">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Page - Stamps -->
+                <div class="passport-right">
+                    <div class="stamps-section">
+                        <div class="stamps-header">
+                            <h3>TRAVEL STAMPS</h3>
+                            <p style="color: #666; font-size: 0.9rem;">Achievements & Experiences</p>
+                        </div>
+                        
+                        <div class="stamps-grid" id="stampsGrid">
+                            <div class="stamp">
+                                <div class="stamp-icon">
+                                    <i class="fas fa-plane"></i>
+                                </div>
+                                <div class="stamp-name">First Flight</div>
+                                <div class="stamp-date">Jan 2020</div>
+                            </div>
+                            
+                            <div class="stamp">
+                                <div class="stamp-icon">
+                                    <i class="fas fa-mountain"></i>
+                                </div>
+                                <div class="stamp-name">Mountain Peak</div>
+                                <div class="stamp-date">Mar 2020</div>
+                            </div>
+                            
+                            <div class="stamp">
+                                <div class="stamp-icon">
+                                    <i class="fas fa-umbrella-beach"></i>
+                                </div>
+                                <div class="stamp-name">Beach Paradise</div>
+                                <div class="stamp-date">Jun 2020</div>
+                            </div>
+                            
+                            <div class="stamp">
+                                <div class="stamp-icon">
+                                    <i class="fas fa-landmark"></i>
+                                </div>
+                                <div class="stamp-name">Historic Site</div>
+                                <div class="stamp-date">Sep 2020</div>
+                            </div>
+                        </div>
+                        
+                        <button class="add-stamp-btn" onclick="addNewStamp()">
+                            <i class="fas fa-plus"></i> Add New Stamp
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Close Button -->
+                <button class="close-btn" onclick="closePassport()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="nav-dots">
+            <div class="nav-dot active" id="dot1" onclick="goToCover()"></div>
+            <div class="nav-dot" id="dot2" onclick="goToInner()"></div>
+        </div>
+    </div>
+
+    <script>
+        let isOpen = false;
+        const passportCover = document.getElementById('passportCover');
+        const passportInner = document.getElementById('passportInner');
+        const dot1 = document.getElementById('dot1');
+        const dot2 = document.getElementById('dot2');
+
+        // Toggle passport open/close
+        passportCover.addEventListener('click', function() {
+            openPassport();
+        });
+
+        function openPassport() {
+            isOpen = true;
+            passportCover.classList.add('hidden');
+            passportInner.classList.add('visible');
+            dot2.classList.add('active');
+            dot1.classList.remove('active');
+        }
+
+        function closePassport() {
+            isOpen = false;
+            passportCover.classList.remove('hidden');
+            passportInner.classList.remove('visible');
+            dot1.classList.add('active');
+            dot2.classList.remove('active');
+        }
+
+        // Navigation functions
+        function goToCover() {
+            if (isOpen) {
+                closePassport();
+            }
+        }
+
+        function goToInner() {
+            if (!isOpen) {
+                openPassport();
+            }
+        }
+
+        // Edit profile function
+        function editProfile() {
+            const fields = ['fullName', 'nationality', 'dob', 'passportNumber', 'memberSince'];
+            const labels = ['Full Name', 'Nationality', 'Date of Birth', 'Passport Number', 'Member Since'];
+            
+            let currentValues = fields.map(field => document.getElementById(field).textContent);
+            
+            let newValues = [];
+            for (let i = 0; i < fields.length; i++) {
+                let newValue = prompt(`Enter ${labels[i]}:`, currentValues[i]);
+                newValues.push(newValue || currentValues[i]);
+            }
+            
+            fields.forEach((field, index) => {
+                document.getElementById(field).textContent = newValues[index];
+            });
+        }
+
+        // Upload photo function
+        function uploadPhoto() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        document.getElementById('profileImg').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            input.click();
+        }
+
+        // Add new stamp function
+        function addNewStamp() {
+            const stampName = prompt('Enter stamp name:');
+            const stampDate = prompt('Enter date (e.g., Jan 2024):');
+            
+            if (stampName && stampDate) {
+                const icons = ['fa-star', 'fa-heart', 'fa-trophy', 'fa-medal', 'fa-award', 'fa-gem'];
+                const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+                
+                const stampHTML = `
+                    <div class="stamp">
+                        <div class="stamp-icon">
+                            <i class="fas ${randomIcon}"></i>
+                        </div>
+                        <div class="stamp-name">${stampName}</div>
+                        <div class="stamp-date">${stampDate}</div>
+                    </div>
+                `;
+                
+                document.getElementById('stampsGrid').insertAdjacentHTML('beforeend', stampHTML);
+                
+                // Add click event to new stamp
+                const newStamp = document.getElementById('stampsGrid').lastElementChild;
+                newStamp.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                });
+            }
+        }
+
+        // Add click events to existing stamps
+        document.querySelectorAll('.stamp').forEach(stamp => {
+            stamp.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 200);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' && !isOpen) {
+                openPassport();
+            } else if (e.key === 'ArrowLeft' && isOpen) {
+                closePassport();
+            } else if (e.key === 'Escape' && isOpen) {
+                closePassport();
+            }
+        });
+    </script>
+</body>
+</html>
