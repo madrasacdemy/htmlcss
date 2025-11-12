@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Data Island - 3D Illusion</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%);
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Sky and clouds */
+        .sky {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98D8E8 50%, #B0E0E6 100%);
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.7;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 20%;
+            left: 20%;
+            animation: drift 60s infinite;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -15px;
+            right: 10px;
+        }
+
+        .cloud2 {
+            width: 80px;
+            height: 35px;
+            top: 40%;
+            right: 30%;
+            animation: drift 80s infinite;
+        }
+
+        .cloud2::before {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 15px;
+        }
+
+        .cloud2::after {
+            width: 50px;
+            height: 35px;
+            top: -10px;
+            right: 15px;
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+        }
+
+        /* Main container */
+        .scene {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transform-style: preserve-3d;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0) rotateX(5deg); }
+            50% { transform: translate(-50%, -50%) translateY(-20px) rotateX(5deg); }
+        }
+
+        /* Island base */
+        .island {
+            position: relative;
+            width: 400px;
+            height: 300px;
+            transform-style: preserve-3d;
+        }
+
+        /* Island layers */
+        .island-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50% 50% 45% 45%;
+        }
+
+        /* Bottom layer - rock */
+        .rock-layer {
+            background: linear-gradient(135deg, #5D4037 0%, #795548 50%, #6D4C41 100%);
+            transform: translateZ(-20px);
+            box-shadow: 0 0 50px rgba(0,0,0,0.3);
+        }
+
+        /* Middle layer - soil */
+        .soil-layer {
+            background: linear-gradient(135deg, #8D6E63 0%, #A1887F 50%, #795548 100%);
+            transform: translateZ(-10px);
+            clip-path: ellipse(48% 45% at 50% 50%);
+        }
+
+        /* Top layer - grass */
+        .grass-layer {
+            background: linear-gradient(135deg, #66BB6A 0%, #81C784 50%, #4CAF50 100%);
+            transform: translateZ(0);
+            clip-path: ellipse(45% 40% at 50% 50%);
+        }
+
+        /* Trees */
+        .tree {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            width: 20px;
+            height: 60px;
+            background: linear-gradient(to right, #5D4037, #795548);
+            border-radius: 5px;
+            transform: translateZ(10px);
+        }
+
+        .tree-leaves {
+            position: absolute;
+            bottom: 50px;
+            width: 80px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, #2E7D32 0%, #388E3C 50%, #1B5E20 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            transform: translateZ(15px);
+        }
+
+        .tree1 {
+            top: 20%;
+            left: 20%;
+            transform: scale(0.8);
+        }
+
+        .tree2 {
+            top: 15%;
+            right: 25%;
+            transform: scale(1.1);
+        }
+
+        .tree3 {
+            bottom: 30%;
+            left: 30%;
+            transform: scale(0.9);
+        }
+
+        /* Rocks */
+        .rock {
+            position: absolute;
+            background: linear-gradient(135deg, #424242 0%, #616161 50%, #757575 100%);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            transform: translateZ(5px);
+        }
+
+        .rock1 {
+            width: 60px;
+            height: 40px;
+            top: 40%;
+            left: 15%;
+            transform: translateZ(5px) rotate(25deg);
+        }
+
+        .rock2 {
+            width: 80px;
+            height: 50px;
+            bottom: 25%;
+            right: 20%;
+            transform: translateZ(5px) rotate(-15deg);
+        }
+
+        .rock3 {
+            width: 50px;
+            height: 35px;
+            top: 50%;
+            right: 35%;
+            transform: translateZ(5px) rotate(45deg);
+        }
+
+        /* Waterfall */
+        .waterfall {
+            position: absolute;
+            top: 0;
+            right: 30%;
+            width: 40px;
+            height: 150px;
+            transform: translateZ(10px);
+            overflow: hidden;
+        }
+
+        .water {
+            position: absolute;
+            width: 100%;
+            height: 200%;
+            background: linear-gradient(to bottom, 
+                rgba(33, 150, 243, 0.8) 0%, 
+                rgba(33, 150, 243, 0.6) 50%, 
+                rgba(33, 150, 243, 0.4) 100%);
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes flow {
+            0% { transform: translateY(-50%); }
+            100% { transform: translateY(0); }
+        }
+
+        .water-splash {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.8) 0%, rgba(33,150,243,0.6) 100%);
+            border-radius: 50%;
+            animation: splash 1s ease-in-out infinite;
+        }
+
+        @keyframes splash {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.8; }
+            50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 100%);
+            border-radius: 50%;
+            animation: float-particle 8s infinite;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        /* Shadow beneath island */
+        .shadow {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%) rotateX(90deg);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+        }
+
+        /* Crystal formations */
+        .crystal {
+            position: absolute;
+            transform-style: preserve-3d;
+        }
+
+        .crystal-shape {
+            width: 0;
+            height: 0;
+            border-style: solid;
+            transform: translateZ(20px);
+        }
+
+        .crystal1 {
+            top: 30%;
+            left: 40%;
+        }
+
+        .crystal1 .crystal-shape {
+            border-width: 0 15px 40px 15px;
+            border-color: transparent transparent #E1BEE7 transparent;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .crystal2 {
+            top: 25%;
+            right: 40%;
+        }
+
+        .crystal2 .crystal-shape {
+            border-width: 0 20px 50px 20px;
+            border-color: transparent transparent #B3E5FC transparent;
+            animation: glow 3s ease-in-out infinite 1s;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.5); }
+        }
+
+        /* Data streams */
+        .data-stream {
+            position: absolute;
+            width: 2px;
+            height: 100px;
+            background: linear-gradient(to top, transparent, #00BCD4, transparent);
+            transform: translateZ(25px);
+            animation: data-flow 3s linear infinite;
+        }
+
+        @keyframes data-flow {
+            0% { transform: translateZ(25px) translateY(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateZ(25px) translateY(-150px); opacity: 0; }
+        }
+
+        .data-stream1 {
+            top: 50%;
+            left: 35%;
+        }
+
+        .data-stream2 {
+            top: 45%;
+            right: 35%;
+            animation-delay: 1s;
+        }
+
+        /* Title */
+        .title {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .title h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00BCD4, #E91E63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* Info panel */
+        .info-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            max-width: 300px;
+        }
+
+        .info-panel h3 {
+            margin-bottom: 10px;
+            color: #00BCD4;
+        }
+
+        .info-panel ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-panel li {
+            margin: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .info-panel li::before {
+            content: '✨';
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="sky">
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+    </div>
+
+    <div class="title">
+        <h1>Floating Data Island</h1>
+        <p>A 3D Illusion of Mystical Data Floating in the Sky</p>
+    </div>
+
+    <div class="scene">
+        <div class="island">
+            <!-- Island layers -->
+            <div class="island-layer rock-layer"></div>
+            <div class="island-layer soil-layer"></div>
+            <div class="island-layer grass-layer"></div>
+
+            <!-- Trees -->
+            <div class="tree tree1">
+                <div class="tree-trunk"></div>
+                <div class="tree-leaves"></div>
+            </div>
+            <div class="tree tree2">
+                <div class="tree-trunk"></div>
+                <div class="tree-leaves"></div>
+            </div>
+            <div class="tree tree3">
+                <div class="tree-trunk"></div>
+                <div class="tree-leaves"></div>
+            </div>
+
+            <!-- Rocks -->
+            <div class="rock rock1"></div>
+            <div class="rock rock2"></div>
+            <div class="rock rock3"></div>
+
+            <!-- Waterfall -->
+            <div class="waterfall">
+                <div class="water"></div>
+                <div class="water-splash"></div>
+            </div>
+
+            <!-- Crystals -->
+            <div class="crystal crystal1">
+                <div class="crystal-shape"></div>
+            </div>
+            <div class="crystal crystal2">
+                <div class="crystal-shape"></div>
+            </div>
+
+            <!-- Data streams -->
+            <div class="data-stream data-stream1"></div>
+            <div class="data-stream data-stream2"></div>
+        </div>
+
+        <!-- Shadow -->
+        <div class="shadow"></div>
+    </div>
+
+    <!-- Floating particles -->
+    <div id="particles"></div>
+
+    <div class="info-panel">
+        <h3>Island Features</h3>
+        <ul>
+            <li>3D Layered Terrain</li>
+            <li>Living Vegetation</li>
+            <li>Flowing Waterfall</li>
+            <li>Mystical Crystals</li>
+            <li>Data Streams</li>
+            <li>Floating Particles</li>
+        </ul>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position around the island
+                const angle = (Math.PI * 2 * i) / particleCount;
+                const radius = 200 + Math.random() * 100;
+                const x = window.innerWidth / 2 + Math.cos(angle) * radius;
+                const y = window.innerHeight / 2 + Math.sin(angle) * radius - 100;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles
+        createParticles();
+
+        // Add mouse interaction
+        document.addEventListener('mousemove', (e) => {
+            const scene = document.querySelector('.scene');
+            const x = (e.clientX - window.innerWidth / 2) / 50;
+            const y = (e.clientY - window.innerHeight / 2) / 50;
+            
+            scene.style.transform = `translate(-50%, -50%) rotateY(${x}deg) rotateX(${-y}deg)`;
+        });
+
+        // Reset on mouse leave
+        document.addEventListener('mouseleave', () => {
+            const scene = document.querySelector('.scene');
+            scene.style.transform = 'translate(-50%, -50%)';
+        });
+    </script>
+</body>
+</html>

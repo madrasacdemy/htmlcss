@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunrise to Sunset Day Cycle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .scene {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            transition: all 3s ease-in-out;
+        }
+
+        /* Sky gradients for different times of day */
+        .sky {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: all 3s ease-in-out;
+        }
+
+        .sky.night {
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a237e 50%, #283593 100%);
+        }
+
+        .sky.dawn {
+            background: linear-gradient(to bottom, #1a237e 0%, #3949ab 20%, #ff6f00 60%, #ff8f00 80%, #ffb74d 100%);
+        }
+
+        .sky.morning {
+            background: linear-gradient(to bottom, #64b5f6 0%, #90caf9 30%, #bbdefb 60%, #ffecb3 100%);
+        }
+
+        .sky.noon {
+            background: linear-gradient(to bottom, #42a5f5 0%, #64b5f6 50%, #90caf9 100%);
+        }
+
+        .sky.afternoon {
+            background: linear-gradient(to bottom, #42a5f5 0%, #64b5f6 40%, #ffb74d 80%, #ff8f00 100%);
+        }
+
+        .sky.dusk {
+            background: linear-gradient(to bottom, #1a237e 0%, #3949ab 30%, #ff6f00 70%, #ff8f00 90%, #ffb74d 100%);
+        }
+
+        /* Sun */
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #fff9c4 0%, #ffeb3b 40%, #ffc107 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px #ffeb3b, 0 0 100px #ffc107;
+            transition: all 3s ease-in-out;
+        }
+
+        .sun.night {
+            opacity: 0;
+            transform: translateY(100vh);
+        }
+
+        .sun.dawn {
+            bottom: 10%;
+            left: 10%;
+            opacity: 0.8;
+        }
+
+        .sun.morning {
+            bottom: 30%;
+            left: 30%;
+            opacity: 1;
+        }
+
+        .sun.noon {
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 1;
+        }
+
+        .sun.afternoon {
+            bottom: 30%;
+            right: 30%;
+            left: auto;
+            opacity: 1;
+        }
+
+        .sun.dusk {
+            bottom: 10%;
+            right: 10%;
+            left: auto;
+            opacity: 0.8;
+        }
+
+        /* Moon */
+        .moon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 30px #f5f5f5;
+            transition: all 3s ease-in-out;
+            opacity: 0;
+        }
+
+        .moon.visible {
+            opacity: 1;
+            top: 20%;
+            right: 20%;
+        }
+
+        /* Stars */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 3s ease-in-out;
+        }
+
+        .stars.visible {
+            opacity: 1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* Clouds */
+        .clouds-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            opacity: 0.8;
+            transition: all 3s ease-in-out;
+        }
+
+        .cloud::before,
+        .cloud::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+        }
+
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 20%;
+            animation: float 30s infinite;
+        }
+
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+
+        .cloud1::after {
+            width: 60px;
+            height: 40px;
+            top: -15px;
+            right: 10px;
+        }
+
+        .cloud2 {
+            width: 80px;
+            height: 35px;
+            top: 40%;
+            animation: float 40s infinite;
+            animation-delay: -10s;
+        }
+
+        .cloud2::before {
+            width: 40px;
+            height: 40px;
+            top: -20px;
+            left: 15px;
+        }
+
+        .cloud2::after {
+            width: 50px;
+            height: 35px;
+            top: -10px;
+            right: 15px;
+        }
+
+        .cloud3 {
+            width: 120px;
+            height: 45px;
+            top: 15%;
+            animation: float 35s infinite;
+            animation-delay: -20s;
+        }
+
+        .cloud3::before {
+            width: 60px;
+            height: 60px;
+            top: -30px;
+            left: 20px;
+        }
+
+        .cloud3::after {
+            width: 70px;
+            height: 45px;
+            top: -15px;
+            right: 20px;
+        }
+
+        @keyframes float {
+            0% {
+                left: -150px;
+                transform: translateY(0);
+            }
+            25% {
+                transform: translateY(-10px);
+            }
+            50% {
+                transform: translateY(0);
+            }
+            75% {
+                transform: translateY(10px);
+            }
+            100% {
+                left: 100%;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cloud color changes based on time */
+        .cloud.night {
+            background: #e0e0e0;
+            opacity: 0.6;
+        }
+
+        .cloud.night::before,
+        .cloud.night::after {
+            background: #e0e0e0;
+        }
+
+        .cloud.dawn {
+            background: #ffecb3;
+            opacity: 0.7;
+        }
+
+        .cloud.dawn::before,
+        .cloud.dawn::after {
+            background: #ffecb3;
+        }
+
+        .cloud.dusk {
+            background: #ffab91;
+            opacity: 0.8;
+        }
+
+        .cloud.dusk::before,
+        .cloud.dusk::after {
+            background: #ffab91;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 30px;
+            border-radius: 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .controls button {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .controls button:hover {
+            background: #1976d2;
+            transform: scale(1.05);
+        }
+
+        .controls button:active {
+            transform: scale(0.95);
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .speed-control input[type="range"] {
+            width: 100px;
+        }
+
+        .time-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 18px;
+            z-index: 1000;
+        }
+
+        /* Ground/Horizon */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to top, #1b5e20 0%, #2e7d32 100%);
+            transition: all 3s ease-in-out;
+        }
+
+        .ground.night {
+            background: linear-gradient(to top, #1a237e 0%, #283593 100%);
+        }
+
+        .ground.dawn {
+            background: linear-gradient(to top, #33691e 0%, #558b2f 100%);
+        }
+
+        .ground.dusk {
+            background: linear-gradient(to top, #33691e 0%, #558b2f 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="scene">
+        <div class="sky night" id="sky"></div>
+        
+        <div class="stars" id="stars"></div>
+        
+        <div class="sun night" id="sun"></div>
+        
+        <div class="moon" id="moon"></div>
+        
+        <div class="clouds-container">
+            <div class="cloud cloud1 night" id="cloud1"></div>
+            <div class="cloud cloud2 night" id="cloud2"></div>
+            <div class="cloud cloud3 night" id="cloud3"></div>
+        </div>
+        
+        <div class="ground night" id="ground"></div>
+    </div>
+
+    <div class="time-indicator" id="timeIndicator">Night</div>
+
+    <div class="controls">
+        <button id="playPauseBtn">Pause</button>
+        <div class="speed-control">
+            <label>Speed:</label>
+            <input type="range" id="speedSlider" min="0.5" max="3" step="0.5" value="1">
+            <span id="speedValue">1x</span>
+        </div>
+    </div>
+
+    <script>
+        // Day cycle states
+        const dayStates = [
+            { name: 'night', duration: 4000 },
+            { name: 'dawn', duration: 3000 },
+            { name: 'morning', duration: 4000 },
+            { name: 'noon', duration: 4000 },
+            { name: 'afternoon', duration: 4000 },
+            { name: 'dusk', duration: 3000 }
+        ];
+
+        let currentStateIndex = 0;
+        let isPlaying = true;
+        let speedMultiplier = 1;
+        let cycleInterval;
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 70 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Update scene based on current state
+        function updateScene(stateName) {
+            const sky = document.getElementById('sky');
+            const sun = document.getElementById('sun');
+            const moon = document.getElementById('moon');
+            const stars = document.getElementById('stars');
+            const clouds = document.querySelectorAll('.cloud');
+            const ground = document.getElementById('ground');
+            const timeIndicator = document.getElementById('timeIndicator');
+
+            // Update sky
+            sky.className = `sky ${stateName}`;
+
+            // Update sun
+            sun.className = `sun ${stateName}`;
+
+            // Update moon and stars
+            if (stateName === 'night') {
+                moon.classList.add('visible');
+                stars.classList.add('visible');
+            } else {
+                moon.classList.remove('visible');
+                stars.classList.remove('visible');
+            }
+
+            // Update clouds
+            clouds.forEach(cloud => {
+                cloud.className = cloud.className.replace(/\s(night|dawn|dusk)/g, '') + ` ${stateName}`;
+            });
+
+            // Update ground
+            ground.className = `ground ${stateName}`;
+
+            // Update time indicator
+            timeIndicator.textContent = stateName.charAt(0).toUpperCase() + stateName.slice(1);
+        }
+
+        // Cycle through day states
+        function cycleDay() {
+            if (!isPlaying) return;
+
+            const currentState = dayStates[currentStateIndex];
+            updateScene(currentState.name);
+
+            currentStateIndex = (currentStateIndex + 1) % dayStates.length;
+
+            const duration = currentState.duration / speedMultiplier;
+            cycleInterval = setTimeout(cycleDay, duration);
+        }
+
+        // Play/Pause functionality
+        document.getElementById('playPauseBtn').addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            this.textContent = isPlaying ? 'Pause' : 'Play';
+            
+            if (isPlaying) {
+                cycleDay();
+            } else {
+                clearTimeout(cycleInterval);
+            }
+        });
+
+        // Speed control
+        document.getElementById('speedSlider').addEventListener('input', function() {
+            speedMultiplier = parseFloat(this.value);
+            document.getElementById('speedValue').textContent = speedMultiplier + 'x';
+            
+            // Restart cycle with new speed
+            if (isPlaying) {
+                clearTimeout(cycleInterval);
+                cycleDay();
+            }
+        });
+
+        // Initialize
+        createStars();
+        cycleDay();
+    </script>
+</body>
+</html>
