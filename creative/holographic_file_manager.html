@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holographic File Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        .header {
+            padding: 25px 40px;
+            background: rgba(15, 15, 30, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(100, 149, 237, 0.2);
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            background: linear-gradient(45deg, #6495ed, #9370db, #20b2aa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .header p {
+            text-align: center;
+            color: #8892b0;
+            margin-top: 8px;
+            font-weight: 400;
+            font-size: 0.95em;
+        }
+
+        .file-manager {
+            flex: 1;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+        }
+
+        .folder-container {
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .folder {
+            background: rgba(26, 26, 46, 0.6);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(100, 149, 237, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 0 16px rgba(100, 149, 237, 0.08);
+            cursor: pointer;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .folder::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #6495ed, #9370db, #20b2aa, #6495ed);
+            border-radius: 16px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.4s ease;
+            filter: blur(8px);
+            background-size: 300% 300%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .folder:hover::before {
+            opacity: 0.6;
+        }
+
+        .folder-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            transform: translateZ(15px);
+        }
+
+        .folder-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 26px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .folder-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            border-radius: 12px;
+        }
+
+        .folder-icon.blue {
+            background: linear-gradient(135deg, #4169e1, #1e90ff);
+            box-shadow: 0 4px 16px rgba(65, 105, 225, 0.4);
+        }
+
+        .folder-icon.purple {
+            background: linear-gradient(135deg, #9370db, #8a2be2);
+            box-shadow: 0 4px 16px rgba(147, 112, 219, 0.4);
+        }
+
+        .folder-icon.teal {
+            background: linear-gradient(135deg, #20b2aa, #48d1cc);
+            box-shadow: 0 4px 16px rgba(32, 178, 170, 0.4);
+        }
+
+        .folder-icon.coral {
+            background: linear-gradient(135deg, #ff7f50, #ff6347);
+            box-shadow: 0 4px 16px rgba(255, 127, 80, 0.4);
+        }
+
+        .folder-info {
+            flex: 1;
+        }
+
+        .folder-name {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+            color: #e0e6ed;
+        }
+
+        .folder-meta {
+            font-size: 0.82em;
+            color: #8892b0;
+            font-weight: 400;
+        }
+
+        .folder-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 0 0 16px 16px;
+            padding: 20px;
+            transform-origin: top;
+            transform: rotateX(-90deg);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 280px;
+            overflow-y: auto;
+            border-top: 1px solid rgba(100, 149, 237, 0.2);
+        }
+
+        .folder-container:hover .folder {
+            transform: translateY(-15px) translateZ(40px);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                0 0 25px rgba(100, 149, 237, 0.25),
+                inset 0 0 25px rgba(100, 149, 237, 0.15);
+        }
+
+        .folder-container:hover .folder-content {
+            transform: rotateX(0);
+            opacity: 1;
+            top: 100px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: rgba(40, 40, 60, 0.4);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .file-item:hover {
+            background: rgba(50, 50, 80, 0.6);
+            transform: translateX(4px);
+            border-left-color: #6495ed;
+            box-shadow: 0 4px 12px rgba(100, 149, 237, 0.2);
+        }
+
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .file-icon.document {
+            background: linear-gradient(135deg, #4682b4, #5f9ea0);
+            box-shadow: 0 2px 8px rgba(70, 130, 180, 0.3);
+        }
+
+        .file-icon.image {
+            background: linear-gradient(135deg, #cd5c5c, #f08080);
+            box-shadow: 0 2px 8px rgba(205, 92, 92, 0.3);
+        }
+
+        .file-icon.video {
+            background: linear-gradient(135deg, #9370db, #ba55d3);
+            box-shadow: 0 2px 8px rgba(147, 112, 219, 0.3);
+        }
+
+        .file-icon.audio {
+            background: linear-gradient(135deg, #3cb371, #2e8b57);
+            box-shadow: 0 2px 8px rgba(60, 179, 113, 0.3);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+            color: #e0e6ed;
+        }
+
+        .file-size {
+            font-size: 0.75em;
+            color: #8892b0;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .file-action {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(100, 149, 237, 0.15);
+            border: 1px solid rgba(100, 149, 237, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #8892b0;
+        }
+
+        .file-action:hover {
+            background: rgba(100, 149, 237, 0.25);
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(100, 149, 237, 0.3);
+            color: #e0e6ed;
+        }
+
+        .holographic-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(100, 149, 237, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 149, 237, 0.08) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1;
+            opacity: 0.4;
+            animation: gridMove 25s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 60px 60px; }
+        }
+
+        .status-bar {
+            padding: 18px 40px;
+            background: rgba(15, 15, 30, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(100, 149, 237, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.88em;
+            color: #8892b0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #20b2aa;
+            box-shadow: 0 0 12px rgba(32, 178, 170, 0.6);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 12px rgba(32, 178, 170, 0.6); }
+            50% { box-shadow: 0 0 20px rgba(32, 178, 170, 0.9); }
+            100% { box-shadow: 0 0 12px rgba(32, 178, 170, 0.6); }
+        }
+
+        /* Scrollbar styling */
+        .folder-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .folder-content::-webkit-scrollbar-track {
+            background: rgba(40, 40, 60, 0.3);
+            border-radius: 3px;
+        }
+
+        .folder-content::-webkit-scrollbar-thumb {
+            background: rgba(100, 149, 237, 0.4);
+            border-radius: 3px;
+        }
+
+        .folder-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(100, 149, 237, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .file-manager {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .status-bar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="holographic-grid"></div>
+    
+    <div class="header">
+        <h1>HOLOGRAPHIC FILE MANAGER</h1>
+        <p>Advanced 3D file organization system</p>
+    </div>
+
+    <div class="file-manager">
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon blue">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Projects</div>
+                        <div class="folder-meta">12 files • 2.4 GB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">Project Proposal.docx</div>
+                            <div class="file-size">1.2 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon image">🖼️</div>
+                        <div class="file-info">
+                            <div class="file-name">Design Mockup.png</div>
+                            <div class="file-size">4.7 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon video">🎬</div>
+                        <div class="file-info">
+                            <div class="file-name">Presentation.mp4</div>
+                            <div class="file-size">245 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon purple">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Media</div>
+                        <div class="folder-meta">48 files • 15.7 GB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon image">🖼️</div>
+                        <div class="file-info">
+                            <div class="file-name">Vacation Photos.zip</div>
+                            <div class="file-size">3.2 GB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon video">🎬</div>
+                        <div class="file-info">
+                            <div class="file-name">Birthday Party.mp4</div>
+                            <div class="file-size">1.8 GB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon audio">🎵</div>
+                        <div class="file-info">
+                            <div class="file-name">Playlist.mp3</div>
+                            <div class="file-size">85 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon teal">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Documents</div>
+                        <div class="folder-meta">24 files • 156 MB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">Report Q3.pdf</div>
+                            <div class="file-size">4.5 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">Invoice_2023.xlsx</div>
+                            <div class="file-size">2.1 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon coral">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Archive</div>
+                        <div class="folder-meta">8 files • 8.9 GB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">Old Projects.zip</div>
+                            <div class="file-size">5.4 GB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon image">🖼️</div>
+                        <div class="file-info">
+                            <div class="file-name">Screenshots.rar</div>
+                            <div class="file-size">890 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon blue">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Development</div>
+                        <div class="folder-meta">36 files • 1.2 GB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">app.js</div>
+                            <div class="file-size">45 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">styles.css</div>
+                            <div class="file-size">128 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">index.html</div>
+                            <div class="file-size">12 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="folder-container">
+            <div class="folder">
+                <div class="folder-header">
+                    <div class="folder-icon purple">📁</div>
+                    <div class="folder-info">
+                        <div class="folder-name">Personal</div>
+                        <div class="folder-meta">15 files • 3.4 GB</div>
+                    </div>
+                </div>
+                <div class="folder-content">
+                    <div class="file-item">
+                        <div class="file-icon document">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">Resume.pdf</div>
+                            <div class="file-size">245 KB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                    <div class="file-item">
+                        <div class="file-icon image">🖼️</div>
+                        <div class="file-info">
+                            <div class="file-name">ID_Scan.jpg</div>
+                            <div class="file-size">1.2 MB</div>
+                        </div>
+                        <div class="file-actions">
+                            <div class="file-action">👁️</div>
+                            <div class="file-action">⬇️</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar">
+        <div class="status-item">
+            <div class="status-indicator"></div>
+            <span>System Online</span>
+        </div>
+        <div class="status-item">
+            <span>Total Storage: 32.6 GB / 100 GB</span>
+        </div>
+        <div class="status-item">
+            <span>143 Files</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add interactive functionality to file actions
+            const fileActions = document.querySelectorAll('.file-action');
+            
+            fileActions.forEach(action => {
+                action.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    
+                    // Create a ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.style.position = 'absolute';
+                    ripple.style.width = '8px';
+                    ripple.style.height = '8px';
+                    ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.transform = 'translate(-50%, -50%)';
+                    ripple.style.pointerEvents = 'none';
+                    ripple.style.animation = 'rippleEffect 0.6s ease-out';
+                    
+                    const rect = this.getBoundingClientRect();
+                    ripple.style.left = `${e.clientX - rect.left}px`;
+                    ripple.style.top = `${e.clientY - rect.top}px`;
+                    
+                    this.style.position = 'relative';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+            
+            // Add ripple effect animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes rippleEffect {
+                    to {
+                        width: 32px;
+                        height: 32px;
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Add click feedback to folders
+            const folders = document.querySelectorAll('.folder');
+            
+            folders.forEach(folder => {
+                folder.addEventListener('click', function() {
+                    // Create a subtle pulse effect
+                    this.style.animation = 'pulseEffect 0.4s ease';
+                    
+                    setTimeout(() => {
+                        this.style.animation = '';
+                    }, 400);
+                });
+            });
+            
+            // Add pulse effect animation
+            const pulseStyle = document.createElement('style');
+            pulseStyle.textContent = `
+                @keyframes pulseEffect {
+                    0% {
+                        transform: translateY(-15px) translateZ(40px) scale(1);
+                    }
+                    50% {
+                        transform: translateY(-15px) translateZ(40px) scale(1.02);
+                    }
+                    100% {
+                        transform: translateY(-15px) translateZ(40px) scale(1);
+                    }
+                }
+            `;
+            document.head.appendChild(pulseStyle);
+        });
+    </script>
+</body>
+</html>

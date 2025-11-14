@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirden 2025 Time Capsule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            color: #e2e8f0;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
+        .container {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 1.1em;
+            font-weight: 300;
+        }
+
+        .message-area {
+            margin-bottom: 30px;
+        }
+
+        .message-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 20px;
+            border: 2px solid rgba(100, 116, 139, 0.3);
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            color: #e2e8f0;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            background: rgba(30, 41, 59, 0.7);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        .message-input::placeholder {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .seal-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .seal-button {
+            background: linear-gradient(45deg, #00d4ff, #a855f7);
+            color: #0f172a;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .seal-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .seal-button:active {
+            transform: translateY(0);
+        }
+
+        .seal-button.sealing {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .time-capsule {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+            display: none;
+        }
+
+        .time-capsule.active {
+            display: block;
+        }
+
+        .capsule-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 
+                inset 0 -10px 20px rgba(0, 0, 0, 0.5),
+                0 10px 30px rgba(0, 212, 255, 0.2);
+            overflow: hidden;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .capsule-lid {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(145deg, #334155, #1e293b);
+            border-radius: 20px 20px 0 0;
+            position: absolute;
+            top: -30px;
+            left: 0;
+            box-shadow: 
+                inset 0 5px 15px rgba(0, 0, 0, 0.5),
+                0 -5px 15px rgba(0, 212, 255, 0.2);
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: bottom center;
+            border: 2px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .capsule-lid.sealed {
+            transform: translateY(30px) rotateX(180deg);
+        }
+
+        .digital-seal {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #00d4ff, #0ea5e9);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            box-shadow: 
+                0 0 30px rgba(0, 212, 255, 0.8),
+                inset 0 0 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.6s ease 0.8s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .digital-seal::before {
+            content: '🔒';
+            position: absolute;
+            font-size: 30px;
+            opacity: 0;
+            transition: opacity 0.3s ease 1.2s;
+        }
+
+        .digital-seal.sealed {
+            transform: translate(-50%, -50%) scale(1);
+            animation: pulse 2s infinite;
+        }
+
+        .digital-seal.sealed::before {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            }
+            50% {
+                box-shadow: 0 0 50px rgba(0, 212, 255, 1);
+            }
+            100% {
+                box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00d4ff;
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        .sealed-message {
+            background: rgba(30, 41, 59, 0.5);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .sealed-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sealed-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .seal-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #00d4ff, #0ea5e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-size: 24px;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .sealed-text {
+            flex: 1;
+        }
+
+        .sealed-text h3 {
+            color: #00d4ff;
+            margin-bottom: 5px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .sealed-text p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .message-preview {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #00d4ff;
+            font-style: italic;
+            color: #64748b;
+            max-height: 100px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .new-capsule-btn {
+            background: linear-gradient(45deg, #a855f7, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .new-capsule-btn:hover {
+            background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .capsules-list {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid rgba(100, 116, 139, 0.3);
+        }
+
+        .capsules-list h3 {
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .capsule-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(100, 116, 139, 0.2);
+        }
+
+        .capsule-item:hover {
+            background: rgba(30, 41, 59, 0.7);
+            transform: translateX(5px);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .mini-seal {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #00d4ff, #0ea5e9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-size: 18px;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .capsule-info {
+            flex: 1;
+        }
+
+        .capsule-info h4 {
+            color: #00d4ff;
+            margin-bottom: 5px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .capsule-info p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hidden-message {
+            color: #64748b;
+            font-style: italic;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .time-capsule {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Secure Time Capsule System</h1>
+        </div>
+
+        <div class="message-area">
+            <textarea 
+                class="message-input" 
+                placeholder="Enter your confidential message here. Once sealed, it will be encrypted and stored securely."
+                id="messageInput"
+            ></textarea>
+        </div>
+
+        <div class="seal-section">
+            <button class="seal-button" id="sealBtn">
+                🔒 Seal Capsule
+            </button>
+        </div>
+
+        <div class="time-capsule" id="timeCapsule">
+            <div class="capsule-body">
+                <div class="capsule-lid" id="capsuleLid"></div>
+                <div class="digital-seal" id="digitalSeal"></div>
+                <div class="particles" id="particles"></div>
+            </div>
+        </div>
+
+        <div class="sealed-message" id="sealedMessage">
+            <div class="sealed-info">
+                <div class="seal-icon">🔒</div>
+                <div class="sealed-text">
+                    <h3>Capsule Sealed!</h3>
+                    <p>Your message has been encrypted and secured in the Mirden 2025 system.</p>
+                </div>
+            </div>
+            <div class="message-preview" id="messagePreview"></div>
+            <button class="new-capsule-btn" id="newCapsuleBtn">Create New Capsule</button>
+        </div>
+
+        <div class="capsules-list" id="capsulesList">
+            <h3>Secure Capsules</h3>
+            <div id="capsulesContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        class TimeCapsuleApp {
+            constructor() {
+                this.capsules = JSON.parse(localStorage.getItem('timeCapsules')) || [];
+                this.init();
+            }
+
+            init() {
+                this.sealBtn = document.getElementById('sealBtn');
+                this.messageInput = document.getElementById('messageInput');
+                this.timeCapsule = document.getElementById('timeCapsule');
+                this.capsuleLid = document.getElementById('capsuleLid');
+                this.digitalSeal = document.getElementById('digitalSeal');
+                this.particles = document.getElementById('particles');
+                this.sealedMessage = document.getElementById('sealedMessage');
+                this.messagePreview = document.getElementById('messagePreview');
+                this.newCapsuleBtn = document.getElementById('newCapsuleBtn');
+                this.capsulesContainer = document.getElementById('capsulesContainer');
+
+                this.bindEvents();
+                this.renderCapsules();
+            }
+
+            bindEvents() {
+                this.sealBtn.addEventListener('click', () => this.sealMessage());
+                this.newCapsuleBtn.addEventListener('click', () => this.resetForm());
+            }
+
+            async sealMessage() {
+                const message = this.messageInput.value.trim();
+                
+                if (!message) {
+                    this.showMessage('Please enter a message before sealing!');
+                    return;
+                }
+
+                this.sealBtn.classList.add('sealing');
+                this.sealBtn.textContent = 'Encrypting...';
+
+                // Show time capsule
+                this.timeCapsule.classList.add('active');
+
+                // Create particles
+                this.createParticles();
+
+                // Animate sealing
+                setTimeout(() => {
+                    this.capsuleLid.classList.add('sealed');
+                }, 500);
+
+                setTimeout(() => {
+                    this.digitalSeal.classList.add('sealed');
+                }, 1300);
+
+                // Save capsule
+                setTimeout(() => {
+                    const capsule = {
+                        id: Date.now(),
+                        message: message,
+                        timestamp: new Date().toLocaleString(),
+                        preview: message.length > 100 ? message.substring(0, 100) + '...' : message
+                    };
+                    
+                    this.capsules.unshift(capsule);
+                    this.saveCapsules();
+                    this.renderCapsules();
+                    
+                    this.showSealedMessage(capsule);
+                    this.sealBtn.classList.remove('sealing');
+                    this.sealBtn.textContent = '🔒 Seal Capsule';
+                }, 2000);
+            }
+
+            createParticles() {
+                this.particles.innerHTML = '';
+                
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 0.5 + 's';
+                    this.particles.appendChild(particle);
+                }
+            }
+
+            showSealedMessage(capsule) {
+                this.messagePreview.textContent = capsule.message;
+                this.sealedMessage.classList.add('show');
+            }
+
+            resetForm() {
+                this.messageInput.value = '';
+                this.timeCapsule.classList.remove('active');
+                this.sealedMessage.classList.remove('show');
+                this.capsuleLid.classList.remove('sealed');
+                this.digitalSeal.classList.remove('sealed');
+                this.messageInput.focus();
+            }
+
+            renderCapsules() {
+                if (this.capsules.length === 0) {
+                    this.capsulesContainer.innerHTML = '<p style="text-align: center; color: #64748b; font-style: italic;">No secure capsules yet. Create your first encrypted capsule!</p>';
+                    return;
+                }
+
+                this.capsulesContainer.innerHTML = this.capsules.map(capsule => `
+                    <div class="capsule-item">
+                        <div class="mini-seal">🔒</div>
+                        <div class="capsule-info">
+                            <h4>Capsule #${capsule.id.toString().slice(-6)}</h4>
+                            <p>Sealed on ${capsule.timestamp}</p>
+                            <div class="status-badge">Encrypted</div>
+                            <div class="hidden-message">Content secured and hidden</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            saveCapsules() {
+                localStorage.setItem('timeCapsules', JSON.stringify(this.capsules));
+            }
+
+            showMessage(text) {
+                const messageEl = document.createElement('div');
+                messageEl.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: linear-gradient(45deg, #a855f7, #8b5cf6);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                    z-index: 1000;
+                    animation: slideIn 0.3s ease;
+                    font-weight: 500;
+                    letter-spacing: 1px;
+                `;
+                messageEl.textContent = text;
+                document.body.appendChild(messageEl);
+
+                setTimeout(() => {
+                    messageEl.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => messageEl.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new TimeCapsuleApp();
+        });
+    </script>
+</body>
+</html>
