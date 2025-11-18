@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Study Timer | Flip Countdown Cards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flip-cards {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .flip-card {
+            position: relative;
+            width: 70px;
+            height: 100px;
+            perspective: 300px;
+            cursor: pointer;
+        }
+
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #2c3e50, #34495e);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            font-weight: bold;
+            backface-visibility: hidden;
+            transition: transform 0.6s ease;
+        }
+
+        .card-top {
+            transform-origin: bottom;
+            z-index: 2;
+        }
+
+        .card-bottom {
+            transform-origin: top;
+            transform: rotateX(180deg);
+        }
+
+        .flip-card.flipping .card-top {
+            animation: flip-top 0.6s ease forwards;
+        }
+
+        .flip-card.flipping .card-bottom {
+            animation: flip-bottom 0.6s ease forwards;
+        }
+
+        @keyframes flip-top {
+            0% { transform: rotateX(0deg); }
+            100% { transform: rotateX(-180deg); }
+        }
+
+        @keyframes flip-bottom {
+            0% { transform: rotateX(180deg); }
+            100% { transform: rotateX(0deg); }
+        }
+
+        .separator {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 0.2rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-tertiary {
+            background: linear-gradient(145deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-tertiary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .time-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group label {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .input-group input {
+            width: 70px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            width: 0%;
+            transition: width 1s linear;
+            border-radius: 10px;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .completed {
+            color: #2ecc71;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .flip-card {
+                width: 60px;
+                height: 80px;
+            }
+            
+            .card {
+                font-size: 2.5rem;
+            }
+            
+            .separator {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Study Timer</h1>
+        
+        <div class="timer-container">
+            <div class="timer-display">
+                <div class="time-unit">
+                    <div class="time-label">Hours</div>
+                    <div class="flip-cards">
+                        <div class="flip-card" id="hours-tens">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                        <div class="flip-card" id="hours-ones">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="separator">:</div>
+                
+                <div class="time-unit">
+                    <div class="time-label">Minutes</div>
+                    <div class="flip-cards">
+                        <div class="flip-card" id="minutes-tens">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                        <div class="flip-card" id="minutes-ones">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="separator">:</div>
+                
+                <div class="time-unit">
+                    <div class="time-label">Seconds</div>
+                    <div class="flip-cards">
+                        <div class="flip-card" id="seconds-tens">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                        <div class="flip-card" id="seconds-ones">
+                            <div class="card card-top">0</div>
+                            <div class="card card-bottom">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="time-inputs">
+                <div class="input-group">
+                    <label for="hours-input">Hours</label>
+                    <input type="number" id="hours-input" min="0" max="23" value="0" placeholder="00">
+                </div>
+                <div class="input-group">
+                    <label for="minutes-input">Minutes</label>
+                    <input type="number" id="minutes-input" min="0" max="59" value="25" placeholder="25">
+                </div>
+                <div class="input-group">
+                    <label for="seconds-input">Seconds</label>
+                    <input type="number" id="seconds-input" min="0" max="59" value="0" placeholder="00">
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="start-btn">Start</button>
+                <button class="btn btn-secondary" id="pause-btn">Pause</button>
+                <button class="btn btn-tertiary" id="reset-btn">Reset</button>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div class="status-message" id="status-message">Set your study time and press Start</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Timer elements
+            const hoursTens = document.getElementById('hours-tens');
+            const hoursOnes = document.getElementById('hours-ones');
+            const minutesTens = document.getElementById('minutes-tens');
+            const minutesOnes = document.getElementById('minutes-ones');
+            const secondsTens = document.getElementById('seconds-tens');
+            const secondsOnes = document.getElementById('seconds-ones');
+            
+            // Input elements
+            const hoursInput = document.getElementById('hours-input');
+            const minutesInput = document.getElementById('minutes-input');
+            const secondsInput = document.getElementById('seconds-input');
+            
+            // Control buttons
+            const startBtn = document.getElementById('start-btn');
+            const pauseBtn = document.getElementById('pause-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // Other elements
+            const progressBar = document.getElementById('progress-bar');
+            const statusMessage = document.getElementById('status-message');
+            
+            // Timer variables
+            let totalSeconds = 0;
+            let remainingSeconds = 0;
+            let timerInterval = null;
+            let isPaused = false;
+            
+            // Initialize timer display
+            updateTimerDisplay(0);
+            
+            // Event listeners
+            startBtn.addEventListener('click', startTimer);
+            pauseBtn.addEventListener('click', pauseTimer);
+            resetBtn.addEventListener('click', resetTimer);
+            
+            // Input validation
+            hoursInput.addEventListener('input', function() {
+                if (this.value > 23) this.value = 23;
+                if (this.value < 0) this.value = 0;
+            });
+            
+            minutesInput.addEventListener('input', function() {
+                if (this.value > 59) this.value = 59;
+                if (this.value < 0) this.value = 0;
+            });
+            
+            secondsInput.addEventListener('input', function() {
+                if (this.value > 59) this.value = 59;
+                if (this.value < 0) this.value = 0;
+            });
+            
+            function startTimer() {
+                if (timerInterval) return;
+                
+                // Get input values
+                const hours = parseInt(hoursInput.value) || 0;
+                const minutes = parseInt(minutesInput.value) || 0;
+                const seconds = parseInt(secondsInput.value) || 0;
+                
+                // Calculate total seconds
+                totalSeconds = hours * 3600 + minutes * 60 + seconds;
+                
+                if (totalSeconds <= 0) {
+                    statusMessage.textContent = "Please set a valid time";
+                    return;
+                }
+                
+                // If timer was paused, resume with remaining time
+                if (isPaused) {
+                    isPaused = false;
+                } else {
+                    remainingSeconds = totalSeconds;
+                }
+                
+                // Update UI
+                statusMessage.textContent = "Study session in progress...";
+                statusMessage.classList.remove('completed');
+                startBtn.disabled = true;
+                
+                // Start timer
+                timerInterval = setInterval(updateTimer, 1000);
+            }
+            
+            function pauseTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    isPaused = true;
+                    statusMessage.textContent = "Timer paused";
+                    startBtn.disabled = false;
+                }
+            }
+            
+            function resetTimer() {
+                if (timerInterval) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                
+                isPaused = false;
+                remainingSeconds = 0;
+                totalSeconds = 0;
+                
+                updateTimerDisplay(0);
+                progressBar.style.width = '0%';
+                statusMessage.textContent = "Set your study time and press Start";
+                statusMessage.classList.remove('completed');
+                startBtn.disabled = false;
+            }
+            
+            function updateTimer() {
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    statusMessage.textContent = "Study session completed! Great job!";
+                    statusMessage.classList.add('completed');
+                    startBtn.disabled = false;
+                    
+                    // Play completion sound
+                    playCompletionSound();
+                    return;
+                }
+                
+                remainingSeconds--;
+                updateTimerDisplay(remainingSeconds);
+                
+                // Update progress bar
+                const progress = ((totalSeconds - remainingSeconds) / totalSeconds) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+            
+            function updateTimerDisplay(seconds) {
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const secs = seconds % 60;
+                
+                // Update hours
+                updateFlipCard(hoursTens, Math.floor(hours / 10));
+                updateFlipCard(hoursOnes, hours % 10);
+                
+                // Update minutes
+                updateFlipCard(minutesTens, Math.floor(minutes / 10));
+                updateFlipCard(minutesOnes, minutes % 10);
+                
+                // Update seconds
+                updateFlipCard(secondsTens, Math.floor(secs / 10));
+                updateFlipCard(secondsOnes, secs % 10);
+            }
+            
+            function updateFlipCard(card, value) {
+                const topCard = card.querySelector('.card-top');
+                const bottomCard = card.querySelector('.card-bottom');
+                const currentValue = parseInt(topCard.textContent);
+                
+                if (currentValue !== value) {
+                    // Add flipping class to trigger animation
+                    card.classList.add('flipping');
+                    
+                    // Update card values
+                    topCard.textContent = value;
+                    bottomCard.textContent = value;
+                    
+                    // Remove flipping class after animation completes
+                    setTimeout(() => {
+                        card.classList.remove('flipping');
+                    }, 600);
+                }
+            }
+            
+            function playCompletionSound() {
+                // Create audio context for sound generation
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            }
+        });
+    </script>
+</body>
+</html>

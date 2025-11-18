@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Envelope</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        .envelope-container {
+            position: relative;
+            width: 400px;
+            height: 250px;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .envelope.open {
+            transform: rotateX(20deg);
+        }
+
+        .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            clip-path: polygon(0 0, 100% 0, 50% 60%);
+            transform-origin: top center;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 3;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .envelope-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #f0f0f0;
+            border-radius: 8px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        .message-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 85%;
+            height: 80%;
+            background: white;
+            border-radius: 6px;
+            transform: translate(-50%, -50%) scale(0.8);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            z-index: 4;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .envelope.open .message-card {
+            transform: translate(-50%, -50%) translateY(-20px) scale(1);
+            opacity: 1;
+        }
+
+        .message-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .message-content {
+            font-size: 16px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .message-signature {
+            font-style: italic;
+            color: #95a5a6;
+            font-size: 14px;
+        }
+
+        .envelope-label {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .envelope.open .envelope-label {
+            opacity: 0;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #f1c40f;
+            opacity: 0;
+            z-index: 5;
+        }
+
+        .envelope.open .confetti {
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotateZ(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(300px) rotateZ(720deg);
+                opacity: 0;
+            }
+        }
+
+        .reset-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope.open ~ .reset-btn {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-50%) translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="envelope-container">
+        <div class="envelope" id="envelope">
+            <div class="envelope-back"></div>
+            <div class="envelope-flap"></div>
+            <div class="envelope-front"></div>
+            <div class="message-card">
+                <h2 class="message-title">Special Message</h2>
+                <p class="message-content">
+                    You've unlocked a secret message! This digital envelope contains 
+                    heartfelt wishes just for you. May your day be filled with joy 
+                    and wonderful surprises.
+                </p>
+                <p class="message-signature">- With Love</p>
+            </div>
+            <div class="confetti" style="left: 20%; background: #e74c3c;"></div>
+            <div class="confetti" style="left: 40%; background: #3498db; animation-delay: 0.2s;"></div>
+            <div class="confetti" style="left: 60%; background: #2ecc71; animation-delay: 0.4s;"></div>
+            <div class="confetti" style="left: 80%; background: #f1c40f; animation-delay: 0.6s;"></div>
+            <div class="envelope-label">Click to Open</div>
+        </div>
+        <button class="reset-btn" id="resetBtn">Reset Envelope</button>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const resetBtn = document.getElementById('resetBtn');
+        let isOpen = false;
+
+        envelope.addEventListener('click', function() {
+            if (!isOpen) {
+                envelope.classList.add('open');
+                isOpen = true;
+                
+                // Play sound effect (optional)
+                playSound();
+            }
+        });
+
+        resetBtn.addEventListener('click', function() {
+            envelope.classList.remove('open');
+            isOpen = false;
+            
+            // Reset confetti animation
+            const confettiPieces = document.querySelectorAll('.confetti');
+            confettiPieces.forEach(piece => {
+                piece.style.animation = 'none';
+                setTimeout(() => {
+                    piece.style.animation = '';
+                }, 10);
+            });
+        });
+
+        // Optional sound effect function
+        function playSound() {
+            // Create audio context for sound generation
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+            oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+            oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    </script>
+</body>
+</html>
