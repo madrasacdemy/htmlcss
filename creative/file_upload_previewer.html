@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload Previewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #8e2de2, #4a00e0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .box {
+      width: 400px;
+      padding: 25px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+      color: white;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 26px;
+      text-transform: uppercase;
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(255,255,255,0.7);
+      border-radius: 15px;
+      padding: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .upload-area:hover {
+      border-color: cyan;
+      box-shadow: 0 0 15px cyan;
+    }
+
+    #previewImg {
+      width: 100%;
+      border-radius: 12px;
+      margin-top: 20px;
+      display: none;
+      animation: fadeIn 0.6s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Upload & Preview</h2>
+
+    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+      <p>Click or Drop Image Here</p>
+    </div>
+
+    <input type="file" id="fileInput" style="display:none" accept="image/*" onchange="previewImage(event)">
+
+    <img id="previewImg">
+  </div>
+
+<script>
+  function previewImage(event) {
+    let file = event.target.files[0];
+    let img = document.getElementById("previewImg");
+
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files allowed!");
+      return;
+    }
+
+    let reader = new FileReader();
+    reader.onload = () => {
+      img.src = reader.result;
+      img.style.display = "block";
+    };
+
+    reader.readAsDataURL(file);
+  }
+</script>
+
+</body>
+</html>

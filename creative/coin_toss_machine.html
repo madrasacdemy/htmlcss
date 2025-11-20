@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Coin Toss Machine</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card {
+      width: 380px;
+      padding: 25px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      color: white;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      font-size: 28px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .coin {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #f7d774, #d39c00);
+      border: 5px solid rgba(255, 255, 255, 0.4);
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 50px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: transform 1.2s;
+    }
+
+    .btn {
+      margin: 8px;
+      padding: 12px 25px;
+      border-radius: 10px;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      transition: 0.3s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .result {
+      margin-top: 15px;
+      font-size: 26px;
+      font-weight: bold;
+      text-shadow: 0 0 10px white;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Coin Toss Machine</h1>
+
+    <div class="coin" id="coin">?</div>
+
+    <button class="btn" onclick="flipCoin()">Flip Coin</button>
+    <button class="btn" onclick="resetCoin()">Reset</button>
+
+    <p class="result" id="resultText"></p>
+  </div>
+
+  <script>
+    function flipCoin() {
+      let coin = document.getElementById("coin");
+      let resultText = document.getElementById("resultText");
+
+      coin.style.transform = "rotateY(1080deg)";
+
+      setTimeout(() => {
+        let result = Math.random() < 0.5 ? "Heads" : "Tails";
+        coin.innerText = result === "Heads" ? "H" : "T";
+        resultText.innerText = "Result: " + result;
+      }, 1200);
+    }
+
+    function resetCoin() {
+      document.getElementById("coin").innerText = "?";
+      document.getElementById("resultText").innerText = "";
+      document.getElementById("coin").style.transform = "rotateY(0deg)";
+    }
+  </script>
+</body>
+</html>
