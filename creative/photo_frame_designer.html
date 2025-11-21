@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Frame Designer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .app-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .controls-panel {
+            flex: 1;
+            min-width: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .preview-panel {
+            flex: 2;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+        }
+        
+        .control-group input, 
+        .control-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        .control-group input:focus, 
+        .control-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        .frame-styles {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .frame-style {
+            position: relative;
+            cursor: pointer;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .frame-style:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .frame-style img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .frame-style input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .frame-style.selected {
+            outline: 3px solid #667eea;
+        }
+        
+        .frame-style .style-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        
+        .color-inputs {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .color-input {
+            flex: 1;
+        }
+        
+        .color-input input[type="color"] {
+            height: 50px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .slider-container {
+            margin-top: 10px;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .slider-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 25px;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .upload-area.dragover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #764ba2;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .preview-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        #previewCanvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .app-content {
+                flex-direction: column;
+            }
+            
+            .frame-styles {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Photo Frame Designer</h1>
+            <p>Upload your photo and create beautiful custom frames</p>
+        </header>
+        
+        <div class="app-content">
+            <div class="controls-panel">
+                <h2 class="section-title">Design Controls</h2>
+                
+                <div class="control-group">
+                    <label>Upload Photo</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Drag & drop your photo here</div>
+                        <div class="upload-subtext">or click to browse files</div>
+                        <input type="file" id="fileInput" accept="image/*">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Frame Style</label>
+                    <div class="frame-styles">
+                        <div class="frame-style selected" data-style="classic">
+                            <input type="radio" name="frameStyle" value="classic" checked>
+                            <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Classic Frame">
+                            <div class="style-name">Classic</div>
+                        </div>
+                        <div class="frame-style" data-style="modern">
+                            <input type="radio" name="frameStyle" value="modern">
+                            <img src="https://images.unsplash.com/photo-1546539782-6fc531453082?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Modern Frame">
+                            <div class="style-name">Modern</div>
+                        </div>
+                        <div class="frame-style" data-style="vintage">
+                            <input type="radio" name="frameStyle" value="vintage">
+                            <img src="https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Vintage Frame">
+                            <div class="style-name">Vintage</div>
+                        </div>
+                        <div class="frame-style" data-style="ornate">
+                            <input type="radio" name="frameStyle" value="ornate">
+                            <img src="https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Ornate Frame">
+                            <div class="style-name">Ornate</div>
+                        </div>
+                        <div class="frame-style" data-style="minimal">
+                            <input type="radio" name="frameStyle" value="minimal">
+                            <img src="https://images.unsplash.com/photo-1588269416118-1c290ef4716e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Minimal Frame">
+                            <div class="style-name">Minimal</div>
+                        </div>
+                        <div class="frame-style" data-style="rustic">
+                            <input type="radio" name="frameStyle" value="rustic">
+                            <img src="https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Rustic Frame">
+                            <div class="style-name">Rustic</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Frame Colors</label>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label>Outer Color</label>
+                            <input type="color" id="outerColor" value="#8B4513">
+                        </div>
+                        <div class="color-input">
+                            <label>Inner Color</label>
+                            <input type="color" id="innerColor" value="#D2691E">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Frame Width</label>
+                    <div class="slider-container">
+                        <input type="range" id="frameWidth" class="slider" min="10" max="100" value="40">
+                        <span class="slider-value" id="frameWidthValue">40px</span>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label>Mat (Border)</label>
+                    <div class="color-inputs">
+                        <div class="color-input">
+                            <label>Mat Color</label>
+                            <input type="color" id="matColor" value="#F5F5DC">
+                        </div>
+                        <div class="color-input">
+                            <label>Mat Width</label>
+                            <input type="range" id="matWidth" class="slider" min="0" max="50" value="15">
+                            <span class="slider-value" id="matWidthValue">15px</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <span>↺</span> Reset
+                    </button>
+                    <button class="btn btn-primary" id="downloadBtn">
+                        <span>↓</span> Download
+                    </button>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <h2 class="section-title">Preview</h2>
+                <div class="preview-container">
+                    <canvas id="previewCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification" id="notification">
+        Image downloaded successfully!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const fileInput = document.getElementById('fileInput');
+            const uploadArea = document.getElementById('uploadArea');
+            const previewCanvas = document.getElementById('previewCanvas');
+            const ctx = previewCanvas.getContext('2d');
+            const frameStyleInputs = document.querySelectorAll('input[name="frameStyle"]');
+            const outerColorInput = document.getElementById('outerColor');
+            const innerColorInput = document.getElementById('innerColor');
+            const frameWidthInput = document.getElementById('frameWidth');
+            const frameWidthValue = document.getElementById('frameWidthValue');
+            const matColorInput = document.getElementById('matColor');
+            const matWidthInput = document.getElementById('matWidth');
+            const matWidthValue = document.getElementById('matWidthValue');
+            const resetBtn = document.getElementById('resetBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const notification = document.getElementById('notification');
+            
+            // State
+            let uploadedImage = null;
+            let frameStyle = 'classic';
+            
+            // Initialize
+            updateSliderValues();
+            drawPlaceholder();
+            
+            // Event Listeners
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            // Drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect();
+                }
+            });
+            
+            // Frame style selection
+            frameStyleInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    frameStyle = this.value;
+                    document.querySelectorAll('.frame-style').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    this.closest('.frame-style').classList.add('selected');
+                    drawFramedImage();
+                });
+            });
+            
+            // Color inputs
+            outerColorInput.addEventListener('input', drawFramedImage);
+            innerColorInput.addEventListener('input', drawFramedImage);
+            matColorInput.addEventListener('input', drawFramedImage);
+            
+            // Sliders
+            frameWidthInput.addEventListener('input', function() {
+                frameWidthValue.textContent = this.value + 'px';
+                drawFramedImage();
+            });
+            
+            matWidthInput.addEventListener('input', function() {
+                matWidthValue.textContent = this.value + 'px';
+                drawFramedImage();
+            });
+            
+            // Buttons
+            resetBtn.addEventListener('click', resetSettings);
+            downloadBtn.addEventListener('click', downloadImage);
+            
+            // Functions
+            function handleFileSelect() {
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        uploadedImage = new Image();
+                        uploadedImage.onload = function() {
+                            drawFramedImage();
+                        };
+                        uploadedImage.src = e.target.result;
+                    };
+                    
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            }
+            
+            function drawPlaceholder() {
+                previewCanvas.width = 600;
+                previewCanvas.height = 400;
+                
+                // Background
+                ctx.fillStyle = '#f0f0f0';
+                ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+                
+                // Placeholder text
+                ctx.fillStyle = '#999';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Upload an image to get started', previewCanvas.width / 2, previewCanvas.height / 2);
+                
+                // Upload icon
+                ctx.font = '48px Arial';
+                ctx.fillText('📷', previewCanvas.width / 2, previewCanvas.height / 2 - 50);
+            }
+            
+            function drawFramedImage() {
+                if (!uploadedImage) {
+                    drawPlaceholder();
+                    return;
+                }
+                
+                // Get values
+                const outerColor = outerColorInput.value;
+                const innerColor = innerColorInput.value;
+                const frameWidth = parseInt(frameWidthInput.value);
+                const matColor = matColorInput.value;
+                const matWidth = parseInt(matWidthInput.value);
+                
+                // Calculate dimensions
+                const maxWidth = 600;
+                const maxHeight = 400;
+                const imageRatio = uploadedImage.width / uploadedImage.height;
+                
+                let canvasWidth, canvasHeight;
+                
+                if (maxWidth / maxHeight > imageRatio) {
+                    canvasHeight = maxHeight;
+                    canvasWidth = canvasHeight * imageRatio;
+                } else {
+                    canvasWidth = maxWidth;
+                    canvasHeight = canvasWidth / imageRatio;
+                }
+                
+                // Add frame and mat dimensions
+                canvasWidth += 2 * (frameWidth + matWidth);
+                canvasHeight += 2 * (frameWidth + matWidth);
+                
+                // Set canvas size
+                previewCanvas.width = canvasWidth;
+                previewCanvas.height = canvasHeight;
+                
+                // Draw frame
+                drawFrame(frameStyle, outerColor, innerColor, frameWidth);
+                
+                // Draw mat
+                if (matWidth > 0) {
+                    ctx.fillStyle = matColor;
+                    ctx.fillRect(
+                        frameWidth, 
+                        frameWidth, 
+                        canvasWidth - 2 * frameWidth, 
+                        canvasHeight - 2 * frameWidth
+                    );
+                }
+                
+                // Draw image
+                const imageWidth = canvasWidth - 2 * (frameWidth + matWidth);
+                const imageHeight = canvasHeight - 2 * (frameWidth + matWidth);
+                
+                ctx.drawImage(
+                    uploadedImage, 
+                    frameWidth + matWidth, 
+                    frameWidth + matWidth, 
+                    imageWidth, 
+                    imageHeight
+                );
+            }
+            
+            function drawFrame(style, outerColor, innerColor, width) {
+                const canvasWidth = previewCanvas.width;
+                const canvasHeight = previewCanvas.height;
+                
+                switch(style) {
+                    case 'classic':
+                        // Outer frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner frame
+                        ctx.fillStyle = innerColor;
+                        ctx.fillRect(
+                            width * 0.7, 
+                            width * 0.7, 
+                            canvasWidth - width * 1.4, 
+                            canvasHeight - width * 1.4
+                        );
+                        break;
+                        
+                    case 'modern':
+                        // Solid frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner accent
+                        ctx.fillStyle = innerColor;
+                        ctx.fillRect(
+                            width * 0.8, 
+                            width * 0.8, 
+                            canvasWidth - width * 1.6, 
+                            canvasHeight - width * 1.6
+                        );
+                        break;
+                        
+                    case 'vintage':
+                        // Outer frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner frame with pattern
+                        ctx.fillStyle = innerColor;
+                        ctx.fillRect(
+                            width * 0.6, 
+                            width * 0.6, 
+                            canvasWidth - width * 1.2, 
+                            canvasHeight - width * 1.2
+                        );
+                        
+                        // Add texture pattern
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                        for (let i = 0; i < canvasWidth; i += 4) {
+                            for (let j = 0; j < canvasHeight; j += 4) {
+                                if ((i + j) % 8 === 0) {
+                                    ctx.fillRect(i, j, 2, 2);
+                                }
+                            }
+                        }
+                        break;
+                        
+                    case 'ornate':
+                        // Outer frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner frame
+                        ctx.fillStyle = innerColor;
+                        ctx.fillRect(
+                            width * 0.5, 
+                            width * 0.5, 
+                            canvasWidth - width, 
+                            canvasHeight - width
+                        );
+                        
+                        // Decorative corners
+                        const cornerSize = width * 0.8;
+                        ctx.fillStyle = '#D4AF37'; // Gold accent
+                        
+                        // Top-left
+                        ctx.beginPath();
+                        ctx.moveTo(0, 0);
+                        ctx.lineTo(cornerSize, 0);
+                        ctx.lineTo(0, cornerSize);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        // Top-right
+                        ctx.beginPath();
+                        ctx.moveTo(canvasWidth, 0);
+                        ctx.lineTo(canvasWidth - cornerSize, 0);
+                        ctx.lineTo(canvasWidth, cornerSize);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        // Bottom-left
+                        ctx.beginPath();
+                        ctx.moveTo(0, canvasHeight);
+                        ctx.lineTo(cornerSize, canvasHeight);
+                        ctx.lineTo(0, canvasHeight - cornerSize);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        // Bottom-right
+                        ctx.beginPath();
+                        ctx.moveTo(canvasWidth, canvasHeight);
+                        ctx.lineTo(canvasWidth - cornerSize, canvasHeight);
+                        ctx.lineTo(canvasWidth, canvasHeight - cornerSize);
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                        
+                    case 'minimal':
+                        // Simple thin frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner cutout
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(
+                            width, 
+                            width, 
+                            canvasWidth - 2 * width, 
+                            canvasHeight - 2 * width
+                        );
+                        break;
+                        
+                    case 'rustic':
+                        // Outer frame
+                        ctx.fillStyle = outerColor;
+                        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                        
+                        // Inner frame
+                        ctx.fillStyle = innerColor;
+                        ctx.fillRect(
+                            width * 0.7, 
+                            width * 0.7, 
+                            canvasWidth - width * 1.4, 
+                            canvasHeight - width * 1.4
+                        );
+                        
+                        // Add wood grain effect
+                        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+                        ctx.lineWidth = 1;
+                        for (let i = 0; i < canvasWidth; i += 8) {
+                            ctx.beginPath();
+                            ctx.moveTo(i, 0);
+                            ctx.lineTo(i + 15, canvasHeight);
+                            ctx.stroke();
+                        }
+                        break;
+                }
+            }
+            
+            function updateSliderValues() {
+                frameWidthValue.textContent = frameWidthInput.value + 'px';
+                matWidthValue.textContent = matWidthInput.value + 'px';
+            }
+            
+            function resetSettings() {
+                // Reset to defaults
+                outerColorInput.value = '#8B4513';
+                innerColorInput.value = '#D2691E';
+                frameWidthInput.value = 40;
+                matColorInput.value = '#F5F5DC';
+                matWidthInput.value = 15;
+                
+                // Reset frame style
+                frameStyle = 'classic';
+                document.querySelector('input[value="classic"]').checked = true;
+                document.querySelectorAll('.frame-style').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                document.querySelector('[data-style="classic"]').classList.add('selected');
+                
+                updateSliderValues();
+                drawFramedImage();
+            }
+            
+            function downloadImage() {
+                if (!uploadedImage) {
+                    showNotification('Please upload an image first', 'error');
+                    return;
+                }
+                
+                const link = document.createElement('a');
+                link.download = 'framed-photo.png';
+                link.href = previewCanvas.toDataURL('image/png');
+                link.click();
+                
+                showNotification('Image downloaded successfully!', 'success');
+            }
+            
+            function showNotification(message, type = 'success') {
+                notification.textContent = message;
+                notification.style.background = type === 'success' ? '#28a745' : '#dc3545';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

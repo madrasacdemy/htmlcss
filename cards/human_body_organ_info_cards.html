@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Human Body Organ Information</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Filter Section */
+        .filter-section {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .filter-btn {
+            padding: 10px 25px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .filter-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        /* Organ Cards Grid */
+        .organs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .organ-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .organ-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .organ-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            background: #f8f9fa;
+        }
+        
+        .organ-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .organ-card:hover .organ-image img {
+            transform: scale(1.1);
+        }
+        
+        .organ-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .organ-content {
+            padding: 25px;
+        }
+        
+        .organ-name {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .organ-icon {
+            font-size: 1.8rem;
+        }
+        
+        .organ-system {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        
+        .organ-description {
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .organ-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            animation: fadeIn 0.3s;
+        }
+        
+        .modal-content {
+            background: white;
+            max-width: 900px;
+            margin: 50px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            animation: slideIn 0.3s;
+        }
+        
+        .modal-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+        
+        .modal-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+        
+        .modal-body {
+            padding: 40px;
+        }
+        
+        .modal-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .modal-subtitle {
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        
+        .info-section {
+            margin-bottom: 30px;
+        }
+        
+        .info-section h3 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-section p {
+            color: #555;
+            line-height: 1.8;
+        }
+        
+        .fact-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+        
+        .fact-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .fact-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .fact-icon {
+            color: #667eea;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        
+        .modal-stat {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .modal-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .modal-stat-label {
+            color: #777;
+            margin-top: 5px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            border-radius: 15px;
+            margin-top: 60px;
+        }
+        
+        footer p {
+            opacity: 0.8;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .organs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-title {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Human Body Organs</h1>
+            <p>Explore the fascinating world of human anatomy and learn about the vital organs that keep us alive</p>
+        </header>
+        
+        <div class="filter-section">
+            <h2>Filter by Body System</h2>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Organs</button>
+                <button class="filter-btn" data-filter="circulatory">Circulatory</button>
+                <button class="filter-btn" data-filter="respiratory">Respiratory</button>
+                <button class="filter-btn" data-filter="digestive">Digestive</button>
+                <button class="filter-btn" data-filter="nervous">Nervous</button>
+                <button class="filter-btn" data-filter="excretory">Excretory</button>
+            </div>
+        </div>
+        
+        <div class="organs-grid">
+            <!-- Heart -->
+            <div class="organ-card" data-system="circulatory" data-organ="heart">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Heart">
+                    <div class="organ-badge">Circulatory</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">❤️</span>
+                        Heart
+                    </h3>
+                    <div class="organ-system">Cardiovascular System</div>
+                    <p class="organ-description">
+                        The heart is a muscular organ that pumps blood through the circulatory system. It's roughly the size of a closed fist and beats about 100,000 times per day.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">300g</div>
+                            <div class="stat-label">Weight</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">72</div>
+                            <div class="stat-label">BPM</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4</div>
+                            <div class="stat-label">Chambers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Brain -->
+            <div class="organ-card" data-system="nervous" data-organ="brain">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1536064479547-7ee40b74b807?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Brain">
+                    <div class="organ-badge">Nervous</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🧠</span>
+                        Brain
+                    </h3>
+                    <div class="organ-system">Central Nervous System</div>
+                    <p class="organ-description">
+                        The brain is the center of the nervous system, controlling thoughts, memory, emotions, touch, motor skills, vision, breathing, temperature, hunger, and every process that regulates our body.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">1.4kg</div>
+                            <div class="stat-label">Weight</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">86B</div>
+                            <div class="stat-label">Neurons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">20%</div>
+                            <div class="stat-label">Energy Use</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Lungs -->
+            <div class="organ-card" data-system="respiratory" data-organ="lungs">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1584362917165-526a968579e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lungs">
+                    <div class="organ-badge">Respiratory</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🫁</span>
+                        Lungs
+                    </h3>
+                    <div class="organ-system">Respiratory System</div>
+                    <p class="organ-description">
+                        The lungs are a pair of spongy, air-filled organs located on either side of the chest. They're responsible for taking in oxygen and expelling carbon dioxide.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Number</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">500M</div>
+                            <div class="stat-label">Alveoli</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">70m²</div>
+                            <div class="stat-label">Surface Area</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Liver -->
+            <div class="organ-card" data-system="digestive" data-organ="liver">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Liver">
+                    <div class="organ-badge">Digestive</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🟤</span>
+                        Liver
+                    </h3>
+                    <div class="organ-system">Digestive System</div>
+                    <p class="organ-description">
+                        The liver is the largest internal organ and gland in the human body. It performs over 500 vital functions including detoxification, protein synthesis, and production of biochemicals.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">1.5kg</div>
+                            <div class="stat-label">Weight</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">500+</div>
+                            <div class="stat-label">Functions</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2L</div>
+                            <div class="stat-label">Blood/Min</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kidneys -->
+            <div class="organ-card" data-system="excretory" data-organ="kidneys">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1599059823006-8a0e8b7f1e0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Kidneys">
+                    <div class="organ-badge">Excretory</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🫘</span>
+                        Kidneys
+                    </h3>
+                    <div class="organ-system">Urinary System</div>
+                    <p class="organ-description">
+                        The kidneys are two bean-shaped organs that filter waste products from the blood and produce urine. They also regulate blood pressure and electrolyte balance.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Number</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">150g</div>
+                            <div class="stat-label">Weight Each</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">180L</div>
+                            <div class="stat-label">Blood/Day</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stomach -->
+            <div class="organ-card" data-system="digestive" data-organ="stomach">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc51?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Stomach">
+                    <div class="organ-badge">Digestive</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🤎</span>
+                        Stomach
+                    </h3>
+                    <div class="organ-system">Digestive System</div>
+                    <p class="organ-description">
+                        The stomach is a muscular organ located on the left side of the upper abdomen. It receives food from the esophagus and begins the digestive process.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">1L</div>
+                            <div class="stat-label">Capacity</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2-4</div>
+                            <div class="stat-label">Hours Digest</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">pH 1.5</div>
+                            <div class="stat-label">Acidity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Skin -->
+            <div class="organ-card" data-system="integumentary" data-organ="skin">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Skin">
+                    <div class="organ-badge">Integumentary</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">👤</span>
+                        Skin
+                    </h3>
+                    <div class="organ-system">Integumentary System</div>
+                    <p class="organ-description">
+                        The skin is the body's largest organ, providing a protective barrier against the environment. It regulates temperature, prevents water loss, and houses sensory receptors.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">2m²</div>
+                            <div class="stat-label">Area</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">4kg</div>
+                            <div class="stat-label">Weight</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Layers</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Intestines -->
+            <div class="organ-card" data-system="digestive" data-organ="intestines">
+                <div class="organ-image">
+                    <img src="https://images.unsplash.com/photo-1627246513919-7d9d4e8b0d4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Intestines">
+                    <div class="organ-badge">Digestive</div>
+                </div>
+                <div class="organ-content">
+                    <h3 class="organ-name">
+                        <span class="organ-icon">🦠</span>
+                        Intestines
+                    </h3>
+                    <div class="organ-system">Digestive System</div>
+                    <p class="organ-description">
+                        The intestines are a long, continuous tube running from the stomach to the anus. They absorb nutrients and water from food and eliminate waste products.
+                    </p>
+                    <div class="organ-stats">
+                        <div class="stat">
+                            <div class="stat-value">7.5m</div>
+                            <div class="stat-label">Length</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Sections</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">100T</div>
+                            <div class="stat-label">Bacteria</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Human Body Organ Information | Educational Resource</p>
+        </footer>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal" id="organModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="">
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-subtitle" id="modalSubtitle"></div>
+                
+                <div class="info-section">
+                    <h3>📋 Overview</h3>
+                    <p id="modalOverview"></p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>🔬 Key Functions</h3>
+                    <ul class="fact-list" id="modalFunctions"></ul>
+                </div>
+                
+                <div class="info-section">
+                    <h3>⚠️ Health Tips</h3>
+                    <ul class="fact-list" id="modalHealthTips"></ul>
+                </div>
+                
+                <div class="modal-stats" id="modalStats"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Organ data
+        const organData = {
+            heart: {
+                title: "Heart",
+                subtitle: "The Engine of Life",
+                image: "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The heart is a muscular organ that pumps blood through the circulatory system. It's roughly the size of a closed fist and located slightly left of center in the chest. The heart works tirelessly, beating about 100,000 times per day and pumping approximately 2,000 gallons of blood throughout the body.",
+                functions: [
+                    "Pumps oxygenated blood to all body tissues",
+                    "Returns deoxygenated blood to the lungs for oxygenation",
+                    "Maintains blood pressure and circulation",
+                    "Transports nutrients, hormones, and waste products",
+                    "Regulates body temperature"
+                ],
+                healthTips: [
+                    "Exercise regularly to strengthen heart muscle",
+                    "Eat a heart-healthy diet low in saturated fats",
+                    "Maintain a healthy weight",
+                    "Avoid smoking and limit alcohol consumption",
+                    "Manage stress through relaxation techniques"
+                ],
+                stats: [
+                    { label: "Weight", value: "300g" },
+                    { label: "Beats per Minute", value: "72" },
+                    { label: "Chambers", value: "4" },
+                    { label: "Blood Pumped/Day", value: "7,500L" }
+                ]
+            },
+            brain: {
+                title: "Brain",
+                subtitle: "The Command Center",
+                image: "https://images.unsplash.com/photo-1536064479547-7ee40b74b807?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The brain is the most complex organ in the human body, serving as the center of the nervous system. It controls thoughts, memory, emotions, touch, motor skills, vision, breathing, temperature, hunger, and every process that regulates our body. The brain weighs about 1.4 kilograms and contains approximately 86 billion neurons.",
+                functions: [
+                    "Processes sensory information from the body",
+                    "Controls voluntary and involuntary movements",
+                    "Stores memories and enables learning",
+                    "Regulates emotions and mood",
+                    "Maintains homeostasis and vital functions"
+                ],
+                healthTips: [
+                    "Get adequate sleep (7-9 hours per night)",
+                    "Engage in regular mental exercise and learning",
+                    "Eat brain-boosting foods like omega-3 fatty acids",
+                    "Stay physically active to improve blood flow",
+                    "Protect your head from injury"
+                ],
+                stats: [
+                    { label: "Weight", value: "1.4kg" },
+                    { label: "Neurons", value: "86 Billion" },
+                    { label: "Energy Use", value: "20%" },
+                    { label: "Synapses", value: "100 Trillion" }
+                ]
+            },
+            lungs: {
+                title: "Lungs",
+                subtitle: "The Breath of Life",
+                image: "https://images.unsplash.com/photo-1584362917165-526a968579e8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The lungs are a pair of spongy, air-filled organs located on either side of the chest. They're responsible for taking in oxygen from the air and expelling carbon dioxide. The lungs contain approximately 500 million alveoli, tiny air sacs where gas exchange occurs. The total surface area of the lungs is roughly the size of a tennis court.",
+                functions: [
+                    "Oxygenate blood through gas exchange",
+                    "Remove carbon dioxide from the body",
+                    "Filter blood and remove small blood clots",
+                    "Protect against airborne pathogens",
+                    "Help regulate blood pH balance"
+                ],
+                healthTips: [
+                    "Avoid smoking and secondhand smoke",
+                    "Practice deep breathing exercises",
+                    "Get regular aerobic exercise",
+                    "Avoid air pollution when possible",
+                    "Stay hydrated to keep mucus thin"
+                ],
+                stats: [
+                    { label: "Number", value: "2" },
+                    { label: "Alveoli", value: "500 Million" },
+                    { label: "Surface Area", value: "70m²" },
+                    { label: "Breaths/Minute", value: "12-20" }
+                ]
+            },
+            liver: {
+                title: "Liver",
+                subtitle: "The Body's Chemical Factory",
+                image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The liver is the largest internal organ and gland in the human body, weighing about 1.5 kilograms. It performs over 500 vital functions including detoxification, protein synthesis, and production of biochemicals necessary for digestion. The liver has an amazing ability to regenerate itself after damage.",
+                functions: [
+                    "Detoxifies harmful substances and drugs",
+                    "Produces bile for fat digestion",
+                    "Stores vitamins and minerals",
+                    "Regulates blood sugar levels",
+                    "Produces blood clotting factors"
+                ],
+                healthTips: [
+                    "Limit alcohol consumption",
+                    "Maintain a healthy weight",
+                    "Avoid exposure to toxic chemicals",
+                    "Get vaccinated for hepatitis",
+                    "Eat a balanced diet rich in antioxidants"
+                ],
+                stats: [
+                    { label: "Weight", value: "1.5kg" },
+                    { label: "Functions", value: "500+" },
+                    { label: "Blood Filtered/Minute", value: "2L" },
+                    { label: "Regeneration Time", value: "6-8 Weeks" }
+                ]
+            },
+            kidneys: {
+                title: "Kidneys",
+                subtitle: "The Body's Filters",
+                image: "https://images.unsplash.com/photo-1599059823006-8a0e8b7f1e0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The kidneys are two bean-shaped organs located on either side of the spine, just below the rib cage. Each kidney is about the size of a fist and contains approximately one million filtering units called nephrons. The kidneys filter about 180 liters of blood daily, producing about 1-2 liters of urine.",
+                functions: [
+                    "Filter waste products from blood",
+                    "Regulate fluid and electrolyte balance",
+                    "Control blood pressure through hormone production",
+                    "Produce red blood cells",
+                    "Activate vitamin D for bone health"
+                ],
+                healthTips: [
+                    "Stay well-hydrated",
+                    "Control blood sugar and blood pressure",
+                    "Limit salt and protein intake",
+                    "Avoid NSAIDs when possible",
+                    "Get regular kidney function tests"
+                ],
+                stats: [
+                    { label: "Number", value: "2" },
+                    { label: "Weight Each", value: "150g" },
+                    { label: "Blood Filtered/Day", value: "180L" },
+                    { label: "Nephrons Each", value: "1 Million" }
+                ]
+            },
+            stomach: {
+                title: "Stomach",
+                subtitle: "The Food Processor",
+                image: "https://images.unsplash.com/photo-1551818255-e6e10975bc51?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The stomach is a muscular organ located on the left side of the upper abdomen. It receives food from the esophagus and begins the digestive process through mechanical and chemical means. The stomach can expand to hold about 1 liter of food and has a highly acidic environment with a pH of 1.5-3.5.",
+                functions: [
+                    "Stores food temporarily after eating",
+                    "Mixes food with digestive enzymes",
+                    "Produces hydrochloric acid to kill bacteria",
+                    "Begins protein digestion",
+                    "Controls the rate of food entry into the small intestine"
+                ],
+                healthTips: [
+                    "Eat slowly and chew thoroughly",
+                    "Avoid overeating",
+                    "Limit spicy and acidic foods if sensitive",
+                    "Don't lie down immediately after eating",
+                    "Manage stress to prevent ulcers"
+                ],
+                stats: [
+                    { label: "Capacity", value: "1L" },
+                    { label: "Digestion Time", value: "2-4 Hours" },
+                    { label: "Acidity (pH)", value: "1.5-3.5" },
+                    { label: "Gastric Juice/Day", value: "2-3L" }
+                ]
+            },
+            skin: {
+                title: "Skin",
+                subtitle: "The Body's Protective Shield",
+                image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The skin is the body's largest organ, covering an area of about 2 square meters and weighing approximately 4 kilograms. It consists of three main layers: the epidermis, dermis, and hypodermis. The skin provides a protective barrier against the environment, regulates temperature, prevents water loss, and houses sensory receptors.",
+                functions: [
+                    "Protects against pathogens and UV radiation",
+                    "Regulates body temperature through sweating",
+                    "Prevents water loss and dehydration",
+                    "Synthesizes vitamin D from sunlight",
+                    "Detects touch, pressure, temperature, and pain"
+                ],
+                healthTips: [
+                    "Use sunscreen to protect against UV damage",
+                    "Keep skin clean and moisturized",
+                    "Stay hydrated from the inside out",
+                    "Eat foods rich in antioxidants",
+                    "Avoid smoking and excessive alcohol"
+                ],
+                stats: [
+                    { label: "Area", value: "2m²" },
+                    { label: "Weight", value: "4kg" },
+                    { label: "Layers", value: "3" },
+                    { label: "Skin Cells/Lost/Day", value: "40,000" }
+                ]
+            },
+            intestines: {
+                title: "Intestines",
+                subtitle: "The Nutrient Absorbers",
+                image: "https://images.unsplash.com/photo-1627246513919-7d9d4e8b0d4d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                overview: "The intestines are a long, continuous tube running from the stomach to the anus, measuring about 7.5 meters in length. They consist of two main sections: the small intestine (about 6 meters) and the large intestine (about 1.5 meters). The intestines absorb nutrients and water from food and eliminate waste products.",
+                functions: [
+                    "Absorbs nutrients from digested food",
+                    "Absorbs water and electrolytes",
+                    "Hosts beneficial gut bacteria",
+                    "Produces some vitamins and hormones",
+                    "Eliminates waste products as feces"
+                ],
+                healthTips: [
+                    "Eat a high-fiber diet",
+                    "Stay hydrated to prevent constipation",
+                    "Include probiotics in your diet",
+                    "Exercise regularly to promote bowel health",
+                    "Avoid processed foods and excessive sugar"
+                ],
+                stats: [
+                    { label: "Total Length", value: "7.5m" },
+                    { label: "Sections", value: "2" },
+                    { label: "Gut Bacteria", value: "100 Trillion" },
+                    { label: "Transit Time", value: "24-72 Hours" }
+                ]
+            }
+        };
+        
+        // DOM Elements
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const organCards = document.querySelectorAll('.organ-card');
+        const modal = document.getElementById('organModal');
+        const modalClose = document.querySelector('.modal-close');
+        
+        // Filter functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.getAttribute('data-filter');
+                
+                // Filter organs
+                organCards.forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-system') === filter) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'scale(1)';
+                        }, 10);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // Modal functionality
+        organCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const organ = card.getAttribute('data-organ');
+                const data = organData[organ];
+                
+                if (data) {
+                    // Populate modal
+                    document.getElementById('modalImage').src = data.image;
+                    document.getElementById('modalTitle').innerHTML = data.title + ' <span class="organ-icon">' + getOrganIcon(organ) + '</span>';
+                    document.getElementById('modalSubtitle').textContent = data.subtitle;
+                    document.getElementById('modalOverview').textContent = data.overview;
+                    
+                    // Populate functions
+                    const functionsList = document.getElementById('modalFunctions');
+                    functionsList.innerHTML = '';
+                    data.functions.forEach(func => {
+                        const li = document.createElement('li');
+                        li.innerHTML = '<span class="fact-icon">✓</span><span>' + func + '</span>';
+                        functionsList.appendChild(li);
+                    });
+                    
+                    // Populate health tips
+                    const tipsList = document.getElementById('modalHealthTips');
+                    tipsList.innerHTML = '';
+                    data.healthTips.forEach(tip => {
+                        const li = document.createElement('li');
+                        li.innerHTML = '<span class="fact-icon">💡</span><span>' + tip + '</span>';
+                        tipsList.appendChild(li);
+                    });
+                    
+                    // Populate stats
+                    const statsContainer = document.getElementById('modalStats');
+                    statsContainer.innerHTML = '';
+                    data.stats.forEach(stat => {
+                        const statDiv = document.createElement('div');
+                        statDiv.className = 'modal-stat';
+                        statDiv.innerHTML = `
+                            <div class="modal-stat-value">${stat.value}</div>
+                            <div class="modal-stat-label">${stat.label}</div>
+                        `;
+                        statsContainer.appendChild(statDiv);
+                    });
+                    
+                    // Show modal
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
+                }
+            });
+        });
+        
+        // Close modal
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Helper function to get organ icon
+        function getOrganIcon(organ) {
+            const icons = {
+                heart: '❤️',
+                brain: '🧠',
+                lungs: '🫁',
+                liver: '🟤',
+                kidneys: '🫘',
+                stomach: '🤎',
+                skin: '👤',
+                intestines: '🦠'
+            };
+            return icons[organ] || '🏥';
+        }
+        
+        // Add scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe organ cards
+        organCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
