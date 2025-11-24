@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Water Cycle - Easy to Understand</title>
+<style>
+  body {
+    margin: 0; overflow: hidden; background: linear-gradient(to bottom, #87CEFA 0%, #E3F2FD 70%);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    height: 100vh;
+  }
+  canvas { display: block; }
+  
+  /* Stage Labels with glowing effect */
+  .stage {
+    position: absolute; color: #0D47A1; font-size: 18px; font-weight: bold;
+    background: rgba(255,255,255,0.85); padding: 8px 16px; border-radius: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); pointer-events: none; z-index: 10;
+    backdrop-filter: blur(5px); text-align: center; min-width: 140px;
+  }
+  .arrow { font-size: 30px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% {opacity:0.6} 50% {opacity:1} }
+</style>
+</head>
+<body>
+
+<!-- Clear Educational Labels -->
+<div class="stage" style="top:15px; left:180px;">1. Evaporation<br><span style="font-size:14px;color:#d32f2f">Water turns into vapor</span></div>
+<div class="stage" style="top:15px; left:520px;">2. Condensation<br><span style="font-size:14px;color:#1976d2">Vapor forms clouds</span></div>
+<div class="stage" style="top:130px; right:180px;">3. Precipitation<br><span style="font-size:14px;color:#1976d2">Rain or snow falls</span></div>
+<div class="stage" style="bottom:120px; left:50%; transform:translateX(-50%)">4. Collection<br><span style="font-size:14px;color:#388e3c">Water returns to oceans, lakes & ground</span></div>
+
+<!-- Flow arrows -->
+<div class="stage arrow" style="top:80px; left:380px;">↑</div>
+<div class="stage arrow" style="top:80px; left:750px;">↓</div>
+<div class="stage arrow" style="bottom:200px; left:200px; transform:rotate(30deg)">→</div>
+<div class="stage arrow" style="bottom:200px; right:200px; transform:rotate(-30deg)">←</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];  // Water vapor & rain
+let clouds = [];
+
+// Create moving clouds
+for(let i = 0; i < 5; i++) {
+  clouds.push({
+    x: -300 + i * 350,
+    y: 80 + i * 20,
+    size: 70 + i * 15,
+    speed: 0.3 + i * 0.1
+  });
+}
+
+// Water particles (vapor going up, rain coming down)
+function createParticle(type = 'vapor') {
+  return {
+    x: type === 'vapor' ? Math.random() * canvas.width : 400 + Math.random() * 600,
+    y: type === 'vapor' ? canvas.height - 150 : 100 + Math.random() * 50,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: type === 'vapor' ? -1 - Math.random() * 1.5 : 3 + Math.random() * 4,
+    size: 4 + Math.random() * 4,
+    life: 1,
+    type: type
+  };
+}
+for(let i = 0; i < 120; i++) {
+  particles.push(createParticle(i < 60 ? 'vapor' : 'rain'));
+}
+
+// Sun with warmth rays
+function drawSun() {
+  const time = Date.now() * 0.001;
+  ctx.fillStyle = '#FFD700';
+  ctx.beginPath();
+  ctx.arc(150, 120, 60, 0, Math.PI * 2);
+  ctx.fill();
+  
+  ctx.strokeStyle = '#FFB300';
+  ctx.lineWidth = 6;
+  for(let i = 0; i < 12; i++) {
+    const angle = i * Math.PI / 6 + time;
+    const x1 = 150 + Math.cos(angle) * 70;
+    const y1 = 120 + Math.sin(angle) * 70;
+    const x2 = 150 + Math.cos(angle) * 100;
+    const y2 = 120 + Math.sin(angle) * 100;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+}
+
+// Ocean with gentle waves
+function drawOcean() {
+  ctx.fillStyle = '#0288D1';
+  ctx.beginPath();
+  ctx.moveTo(0, canvas.height);
+  for(let x = 0; x <= canvas.width; x += 20) {
+    const waveHeight = Math.sin((x + Date.now() * 0.001) * 0.02) * 20;
+    ctx.lineTo(x, canvas.height - 140 + waveHeight);
+  }
+  ctx.lineTo(canvas.width, canvas.height);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Reflection effect
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  for(let i = 0; i < 8; i++) {
+    const x = 100 + i * 200 + (Date.now() * 0.05) % 300;
+    ctx.beginPath();
+    ctx.ellipse(x, canvas.height - 130, 80, 15, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// Big fluffy animated clouds
+function drawClouds() {
+  clouds.forEach(c => {
+    c.x += c.speed;
+    if(c.x > canvas.width + 200) c.x = -400;
+    
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'rgba(0,0,0,0.2)';
+    
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, c.size * 0.6, 0, Math.PI * 2);
+    ctx.arc(c.x + 35, c.y - 10, c.size * 0.8, 0, Math.PI * 2);
+    ctx.arc(c.x + 70, c.y, c.size, 0, Math.PI * 2);
+    ctx.arc(c.x + 110, c.y - 5, c.size * 0.7, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.shadowBlur = 0;
+}
+
+// Particles animation (vapor up → rain down)
+function updateParticles() {
+  particles.forEach((p, i) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life -= 0.005;
+    
+    // Vapor rising
+    if(p.type === 'vapor' && p.y < 150) {
+      particles[i] = createParticle('rain');  // Turns into rain when high
+    }
+    
+    // Rain hits ocean → splash → new vapor
+    if(p.type === 'rain' && p.y > canvas.height - 160) {
+      // Splash
+      for(let j = 0; j < 6; j++) {
+        ctx.strokeStyle = 'rgba(100,180,255,0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(p.x, canvas.height - 150);
+        ctx.lineTo(p.x + (Math.random()-0.5)*30, canvas.height - 170 - Math.random()*20);
+        ctx.stroke();
+      }
+      particles[i] = createParticle('vapor');  // Recycle into vapor
+      particles[i].x = p.x;
+    }
+    
+    // Draw particle
+    if(p.type === 'vapor') {
+      ctx.fillStyle = `rgba(100, 180, 255, ${p.life})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.strokeStyle = `rgba(80, 150, 255, ${p.life})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x, p.y + 14);
+      ctx.stroke();
+    }
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  drawOcean();
+  drawSun();
+  updateParticles();
+  drawClouds();
+  
+  requestAnimationFrame(animate);
+}
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+animate();
+</script>
+
+<div style="position:absolute; bottom:15px; left:50%; transform:translateX(-50%); color:#0D47A1; font-size:14px; background:rgba(255,255,255,0.9); padding:10px 20px; border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.2)">
+  <strong>The Water Cycle:</strong> Sun heats water → Evaporation → Vapor rises → Cools & forms clouds → Rain falls → Collects in oceans & rivers → Cycle repeats!
+</div>
+
+</body>
+</html>
