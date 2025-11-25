@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Chain & Food Web Interactive Display</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .organism {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .organism:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+        
+        .arrow {
+            stroke-dasharray: 5;
+            animation: dash 20s linear infinite;
+        }
+        
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .tab-active {
+            border-bottom: 3px solid #10b981;
+            color: #10b981;
+        }
+        
+        .energy-flow {
+            animation: flow 3s ease-in-out infinite;
+        }
+        
+        @keyframes flow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-green-600 to-blue-600 text-white py-16">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-5xl font-bold mb-4">Food Chain & Food Web</h1>
+            <p class="text-xl opacity-90">Explore the flow of energy through ecosystems</p>
+        </div>
+    </header>
+
+    <!-- Introduction -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold mb-4">Understanding Energy Flow</h2>
+                    <p class="text-gray-600 mb-4">
+                        Food chains and food webs illustrate how energy moves through ecosystems. 
+                        They show the feeding relationships between organisms and how energy is 
+                        transferred from one level to another.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <span><strong>Food Chain:</strong> Linear sequence showing who eats whom</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <span><strong>Food Web:</strong> Complex network of interconnected food chains</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                            <span><strong>Trophic Levels:</strong> Positions in the energy transfer hierarchy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-2xl p-8 text-center">
+                    <div class="text-6xl mb-4 pulse">
+                        <i class="fas fa-leaf text-green-500"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Energy Transfer</h3>
+                    <p class="text-gray-600">Only 10% of energy is transferred between trophic levels</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ecosystem Tabs -->
+    <section class="py-8 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-center space-x-8 mb-8">
+                <button onclick="switchEcosystem('forest')" id="forest-tab" class="tab-btn tab-active px-6 py-3 font-semibold transition">
+                    <i class="fas fa-tree mr-2"></i>Forest
+                </button>
+                <button onclick="switchEcosystem('ocean')" id="ocean-tab" class="tab-btn px-6 py-3 font-semibold transition text-gray-600 hover:text-green-600">
+                    <i class="fas fa-water mr-2"></i>Ocean
+                </button>
+                <button onclick="switchEcosystem('grassland')" id="grassland-tab" class="tab-btn px-6 py-3 font-semibold transition text-gray-600 hover:text-green-600">
+                    <i class="fas fa-seedling mr-2"></i>Grassland
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Food Chain Display -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-8">Food Chain</h2>
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                A linear pathway showing how energy flows from producers to consumers
+            </p>
+            
+            <!-- Forest Food Chain -->
+            <div id="forest-chain" class="ecosystem-chain">
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+                    <div class="organism text-center" onclick="showOrganismInfo('sun')">
+                        <div class="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-sun text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Sun</p>
+                        <p class="text-sm text-gray-500">Energy Source</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('grass')">
+                        <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-seedling text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Grass</p>
+                        <p class="text-sm text-gray-500">Producer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('rabbit')">
+                        <div class="w-24 h-24 bg-orange-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-rabbit text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Rabbit</p>
+                        <p class="text-sm text-gray-500">Primary Consumer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('fox')">
+                        <div class="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-fox text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Fox</p>
+                        <p class="text-sm text-gray-500">Secondary Consumer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('decomposer')">
+                        <div class="w-24 h-24 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-bacteria text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Decomposers</p>
+                        <p class="text-sm text-gray-500">Nutrient Recyclers</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ocean Food Chain (Hidden by default) -->
+            <div id="ocean-chain" class="ecosystem-chain hidden">
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+                    <div class="organism text-center" onclick="showOrganismInfo('sun')">
+                        <div class="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-sun text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Sun</p>
+                        <p class="text-sm text-gray-500">Energy Source</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('phytoplankton')">
+                        <div class="w-24 h-24 bg-green-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-microscope text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Phytoplankton</p>
+                        <p class="text-sm text-gray-500">Producer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('krill')">
+                        <div class="w-24 h-24 bg-blue-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-fish text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Krill</p>
+                        <p class="text-sm text-gray-500">Primary Consumer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('whale')">
+                        <div class="w-24 h-24 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-whale text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Whale</p>
+                        <p class="text-sm text-gray-500">Secondary Consumer</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grassland Food Chain (Hidden by default) -->
+            <div id="grassland-chain" class="ecosystem-chain hidden">
+                <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8">
+                    <div class="organism text-center" onclick="showOrganismInfo('sun')">
+                        <div class="w-24 h-24 bg-yellow-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-sun text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Sun</p>
+                        <p class="text-sm text-gray-500">Energy Source</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('grass')">
+                        <div class="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-seedling text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Grass</p>
+                        <p class="text-sm text-gray-500">Producer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('zebra')">
+                        <div class="w-24 h-24 bg-gray-400 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-horse text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Zebra</p>
+                        <p class="text-sm text-gray-500">Primary Consumer</p>
+                    </div>
+                    <div class="text-4xl text-gray-400">→</div>
+                    <div class="organism text-center" onclick="showOrganismInfo('lion')">
+                        <div class="w-24 h-24 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                            <i class="fas fa-paw text-4xl text-white"></i>
+                        </div>
+                        <p class="font-semibold">Lion</p>
+                        <p class="text-sm text-gray-500">Secondary Consumer</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Food Web Display -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-8">Food Web</h2>
+            <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">
+                A complex network showing multiple feeding relationships in an ecosystem
+            </p>
+            
+            <!-- Forest Food Web -->
+            <div id="forest-web" class="ecosystem-web">
+                <div class="relative max-w-4xl mx-auto h-96">
+                    <svg class="w-full h-full" viewBox="0 0 800 400">
+                        <!-- Connection lines -->
+                        <line x1="400" y1="50" x2="200" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="50" x2="600" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="200" y1="150" x2="100" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="200" y1="150" x2="300" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="600" y1="150" x2="500" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="600" y1="150" x2="700" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="100" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="300" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="500" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="700" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        
+                        <!-- Organisms -->
+                        <g onclick="showOrganismInfo('sun')" class="organism">
+                            <circle cx="400" cy="50" r="30" fill="#fbbf24" />
+                            <text x="400" y="55" text-anchor="middle" fill="white" font-size="20">☀️</text>
+                            <text x="400" y="90" text-anchor="middle" font-size="14" font-weight="bold">Sun</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('grass')" class="organism">
+                            <circle cx="200" cy="150" r="30" fill="#10b981" />
+                            <text x="200" y="155" text-anchor="middle" fill="white" font-size="20">🌱</text>
+                            <text x="200" y="190" text-anchor="middle" font-size="14" font-weight="bold">Grass</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('tree')" class="organism">
+                            <circle cx="600" cy="150" r="30" fill="#059669" />
+                            <text x="600" y="155" text-anchor="middle" fill="white" font-size="20">🌳</text>
+                            <text x="600" y="190" text-anchor="middle" font-size="14" font-weight="bold">Trees</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('rabbit')" class="organism">
+                            <circle cx="100" cy="250" r="30" fill="#fb923c" />
+                            <text x="100" y="255" text-anchor="middle" fill="white" font-size="20">🐰</text>
+                            <text x="100" y="290" text-anchor="middle" font-size="14" font-weight="bold">Rabbit</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('deer')" class="organism">
+                            <circle cx="300" cy="250" r="30" fill="#a3a3a3" />
+                            <text x="300" y="255" text-anchor="middle" fill="white" font-size="20">🦌</text>
+                            <text x="300" y="290" text-anchor="middle" font-size="14" font-weight="bold">Deer</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('bird')" class="organism">
+                            <circle cx="500" cy="250" r="30" fill="#3b82f6" />
+                            <text x="500" y="255" text-anchor="middle" fill="white" font-size="20">🦅</text>
+                            <text x="500" y="290" text-anchor="middle" font-size="14" font-weight="bold">Bird</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('squirrel')" class="organism">
+                            <circle cx="700" cy="250" r="30" fill="#f97316" />
+                            <text x="700" y="255" text-anchor="middle" fill="white" font-size="20">🐿️</text>
+                            <text x="700" y="290" text-anchor="middle" font-size="14" font-weight="bold">Squirrel</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('fox')" class="organism">
+                            <circle cx="400" cy="350" r="30" fill="#ef4444" />
+                            <text x="400" y="355" text-anchor="middle" fill="white" font-size="20">🦊</text>
+                            <text x="400" y="390" text-anchor="middle" font-size="14" font-weight="bold">Fox</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Ocean Food Web (Hidden by default) -->
+            <div id="ocean-web" class="ecosystem-web hidden">
+                <div class="relative max-w-4xl mx-auto h-96">
+                    <svg class="w-full h-full" viewBox="0 0 800 400">
+                        <!-- Connection lines -->
+                        <line x1="400" y1="50" x2="200" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="50" x2="600" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="200" y1="150" x2="150" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="200" y1="150" x2="350" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="600" y1="150" x2="450" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="600" y1="150" x2="650" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="150" y1="250" x2="300" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="350" y1="250" x2="300" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="450" y1="250" x2="500" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="650" y1="250" x2="500" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        
+                        <!-- Organisms -->
+                        <g onclick="showOrganismInfo('sun')" class="organism">
+                            <circle cx="400" cy="50" r="30" fill="#fbbf24" />
+                            <text x="400" y="55" text-anchor="middle" fill="white" font-size="20">☀️</text>
+                            <text x="400" y="90" text-anchor="middle" font-size="14" font-weight="bold">Sun</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('phytoplankton')" class="organism">
+                            <circle cx="200" cy="150" r="30" fill="#34d399" />
+                            <text x="200" y="155" text-anchor="middle" fill="white" font-size="20">🦠</text>
+                            <text x="200" y="190" text-anchor="middle" font-size="14" font-weight="bold">Phytoplankton</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('seaweed')" class="organism">
+                            <circle cx="600" cy="150" r="30" fill="#10b981" />
+                            <text x="600" y="155" text-anchor="middle" fill="white" font-size="20">🌿</text>
+                            <text x="600" y="190" text-anchor="middle" font-size="14" font-weight="bold">Seaweed</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('krill')" class="organism">
+                            <circle cx="150" cy="250" r="30" fill="#60a5fa" />
+                            <text x="150" y="255" text-anchor="middle" fill="white" font-size="20">🦐</text>
+                            <text x="150" y="290" text-anchor="middle" font-size="14" font-weight="bold">Krill</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('smallfish')" class="organism">
+                            <circle cx="350" cy="250" r="30" fill="#3b82f6" />
+                            <text x="350" y="255" text-anchor="middle" fill="white" font-size="20">🐟</text>
+                            <text x="350" y="290" text-anchor="middle" font-size="14" font-weight="bold">Small Fish</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('turtle')" class="organism">
+                            <circle cx="450" cy="250" r="30" fill="#16a34a" />
+                            <text x="450" y="255" text-anchor="middle" fill="white" font-size="20">🐢</text>
+                            <text x="450" y="290" text-anchor="middle" font-size="14" font-weight="bold">Sea Turtle</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('jellyfish')" class="organism">
+                            <circle cx="650" cy="250" r="30" fill="#ec4899" />
+                            <text x="650" y="255" text-anchor="middle" fill="white" font-size="20">🎐</text>
+                            <text x="650" y="290" text-anchor="middle" font-size="14" font-weight="bold">Jellyfish</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('shark')" class="organism">
+                            <circle cx="300" cy="350" r="30" fill="#6b7280" />
+                            <text x="300" y="355" text-anchor="middle" fill="white" font-size="20">🦈</text>
+                            <text x="300" y="390" text-anchor="middle" font-size="14" font-weight="bold">Shark</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('whale')" class="organism">
+                            <circle cx="500" cy="350" r="30" fill="#4b5563" />
+                            <text x="500" y="355" text-anchor="middle" fill="white" font-size="20">🐋</text>
+                            <text x="500" y="390" text-anchor="middle" font-size="14" font-weight="bold">Whale</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Grassland Food Web (Hidden by default) -->
+            <div id="grassland-web" class="ecosystem-web hidden">
+                <div class="relative max-w-4xl mx-auto h-96">
+                    <svg class="w-full h-full" viewBox="0 0 800 400">
+                        <!-- Connection lines -->
+                        <line x1="400" y1="50" x2="200" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="50" x2="400" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="50" x2="600" y2="150" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="200" y1="150" x2="150" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="150" x2="300" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="400" y1="150" x2="500" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="600" y1="150" x2="650" y2="250" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="150" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="300" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="500" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        <line x1="650" y1="250" x2="400" y2="350" class="arrow stroke-gray-400 stroke-2" />
+                        
+                        <!-- Organisms -->
+                        <g onclick="showOrganismInfo('sun')" class="organism">
+                            <circle cx="400" cy="50" r="30" fill="#fbbf24" />
+                            <text x="400" y="55" text-anchor="middle" fill="white" font-size="20">☀️</text>
+                            <text x="400" y="90" text-anchor="middle" font-size="14" font-weight="bold">Sun</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('grass')" class="organism">
+                            <circle cx="200" cy="150" r="30" fill="#10b981" />
+                            <text x="200" y="155" text-anchor="middle" fill="white" font-size="20">🌱</text>
+                            <text x="200" y="190" text-anchor="middle" font-size="14" font-weight="bold">Grass</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('flowers')" class="organism">
+                            <circle cx="400" cy="150" r="30" fill="#f472b6" />
+                            <text x="400" y="155" text-anchor="middle" fill="white" font-size="20">🌸</text>
+                            <text x="400" y="190" text-anchor="middle" font-size="14" font-weight="bold">Flowers</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('shrubs')" class="organism">
+                            <circle cx="600" cy="150" r="30" fill="#84cc16" />
+                            <text x="600" y="155" text-anchor="middle" fill="white" font-size="20">🌿</text>
+                            <text x="600" y="190" text-anchor="middle" font-size="14" font-weight="bold">Shrubs</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('zebra')" class="organism">
+                            <circle cx="150" cy="250" r="30" fill="#a3a3a3" />
+                            <text x="150" y="255" text-anchor="middle" fill="white" font-size="20">🦓</text>
+                            <text x="150" y="290" text-anchor="middle" font-size="14" font-weight="bold">Zebra</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('gazelle')" class="organism">
+                            <circle cx="300" cy="250" r="30" fill="#fbbf24" />
+                            <text x="300" y="255" text-anchor="middle" fill="white" font-size="20">🦌</text>
+                            <text x="300" y="290" text-anchor="middle" font-size="14" font-weight="bold">Gazelle</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('bee')" class="organism">
+                            <circle cx="500" cy="250" r="30" fill="#fbbf24" />
+                            <text x="500" y="255" text-anchor="middle" fill="white" font-size="20">🐝</text>
+                            <text x="500" y="290" text-anchor="middle" font-size="14" font-weight="bold">Bee</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('elephant')" class="organism">
+                            <circle cx="650" cy="250" r="30" fill="#6b7280" />
+                            <text x="650" y="255" text-anchor="middle" fill="white" font-size="20">🐘</text>
+                            <text x="650" y="290" text-anchor="middle" font-size="14" font-weight="bold">Elephant</text>
+                        </g>
+                        
+                        <g onclick="showOrganismInfo('lion')" class="organism">
+                            <circle cx="400" cy="350" r="30" fill="#d97706" />
+                            <text x="400" y="355" text-anchor="middle" fill="white" font-size="20">🦁</text>
+                            <text x="400" y="390" text-anchor="middle" font-size="14" font-weight="bold">Lion</text>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="py-12 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center mb-8">Food Chain vs Food Web</h2>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="bg-green-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-green-700">
+                        <i class="fas fa-stream mr-2"></i>Food Chain
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Linear sequence of organisms</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Shows single pathway of energy flow</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Simple and easy to understand</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                            <span>Each organism has one predator/prey</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-blue-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-700">
+                        <i class="fas fa-project-diagram mr-2"></i>Food Web
+                    </h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                            <span>Complex network of interconnected chains</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                            <span>Shows multiple feeding relationships</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                            <span>More realistic representation</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mr-2 mt-1"></i>
+                            <span>Organisms can have multiple food sources</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Organism Info Modal -->
+    <div id="organismModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 relative fade-in">
+            <button onclick="closeOrganismModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div id="organismContent" class="text-center">
+                <!-- Content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Organism information data
+        const organismInfo = {
+            sun: {
+                name: "Sun",
+                emoji: "☀️",
+                description: "The ultimate source of energy for all ecosystems. Provides light and heat energy.",
+                role: "Energy Source",
+                trophic: "N/A",
+                energy: "100%"
+            },
+            grass: {
+                name: "Grass",
+                emoji: "🌱",
+                description: "Producer that converts sunlight into chemical energy through photosynthesis.",
+                role: "Producer",
+                trophic: "1st Level",
+                energy: "100%"
+            },
+            rabbit: {
+                name: "Rabbit",
+                emoji: "🐰",
+                description: "Herbivore that feeds on grass and other plants. Primary consumer.",
+                role: "Primary Consumer",
+                trophic: "2nd Level",
+                energy: "10%"
+            },
+            fox: {
+                name: "Fox",
+                emoji: "🦊",
+                description: "Carnivore that preys on rabbits and other small animals. Secondary consumer.",
+                role: "Secondary Consumer",
+                trophic: "3rd Level",
+                energy: "1%"
+            },
+            decomposer: {
+                name: "Decomposers",
+                emoji: "🦠",
+                description: "Bacteria and fungi that break down dead organisms, recycling nutrients.",
+                role: "Decomposer",
+                trophic: "All Levels",
+                energy: "Recycles"
+            },
+            phytoplankton: {
+                name: "Phytoplankton",
+                emoji: "🦠",
+                description: "Microscopic marine algae that form the base of ocean food chains.",
+                role: "Producer",
+                trophic: "1st Level",
+                energy: "100%"
+            },
+            krill: {
+                name: "Krill",
+                emoji: "🦐",
+                description: "Small crustaceans that feed on phytoplankton. Important food source.",
+                role: "Primary Consumer",
+                trophic: "2nd Level",
+                energy: "10%"
+            },
+            whale: {
+                name: "Whale",
+                emoji: "🐋",
+                description: "Large marine mammals that feed on krill and small fish. Top predators.",
+                role: "Secondary Consumer",
+                trophic: "3rd Level",
+                energy: "1%"
+            },
+            zebra: {
+                name: "Zebra",
+                emoji: "🦓",
+                description: "Herbivorous mammal that grazes on grasses in grassland ecosystems.",
+                role: "Primary Consumer",
+                trophic: "2nd Level",
+                energy: "10%"
+            },
+            lion: {
+                name: "Lion",
+                emoji: "🦁",
+                description: "Apex predator that hunts zebras and other large herbivores.",
+                role: "Secondary Consumer",
+                trophic: "3rd Level",
+                energy: "1%"
+            },
+            tree: {
+                name: "Trees",
+                emoji: "🌳",
+                description: "Large plants that produce fruits, nuts, and provide habitat.",
+                role: "Producer",
+                trophic: "1st Level",
+                energy: "100%"
+            },
+            deer: {
+                name: "Deer",
+                emoji: "🦌",
+                description: "Herbivores that browse on leaves, twigs, and grasses.",
+                role: "Primary Consumer",
+                trophic: "2nd Level",
+                energy: "10%"
+            },
+            bird: {
+                name: "Birds",
+                emoji: "🦅",
+                description: "Various species that feed on seeds, insects, or small animals.",
+                role: "Primary/Secondary Consumer",
+                trophic: "2nd/3rd Level",
+                energy: "10%/1%"
+            },
+            squirrel: {
+                name: "Squirrel",
+                emoji: "🐿️",
+                description: "Small rodents that eat nuts, seeds, and fruits from trees.",
+                role: "Primary Consumer",
+                trophic: "2nd Level",
+                energy: "10%"
+            }
+        };
+
+        // Switch ecosystem function
+        function switchEcosystem(ecosystem) {
+            // Update tab styles
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.classList.remove('tab-active');
+                tab.classList.add('text-gray-600');
+            });
+            document.getElementById(`${ecosystem}-tab`).classList.add('tab-active');
+            document.getElementById(`${ecosystem}-tab`).classList.remove('text-gray-600');
+
+            // Hide all ecosystem chains and webs
+            document.querySelectorAll('.ecosystem-chain, .ecosystem-web').forEach(el => {
+                el.classList.add('hidden');
+            });
+
+            // Show selected ecosystem
+            document.getElementById(`${ecosystem}-chain`).classList.remove('hidden');
+            document.getElementById(`${ecosystem}-web`).classList.remove('hidden');
+        }
+
+        // Show organism information
+        function showOrganismInfo(organism) {
+            const info = organismInfo[organism];
+            if (!info) return;
+
+            const content = `
+                <div class="text-6xl mb-4">${info.emoji}</div>
+                <h3 class="text-2xl font-bold mb-2">${info.name}</h3>
+                <div class="bg-gray-100 rounded-lg p-4 mb-4">
+                    <p class="text-gray-700 mb-2">${info.description}</p>
+                    <div class="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Role</p>
+                            <p class="font-semibold">${info.role}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Trophic Level</p>
+                            <p class="font-semibold">${info.trophic}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Energy Available</p>
+                            <p class="font-semibold">${info.energy}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('organismContent').innerHTML = content;
+            document.getElementById('organismModal').classList.remove('hidden');
+        }
+
+        // Close organism modal
+        function closeOrganismModal() {
+            document.getElementById('organismModal').classList.add('hidden');
+        }
+
+        // Close modal on outside click
+        document.getElementById('organismModal').addEventListener('click', (e) => {
+            if (e.target.id === 'organismModal') {
+                closeOrganismModal();
+            }
+        });
+
+        // Add hover effects to organisms
+        document.querySelectorAll('.organism').forEach(org => {
+            org.addEventListener('mouseenter', function() {
+                this.style.filter = 'brightness(1.2)';
+            });
+            org.addEventListener('mouseleave', function() {
+                this.style.filter = 'brightness(1)';
+            });
+        });
+    </script>
+</body>
+</html>

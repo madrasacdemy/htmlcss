@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Pollution: Causes & Effects</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .pollution-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .pollution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .smoke-animation {
+            animation: smoke 4s ease-in-out infinite;
+        }
+        
+        @keyframes smoke {
+            0% { opacity: 0.3; transform: translateY(0) scale(1); }
+            50% { opacity: 0.6; transform: translateY(-30px) scale(1.1); }
+            100% { opacity: 0.3; transform: translateY(-60px) scale(1.2); }
+        }
+        
+        .progress-bar {
+            transition: width 2s ease-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 1s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-20">
+            <div class="absolute top-20 left-10 w-32 h-32 bg-white rounded-full smoke-animation"></div>
+            <div class="absolute top-40 right-20 w-24 h-24 bg-white rounded-full smoke-animation" style="animation-delay: 1s;"></div>
+            <div class="absolute bottom-20 left-1/3 w-20 h-20 bg-white rounded-full smoke-animation" style="animation-delay: 2s;"></div>
+        </div>
+        
+        <div class="container mx-auto px-6 py-20 relative z-10">
+            <div class="text-center fade-in">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">Air Pollution</h1>
+                <p class="text-xl md:text-2xl mb-8 opacity-90">Understanding the Causes and Effects on Our Planet</p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="scrollToSection('causes')" class="bg-white text-purple-700 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
+                        Explore Causes
+                    </button>
+                    <button onclick="scrollToSection('effects')" class="border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-purple-700 transition">
+                        View Effects
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+                <div class="fade-in">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">7M</div>
+                    <p class="text-gray-600">Deaths annually from air pollution</p>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.2s;">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">91%</div>
+                    <p class="text-gray-600">Of world's population breathes polluted air</p>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.4s;">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">4.2M</div>
+                    <p class="text-gray-600">Outdoor air pollution deaths yearly</p>
+                </div>
+                <div class="fade-in" style="animation-delay: 0.6s;">
+                    <div class="text-4xl font-bold text-purple-600 mb-2">$2.9T</div>
+                    <p class="text-gray-600">Global economic cost annually</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Causes Section -->
+    <section id="causes" class="py-20 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-4">Major Causes of Air Pollution</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">Air pollution stems from various human activities and natural sources. Understanding these causes is the first step toward finding solutions.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Industrial Emissions -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-orange-500">
+                        <i class="fas fa-industry"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Industrial Emissions</h3>
+                    <p class="text-gray-600 mb-4">Factories and power plants release large amounts of sulfur dioxide, nitrogen oxides, and particulate matter into the atmosphere.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-orange-500 h-2 rounded-full" style="width: 0%" data-width="85%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">85% contribution to global emissions</span>
+                </div>
+
+                <!-- Vehicle Emissions -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-blue-500">
+                        <i class="fas fa-car"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Vehicle Emissions</h3>
+                    <p class="text-gray-600 mb-4">Cars, trucks, and airplanes emit carbon monoxide, nitrogen oxides, and other harmful pollutants that affect air quality.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-blue-500 h-2 rounded-full" style="width: 0%" data-width="75%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">75% of urban air pollution</span>
+                </div>
+
+                <!-- Agricultural Activities -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-green-500">
+                        <i class="fas fa-tractor"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Agricultural Activities</h3>
+                    <p class="text-gray-600 mb-4">Farming practices release ammonia, methane, and other pollutants from fertilizers, livestock, and crop burning.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-green-500 h-2 rounded-full" style="width: 0%" data-width="60%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">60% of methane emissions</span>
+                </div>
+
+                <!-- Natural Sources -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-yellow-500">
+                        <i class="fas fa-mountain"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Natural Sources</h3>
+                    <p class="text-gray-600 mb-4">Wildfires, volcanic eruptions, and dust storms contribute significantly to air pollution, especially in certain regions.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-yellow-500 h-2 rounded-full" style="width: 0%" data-width="40%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">40% from natural events</span>
+                </div>
+
+                <!-- Household Sources -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-purple-500">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Household Sources</h3>
+                    <p class="text-gray-600 mb-4">Burning solid fuels for cooking and heating releases harmful pollutants, particularly affecting indoor air quality.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-purple-500 h-2 rounded-full" style="width: 0%" data-width="55%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">55% in developing countries</span>
+                </div>
+
+                <!-- Waste Management -->
+                <div class="pollution-card bg-white rounded-xl p-6 shadow-lg">
+                    <div class="text-5xl mb-4 text-red-500">
+                        <i class="fas fa-trash"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Waste Management</h3>
+                    <p class="text-gray-600 mb-4">Landfills and incineration of waste release methane, dioxins, and other toxic substances into the air.</p>
+                    <div class="bg-gray-200 rounded-full h-2 mb-2">
+                        <div class="progress-bar bg-red-500 h-2 rounded-full" style="width: 0%" data-width="45%"></div>
+                    </div>
+                    <span class="text-sm text-gray-500">45% of methane from waste</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Effects Section -->
+    <section id="effects" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center mb-4">Devastating Effects of Air Pollution</h2>
+            <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">The consequences of air pollution extend far beyond health issues, affecting our environment, economy, and future generations.</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+                <!-- Health Effects -->
+                <div class="fade-in">
+                    <h3 class="text-2xl font-semibold mb-6 text-red-600">
+                        <i class="fas fa-heartbeat mr-3"></i>Health Impacts
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-red-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-lungs text-red-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Respiratory Diseases</h4>
+                                <p class="text-gray-600">Asthma, bronchitis, and lung cancer rates increase significantly in polluted areas.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-red-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-brain text-red-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Neurological Effects</h4>
+                                <p class="text-gray-600">Cognitive decline, developmental issues in children, and increased risk of dementia.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-red-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-heart text-red-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Cardiovascular Problems</h4>
+                                <p class="text-gray-600">Heart attacks, strokes, and high blood pressure linked to air pollution exposure.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visual representation -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-8 text-center">
+                        <div class="text-6xl mb-4 floating">
+                            <i class="fas fa-exclamation-triangle text-red-500"></i>
+                        </div>
+                        <h4 class="text-xl font-semibold mb-2">Premature Deaths</h4>
+                        <p class="text-3xl font-bold text-red-600">1 in 9</p>
+                        <p class="text-gray-600">deaths worldwide are attributed to air pollution</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environmental Effects -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+                <!-- Visual representation -->
+                <div class="relative order-2 lg:order-1">
+                    <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-2xl p-8 text-center">
+                        <div class="text-6xl mb-4 floating">
+                            <i class="fas fa-globe-americas text-blue-500"></i>
+                        </div>
+                        <h4 class="text-xl font-semibold mb-2">Climate Change</h4>
+                        <p class="text-3xl font-bold text-blue-600">76%</p>
+                        <p class="text-gray-600">of global greenhouse gas emissions contribute to climate change</p>
+                    </div>
+                </div>
+                
+                <!-- Environmental Effects Content -->
+                <div class="fade-in order-1 lg:order-2">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-600">
+                        <i class="fas fa-leaf mr-3"></i>Environmental Damage
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-cloud text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Acid Rain</h4>
+                                <p class="text-gray-600">Damages forests, lakes, and buildings through chemical reactions in the atmosphere.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-sun text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Ozone Depletion</h4>
+                                <p class="text-gray-600">Certain pollutants destroy the ozone layer, increasing UV radiation exposure.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                <i class="fas fa-fish text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold">Ecosystem Disruption</h4>
+                                <p class="text-gray-600">Affects plant growth, animal habitats, and biodiversity across ecosystems.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Economic Effects -->
+            <div class="bg-gray-100 rounded-2xl p-8">
+                <h3 class="text-2xl font-semibold mb-6 text-center text-gray-800">
+                    <i class="fas fa-chart-line mr-3"></i>Economic Consequences
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-lg p-6 text-center">
+                        <i class="fas fa-hospital text-4xl text-gray-600 mb-3"></i>
+                        <h4 class="font-semibold mb-2">Healthcare Costs</h4>
+                        <p class="text-2xl font-bold text-gray-800">$8.1B</p>
+                        <p class="text-gray-600">Daily global healthcare expenditure</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 text-center">
+                        <i class="fas fa-briefcase text-4xl text-gray-600 mb-3"></i>
+                        <h4 class="font-semibold mb-2">Lost Productivity</h4>
+                        <p class="text-2xl font-bold text-gray-800">3.2M</p>
+                        <p class="text-gray-600">Work days lost annually</p>
+                    </div>
+                    <div class="bg-white rounded-lg p-6 text-center">
+                        <i class="fas fa-seedling text-4xl text-gray-600 mb-3"></i>
+                        <h4 class="font-semibold mb-2">Agricultural Losses</h4>
+                        <p class="text-2xl font-bold text-gray-800">15-20%</p>
+                        <p class="text-gray-600">Crop yield reduction</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 gradient-bg text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-6">Take Action Against Air Pollution</h2>
+            <p class="text-xl mb-8 opacity-90 max-w-2xl mx-auto">Every individual can make a difference. Here's how you can help reduce air pollution:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6">
+                    <i class="fas fa-bicycle text-4xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Use Public Transport</h3>
+                    <p>Reduce vehicle emissions by choosing eco-friendly transportation options.</p>
+                </div>
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6">
+                    <i class="fas fa-solar-panel text-4xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Switch to Clean Energy</h3>
+                    <p>Support renewable energy sources and reduce fossil fuel consumption.</p>
+                </div>
+                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-6">
+                    <i class="fas fa-users text-4xl mb-4"></i>
+                    <h3 class="text-xl font-semibold mb-2">Spread Awareness</h3>
+                    <p>Educate others about air pollution and advocate for cleaner policies.</p>
+                </div>
+            </div>
+            
+            <button onclick="showMoreInfo()" class="bg-white text-purple-700 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition transform hover:scale-105">
+                Learn More About Solutions
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="mb-4">© 2024 Air Pollution Awareness. Together for cleaner air.</p>
+            <div class="flex justify-center space-x-6">
+                <a href="#" class="hover:text-purple-400 transition"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="hover:text-purple-400 transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-purple-400 transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-purple-400 transition"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for more info -->
+    <div id="infoModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-8 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4">Additional Resources</h3>
+            <div class="space-y-4">
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h4 class="font-semibold">WHO Air Quality Guidelines</h4>
+                    <p class="text-gray-600">Global standards for air quality to protect public health.</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h4 class="font-semibold">Clean Air Act</h4>
+                    <p class="text-gray-600">Legislation aimed at reducing air pollution in the United States.</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                    <h4 class="font-semibold">Paris Agreement</h4>
+                    <p class="text-gray-600">International treaty on climate change and emissions reduction.</p>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="mt-6 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Animate progress bars on scroll
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const progressBars = entry.target.querySelectorAll('.progress-bar');
+                    progressBars.forEach(bar => {
+                        const width = bar.getAttribute('data-width');
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 200);
+                    });
+                }
+            });
+        }, observerOptions);
+
+        // Observe causes section
+        const causesSection = document.getElementById('causes');
+        if (causesSection) {
+            observer.observe(causesSection);
+        }
+
+        // Modal functions
+        function showMoreInfo() {
+            document.getElementById('infoModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').classList.add('hidden');
+        }
+
+        // Close modal on outside click
+        document.getElementById('infoModal').addEventListener('click', (e) => {
+            if (e.target.id === 'infoModal') {
+                closeModal();
+            }
+        });
+
+        // Add scroll effect to navigation
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.gradient-bg');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Interactive hover effects for cards
+        document.querySelectorAll('.pollution-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
