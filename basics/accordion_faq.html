@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordion FAQ Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #2c3e50;
+        }
+
+        .accordion {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #eee;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .accordion-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .accordion-title {
+            font-weight: 600;
+            font-size: 16px;
+            color: #2c3e50;
+        }
+
+        .accordion-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .accordion-icon::before,
+        .accordion-icon::after {
+            content: '';
+            position: absolute;
+            background-color: #3498db;
+            transition: transform 0.3s;
+        }
+
+        .accordion-icon::before {
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            transform: translateY(-50%);
+        }
+
+        .accordion-icon::after {
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            transform: translateX(-50%);
+        }
+
+        .accordion-item.active .accordion-icon::after {
+            transform: translateX(-50%) rotate(90deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background-color: #f8f9fa;
+        }
+
+        .accordion-body {
+            padding: 0 20px 20px;
+            color: #555;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .demo-info {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-info h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .demo-info ul {
+            margin-left: 20px;
+        }
+
+        .demo-info li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Frequently Asked Questions</h1>
+        
+        <div class="accordion">
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3 class="accordion-title">What is an accordion component?</h3>
+                    <div class="accordion-icon"></div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <p>An accordion component is a UI element that allows users to expand and collapse sections of content. It's commonly used in FAQ pages, product descriptions, and settings panels to organize information in a space-efficient way.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3 class="accordion-title">How does this accordion work?</h3>
+                    <div class="accordion-icon"></div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <p>This accordion uses JavaScript to toggle the 'active' class on accordion items when you click on the header. The CSS then uses this class to control the max-height of the content area, creating a smooth expanding and collapsing animation.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3 class="accordion-title">Can multiple sections be open at once?</h3>
+                    <div class="accordion-icon"></div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <p>Yes, in this implementation, multiple accordion sections can be open simultaneously. Each section operates independently, allowing users to view multiple answers at the same time. This is useful for comparing information or when users want to reference multiple answers.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3 class="accordion-title">What technologies are used in this component?</h3>
+                    <div class="accordion-icon"></div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <p>This accordion component is built with HTML for structure, CSS for styling and transitions, and JavaScript for interactivity. The key technologies include:</p>
+                        <ul>
+                            <li>HTML5 semantic elements</li>
+                            <li>CSS3 transitions for smooth animations</li>
+                            <li>JavaScript DOM manipulation for toggling classes</li>
+                            <li>Flexbox for layout</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion-item">
+                <div class="accordion-header">
+                    <h3 class="accordion-title">Is this component responsive?</h3>
+                    <div class="accordion-icon"></div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <p>Yes, this accordion component is fully responsive and works well on all device sizes. The layout adjusts to different screen widths, and the touch-friendly headers make it easy to use on mobile devices. The max-height approach ensures smooth animations regardless of content length.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-info">
+            <h2>Features:</h2>
+            <ul>
+                <li>Click on any question to expand/collapse the answer</li>
+                <li>Smooth CSS transitions for expanding and collapsing</li>
+                <li>Multiple sections can be open simultaneously</li>
+                <li>Visual indicator (plus/minus icon) shows state</li>
+                <li>Fully responsive design</li>
+                <li>Clean, modern styling</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Get all accordion items
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        // Add click event to each accordion header
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            
+            header.addEventListener('click', () => {
+                // Toggle active class on the clicked item
+                item.classList.toggle('active');
+                
+                // Optional: Close other items when opening a new one
+                // Uncomment the following code if you want only one item open at a time
+                /*
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                */
+            });
+        });
+    </script>
+</body>
+</html>
