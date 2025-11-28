@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Toast Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .btn-info {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            min-width: 300px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.hide {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+
+        .toast-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            padding: 0;
+            margin-left: 10px;
+            box-shadow: none;
+        }
+
+        .toast-close:hover {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Toast Types */
+        .toast-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .toast-error {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .toast-warning {
+            background-color: #ff9800;
+            color: white;
+        }
+
+        .toast-info {
+            background-color: #2196F3;
+            color: white;
+        }
+
+        /* Progress bar */
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 0 0 8px 8px;
+            width: 100%;
+            transform-origin: left;
+            animation: progress 3s linear forwards;
+        }
+
+        @keyframes progress {
+            from {
+                transform: scaleX(1);
+            }
+            to {
+                transform: scaleX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .toast-container {
+                left: 20px;
+                right: 20px;
+            }
+            
+            .toast {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notification Toast Component</h1>
+        
+        <div class="button-group">
+            <button class="btn-success" onclick="showToast('success', 'Success', 'Your action was completed successfully!')">
+                Success Toast
+            </button>
+            <button class="btn-error" onclick="showToast('error', 'Error', 'Something went wrong. Please try again.')">
+                Error Toast
+            </button>
+            <button class="btn-warning" onclick="showToast('warning', 'Warning', 'Please be careful with this action.')">
+                Warning Toast
+            </button>
+            <button class="btn-info" onclick="showToast('info', 'Information', 'Here is some useful information for you.')">
+                Info Toast
+            </button>
+        </div>
+        
+        <p>Click any button to trigger a toast notification. It will automatically disappear after 3 seconds.</p>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Toast notification function
+        function showToast(type, title, message) {
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.className = 'toast-container';
+                document.body.appendChild(toastContainer);
+            }
+
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            // Set icon based on type
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '✓';
+                    break;
+                case 'error':
+                    icon = '✕';
+                    break;
+                case 'warning':
+                    icon = '⚠';
+                    break;
+                case 'info':
+                    icon = 'ℹ';
+                    break;
+                default:
+                    icon = 'ℹ';
+            }
+
+            // Toast content
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="closeToast(this)">×</button>
+                <div class="toast-progress"></div>
+            `;
+
+            // Add toast to container
+            toastContainer.appendChild(toast);
+
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+
+            // Auto-hide after 3 seconds using setTimeout
+            const timeoutId = setTimeout(() => {
+                closeToast(toast.querySelector('.toast-close'));
+            }, 3000);
+
+            // Store timeout ID for cleanup
+            toast.dataset.timeoutId = timeoutId;
+        }
+
+        // Close toast function
+        function closeToast(closeButton) {
+            const toast = closeButton.parentElement;
+            
+            // Clear the timeout if it exists
+            if (toast.dataset.timeoutId) {
+                clearTimeout(parseInt(toast.dataset.timeoutId));
+            }
+            
+            // Add hide class
+            toast.classList.add('hide');
+            
+            // Remove from DOM after animation completes
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }
+    </script>
+</body>
+</html>
