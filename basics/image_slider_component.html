@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Image Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 450px;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .slider-wrapper {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(255,255,255,0.9), rgba(255,255,255,0.7), transparent);
+            color: #333;
+            padding: 30px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .slide.active .slide-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .slide-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .slide-description {
+            font-size: 1.1rem;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .nav-button:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prev {
+            left: 20px;
+        }
+
+        .next {
+            right: 20px;
+        }
+
+        .indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: white;
+            border-color: #333;
+            transform: scale(1.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.8);
+            color: #333;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .control-btn:hover {
+            background: white;
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .slider-container {
+                height: 350px;
+            }
+            
+            .slide-title {
+                font-size: 1.5rem;
+            }
+            
+            .slide-description {
+                font-size: 1rem;
+            }
+            
+            .nav-button {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider-wrapper">
+            
+            <!-- SLIDE 1 -->
+            <div class="slide active">
+                <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg" alt="Car 1">
+                <div class="slide-content">
+                    <h2 class="slide-title">Supercar Red Edition</h2>
+                    <p class="slide-description">Unmatched power and sleek aerodynamic design.</p>
+                </div>
+            </div>
+
+            <!-- SLIDE 2 -->
+            <div class="slide">
+                <img src="https://images.pexels.com/photos/358070/pexels-photo-358070.jpeg" alt="Car 2">
+                <div class="slide-content">
+                    <h2 class="slide-title">BMW M Performance</h2>
+                    <p class="slide-description">Luxury meets speed with cutting-edge technology.</p>
+                </div>
+            </div>
+
+        </div>
+        
+        <button class="nav-button prev">&#10094;</button>
+        <button class="nav-button next">&#10095;</button>
+        
+        <div class="indicators">
+            <span class="indicator active"></span>
+            <span class="indicator"></span>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" id="playPauseBtn">&#9658;</button>
+            <button class="control-btn" id="restartBtn">&#8635;</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sliderWrapper = document.querySelector('.slider-wrapper');
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.querySelector('.prev');
+            const nextBtn = document.querySelector('.next');
+            const indicators = document.querySelectorAll('.indicator');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const restartBtn = document.getElementById('restartBtn');
+            
+            let currentIndex = 0;
+            let slideInterval;
+            let isPlaying = true;
+            const intervalTime = 5000; // 5 seconds
+            
+            function initSlider() {
+                updateSliderPosition();
+                startAutoSlide();
+            }
+            
+            function updateSliderPosition() {
+                sliderWrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+                
+                slides.forEach((slide, index) => {
+                    slide.classList.toggle('active', index === currentIndex);
+                });
+                
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentIndex);
+                });
+            }
+            
+            function nextSlide() {
+                currentIndex = (currentIndex + 1) % slides.length;
+                updateSliderPosition();
+            }
+            
+            function prevSlide() {
+                currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+                updateSliderPosition();
+            }
+            
+            function goToSlide(index) {
+                currentIndex = index;
+                updateSliderPosition();
+            }
+            
+            function startAutoSlide() {
+                if (isPlaying) {
+                    slideInterval = setInterval(nextSlide, intervalTime);
+                    playPauseBtn.innerHTML = '&#10074;&#10074;';
+                }
+            }
+            
+            function stopAutoSlide() {
+                clearInterval(slideInterval);
+                playPauseBtn.innerHTML = '&#9658;';
+            }
+            
+            function togglePlayPause() {
+                isPlaying = !isPlaying;
+                isPlaying ? startAutoSlide() : stopAutoSlide();
+            }
+            
+            function restartSlider() {
+                currentIndex = 0;
+                updateSliderPosition();
+                if (isPlaying) {
+                    stopAutoSlide();
+                    startAutoSlide();
+                }
+            }
+            
+            prevBtn.addEventListener('click', () => {
+                prevSlide();
+                if (isPlaying) { stopAutoSlide(); startAutoSlide(); }
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                nextSlide();
+                if (isPlaying) { stopAutoSlide(); startAutoSlide(); }
+            });
+            
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => {
+                    goToSlide(index);
+                    if (isPlaying) { stopAutoSlide(); startAutoSlide(); }
+                });
+            });
+            
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            restartBtn.addEventListener('click', restartSlider);
+            
+            sliderWrapper.addEventListener('mouseenter', () => {
+                if (isPlaying) stopAutoSlide();
+            });
+            
+            sliderWrapper.addEventListener('mouseleave', () => {
+                if (isPlaying) startAutoSlide();
+            });
+            
+            initSlider();
+        });
+    </script>
+</body>
+</html>

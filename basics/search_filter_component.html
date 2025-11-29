@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Filter Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 1.2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            font-size: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .filter-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .results-count {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .item-list {
+            list-style: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .item {
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .item:hover {
+            background: #e8f5e9;
+            transform: translateX(5px);
+        }
+
+        .item.hidden {
+            display: none;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-category {
+            font-size: 0.9rem;
+            color: #666;
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-right: 5px;
+        }
+
+        .item-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* Scrollbar styling */
+        .item-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .item-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .item-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+        }
+
+        .item-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .filter-info {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Search Filter</h1>
+            <p>Find items by typing in the search box</p>
+        </div>
+        
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search items..." id="searchInput">
+        </div>
+        
+        <div class="filter-info">
+            <span class="results-count" id="resultsCount">Showing all 12 items</span>
+            <button class="clear-btn" id="clearBtn">Clear</button>
+        </div>
+        
+        <ul class="item-list" id="itemList">
+            <!-- Items will be populated by JavaScript -->
+        </ul>
+        
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <p>No items found matching your search</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample data
+            const items = [
+                { id: 1, name: "Apple", category: "Fruit", description: "Fresh red apples from local orchards" },
+                { id: 2, name: "Banana", category: "Fruit", description: "Sweet yellow bananas rich in potassium" },
+                { id: 3, name: "Carrot", category: "Vegetable", description: "Crunchy orange carrots high in vitamin A" },
+                { id: 4, name: "Broccoli", category: "Vegetable", description: "Green broccoli packed with nutrients" },
+                { id: 5, name: "Chicken", category: "Meat", description: "Tender chicken breast fillets" },
+                { id: 6, name: "Salmon", category: "Fish", description: "Fresh Atlantic salmon rich in omega-3" },
+                { id: 7, name: "Bread", category: "Bakery", description: "Whole grain artisan bread" },
+                { id: 8, name: "Milk", category: "Dairy", description: "Fresh whole milk from grass-fed cows" },
+                { id: 9, name: "Cheese", category: "Dairy", description: "Aged cheddar cheese with rich flavor" },
+                { id: 10, name: "Rice", category: "Grain", description: "Long grain white rice perfect for any meal" },
+                { id: 11, name: "Pasta", category: "Grain", description: "Italian durum wheat pasta" },
+                { id: 12, name: "Eggs", category: "Dairy", description: "Free-range organic eggs" }
+            ];
+
+            // DOM elements
+            const searchInput = document.getElementById('searchInput');
+            const itemList = document.getElementById('itemList');
+            const resultsCount = document.getElementById('resultsCount');
+            const clearBtn = document.getElementById('clearBtn');
+            const noResults = document.getElementById('noResults');
+
+            // Initialize the list
+            function initializeList() {
+                renderItems(items);
+                updateResultsCount(items.length);
+            }
+
+            // Render items to the DOM
+            function renderItems(itemsToRender) {
+                itemList.innerHTML = '';
+                
+                if (itemsToRender.length === 0) {
+                    noResults.style.display = 'block';
+                    return;
+                }
+                
+                noResults.style.display = 'none';
+                
+                itemsToRender.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'item';
+                    li.innerHTML = `
+                        <div class="item-name">${highlightMatch(item.name, searchInput.value)}</div>
+                        <div>
+                            <span class="item-category">${item.category}</span>
+                        </div>
+                        <div class="item-description">${highlightMatch(item.description, searchInput.value)}</div>
+                    `;
+                    itemList.appendChild(li);
+                });
+            }
+
+            // Highlight matching text
+            function highlightMatch(text, searchTerm) {
+                if (!searchTerm) return text;
+                
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                return text.replace(regex, '<mark>$1</mark>');
+            }
+
+            // Filter items based on search term
+            function filterItems(searchTerm) {
+                const filtered = items.filter(item => {
+                    const searchLower = searchTerm.toLowerCase();
+                    return (
+                        item.name.toLowerCase().includes(searchLower) ||
+                        item.category.toLowerCase().includes(searchLower) ||
+                        item.description.toLowerCase().includes(searchLower)
+                    );
+                });
+                
+                renderItems(filtered);
+                updateResultsCount(filtered.length, searchTerm);
+            }
+
+            // Update results count
+            function updateResultsCount(count, searchTerm = '') {
+                if (searchTerm) {
+                    resultsCount.textContent = `Found ${count} item${count !== 1 ? 's' : ''} matching "${searchTerm}"`;
+                } else {
+                    resultsCount.textContent = `Showing all ${items.length} items`;
+                }
+            }
+
+            // Clear search
+            function clearSearch() {
+                searchInput.value = '';
+                filterItems('');
+                searchInput.focus();
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', (e) => {
+                filterItems(e.target.value);
+            });
+
+            clearBtn.addEventListener('click', clearSearch);
+
+            // Keyboard shortcut (Ctrl/Cmd + K to focus search)
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+
+            // Initialize the component
+            initializeList();
+        });
+    </script>
+</body>
+</html>
