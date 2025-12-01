@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile Card Component</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+    }
+
+    body {
+        background: #dcd2ff;
+        display: flex;
+        justify-content: center;
+        padding: 40px 0;
+    }
+
+    .profile-container {
+        width: 380px;
+        background: #ffffff;
+        border-radius: 30px;
+        padding: 40px 30px 65px;
+        position: relative;
+        text-align: center;
+        box-shadow: 0px 15px 40px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    h4 {
+        color: #7c5cff;
+        font-weight: 500;
+        margin-top: 6px;
+    }
+
+    .description {
+        font-size: 14px;
+        color: #555;
+        margin: 18px 0;
+        line-height: 1.6;
+    }
+
+    /* Tags */
+    .tags {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .tags span {
+        background: #ebe8ff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        color: #6a5ae0;
+        font-weight: 500;
+    }
+
+    /* Stats */
+    .stats {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0 30px;
+        padding: 0 10px;
+    }
+
+    .stats h3 {
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .stats p {
+        font-size: 12px;
+        color: #777;
+        margin-top: 3px;
+    }
+
+    /* Icons row (Empty circles) */
+    .circle-icons {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        margin: 20px 0 30px;
+    }
+
+    .circle {
+        width: 42px;
+        height: 42px;
+        background: #eee;
+        border-radius: 50%;
+    }
+
+    /* Buttons */
+    .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .buttons button {
+        width: 130px;
+        padding: 10px 0;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: 0.3s;
+    }
+
+    .btn-follow {
+        background: #6a5ae0;
+        color: white;
+        border: 2px solid #4b3bc9;
+    }
+
+    .btn-msg {
+        background: #ededed;
+        color: #444;
+    }
+
+    /* Contact */
+    .contact-info {
+        font-size: 13px;
+        color: #555;
+        margin-top: 20px;
+        line-height: 1.6;
+    }
+
+    /* Profile photo */
+    .profile-img {
+        width: 95px;
+        height: 95px;
+        border-radius: 50%;
+        border: 5px solid #fff;
+        position: absolute;
+        bottom: -47px;
+        left: 50%;
+        transform: translateX(-50%);
+        overflow: hidden;
+    }
+
+    .profile-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="profile-container">
+
+    <h2>Alexandra Rose</h2>
+    <h4>Creative Director</h4>
+
+    <p class="description">
+        Passionate about creating meaningful digital experiences. Leading design teams to build innovative
+        products that make a difference.
+    </p>
+
+    <div class="tags">
+        <span>UI/UX Design</span>
+        <span>Branding</span>
+        <span>Leadership</span>
+        <span>Strategy</span>
+    </div>
+
+    <div class="stats">
+        <div>
+            <h3>12.5K</h3>
+            <p>FOLLOWERS</p>
+        </div>
+        <div>
+            <h3>892</h3>
+            <p>FOLLOWING</p>
+        </div>
+        <div>
+            <h3>234</h3>
+            <p>PROJECTS</p>
+        </div>
+    </div>
+
+    <!-- NEW ICONS ROW -->
+
+    <div class="contact-info">
+        alex.rose@design.com <br>
+        California, USA
+    </div>
+
+    <div class="profile-img">
+        <img src="https://i.pravatar.cc/200?img=12" alt="Profile Image">
+    </div>
+
+</div>
+
+</body>
+</html>

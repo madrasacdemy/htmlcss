@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Step Form - Stepper Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .stepper-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+        }
+
+        /* Stepper Header */
+        .stepper-header {
+            background: #f8f9fa;
+            padding: 40px 30px 30px;
+            position: relative;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .stepper-progress {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.3s ease;
+            z-index: 2;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+            flex: 1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step.active .step-circle {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .step.completed .step-circle {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .step.completed .step-circle::after {
+            content: '✓';
+            font-size: 18px;
+        }
+
+        .step-title {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .step.active .step-title {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 40px;
+            min-height: 400px;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .step-content h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .step-content p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: #f44336;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        /* Radio and Checkbox Groups */
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option,
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .radio-option input,
+        .checkbox-option input {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        /* Navigation Buttons */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Summary Step */
+        .summary-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .summary-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        /* Success Step */
+        .success-content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #4caf50;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .success-icon::after {
+            content: '✓';
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .success-content h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        .success-content p {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .stepper-header {
+                padding: 30px 20px 20px;
+            }
+
+            .step-title {
+                font-size: 10px;
+            }
+
+            .form-content {
+                padding: 30px 20px;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .radio-group,
+            .checkbox-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stepper-container">
+        <div class="stepper-header">
+            <div class="stepper">
+                <div class="stepper-progress" id="stepperProgress"></div>
+                <div class="step active" data-step="1">
+                    <div class="step-circle">1</div>
+                    <div class="step-title">Personal Info</div>
+                </div>
+                <div class="step" data-step="2">
+                    <div class="step-circle">2</div>
+                    <div class="step-title">Account Details</div>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="step-circle">3</div>
+                    <div class="step-title">Preferences</div>
+                </div>
+                <div class="step" data-step="4">
+                    <div class="step-circle">4</div>
+                    <div class="step-title">Review</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-content">
+            <!-- Step 1: Personal Information -->
+            <div class="step-content active" data-step="1">
+                <h2>Personal Information</h2>
+                <p>Please provide your basic personal details to get started.</p>
+                
+                <form id="step1Form">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                        <div class="error-message">Please enter your first name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                        <div class="error-message">Please enter your last name</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address *</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message">Please enter a valid email address</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone">
+                        <div class="error-message">Please enter a valid phone number</div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Account Details -->
+            <div class="step-content" data-step="2">
+                <h2>Account Details</h2>
+                <p>Create your account credentials and select your account type.</p>
+                
+                <form id="step2Form">
+                    <div class="form-group">
+                        <label for="username">Username *</label>
+                        <input type="text" id="username" name="username" required>
+                        <div class="error-message">Username must be at least 3 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password *</label>
+                        <input type="password" id="password" name="password" required>
+                        <div class="error-message">Password must be at least 8 characters</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password *</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <div class="error-message">Passwords do not match</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Account Type *</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="accountType" value="personal" required>
+                                Personal
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="accountType" value="business" required>
+                                Business
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="accountType" value="enterprise" required>
+                                Enterprise
+                            </label>
+                        </div>
+                        <div class="error-message">Please select an account type</div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 3: Preferences -->
+            <div class="step-content" data-step="3">
+                <h2>Preferences</h2>
+                <p>Tell us about your preferences to customize your experience.</p>
+                
+                <form id="step3Form">
+                    <div class="form-group">
+                        <label for="country">Country *</label>
+                        <select id="country" name="country" required>
+                            <option value="">Select a country</option>
+                            <option value="us">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="ca">Canada</option>
+                            <option value="au">Australia</option>
+                            <option value="de">Germany</option>
+                            <option value="fr">France</option>
+                            <option value="jp">Japan</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="error-message">Please select your country</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Interests</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="interests" value="technology">
+                                Technology
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="interests" value="design">
+                                Design
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="interests" value="business">
+                                Business
+                            </label>
+                            <label class="checkbox-option">
+                                <input type="checkbox" name="interests" value="marketing">
+                                Marketing
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" rows="4" placeholder="Tell us a bit about yourself..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="checkbox-option">
+                            <input type="checkbox" name="newsletter" value="yes">
+                            Subscribe to our newsletter
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div class="step-content" data-step="4">
+                <h2>Review Your Information</h2>
+                <p>Please review all your information before submitting.</p>
+                
+                <div class="summary-section">
+                    <h3>Personal Information</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Full Name:</span>
+                        <span class="summary-value" id="reviewName">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Email:</span>
+                        <span class="summary-value" id="reviewEmail">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Phone:</span>
+                        <span class="summary-value" id="reviewPhone">-</span>
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <h3>Account Details</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Username:</span>
+                        <span class="summary-value" id="reviewUsername">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Account Type:</span>
+                        <span class="summary-value" id="reviewAccountType">-</span>
+                    </div>
+                </div>
+                
+                <div class="summary-section">
+                    <h3>Preferences</h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Country:</span>
+                        <span class="summary-value" id="reviewCountry">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Interests:</span>
+                        <span class="summary-value" id="reviewInterests">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Newsletter:</span>
+                        <span class="summary-value" id="reviewNewsletter">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Step -->
+            <div class="step-content" data-step="5">
+                <div class="success-content">
+                    <div class="success-icon"></div>
+                    <h2>Registration Complete!</h2>
+                    <p>Thank you for signing up. Your account has been created successfully.</p>
+                    <button class="btn btn-primary" onclick="resetForm()">
+                        Create Another Account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="form-navigation">
+                <button class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">
+                    ← Previous
+                </button>
+                <button class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">
+                    Next →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        const formData = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStepper();
+            setupFormValidation();
+        });
+
+        // Setup form validation
+        function setupFormValidation() {
+            // Real-time validation
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('blur', () => validateField(input));
+                input.addEventListener('input', () => {
+                    if (input.parentElement.classList.contains('error')) {
+                        validateField(input);
+                    }
+                });
+            });
+        }
+
+        // Validate individual field
+        function validateField(field) {
+            const formGroup = field.closest('.form-group');
+            let isValid = true;
+
+            // Remove existing error state
+            formGroup.classList.remove('error');
+
+            // Required field validation
+            if (field.hasAttribute('required') && !field.value.trim()) {
+                isValid = false;
+            }
+
+            // Email validation
+            if (field.type === 'email' && field.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(field.value)) {
+                    isValid = false;
+                }
+            }
+
+            // Password length validation
+            if (field.name === 'password' && field.value.length < 8) {
+                isValid = false;
+            }
+
+            // Username length validation
+            if (field.name === 'username' && field.value.length < 3) {
+                isValid = false;
+            }
+
+            // Confirm password validation
+            if (field.name === 'confirmPassword') {
+                const password = document.getElementById('password').value;
+                if (field.value !== password) {
+                    isValid = false;
+                }
+            }
+
+            // Radio button validation
+            if (field.type === 'radio') {
+                const radioGroup = field.name;
+                const radioButtons = document.querySelectorAll(`input[name="${radioGroup}"]`);
+                const isChecked = Array.from(radioButtons).some(radio => radio.checked);
+                if (!isChecked) {
+                    radioButtons.forEach(radio => {
+                        radio.closest('.form-group').classList.add('error');
+                    });
+                }
+            }
+
+            if (!isValid) {
+                formGroup.classList.add('error');
+            }
+
+            return isValid;
+        }
+
+        // Validate entire step
+        function validateStep(stepNumber) {
+            const stepForm = document.getElementById(`step${stepNumber}Form`);
+            if (!stepForm) return true;
+
+            const inputs = stepForm.querySelectorAll('input[required], select[required], textarea[required]');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (!validateField(input)) {
+                    isValid = false;
+                }
+            });
+
+            // Special validation for radio buttons
+            const radioGroups = stepForm.querySelectorAll('input[type="radio"][required]');
+            const checkedRadios = new Set();
+            radioGroups.forEach(radio => {
+                checkedRadios.add(radio.name);
+            });
+
+            checkedRadios.forEach(groupName => {
+                const radios = document.querySelectorAll(`input[name="${groupName}"]`);
+                const isChecked = Array.from(radios).some(radio => radio.checked);
+                if (!isChecked) {
+                    isValid = false;
+                    radios.forEach(radio => {
+                        radio.closest('.form-group').classList.add('error');
+                    });
+                }
+            });
+
+            return isValid;
+        }
+
+        // Save form data
+        function saveStepData(stepNumber) {
+            const stepForm = document.getElementById(`step${stepNumber}Form`);
+            if (!stepForm) return;
+
+            const inputs = stepForm.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox') {
+                    if (!formData[input.name]) {
+                        formData[input.name] = [];
+                    }
+                    if (input.checked) {
+                        formData[input.name].push(input.value);
+                    }
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        formData[input.name] = input.value;
+                    }
+                } else {
+                    formData[input.name] = input.value;
+                }
+            });
+        }
+
+        // Update review step
+        function updateReview() {
+            document.getElementById('reviewName').textContent = 
+                `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || '-';
+            document.getElementById('reviewEmail').textContent = formData.email || '-';
+            document.getElementById('reviewPhone').textContent = formData.phone || '-';
+            document.getElementById('reviewUsername').textContent = formData.username || '-';
+            document.getElementById('reviewAccountType').textContent = 
+                formData.accountType ? formData.accountType.charAt(0).toUpperCase() + formData.accountType.slice(1) : '-';
+            
+            const countrySelect = document.getElementById('country');
+            document.getElementById('reviewCountry').textContent = 
+                countrySelect.options[countrySelect.selectedIndex]?.text || '-';
+            
+            const interests = formData.interests || [];
+            document.getElementById('reviewInterests').textContent = 
+                interests.length > 0 ? interests.join(', ') : 'None selected';
+            
+            document.getElementById('reviewNewsletter').textContent = 
+                formData.newsletter && formData.newsletter.length > 0 ? 'Yes' : 'No';
+        }
+
+        // Change step
+        function changeStep(direction) {
+            if (direction === 1) {
+                // Validate current step before moving forward
+                if (!validateStep(currentStep)) {
+                    return;
+                }
+
+                // Save current step data
+                saveStepData(currentStep);
+
+                // Update review if moving to review step
+                if (currentStep === 3) {
+                    updateReview();
+                }
+            }
+
+            // Hide current step
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+
+            // Update step number
+            currentStep += direction;
+
+            // Show new step
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.add('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update stepper UI
+            updateStepper();
+        }
+
+        // Update stepper UI
+        function updateStepper() {
+            // Update progress bar
+            const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
+            document.getElementById('stepperProgress').style.width = `${progress}%`;
+
+            // Update step states
+            for (let i = 1; i <= totalSteps; i++) {
+                const step = document.querySelector(`.step[data-step="${i}"]`);
+                step.classList.remove('active', 'completed');
+
+                if (i < currentStep) {
+                    step.classList.add('completed');
+                } else if (i === currentStep) {
+                    step.classList.add('active');
+                }
+            }
+
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.style.display = currentStep === 1 ? 'none' : 'block';
+
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = 'Submit';
+                nextBtn.innerHTML = 'Submit →';
+            } else if (currentStep === totalSteps + 1) {
+                // Success step
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.innerHTML = 'Next →';
+            }
+
+            // Handle submit
+            if (currentStep === totalSteps) {
+                nextBtn.onclick = submitForm;
+            } else {
+                nextBtn.onclick = () => changeStep(1);
+            }
+        }
+
+        // Submit form
+        function submitForm() {
+            // Save final step data
+            saveStepData(currentStep);
+
+            // Here you would typically send the data to a server
+            console.log('Form submitted:', formData);
+
+            // Move to success step
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+            currentStep++;
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.add('active');
+            updateStepper();
+        }
+
+        // Reset form
+        function resetForm() {
+            currentStep = 1;
+            formData = {};
+            
+            // Clear all forms
+            document.querySelectorAll('form').forEach(form => form.reset());
+            
+            // Remove all error states
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Reset stepper
+            document.querySelectorAll('.step-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            // Show first step
+            document.querySelector('.step-content[data-step="1"]').classList.add('active');
+            document.querySelector('.step[data-step="1"]').classList.add('active');
+            
+            updateStepper();
+        }
+
+        // Allow clicking on completed steps to go back
+        document.querySelectorAll('.step').forEach(step => {
+            step.addEventListener('click', function() {
+                const stepNumber = parseInt(this.dataset.step);
+                if (stepNumber < currentStep) {
+                    // Hide current step
+                    document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
+                    document.querySelector(`.step[data-step="${currentStep}"]`).classList.remove('active');
+                    
+                    // Show clicked step
+                    currentStep = stepNumber;
+                    document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.add('active');
+                    document.querySelector(`.step[data-step="${currentStep}"]`).classList.add('active');
+                    
+                    updateStepper();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
