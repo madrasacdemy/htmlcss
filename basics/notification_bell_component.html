@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Bell Component</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .notification-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Bell Icon */
+        .notification-bell {
+            position: relative;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #333;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .notification-bell:hover {
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-bell:active {
+            transform: scale(0.95);
+        }
+
+        /* Unread Indicator Dot */
+        .notification-indicator {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(255, 71, 87, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 71, 87, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+            }
+        }
+
+        /* Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            width: 350px;
+            max-height: 400px;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Dropdown Header */
+        .dropdown-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dropdown-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .mark-all-read:hover {
+            color: #5a67d8;
+            text-decoration: underline;
+        }
+
+        /* Notification List */
+        .notification-list {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f8f8f8;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background: #f8f9ff;
+        }
+
+        .notification-item.unread {
+            background: #f0f4ff;
+        }
+
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #667eea;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Dropdown Footer */
+        .dropdown-footer {
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .view-all {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .view-all:hover {
+            color: #5a67d8;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .notification-dropdown {
+                width: 300px;
+                right: -50px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        .notification-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .notification-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        .notification-list::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification-container">
+        <button class="notification-bell" id="notificationBell">
+            <i class="fas fa-bell"></i>
+            <span class="notification-indicator" id="notificationIndicator">3</span>
+        </button>
+
+        <div class="notification-dropdown" id="notificationDropdown">
+            <div class="dropdown-header">
+                <h3 class="dropdown-title">Notifications</h3>
+                <button class="mark-all-read" id="markAllRead">Mark all as read</button>
+            </div>
+
+            <div class="notification-list" id="notificationList">
+                <div class="notification-item unread" data-id="1">
+                    <div class="notification-content">
+                        <div class="notification-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-message">
+                                <strong>Sarah Johnson</strong> commented on your post
+                            </div>
+                            <div class="notification-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item unread" data-id="2">
+                    <div class="notification-content">
+                        <div class="notification-avatar">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-message">
+                                Your post received <strong>50 likes</strong>
+                            </div>
+                            <div class="notification-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item unread" data-id="3">
+                    <div class="notification-content">
+                        <div class="notification-avatar">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-message">
+                                New message from <strong>Mike Chen</strong>
+                            </div>
+                            <div class="notification-time">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item" data-id="4">
+                    <div class="notification-content">
+                        <div class="notification-avatar">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-message">
+                                Reminder: Team meeting at 3:00 PM
+                            </div>
+                            <div class="notification-time">3 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notification-item" data-id="5">
+                    <div class="notification-content">
+                        <div class="notification-avatar">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="notification-text">
+                            <div class="notification-message">
+                                Your project was <strong>featured</strong> this week
+                            </div>
+                            <div class="notification-time">Yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dropdown-footer">
+                <a href="#" class="view-all">View all notifications</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const notificationBell = document.getElementById('notificationBell');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationIndicator = document.getElementById('notificationIndicator');
+        const markAllReadBtn = document.getElementById('markAllRead');
+        const notificationItems = document.querySelectorAll('.notification-item');
+
+        // Toggle dropdown
+        notificationBell.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown.contains(e.target) && !notificationBell.contains(e.target)) {
+                notificationDropdown.classList.remove('active');
+            }
+        });
+
+        // Mark individual notification as read
+        notificationItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (item.classList.contains('unread')) {
+                    item.classList.remove('unread');
+                    updateUnreadCount();
+                }
+            });
+        });
+
+        // Mark all as read
+        markAllReadBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationItems.forEach(item => {
+                item.classList.remove('unread');
+            });
+            updateUnreadCount();
+        });
+
+        // Update unread count
+        function updateUnreadCount() {
+            const unreadItems = document.querySelectorAll('.notification-item.unread');
+            const count = unreadItems.length;
+            
+            if (count > 0) {
+                notificationIndicator.textContent = count;
+                notificationIndicator.style.display = 'flex';
+            } else {
+                notificationIndicator.style.display = 'none';
+            }
+        }
+
+        // Simulate new notification (for demo purposes)
+        function addNewNotification() {
+            const notifications = [
+                {
+                    icon: 'fas fa-comment',
+                    message: '<strong>Alex Smith</strong> mentioned you in a comment',
+                    time: 'Just now'
+                },
+                {
+                    icon: 'fas fa-share',
+                    message: 'Your post was shared by <strong>Emma Wilson</strong>',
+                    time: 'Just now'
+                },
+                {
+                    icon: 'fas fa-trophy',
+                    message: 'Congratulations! You earned a new badge',
+                    time: 'Just now'
+                }
+            ];
+
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            const notificationList = document.getElementById('notificationList');
+            
+            const newId = Date.now();
+            const newItem = document.createElement('div');
+            newItem.className = 'notification-item unread';
+            newItem.setAttribute('data-id', newId);
+            
+            newItem.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-avatar">
+                        <i class="${randomNotification.icon}"></i>
+                    </div>
+                    <div class="notification-text">
+                        <div class="notification-message">
+                            ${randomNotification.message}
+                        </div>
+                        <div class="notification-time">${randomNotification.time}</div>
+                    </div>
+                </div>
+            `;
+
+            // Add to top of list
+            notificationList.insertBefore(newItem, notificationList.firstChild);
+            
+            // Add click event
+            newItem.addEventListener('click', () => {
+                if (newItem.classList.contains('unread')) {
+                    newItem.classList.remove('unread');
+                    updateUnreadCount();
+                }
+            });
+
+            updateUnreadCount();
+
+            // Show dropdown briefly
+            notificationDropdown.classList.add('active');
+            setTimeout(() => {
+                notificationDropdown.classList.remove('active');
+            }, 3000);
+        }
+
+        // Simulate new notification every 10 seconds (for demo)
+        setInterval(addNewNotification, 10000);
+
+        // Initialize
+        updateUnreadCount();
+
+        // Add bell ring animation on new notification
+        function ringBell() {
+            notificationBell.style.animation = 'none';
+            setTimeout(() => {
+                notificationBell.style.animation = 'ring 0.5s ease-in-out';
+            }, 10);
+        }
+
+        // Add ring animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ring {
+                0%, 100% { transform: rotate(0deg); }
+                25% { transform: rotate(-15deg); }
+                75% { transform: rotate(15deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Ring bell when new notification is added
+        const originalAddNewNotification = addNewNotification;
+        addNewNotification = function() {
+            originalAddNewNotification();
+            ringBell();
+        };
+    </script>
+</body>
+</html>
