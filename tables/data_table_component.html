@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Table Component</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .pagination-info {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+        
+        th:hover {
+            background-color: #f1f1f1;
+        }
+        
+        th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 10px;
+            opacity: 0.3;
+        }
+        
+        th.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+        
+        th.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        tr.highlight {
+            background-color: #e3f2fd;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background-color: #f1f1f1;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination .current-page {
+            padding: 8px 12px;
+            background-color: #3498db;
+            color: white;
+            border-radius: 4px;
+        }
+        
+        .page-size-selector {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .page-size-selector select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Data Table Component</h1>
+        
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search...">
+            </div>
+            <div class="pagination-info">
+                <span id="paginationInfo">Showing 0 of 0 entries</span>
+            </div>
+        </div>
+        
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th class="sortable" data-column="id">ID</th>
+                    <th class="sortable" data-column="name">Name</th>
+                    <th class="sortable" data-column="email">Email</th>
+                    <th class="sortable" data-column="position">Position</th>
+                    <th class="sortable" data-column="department">Department</th>
+                    <th class="sortable" data-column="salary">Salary</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Table rows will be inserted here -->
+            </tbody>
+        </table>
+        
+        <div class="pagination">
+            <div class="page-size-selector">
+                <span>Show:</span>
+                <select id="pageSizeSelect">
+                    <option value="5">5</option>
+                    <option value="10" selected>10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <span>entries</span>
+            </div>
+            <div>
+                <button id="prevPageBtn">Previous</button>
+                <span class="current-page" id="currentPageInfo">1</span>
+                <button id="nextPageBtn">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const sampleData = [
+            { id: 1, name: "John Doe", email: "john@example.com", position: "Software Engineer", department: "Engineering", salary: 85000 },
+            { id: 2, name: "Jane Smith", email: "jane@example.com", position: "Product Manager", department: "Product", salary: 95000 },
+            { id: 3, name: "Robert Johnson", email: "robert@example.com", position: "UX Designer", department: "Design", salary: 78000 },
+            { id: 4, name: "Emily Davis", email: "emily@example.com", position: "Data Analyst", department: "Analytics", salary: 72000 },
+            { id: 5, name: "Michael Wilson", email: "michael@example.com", position: "DevOps Engineer", department: "Engineering", salary: 90000 },
+            { id: 6, name: "Sarah Brown", email: "sarah@example.com", position: "Marketing Manager", department: "Marketing", salary: 82000 },
+            { id: 7, name: "David Miller", email: "david@example.com", position: "Sales Representative", department: "Sales", salary: 65000 },
+            { id: 8, name: "Lisa Taylor", email: "lisa@example.com", position: "HR Specialist", department: "Human Resources", salary: 68000 },
+            { id: 9, name: "James Anderson", email: "james@example.com", position: "Financial Analyst", department: "Finance", salary: 75000 },
+            { id: 10, name: "Jennifer Thomas", email: "jennifer@example.com", position: "Project Manager", department: "Operations", salary: 88000 },
+            { id: 11, name: "William Jackson", email: "william@example.com", position: "Backend Developer", department: "Engineering", salary: 82000 },
+            { id: 12, name: "Patricia White", email: "patricia@example.com", position: "Frontend Developer", department: "Engineering", salary: 80000 },
+            { id: 13, name: "Richard Harris", email: "richard@example.com", position: "QA Engineer", department: "Engineering", salary: 75000 },
+            { id: 14, name: "Linda Martin", email: "linda@example.com", position: "Content Writer", department: "Marketing", salary: 62000 },
+            { id: 15, name: "Charles Thompson", email: "charles@example.com", position: "Business Analyst", department: "Product", salary: 78000 },
+            { id: 16, name: "Barbara Garcia", email: "barbara@example.com", position: "Graphic Designer", department: "Design", salary: 70000 },
+            { id: 17, name: "Thomas Martinez", email: "thomas@example.com", position: "System Administrator", department: "IT", salary: 73000 },
+            { id: 18, name: "Karen Robinson", email: "karen@example.com", position: "Recruiter", department: "Human Resources", salary: 65000 },
+            { id: 19, name: "Christopher Clark", email: "christopher@example.com", position: "Accountant", department: "Finance", salary: 68000 },
+            { id: 20, name: "Susan Rodriguez", email: "susan@example.com", position: "Customer Support", department: "Support", salary: 55000 },
+            { id: 21, name: "Daniel Lewis", email: "daniel@example.com", position: "Security Specialist", department: "IT", salary: 85000 },
+            { id: 22, name: "Nancy Lee", email: "nancy@example.com", position: "Research Analyst", department: "Analytics", salary: 72000 },
+            { id: 23, name: "Matthew Walker", email: "matthew@example.com", position: "Mobile Developer", department: "Engineering", salary: 83000 },
+            { id: 24, name: "Betty Hall", email: "betty@example.com", position: "Public Relations", department: "Marketing", salary: 67000 },
+            { id: 25, name: "Joseph Allen", email: "joseph@example.com", position: "Database Administrator", department: "IT", salary: 78000 }
+        ];
+
+        // State variables
+        let data = [...sampleData];
+        let filteredData = [...data];
+        let currentPage = 1;
+        let pageSize = 10;
+        let sortColumn = null;
+        let sortDirection = 'asc';
+        let searchTerm = '';
+
+        // DOM elements
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const pageSizeSelect = document.getElementById('pageSizeSelect');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const currentPageInfo = document.getElementById('currentPageInfo');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const tableHeaders = document.querySelectorAll('th.sortable');
+
+        // Initialize the table
+        function init() {
+            renderTable();
+            updatePaginationInfo();
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search functionality
+            searchInput.addEventListener('input', handleSearch);
+            
+            // Page size change
+            pageSizeSelect.addEventListener('change', handlePageSizeChange);
+            
+            // Pagination buttons
+            prevPageBtn.addEventListener('click', () => changePage(currentPage - 1));
+            nextPageBtn.addEventListener('click', () => changePage(currentPage + 1));
+            
+            // Column sorting
+            tableHeaders.forEach(header => {
+                header.addEventListener('click', () => handleSort(header.dataset.column));
+            });
+            
+            // Row highlighting
+            tableBody.addEventListener('click', handleRowClick);
+        }
+
+        // Render the table with current data
+        function renderTable() {
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Calculate pagination
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, filteredData.length);
+            const paginatedData = filteredData.slice(startIndex, endIndex);
+            
+            // Show message if no results
+            if (paginatedData.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="6" class="no-results">No matching records found</td>`;
+                tableBody.appendChild(row);
+                return;
+            }
+            
+            // Add rows
+            paginatedData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.name}</td>
+                    <td>${item.email}</td>
+                    <td>${item.position}</td>
+                    <td>${item.department}</td>
+                    <td>$${item.salary.toLocaleString()}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Update pagination information
+        function updatePaginationInfo() {
+            const startIndex = (currentPage - 1) * pageSize + 1;
+            const endIndex = Math.min(currentPage * pageSize, filteredData.length);
+            
+            paginationInfo.textContent = `Showing ${startIndex} to ${endIndex} of ${filteredData.length} entries`;
+            currentPageInfo.textContent = currentPage;
+            
+            // Update button states
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage * pageSize >= filteredData.length;
+        }
+
+        // Handle search functionality
+        function handleSearch(e) {
+            searchTerm = e.target.value.toLowerCase();
+            
+            if (searchTerm === '') {
+                filteredData = [...data];
+            } else {
+                filteredData = data.filter(item => {
+                    return Object.values(item).some(value => 
+                        value.toString().toLowerCase().includes(searchTerm)
+                    );
+                });
+            }
+            
+            currentPage = 1;
+            renderTable();
+            updatePaginationInfo();
+        }
+
+        // Handle page size change
+        function handlePageSizeChange(e) {
+            pageSize = parseInt(e.target.value);
+            currentPage = 1;
+            renderTable();
+            updatePaginationInfo();
+        }
+
+        // Change page
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTable();
+                updatePaginationInfo();
+            }
+        }
+
+        // Handle column sorting
+        function handleSort(column) {
+            // Update sort direction
+            if (sortColumn === column) {
+                sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                sortColumn = column;
+                sortDirection = 'asc';
+            }
+            
+            // Update header classes
+            tableHeaders.forEach(header => {
+                header.classList.remove('sort-asc', 'sort-desc');
+                if (header.dataset.column === column) {
+                    header.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+                }
+            });
+            
+            // Sort the data
+            filteredData.sort((a, b) => {
+                let valueA = a[column];
+                let valueB = b[column];
+                
+                // Handle numeric values
+                if (column === 'id' || column === 'salary') {
+                    valueA = Number(valueA);
+                    valueB = Number(valueB);
+                }
+                
+                // Handle string values
+                if (typeof valueA === 'string') {
+                    valueA = valueA.toLowerCase();
+                    valueB = valueB.toLowerCase();
+                }
+                
+                if (valueA < valueB) {
+                    return sortDirection === 'asc' ? -1 : 1;
+                }
+                if (valueA > valueB) {
+                    return sortDirection === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+            
+            renderTable();
+            updatePaginationInfo();
+        }
+
+        // Handle row click for highlighting
+        function handleRowClick(e) {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            
+            // Toggle highlight class
+            row.classList.toggle('highlight');
+        }
+
+        // Initialize the table when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

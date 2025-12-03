@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .demo-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .demo-button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loading-screen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .loader-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Animated Loader */
+        .loader {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .loader-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid transparent;
+            border-top-color: #3498db;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        .loader-circle:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            top: 15%;
+            left: 15%;
+            border-top-color: #e74c3c;
+            animation: spin 1.2s linear infinite reverse;
+        }
+        
+        .loader-circle:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            top: 30%;
+            left: 30%;
+            border-top-color: #2ecc71;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Branding */
+        .branding {
+            text-align: center;
+        }
+        
+        .brand-logo {
+            width: 120px;
+            height: 120px;
+            background-color: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+        }
+        
+        .brand-name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .brand-tagline {
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+        
+        /* Loading text */
+        .loading-text {
+            margin-top: 30px;
+            font-size: 18px;
+            color: #3498db;
+            display: flex;
+            align-items: center;
+        }
+        
+        .loading-dots {
+            display: inline-block;
+            margin-left: 5px;
+        }
+        
+        .loading-dots span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #3498db;
+            margin: 0 2px;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        
+        .loading-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .loading-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 300px;
+            height: 6px;
+            background-color: #ecf0f1;
+            border-radius: 3px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #3498db;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Loading Screen Component</h1>
+        <p>This is a demonstration of a professional loading screen component with animated loader, fade-in/fade-out effects, and centered branding.</p>
+        <button class="demo-button" id="showLoadingBtn">Show Loading Screen</button>
+    </div>
+    
+    <!-- Loading Screen Component -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-container">
+            <!-- Animated Loader -->
+            <div class="loader">
+                <div class="loader-circle"></div>
+                <div class="loader-circle"></div>
+                <div class="loader-circle"></div>
+            </div>
+            
+            <!-- Branding -->
+            <div class="branding">
+                <div class="brand-logo">AC</div>
+                <div class="brand-name">AppCompany</div>
+                <div class="brand-tagline">Building amazing experiences</div>
+            </div>
+            
+            <!-- Loading Text -->
+            <div class="loading-text">
+                Loading
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const loadingScreen = document.getElementById('loadingScreen');
+        const showLoadingBtn = document.getElementById('showLoadingBtn');
+        const progressBar = document.getElementById('progressBar');
+        
+        // Show loading screen
+        function showLoadingScreen() {
+            loadingScreen.classList.add('active');
+            showLoadingBtn.disabled = true;
+            
+            // Simulate loading progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Hide loading screen after a short delay
+                    setTimeout(() => {
+                        hideLoadingScreen();
+                    }, 500);
+                }
+            }, 200);
+        }
+        
+        // Hide loading screen
+        function hideLoadingScreen() {
+            loadingScreen.classList.remove('active');
+            showLoadingBtn.disabled = false;
+            
+            // Reset progress bar for next time
+            setTimeout(() => {
+                progressBar.style.width = '0%';
+            }, 500);
+        }
+        
+        // Event listener for the demo button
+        showLoadingBtn.addEventListener('click', showLoadingScreen);
+        
+        // Optional: Show loading screen on page load (uncomment to test)
+        // window.addEventListener('load', () => {
+        //     showLoadingScreen();
+        // });
+    </script>
+</body>
+</html>
