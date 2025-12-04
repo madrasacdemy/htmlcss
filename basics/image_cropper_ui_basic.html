@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper UI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .cropper-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .cropper-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cropper-header h1 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .cropper-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9ff;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8ebff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        .upload-text {
+            color: #667eea;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .cropper-workspace {
+            display: none;
+            gap: 30px;
+        }
+
+        .cropper-workspace.active {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .image-container {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+            background: #f5f5f5;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .source-image {
+            max-width: 100%;
+            max-height: 500px;
+            display: block;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        .crop-frame {
+            position: absolute;
+            border: 2px solid white;
+            box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);
+            cursor: move;
+            min-width: 100px;
+            min-height: 100px;
+        }
+
+        .crop-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+        }
+
+        .crop-handle.nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .crop-handle.ne { top: -6px; right: -6px; cursor: ne-resize; }
+        .crop-handle.sw { bottom: -6px; left: -6px; cursor: sw-resize; }
+        .crop-handle.se { bottom: -6px; right: -6px; cursor: se-resize; }
+
+        .preview-section {
+            flex: 0 0 300px;
+        }
+
+        .preview-container {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .preview-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .preview-canvas {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .crop-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .crop-info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .crop-info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .crop-info-label {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f2ff;
+            color: #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #e8ebff;
+        }
+
+        .btn-danger {
+            background: #fee;
+            color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #fdd;
+        }
+
+        .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .cropper-container {
+                padding: 20px;
+            }
+
+            .cropper-workspace {
+                flex-direction: column;
+            }
+
+            .preview-section {
+                flex: 1;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cropper-container">
+        <div class="cropper-header">
+            <h1>Image Cropper</h1>
+            <p>Upload an image and crop it to your desired size</p>
+        </div>
+
+        <div class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                    </svg>
+                </div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">PNG, JPG, GIF up to 10MB</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+
+        <div class="cropper-workspace" id="cropperWorkspace">
+            <div class="image-container" id="imageContainer">
+                <img id="sourceImage" class="source-image" alt="Source image">
+                <div class="crop-frame" id="cropFrame">
+                    <div class="crop-handle nw" data-handle="nw"></div>
+                    <div class="crop-handle ne" data-handle="ne"></div>
+                    <div class="crop-handle sw" data-handle="sw"></div>
+                    <div class="crop-handle se" data-handle="se"></div>
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div class="preview-container">
+                    <h3 class="preview-title">Preview</h3>
+                    <canvas id="previewCanvas" class="preview-canvas"></canvas>
+                    <div class="crop-info">
+                        <div class="crop-info-row">
+                            <span class="crop-info-label">Width:</span>
+                            <span id="cropWidth">0px</span>
+                        </div>
+                        <div class="crop-info-row">
+                            <span class="crop-info-label">Height:</span>
+                            <span id="cropHeight">0px</span>
+                        </div>
+                        <div class="crop-info-row">
+                            <span class="crop-info-label">Position:</span>
+                            <span id="cropPosition">0, 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls" id="controls" style="display: none;">
+            <button class="btn btn-primary" id="downloadBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+                Download
+            </button>
+            <button class="btn btn-secondary" id="resetBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+                </svg>
+                Reset
+            </button>
+            <button class="btn btn-danger" id="clearBtn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                Clear
+            </button>
+        </div>
+    </div>
+
+    <script>
+        class ImageCropper {
+            constructor() {
+                this.uploadArea = document.getElementById('uploadArea');
+                this.fileInput = document.getElementById('fileInput');
+                this.cropperWorkspace = document.getElementById('cropperWorkspace');
+                this.imageContainer = document.getElementById('imageContainer');
+                this.sourceImage = document.getElementById('sourceImage');
+                this.cropFrame = document.getElementById('cropFrame');
+                this.previewCanvas = document.getElementById('previewCanvas');
+                this.controls = document.getElementById('controls');
+                
+                this.isDragging = false;
+                this.isResizing = false;
+                this.currentHandle = null;
+                this.startX = 0;
+                this.startY = 0;
+                this.startWidth = 0;
+                this.startHeight = 0;
+                this.startLeft = 0;
+                this.startTop = 0;
+                
+                this.imageData = {
+                    naturalWidth: 0,
+                    naturalHeight: 0,
+                    displayWidth: 0,
+                    displayHeight: 0,
+                    offsetX: 0,
+                    offsetY: 0
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                // Upload events
+                this.uploadArea.addEventListener('click', () => this.fileInput.click());
+                this.fileInput.addEventListener('change', (e) => this.handleFileSelect(e));
+                
+                // Drag and drop
+                this.uploadArea.addEventListener('dragover', (e) => this.handleDragOver(e));
+                this.uploadArea.addEventListener('dragleave', () => this.handleDragLeave());
+                this.uploadArea.addEventListener('drop', (e) => this.handleDrop(e));
+                
+                // Crop frame events
+                this.cropFrame.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                document.addEventListener('mouseup', () => this.handleMouseUp());
+                
+                // Control buttons
+                document.getElementById('downloadBtn').addEventListener('click', () => this.downloadCroppedImage());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetCrop());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearImage());
+                
+                // Prevent image drag
+                this.sourceImage.addEventListener('dragstart', (e) => e.preventDefault());
+            }
+
+            handleFileSelect(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    this.loadImage(file);
+                }
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                this.uploadArea.classList.add('dragover');
+            }
+
+            handleDragLeave() {
+                this.uploadArea.classList.remove('dragover');
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                this.uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    this.loadImage(file);
+                }
+            }
+
+            loadImage(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.sourceImage.src = e.target.result;
+                    this.sourceImage.onload = () => {
+                        this.initializeCropper();
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+
+            initializeCropper() {
+                this.cropperWorkspace.classList.add('active');
+                this.controls.style.display = 'flex';
+                
+                // Store image data
+                const containerRect = this.imageContainer.getBoundingClientRect();
+                const imageRect = this.sourceImage.getBoundingClientRect();
+                
+                this.imageData.naturalWidth = this.sourceImage.naturalWidth;
+                this.imageData.naturalHeight = this.sourceImage.naturalHeight;
+                this.imageData.displayWidth = imageRect.width;
+                this.imageData.displayHeight = imageRect.height;
+                this.imageData.offsetX = imageRect.left - containerRect.left;
+                this.imageData.offsetY = imageRect.top - containerRect.top;
+                
+                // Set initial crop frame size and position
+                const frameSize = Math.min(this.imageData.displayWidth, this.imageData.displayHeight) * 0.6;
+                const left = this.imageData.offsetX + (this.imageData.displayWidth - frameSize) / 2;
+                const top = this.imageData.offsetY + (this.imageData.displayHeight - frameSize) / 2;
+                
+                this.cropFrame.style.width = frameSize + 'px';
+                this.cropFrame.style.height = frameSize + 'px';
+                this.cropFrame.style.left = left + 'px';
+                this.cropFrame.style.top = top + 'px';
+                
+                this.updatePreview();
+            }
+
+            handleMouseDown(e) {
+                e.preventDefault();
+                
+                if (e.target.classList.contains('crop-handle')) {
+                    this.isResizing = true;
+                    this.currentHandle = e.target.dataset.handle;
+                } else {
+                    this.isDragging = true;
+                }
+                
+                const rect = this.cropFrame.getBoundingClientRect();
+                const containerRect = this.imageContainer.getBoundingClientRect();
+                
+                this.startX = e.clientX;
+                this.startY = e.clientY;
+                this.startLeft = rect.left - containerRect.left;
+                this.startTop = rect.top - containerRect.top;
+                this.startWidth = rect.width;
+                this.startHeight = rect.height;
+            }
+
+            handleMouseMove(e) {
+                if (!this.isDragging && !this.isResizing) return;
+                
+                e.preventDefault();
+                
+                const deltaX = e.clientX - this.startX;
+                const deltaY = e.clientY - this.startY;
+                
+                if (this.isDragging) {
+                    this.handleDrag(deltaX, deltaY);
+                } else if (this.isResizing) {
+                    this.handleResize(deltaX, deltaY);
+                }
+                
+                this.updatePreview();
+            }
+
+            handleDrag(deltaX, deltaY) {
+                let newLeft = this.startLeft + deltaX;
+                let newTop = this.startTop + deltaY;
+                
+                // Constrain to image bounds
+                newLeft = Math.max(this.imageData.offsetX, 
+                    Math.min(newLeft, this.imageData.offsetX + this.imageData.displayWidth - this.cropFrame.offsetWidth));
+                newTop = Math.max(this.imageData.offsetY, 
+                    Math.min(newTop, this.imageData.offsetY + this.imageData.displayHeight - this.cropFrame.offsetHeight));
+                
+                this.cropFrame.style.left = newLeft + 'px';
+                this.cropFrame.style.top = newTop + 'px';
+            }
+
+            handleResize(deltaX, deltaY) {
+                let newWidth = this.startWidth;
+                let newHeight = this.startHeight;
+                let newLeft = this.startLeft;
+                let newTop = this.startTop;
+                
+                switch (this.currentHandle) {
+                    case 'se':
+                        newWidth = Math.max(100, this.startWidth + deltaX);
+                        newHeight = Math.max(100, this.startHeight + deltaY);
+                        break;
+                    case 'sw':
+                        newWidth = Math.max(100, this.startWidth - deltaX);
+                        newHeight = Math.max(100, this.startHeight + deltaY);
+                        newLeft = this.startLeft + (this.startWidth - newWidth);
+                        break;
+                    case 'ne':
+                        newWidth = Math.max(100, this.startWidth + deltaX);
+                        newHeight = Math.max(100, this.startHeight - deltaY);
+                        newTop = this.startTop + (this.startHeight - newHeight);
+                        break;
+                    case 'nw':
+                        newWidth = Math.max(100, this.startWidth - deltaX);
+                        newHeight = Math.max(100, this.startHeight - deltaY);
+                        newLeft = this.startLeft + (this.startWidth - newWidth);
+                        newTop = this.startTop + (this.startHeight - newHeight);
+                        break;
+                }
+                
+                // Constrain to image bounds
+                if (newLeft < this.imageData.offsetX) {
+                    newWidth += newLeft - this.imageData.offsetX;
+                    newLeft = this.imageData.offsetX;
+                }
+                if (newTop < this.imageData.offsetY) {
+                    newHeight += newTop - this.imageData.offsetY;
+                    newTop = this.imageData.offsetY;
+                }
+                if (newLeft + newWidth > this.imageData.offsetX + this.imageData.displayWidth) {
+                    newWidth = this.imageData.offsetX + this.imageData.displayWidth - newLeft;
+                }
+                if (newTop + newHeight > this.imageData.offsetY + this.imageData.displayHeight) {
+                    newHeight = this.imageData.offsetY + this.imageData.displayHeight - newTop;
+                }
+                
+                this.cropFrame.style.width = newWidth + 'px';
+                this.cropFrame.style.height = newHeight + 'px';
+                this.cropFrame.style.left = newLeft + 'px';
+                this.cropFrame.style.top = newTop + 'px';
+            }
+
+            handleMouseUp() {
+                this.isDragging = false;
+                this.isResizing = false;
+                this.currentHandle = null;
+            }
+
+            updatePreview() {
+                // Get crop frame position relative to image
+                const frameLeft = parseFloat(this.cropFrame.style.left) - this.imageData.offsetX;
+                const frameTop = parseFloat(this.cropFrame.style.top) - this.imageData.offsetY;
+                const frameWidth = parseFloat(this.cropFrame.style.width);
+                const frameHeight = parseFloat(this.cropFrame.style.height);
+                
+                // Calculate scaling factors
+                const scaleX = this.imageData.naturalWidth / this.imageData.displayWidth;
+                const scaleY = this.imageData.naturalHeight / this.imageData.displayHeight;
+                
+                // Calculate crop area on original image
+                const cropX = frameLeft * scaleX;
+                const cropY = frameTop * scaleY;
+                const cropWidth = frameWidth * scaleX;
+                const cropHeight = frameHeight * scaleY;
+                
+                // Update canvas
+                this.previewCanvas.width = cropWidth;
+                this.previewCanvas.height = cropHeight;
+                
+                const ctx = this.previewCanvas.getContext('2d');
+                ctx.drawImage(
+                    this.sourceImage,
+                    cropX, cropY, cropWidth, cropHeight,
+                    0, 0, cropWidth, cropHeight
+                );
+                
+                // Update info
+                document.getElementById('cropWidth').textContent = Math.round(cropWidth) + 'px';
+                document.getElementById('cropHeight').textContent = Math.round(cropHeight) + 'px';
+                document.getElementById('cropPosition').textContent = 
+                    `${Math.round(cropX)}, ${Math.round(cropY)}`;
+            }
+
+            downloadCroppedImage() {
+                const link = document.createElement('a');
+                link.download = 'cropped-image.png';
+                link.href = this.previewCanvas.toDataURL();
+                link.click();
+            }
+
+            resetCrop() {
+                this.initializeCropper();
+            }
+
+            clearImage() {
+                this.cropperWorkspace.classList.remove('active');
+                this.controls.style.display = 'none';
+                this.fileInput.value = '';
+                this.sourceImage.src = '';
+            }
+        }
+
+        // Initialize the cropper when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ImageCropper();
+        });
+    </script>
+</body>
+</html>

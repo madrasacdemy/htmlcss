@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Cards Carousel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .carousel-container {
+            width: 100%;
+            max-width: 1200px;
+            position: relative;
+        }
+
+        .carousel-header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .carousel-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .carousel-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .carousel-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            gap: 20px;
+            will-change: transform;
+        }
+
+        .carousel-card {
+            flex: 0 0 calc(33.333% - 14px);
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .carousel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-card:hover .card-image {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-category {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-author {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .author-name {
+            font-size: 0.9rem;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .card-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .carousel-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .carousel-nav:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .carousel-nav.prev {
+            left: -25px;
+        }
+
+        .carousel-nav.next {
+            right: -25px;
+        }
+
+        .carousel-nav svg {
+            width: 24px;
+            height: 24px;
+            fill: #667eea;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        .dot:hover {
+            background: rgba(255,255,255,0.8);
+        }
+
+        .auto-scroll-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #667eea;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .auto-scroll-toggle:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .auto-scroll-toggle.paused {
+            color: #e74c3c;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .carousel-card {
+                flex: 0 0 calc(50% - 10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-header h1 {
+                font-size: 2rem;
+            }
+
+            .carousel-card {
+                flex: 0 0 calc(100% - 0px);
+            }
+
+            .carousel-nav {
+                width: 40px;
+                height: 40px;
+            }
+
+            .carousel-nav.prev {
+                left: 10px;
+            }
+
+            .carousel-nav.next {
+                right: 10px;
+            }
+
+            .auto-scroll-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .loading {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel-header">
+            <h1>Featured Articles</h1>
+            <p>Discover our latest stories and insights</p>
+        </div>
+
+        <div class="carousel-wrapper">
+            <button class="auto-scroll-toggle" id="autoScrollToggle">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span>Auto Play</span>
+            </button>
+
+            <button class="carousel-nav prev" id="prevBtn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                </svg>
+            </button>
+
+            <button class="carousel-nav next" id="nextBtn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+                </svg>
+            </button>
+
+            <div class="carousel-track" id="carouselTrack">
+                <!-- Cards will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="carousel-dots" id="carouselDots">
+            <!-- Dots will be dynamically generated -->
+        </div>
+    </div>
+
+    <script>
+        // Sample data for cards
+        const cardData = [
+            {
+                image: 'https://picsum.photos/seed/card1/400/300.jpg',
+                category: 'Technology',
+                title: 'The Future of AI in Web Development',
+                description: 'Exploring how artificial intelligence is revolutionizing the way we build and interact with web applications.',
+                author: 'Sarah Johnson',
+                authorAvatar: 'https://picsum.photos/seed/author1/100/100.jpg',
+                date: 'Dec 15, 2023'
+            },
+            {
+                image: 'https://picsum.photos/seed/card2/400/300.jpg',
+                category: 'Design',
+                title: 'Minimalist UI Trends for 2024',
+                description: 'A deep dive into the latest minimalist design principles that are shaping modern user interfaces.',
+                author: 'Mike Chen',
+                authorAvatar: 'https://picsum.photos/seed/author2/100/100.jpg',
+                date: 'Dec 14, 2023'
+            },
+            {
+                image: 'https://picsum.photos/seed/card3/400/300.jpg',
+                category: 'Business',
+                title: 'Remote Work Best Practices',
+                description: 'Essential strategies for maintaining productivity and team cohesion in distributed work environments.',
+                author: 'Emily Davis',
+                authorAvatar: 'https://picsum.photos/seed/author3/100/100.jpg',
+                date: 'Dec 13, 2023'
+            },
+            {
+                image: 'https://picsum.photos/seed/card4/400/300.jpg',
+                category: 'Innovation',
+                title: 'Blockchain Beyond Cryptocurrency',
+                description: 'Discovering innovative applications of blockchain technology in various industries beyond digital currencies.',
+                author: 'Alex Rodriguez',
+                authorAvatar: 'https://picsum.photos/seed/author4/100/100.jpg',
+                date: 'Dec 12, 2023'
+            },
+            {
+                image: 'https://picsum.photos/seed/card5/400/300.jpg',
+                category: 'Marketing',
+                title: 'Content Marketing in the AI Era',
+                description: 'How content creators are leveraging AI tools to enhance their marketing strategies and engagement.',
+                author: 'Lisa Wang',
+                authorAvatar: 'https://picsum.photos/seed/author5/100/100.jpg',
+                date: 'Dec 11, 2023'
+            },
+            {
+                image: 'https://picsum.photos/seed/card6/400/300.jpg',
+                category: 'Security',
+                title: 'Cybersecurity Essentials for Startups',
+                description: 'Critical security measures every startup should implement to protect their digital assets and user data.',
+                author: 'David Kim',
+                authorAvatar: 'https://picsum.photos/seed/author6/100/100.jpg',
+                date: 'Dec 10, 2023'
+            }
+        ];
+
+        class Carousel {
+            constructor() {
+                this.track = document.getElementById('carouselTrack');
+                this.dotsContainer = document.getElementById('carouselDots');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.autoScrollToggle = document.getElementById('autoScrollToggle');
+                
+                this.currentIndex = 0;
+                this.cardsPerView = this.getCardsPerView();
+                this.autoScrollInterval = null;
+                this.autoScrollDelay = 4000;
+                this.isAutoScrolling = true;
+                this.touchStartX = 0;
+                this.touchEndX = 0;
+                
+                this.init();
+            }
+
+            getCardsPerView() {
+                const width = window.innerWidth;
+                if (width <= 768) return 1;
+                if (width <= 1024) return 2;
+                return 3;
+            }
+
+            init() {
+                this.createCards();
+                this.createDots();
+                this.setupEventListeners();
+                this.updateCarousel();
+                this.startAutoScroll();
+            }
+
+            createCards() {
+                cardData.forEach((data, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'carousel-card';
+                    card.innerHTML = `
+                        <img src="${data.image}" alt="${data.title}" class="card-image">
+                        <div class="card-content">
+                            <span class="card-category">${data.category}</span>
+                            <h3 class="card-title">${data.title}</h3>
+                            <p class="card-description">${data.description}</p>
+                            <div class="card-footer">
+                                <div class="card-author">
+                                    <img src="${data.authorAvatar}" alt="${data.author}" class="author-avatar">
+                                    <span class="author-name">${data.author}</span>
+                                </div>
+                                <span class="card-date">${data.date}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    card.addEventListener('click', () => {
+                        this.handleCardClick(index);
+                    });
+                    
+                    this.track.appendChild(card);
+                });
+            }
+
+            createDots() {
+                const totalSlides = Math.ceil(cardData.length / this.cardsPerView);
+                for (let i = 0; i < totalSlides; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'dot';
+                    dot.addEventListener('click', () => {
+                        this.goToSlide(i);
+                    });
+                    this.dotsContainer.appendChild(dot);
+                }
+            }
+
+            setupEventListeners() {
+                // Navigation buttons
+                this.prevBtn.addEventListener('click', () => this.prev());
+                this.nextBtn.addEventListener('click', () => this.next());
+                
+                // Auto-scroll toggle
+                this.autoScrollToggle.addEventListener('click', () => this.toggleAutoScroll());
+                
+                // Touch events for mobile
+                this.track.addEventListener('touchstart', (e) => this.handleTouchStart(e));
+                this.track.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+                this.track.addEventListener('touchend', () => this.handleTouchEnd());
+                
+                // Mouse events for desktop
+                this.track.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+                this.track.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                this.track.addEventListener('mouseup', () => this.handleMouseUp());
+                this.track.addEventListener('mouseleave', () => this.handleMouseUp());
+                
+                // Pause on hover
+                this.track.addEventListener('mouseenter', () => this.pauseAutoScroll());
+                this.track.addEventListener('mouseleave', () => {
+                    if (this.isAutoScrolling) this.startAutoScroll();
+                });
+                
+                // Window resize
+                window.addEventListener('resize', () => this.handleResize());
+                
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.prev();
+                    if (e.key === 'ArrowRight') this.next();
+                });
+            }
+
+            updateCarousel() {
+                const cardWidth = this.track.children[0].offsetWidth;
+                const gap = 20;
+                const translateX = -(this.currentIndex * (cardWidth + gap));
+                
+                this.track.style.transform = `translateX(${translateX}px)`;
+                
+                // Update dots
+                const dots = this.dotsContainer.querySelectorAll('.dot');
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === this.currentIndex);
+                });
+                
+                // Update button states
+                this.updateButtonStates();
+            }
+
+            updateButtonStates() {
+                const maxIndex = Math.ceil(cardData.length / this.cardsPerView) - 1;
+                this.prevBtn.style.opacity = this.currentIndex === 0 ? '0.5' : '1';
+                this.nextBtn.style.opacity = this.currentIndex >= maxIndex ? '0.5' : '1';
+                this.prevBtn.style.pointerEvents = this.currentIndex === 0 ? 'none' : 'auto';
+                this.nextBtn.style.pointerEvents = this.currentIndex >= maxIndex ? 'none' : 'auto';
+            }
+
+            next() {
+                const maxIndex = Math.ceil(cardData.length / this.cardsPerView) - 1;
+                if (this.currentIndex < maxIndex) {
+                    this.currentIndex++;
+                    this.updateCarousel();
+                    this.resetAutoScroll();
+                }
+            }
+
+            prev() {
+                if (this.currentIndex > 0) {
+                    this.currentIndex--;
+                    this.updateCarousel();
+                    this.resetAutoScroll();
+                }
+            }
+
+            goToSlide(index) {
+                this.currentIndex = index;
+                this.updateCarousel();
+                this.resetAutoScroll();
+            }
+
+            startAutoScroll() {
+                if (this.autoScrollInterval) return;
+                
+                this.autoScrollInterval = setInterval(() => {
+                    const maxIndex = Math.ceil(cardData.length / this.cardsPerView) - 1;
+                    if (this.currentIndex >= maxIndex) {
+                        this.currentIndex = 0;
+                    } else {
+                        this.currentIndex++;
+                    }
+                    this.updateCarousel();
+                }, this.autoScrollDelay);
+            }
+
+            pauseAutoScroll() {
+                if (this.autoScrollInterval) {
+                    clearInterval(this.autoScrollInterval);
+                    this.autoScrollInterval = null;
+                }
+            }
+
+            resetAutoScroll() {
+                if (this.isAutoScrolling) {
+                    this.pauseAutoScroll();
+                    this.startAutoScroll();
+                }
+            }
+
+            toggleAutoScroll() {
+                this.isAutoScrolling = !this.isAutoScrolling;
+                this.autoScrollToggle.classList.toggle('paused', !this.isAutoScrolling);
+                
+                if (this.isAutoScrolling) {
+                    this.startAutoScroll();
+                    this.autoScrollToggle.querySelector('span').textContent = 'Auto Play';
+                } else {
+                    this.pauseAutoScroll();
+                    this.autoScrollToggle.querySelector('span').textContent = 'Paused';
+                }
+            }
+
+            handleTouchStart(e) {
+                this.touchStartX = e.touches[0].clientX;
+                this.pauseAutoScroll();
+            }
+
+            handleTouchMove(e) {
+                if (!this.touchStartX) return;
+                this.touchEndX = e.touches[0].clientX;
+            }
+
+            handleTouchEnd() {
+                if (!this.touchStartX || !this.touchEndX) return;
+                
+                const diff = this.touchStartX - this.touchEndX;
+                const threshold = 50;
+                
+                if (diff > threshold) {
+                    this.next();
+                } else if (diff < -threshold) {
+                    this.prev();
+                }
+                
+                this.touchStartX = 0;
+                this.touchEndX = 0;
+                
+                if (this.isAutoScrolling) {
+                    this.startAutoScroll();
+                }
+            }
+
+            handleMouseDown(e) {
+                this.touchStartX = e.clientX;
+                this.pauseAutoScroll();
+                this.track.style.cursor = 'grabbing';
+            }
+
+            handleMouseMove(e) {
+                if (!this.touchStartX) return;
+                this.touchEndX = e.clientX;
+            }
+
+            handleMouseUp() {
+                if (!this.touchStartX || !this.touchEndX) return;
+                
+                const diff = this.touchStartX - this.touchEndX;
+                const threshold = 50;
+                
+                if (diff > threshold) {
+                    this.next();
+                } else if (diff < -threshold) {
+                    this.prev();
+                }
+                
+                this.touchStartX = 0;
+                this.touchEndX = 0;
+                this.track.style.cursor = 'pointer';
+                
+                if (this.isAutoScrolling) {
+                    this.startAutoScroll();
+                }
+            }
+
+            handleResize() {
+                const newCardsPerView = this.getCardsPerView();
+                if (newCardsPerView !== this.cardsPerView) {
+                    this.cardsPerView = newCardsPerView;
+                    this.currentIndex = 0;
+                    
+                    // Recreate dots
+                    this.dotsContainer.innerHTML = '';
+                    this.createDots();
+                    
+                    this.updateCarousel();
+                }
+            }
+
+            handleCardClick(index) {
+                // Add your card click logic here
+                console.log(`Card ${index + 1} clicked:`, cardData[index]);
+                // Example: Navigate to article page
+                // window.location.href = `/article/${index + 1}`;
+            }
+        }
+
+        // Initialize carousel when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new Carousel();
+        });
+    </script>
+</body>
+</html>
