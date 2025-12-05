@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Input Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .tag-input-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .tag-input-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            min-height: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .tag-input-container:focus-within {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            animation: tagAppear 0.3s ease;
+        }
+
+        @keyframes tagAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tag-remove {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .tag-remove:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: rotate(90deg);
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 150px;
+            font-size: 16px;
+            padding: 8px 4px;
+            background: transparent;
+        }
+
+        .suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10;
+        }
+
+        .suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 14px;
+        }
+
+        .suggestion-item:hover {
+            background: #f5f5f5;
+        }
+
+        .suggestion-item.selected {
+            background: #667eea;
+            color: white;
+        }
+
+        .info-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e9ecef;
+        }
+
+        .info-card h3 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .tag-count {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .tag-array {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            word-break: break-all;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #2d3748;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .validation-message {
+            color: #f56565;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .validation-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏷️ Tag Input Component</h1>
+        <p class="subtitle">Add tags by pressing Enter • Remove with (x) • Auto-suggestions included</p>
+
+        <div class="tag-input-wrapper">
+            <div class="tag-input-container" id="tagContainer">
+                <input 
+                    type="text" 
+                    class="tag-input" 
+                    id="tagInput" 
+                    placeholder="Type a tag and press Enter..."
+                    autocomplete="off"
+                >
+            </div>
+            <div class="suggestions" id="suggestions"></div>
+            <div class="validation-message" id="validationMessage"></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-card">
+                <h3>📊 Tag Count</h3>
+                <div class="tag-count" id="tagCount">0</div>
+            </div>
+            <div class="info-card">
+                <h3>💾 Current Array</h3>
+                <div class="tag-array" id="tagArray">[]</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="exportTags()">
+                📥 Export Tags
+            </button>
+            <button class="btn btn-secondary" onclick="importTags()">
+                📤 Import Tags
+            </button>
+            <button class="btn btn-secondary" onclick="copyToClipboard()">
+                📋 Copy Array
+            </button>
+            <button class="btn btn-danger" onclick="clearAllTags()">
+                🗑️ Clear All
+            </button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Global variables
+        var tags = [];
+        var maxTags = 20;
+        var maxTagLength = 30;
+        var suggestions = [
+            'javascript', 'react', 'vue', 'angular', 'nodejs',
+            'python', 'django', 'flask', 'mongodb', 'mysql',
+            'css', 'html', 'typescript', 'webpack', 'git',
+            'docker', 'kubernetes', 'aws', 'devops', 'api'
+        ];
+        var selectedSuggestion = -1;
+        var isSelectingSuggestion = false;
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTagInput();
+        });
+
+        function initializeTagInput() {
+            var tagInput = document.getElementById('tagInput');
+            var tagContainer = document.getElementById('tagContainer');
+            var suggestionsContainer = document.getElementById('suggestions');
+            var validationMessage = document.getElementById('validationMessage');
+
+            if (!tagInput || !tagContainer || !suggestionsContainer || !validationMessage) {
+                console.error('Required elements not found');
+                return;
+            }
+
+            // Add event listeners
+            tagInput.addEventListener('keydown', handleKeyDown);
+            tagInput.addEventListener('input', handleInput);
+            tagInput.addEventListener('blur', handleBlur);
+            
+            // Add event listener for suggestions container using event delegation
+            suggestionsContainer.addEventListener('mousedown', function(e) {
+                isSelectingSuggestion = true;
+            });
+            
+            suggestionsContainer.addEventListener('mouseup', function(e) {
+                isSelectingSuggestion = false;
+            });
+            
+            suggestionsContainer.addEventListener('click', function(e) {
+                var item = e.target.closest('.suggestion-item');
+                if (item) {
+                    var index = parseInt(item.getAttribute('data-index'));
+                    selectSuggestion(index);
+                }
+            });
+            
+            // Click outside to hide suggestions
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.tag-input-wrapper')) {
+                    hideSuggestions();
+                }
+            });
+
+            updateDisplay();
+        }
+
+        function handleBlur(e) {
+            // Delay hiding suggestions to allow click to be processed
+            setTimeout(function() {
+                if (!isSelectingSuggestion) {
+                    hideSuggestions();
+                }
+            }, 200);
+        }
+
+        function handleKeyDown(e) {
+            var value = e.target.value.trim();
+            
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (selectedSuggestion >= 0) {
+                    selectSuggestion(selectedSuggestion);
+                } else if (value) {
+                    addTag(value);
+                }
+            } else if (e.key === 'Backspace' && !value && tags.length > 0) {
+                removeTag(tags.length - 1);
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateSuggestions(1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateSuggestions(-1);
+            }
+        }
+
+        function handleInput(e) {
+            var value = e.target.value.trim();
+            if (value) {
+                showSuggestions(value);
+            } else {
+                hideSuggestions();
+            }
+        }
+
+        function addTag(tagText) {
+            tagText = tagText.trim().toLowerCase();
+            
+            // Validation
+            if (tags.length >= maxTags) {
+                showValidation('Maximum ' + maxTags + ' tags allowed');
+                return;
+            }
+            
+            if (tagText.length > maxTagLength) {
+                showValidation('Tag must be less than ' + maxTagLength + ' characters');
+                return;
+            }
+            
+            if (tags.indexOf(tagText) !== -1) {
+                showValidation('Tag already exists');
+                return;
+            }
+            
+            if (!/^[a-zA-Z0-9\-_]+$/.test(tagText)) {
+                showValidation('Only letters, numbers, hyphens, and underscores allowed');
+                return;
+            }
+            
+            tags.push(tagText);
+            renderTags();
+            document.getElementById('tagInput').value = '';
+            hideSuggestions();
+            hideValidation();
+            updateDisplay();
+            showToast('Added tag: ' + tagText);
+        }
+
+        function removeTag(index) {
+            var removedTag = tags[index];
+            tags.splice(index, 1);
+            renderTags();
+            updateDisplay();
+            showToast('Removed tag: ' + removedTag);
+        }
+
+        function renderTags() {
+            var tagContainer = document.getElementById('tagContainer');
+            var tagInput = document.getElementById('tagInput');
+            
+            // Remove existing tags
+            var existingTags = tagContainer.querySelectorAll('.tag');
+            for (var i = 0; i < existingTags.length; i++) {
+                existingTags[i].remove();
+            }
+            
+            // Add current tags
+            for (var i = 0; i < tags.length; i++) {
+                var tagElement = document.createElement('div');
+                tagElement.className = 'tag';
+                tagElement.innerHTML = tags[i] + '<button class="tag-remove" onclick="removeTag(' + i + ')">×</button>';
+                tagContainer.insertBefore(tagElement, tagInput);
+            }
+        }
+
+        function showSuggestions(query) {
+            var suggestionsContainer = document.getElementById('suggestions');
+            var filtered = [];
+            
+            for (var i = 0; i < suggestions.length; i++) {
+                if (suggestions[i].toLowerCase().indexOf(query.toLowerCase()) !== -1 && 
+                    tags.indexOf(suggestions[i]) === -1) {
+                    filtered.push(suggestions[i]);
+                }
+            }
+            
+            if (filtered.length === 0) {
+                hideSuggestions();
+                return;
+            }
+            
+            var html = '';
+            for (var i = 0; i < filtered.length; i++) {
+                html += '<div class="suggestion-item" data-index="' + i + '">' + filtered[i] + '</div>';
+            }
+            suggestionsContainer.innerHTML = html;
+            suggestionsContainer.classList.add('active');
+            selectedSuggestion = -1;
+        }
+
+        function hideSuggestions() {
+            var suggestionsContainer = document.getElementById('suggestions');
+            if (suggestionsContainer) {
+                suggestionsContainer.classList.remove('active');
+                selectedSuggestion = -1;
+            }
+        }
+
+        function navigateSuggestions(direction) {
+            var items = document.querySelectorAll('.suggestion-item');
+            if (items.length === 0) return;
+            
+            if (selectedSuggestion >= 0) {
+                items[selectedSuggestion].classList.remove('selected');
+            }
+            
+            selectedSuggestion += direction;
+            if (selectedSuggestion < 0) {
+                selectedSuggestion = items.length - 1;
+            } else if (selectedSuggestion >= items.length) {
+                selectedSuggestion = 0;
+            }
+            
+            items[selectedSuggestion].classList.add('selected');
+        }
+
+        function selectSuggestion(index) {
+            var items = document.querySelectorAll('.suggestion-item');
+            if (items[index]) {
+                addTag(items[index].textContent);
+            }
+        }
+
+        function showValidation(message) {
+            var validationMessage = document.getElementById('validationMessage');
+            if (validationMessage) {
+                validationMessage.textContent = message;
+                validationMessage.classList.add('show');
+                setTimeout(hideValidation, 3000);
+            }
+        }
+
+        function hideValidation() {
+            var validationMessage = document.getElementById('validationMessage');
+            if (validationMessage) {
+                validationMessage.classList.remove('show');
+            }
+        }
+
+        function updateDisplay() {
+            var tagCount = document.getElementById('tagCount');
+            var tagArray = document.getElementById('tagArray');
+            
+            if (tagCount) {
+                tagCount.textContent = tags.length;
+            }
+            if (tagArray) {
+                tagArray.textContent = JSON.stringify(tags, null, 2);
+            }
+        }
+
+        function showToast(message) {
+            var toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        function exportTags() {
+            var data = JSON.stringify(tags, null, 2);
+            var blob = new Blob([data], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'tags.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Tags exported successfully');
+        }
+
+        function importTags() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            var imported = JSON.parse(e.target.result);
+                            if (Array.isArray(imported)) {
+                                tags = [];
+                                for (var i = 0; i < imported.length; i++) {
+                                    var tag = imported[i];
+                                    if (typeof tag === 'string' && 
+                                        tag.length <= maxTagLength &&
+                                        /^[a-zA-Z0-9\-_]+$/.test(tag) &&
+                                        tags.indexOf(tag) === -1) {
+                                        tags.push(tag);
+                                    }
+                                }
+                                renderTags();
+                                updateDisplay();
+                                showToast('Imported ' + tags.length + ' tags');
+                            }
+                        } catch (error) {
+                            showToast('Invalid file format');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            };
+            input.click();
+        }
+
+        function copyToClipboard() {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(JSON.stringify(tags)).then(function() {
+                    showToast('Copied to clipboard');
+                });
+            } else {
+                // Fallback for older browsers
+                var textArea = document.createElement('textarea');
+                textArea.value = JSON.stringify(tags);
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Copied to clipboard');
+            }
+        }
+
+        function clearAllTags() {
+            if (tags.length === 0) return;
+            
+            if (confirm('Are you sure you want to clear all tags?')) {
+                tags = [];
+                renderTags();
+                updateDisplay();
+                showToast('All tags cleared');
+            }
+        }
+
+        // Initialize immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTagInput);
+        } else {
+            initializeTagInput();
+        }
+    </script>
+</body>
+</html>
