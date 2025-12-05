@@ -1,2 +1,527 @@
-asdasdsa
-asdasdsa
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordion Menu with Icons</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .accordion {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .accordion-item:last-child {
+            border-bottom: none;
+        }
+
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+
+        .accordion-header.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .accordion-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            transition: color 0.3s ease;
+        }
+
+        .accordion-header.active .accordion-icon {
+            color: white;
+        }
+
+        .accordion-arrow {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            color: #666;
+        }
+
+        .accordion-header.active .accordion-arrow {
+            transform: rotate(180deg);
+            color: white;
+        }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+        }
+
+        .accordion-body.active {
+            max-height: 1000px;
+        }
+
+        .accordion-content {
+            padding: 0;
+        }
+
+        .sub-menu {
+            list-style: none;
+        }
+
+        .sub-menu-item {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .sub-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .sub-menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px 14px 56px;
+            color: #555;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
+
+        .sub-menu-link:hover {
+            background: #f8f9fa;
+            color: #667eea;
+            padding-left: 60px;
+        }
+
+        .sub-menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            transition: color 0.2s ease;
+        }
+
+        .sub-menu-link:hover .sub-menu-icon {
+            color: #667eea;
+        }
+
+        /* Nested accordion styles */
+        .nested-accordion {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            margin-left: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+        }
+
+        .nested-accordion .accordion-header {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            font-size: 14px;
+        }
+
+        .nested-accordion .accordion-header.active {
+            background: #667eea;
+        }
+
+        .nested-accordion .accordion-title {
+            font-weight: 500;
+        }
+
+        .nested-accordion .sub-menu-link {
+            padding: 12px 16px 12px 40px;
+            font-size: 14px;
+        }
+
+        .nested-accordion .sub-menu-link:hover {
+            padding-left: 44px;
+        }
+
+        .demo-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .demo-info h3 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .demo-info p {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .accordion-header {
+                padding: 14px 16px;
+            }
+
+            .sub-menu-link {
+                padding: 12px 16px 12px 48px;
+            }
+
+            .sub-menu-link:hover {
+                padding-left: 52px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Accordion Menu with Icons</h1>
+        <p class="subtitle">Click to expand sub-menus • Animated rotation of arrows</p>
+
+        <div class="accordion" id="mainAccordion">
+            <!-- Dashboard Section -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <div class="accordion-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="accordion-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <span>Analytics</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-chart-pie"></i>
+                                    </div>
+                                    <span>Reports</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-calendar-alt"></i>
+                                    </div>
+                                    <span>Schedule</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Section with Nested Accordion -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <div class="accordion-icon">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <span>Products</span>
+                    </div>
+                    <div class="accordion-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-plus-circle"></i>
+                                    </div>
+                                    <span>Add Product</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-list"></i>
+                                    </div>
+                                    <span>All Products</span>
+                                </a>
+                            </li>
+                            
+                            <!-- Nested Accordion Example -->
+                            <li class="sub-menu-item">
+                                <div class="nested-accordion">
+                                    <div class="accordion-item">
+                                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                                            <div class="accordion-title">
+                                                <div class="accordion-icon">
+                                                    <i class="fas fa-tags"></i>
+                                                </div>
+                                                <span>Categories</span>
+                                            </div>
+                                            <div class="accordion-arrow">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                        </div>
+                                        <div class="accordion-body">
+                                            <div class="accordion-content">
+                                                <ul class="sub-menu">
+                                                    <li class="sub-menu-item">
+                                                        <a href="#" class="sub-menu-link">
+                                                            <div class="sub-menu-icon">
+                                                                <i class="fas fa-laptop"></i>
+                                                            </div>
+                                                            <span>Electronics</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="sub-menu-item">
+                                                        <a href="#" class="sub-menu-link">
+                                                            <div class="sub-menu-icon">
+                                                                <i class="fas fa-tshirt"></i>
+                                                            </div>
+                                                            <span>Clothing</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="sub-menu-item">
+                                                        <a href="#" class="sub-menu-link">
+                                                            <div class="sub-menu-icon">
+                                                                <i class="fas fa-home"></i>
+                                                            </div>
+                                                            <span>Home & Garden</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <div class="accordion-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <span>Users</span>
+                    </div>
+                    <div class="accordion-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-user-plus"></i>
+                                    </div>
+                                    <span>Add User</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-user-friends"></i>
+                                    </div>
+                                    <span>All Users</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-user-shield"></i>
+                                    </div>
+                                    <span>Roles & Permissions</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <div class="accordion-icon">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <span>Settings</span>
+                    </div>
+                    <div class="accordion-arrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                <div class="accordion-body">
+                    <div class="accordion-content">
+                        <ul class="sub-menu">
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-palette"></i>
+                                    </div>
+                                    <span>Appearance</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                    <span>Notifications</span>
+                                </a>
+                            </li>
+                            <li class="sub-menu-item">
+                                <a href="#" class="sub-menu-link">
+                                    <div class="sub-menu-icon">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <span>Security</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-info">
+            <h3>🔧 Features</h3>
+            <p>This accordion menu includes smooth animations, rotating arrow icons, nested accordion support, and a responsive design. Click on any menu item to expand/collapse its sub-menu. The arrow icons rotate 180 degrees when expanded.</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleAccordion(header) {
+            const accordionItem = header.parentElement;
+            const accordionBody = accordionItem.querySelector('.accordion-body');
+            const isActive = header.classList.contains('active');
+            
+            // Get the immediate parent accordion container
+            const parentAccordion = accordionItem.parentElement;
+            
+            // Close only sibling accordion items (same level)
+            const siblingItems = Array.from(parentAccordion.children).filter(item => 
+                item.classList.contains('accordion-item') && item !== accordionItem
+            );
+            
+            siblingItems.forEach(item => {
+                const siblingHeader = item.querySelector('.accordion-header');
+                const siblingBody = item.querySelector('.accordion-body');
+                siblingHeader.classList.remove('active');
+                siblingBody.classList.remove('active');
+            });
+            
+            // Toggle current accordion item
+            if (!isActive) {
+                header.classList.add('active');
+                accordionBody.classList.add('active');
+            } else {
+                header.classList.remove('active');
+                accordionBody.classList.remove('active');
+            }
+        }
+
+        // Optional: Open first accordion by default
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstAccordionHeader = document.querySelector('#mainAccordion .accordion-header');
+            if (firstAccordionHeader) {
+                toggleAccordion(firstAccordionHeader);
+            }
+        });
+    </script>
+</body>
+</html>
