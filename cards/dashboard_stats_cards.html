@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .stat-card {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .icon-wrapper {
+            background: linear-gradient(135deg, var(--icon-bg-start), var(--icon-bg-end));
+        }
+        
+        .trend-up {
+            color: #10b981;
+        }
+        
+        .trend-down {
+            color: #ef4444;
+        }
+        
+        .graph-placeholder {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .graph-placeholder::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: shimmer 3s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%);
+            }
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .loading-bar {
+            animation: loading 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0%, 100% {
+                width: 0%;
+            }
+            50% {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                    <span class="ml-3 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        Live
+                    </span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-bell text-xl"></i>
+                    </button>
+                    <button class="text-gray-500 hover:text-gray-700 transition-colors">
+                        <i class="fas fa-cog text-xl"></i>
+                    </button>
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Date Range Selector -->
+        <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Analytics Overview</h2>
+                <p class="text-gray-600 mt-1">Track your business performance in real-time</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button class="date-btn px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" data-range="7d">
+                    Last 7 days
+                </button>
+                <button class="date-btn px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-lg hover:bg-blue-700 transition-colors" data-range="30d">
+                    Last 30 days
+                </button>
+                <button class="date-btn px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" data-range="90d">
+                    Last 90 days
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Revenue Card -->
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6" style="--gradient-start: #3b82f6; --gradient-end: #8b5cf6; --icon-bg-start: #dbeafe; --icon-bg-end: #ede9fe;">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="icon-wrapper w-12 h-12 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-dollar-sign text-xl text-blue-600"></i>
+                    </div>
+                    <span class="trend-up text-sm font-medium flex items-center">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        12.5%
+                    </span>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Total Revenue</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">$48,574</h3>
+                    <p class="text-gray-500 text-xs">+ $5,421 from last month</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-gray-500">Goal Progress</span>
+                        <span class="font-medium text-gray-900">75%</span>
+                    </div>
+                    <div class="mt-2 w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Card -->
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6" style="--gradient-start: #10b981; --gradient-end: #34d399; --icon-bg-start: #d1fae5; --icon-bg-end: #a7f3d0;">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="icon-wrapper w-12 h-12 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-users text-xl text-green-600"></i>
+                    </div>
+                    <span class="trend-up text-sm font-medium flex items-center">
+                        <i class="fas fa-arrow-up mr-1"></i>
+                        8.2%
+                    </span>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Active Users</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">12,489</h3>
+                    <p class="text-gray-500 text-xs">+ 948 new users this week</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="flex -space-x-2">
+                        <img src="https://picsum.photos/seed/user1/32/32.jpg" class="w-8 h-8 rounded-full border-2 border-white" alt="User">
+                        <img src="https://picsum.photos/seed/user2/32/32.jpg" class="w-8 h-8 rounded-full border-2 border-white" alt="User">
+                        <img src="https://picsum.photos/seed/user3/32/32.jpg" class="w-8 h-8 rounded-full border-2 border-white" alt="User">
+                        <img src="https://picsum.photos/seed/user4/32/32.jpg" class="w-8 h-8 rounded-full border-2 border-white" alt="User">
+                        <div class="w-8 h-8 rounded-full border-2 border-white bg-gray-200 flex items-center justify-center">
+                            <span class="text-xs font-medium text-gray-600">+5k</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Card -->
+            <div class="stat-card bg-white rounded-xl shadow-sm p-6" style="--gradient-start: #f59e0b; --gradient-end: #fbbf24; --icon-bg-start: #fef3c7; --icon-bg-end: #fde68a;">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="icon-wrapper w-12 h-12 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shopping-cart text-xl text-amber-600"></i>
+                    </div>
+                    <span class="trend-down text-sm font-medium flex items-center">
+                        <i class="fas fa-arrow-down mr-1"></i>
+                        3.1%
+                    </span>
+                </div>
+                <div>
+                    <p class="text-gray-600 text-sm mb-1">Total Orders</p>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">3,847</h3>
+                    <p class="text-gray-500 text-xs">- 122 from last month</p>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div>
+                            <p class="text-xs text-gray-500">Pending</p>
+                            <p class="text-sm font-semibold text-amber-600">234</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Processing</p>
+                            <p class="text-sm font-semibold text-blue-600">567</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500">Completed</p>
+                            <p class="text-sm font-semibold text-green-600">3,046</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Graph Placeholder Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Main Graph -->
+            <div class="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900">Revenue Overview</h3>
+                        <p class="text-gray-600 text-sm mt-1">Monthly revenue trends and projections</p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="graph-type-btn px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors" data-type="line">
+                            <i class="fas fa-chart-line mr-1"></i> Line
+                        </button>
+                        <button class="graph-type-btn px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors" data-type="bar">
+                            <i class="fas fa-chart-bar mr-1"></i> Bar
+                        </button>
+                    </div>
+                </div>
+                <div class="graph-placeholder h-80 rounded-lg flex items-center justify-center relative">
+                    <div class="text-center z-10">
+                        <i class="fas fa-chart-area text-6xl text-gray-400 mb-4"></i>
+                        <p class="text-gray-500 font-medium">Interactive Chart Placeholder</p>
+                        <p class="text-gray-400 text-sm mt-2">Click to load visualization</p>
+                    </div>
+                    <div class="absolute bottom-4 left-4 right-4 h-1 bg-gray-300 rounded-full overflow-hidden">
+                        <div class="loading-bar h-full bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Stats -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-eye text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Page Views</p>
+                                <p class="text-xs text-gray-500">Today</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-gray-900">24.5K</p>
+                            <p class="text-xs trend-up">+5.2%</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-clock text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Avg. Session</p>
+                                <p class="text-xs text-gray-500">Duration</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-gray-900">4m 32s</p>
+                            <p class="text-xs trend-up">+12s</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-percentage text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">Conversion</p>
+                                <p class="text-xs text-gray-500">Rate</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-gray-900">3.24%</p>
+                            <p class="text-xs trend-down">-0.3%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+                    <span class="pulse-dot w-2 h-2 bg-green-500 rounded-full"></span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-shopping-bag text-xs text-blue-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">New order #12345</p>
+                            <p class="text-xs text-gray-500">2 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user-plus text-xs text-green-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">New user registered</p>
+                            <p class="text-xs text-gray-500">15 minutes ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-star text-xs text-amber-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">5-star review received</p>
+                            <p class="text-xs text-gray-500">1 hour ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-chart-line text-xs text-purple-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm text-gray-900">Monthly goal achieved</p>
+                            <p class="text-xs text-gray-500">3 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Date range selector functionality
+        document.querySelectorAll('.date-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.date-btn').forEach(b => {
+                    b.classList.remove('text-white', 'bg-blue-600', 'border-blue-600');
+                    b.classList.add('text-gray-700', 'bg-white', 'border-gray-300');
+                });
+                this.classList.remove('text-gray-700', 'bg-white', 'border-gray-300');
+                this.classList.add('text-white', 'bg-blue-600', 'border-blue-600');
+                
+                // Simulate data refresh
+                updateStats();
+            });
+        });
+
+        // Graph type selector functionality
+        document.querySelectorAll('.graph-type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.graph-type-btn').forEach(b => {
+                    b.classList.remove('text-white', 'bg-blue-600');
+                    b.classList.add('text-gray-700', 'bg-gray-100');
+                });
+                this.classList.remove('text-gray-700', 'bg-gray-100');
+                this.classList.add('text-white', 'bg-blue-600');
+            });
+        });
+
+        // Simulate updating stats
+        function updateStats() {
+            const revenueCard = document.querySelector('.stat-card');
+            revenueCard.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                // Update revenue with animation
+                const revenueElement = revenueCard.querySelector('h3');
+                const currentRevenue = parseInt(revenueElement.textContent.replace(/[$,]/g, ''));
+                const newRevenue = currentRevenue + Math.floor(Math.random() * 5000);
+                animateValue(revenueElement, currentRevenue, newRevenue, 1000, '$');
+                
+                revenueCard.style.opacity = '1';
+            }, 500);
+        }
+
+        // Animate number changes
+        function animateValue(element, start, end, duration, prefix = '') {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    current = end;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current).toLocaleString();
+            }, 16);
+        }
+
+        // Add click interaction to graph placeholder
+        document.querySelector('.graph-placeholder').addEventListener('click', function() {
+            this.innerHTML = `
+                <div class="text-center z-10">
+                    <i class="fas fa-sync-alt fa-spin text-6xl text-blue-500 mb-4"></i>
+                    <p class="text-gray-700 font-medium">Loading Chart Data...</p>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                this.innerHTML = `
+                    <div class="text-center z-10">
+                        <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                        <p class="text-gray-700 font-medium">Chart Loaded Successfully!</p>
+                        <p class="text-gray-500 text-sm mt-2">Real-time data visualization active</p>
+                    </div>
+                `;
+            }, 2000);
+        });
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const pulseDot = document.querySelector('.pulse-dot');
+            pulseDot.style.opacity = '0.3';
+            setTimeout(() => {
+                pulseDot.style.opacity = '1';
+            }, 500);
+        }, 3000);
+    </script>
+</body>
+</html>
