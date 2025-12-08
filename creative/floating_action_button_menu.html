@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Floating Action Button (FAB) Menu</title>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+        
+        p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        /* FAB Menu Container */
+        .fab-menu {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        
+        /* Main FAB Button */
+        .fab-main {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: #25D366; /* WhatsApp green */
+            color: white;
+            border: none;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .fab-main:hover {
+            background-color: #128C7E;
+            transform: scale(1.05);
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .fab-main.active {
+            background-color: #128C7E;
+            transform: rotate(45deg);
+        }
+        
+        /* Mini FAB Buttons */
+        .fab-mini {
+            position: absolute;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: white;
+            color: #333;
+            border: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: scale(0);
+            bottom: 0;
+            right: 0;
+        }
+        
+        .fab-menu.active .fab-mini {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        /* Position each mini button */
+        .fab-menu.active .fab-mini:nth-child(2) {
+            bottom: 70px;
+            right: 0;
+            transition-delay: 0.05s;
+        }
+        
+        .fab-menu.active .fab-mini:nth-child(3) {
+            bottom: 70px;
+            right: 70px;
+            transition-delay: 0.1s;
+        }
+        
+        .fab-menu.active .fab-mini:nth-child(4) {
+            bottom: 0;
+            right: 70px;
+            transition-delay: 0.15s;
+        }
+        
+        .fab-menu.active .fab-mini:nth-child(5) {
+            bottom: -70px;
+            right: 70px;
+            transition-delay: 0.2s;
+        }
+        
+        .fab-menu.active .fab-mini:nth-child(6) {
+            bottom: -70px;
+            right: 0;
+            transition-delay: 0.25s;
+        }
+        
+        /* Hover effects for mini buttons */
+        .fab-mini:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.1);
+        }
+        
+        /* Tooltips for mini buttons */
+        .fab-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 5;
+        }
+        
+        .fab-mini:hover .fab-tooltip {
+            opacity: 1;
+        }
+        
+        /* Position tooltips */
+        .fab-mini:nth-child(2) .fab-tooltip {
+            bottom: 100%;
+            right: 0;
+            margin-bottom: 10px;
+        }
+        
+        .fab-mini:nth-child(3) .fab-tooltip {
+            bottom: 100%;
+            right: 100%;
+            margin-bottom: 10px;
+            transform: translateX(50%);
+        }
+        
+        .fab-mini:nth-child(4) .fab-tooltip {
+            bottom: 0;
+            right: 100%;
+            margin-right: 10px;
+            transform: translateY(-50%);
+        }
+        
+        .fab-mini:nth-child(5) .fab-tooltip {
+            top: 100%;
+            right: 100%;
+            margin-top: 10px;
+            transform: translateX(50%);
+        }
+        
+        .fab-mini:nth-child(6) .fab-tooltip {
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+        }
+        
+        /* Demo content */
+        .demo-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 1rem;
+            transition: transform 0.3s;
+        }
+        
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-card h3 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #FF5252;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .fab-menu {
+                bottom: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .fab-main {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .fab-mini {
+                width: 44px;
+                height: 44px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Floating Action Button (FAB) Menu</h1>
+        
+        <div class="content">
+            <p>This demo showcases a Floating Action Button (FAB) Menu component similar to what's used in mobile apps like WhatsApp.</p>
+            <p>Click the green button in the bottom-right corner to expand the menu and reveal additional action buttons.</p>
+            <p>Each mini button has a tooltip that appears on hover to describe its function.</p>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Feature 1</h3>
+            <p>This is a sample card to demonstrate the FAB menu in context. The FAB menu stays fixed as you scroll.</p>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Feature 2</h3>
+            <p>The FAB menu uses CSS animations for smooth transitions and scaling effects when expanding and collapsing.</p>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Feature 3</h3>
+            <p>Each mini button can have its own action, such as creating new content, searching, or accessing settings.</p>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Feature 4</h3>
+            <p>The main FAB button rotates 45 degrees when the menu is open, transforming the plus icon into an X icon.</p>
+        </div>
+        
+        <div class="demo-card">
+            <h3>Feature 5</h3>
+            <p>The component is fully responsive and adjusts its size and positioning for mobile devices.</p>
+        </div>
+    </div>
+    
+    <!-- FAB Menu -->
+    <div class="fab-menu" id="fabMenu">
+        <!-- Mini buttons -->
+        <button class="fab-mini" id="btn1">
+            <i class="fas fa-camera"></i>
+            <span class="fab-tooltip">Camera</span>
+        </button>
+        <button class="fab-mini" id="btn2">
+            <i class="fas fa-image"></i>
+            <span class="fab-tooltip">Gallery</span>
+        </button>
+        <button class="fab-mini" id="btn3">
+            <i class="fas fa-file"></i>
+            <span class="fab-tooltip">Document</span>
+        </button>
+        <button class="fab-mini" id="btn4">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="fab-tooltip">Location</span>
+        </button>
+        <button class="fab-mini" id="btn5">
+            <i class="fas fa-user-plus"></i>
+            <span class="fab-tooltip">Contact</span>
+        </button>
+        
+        <!-- Main FAB button -->
+        <button class="fab-main" id="fabMain">
+            <i class="fas fa-plus"></i>
+            <span class="notification-badge">3</span>
+        </button>
+    </div>
+    
+    <script>
+        // Get DOM elements
+        const fabMenu = document.getElementById('fabMenu');
+        const fabMain = document.getElementById('fabMain');
+        const miniButtons = document.querySelectorAll('.fab-mini');
+        
+        // Toggle FAB menu
+        fabMain.addEventListener('click', () => {
+            fabMenu.classList.toggle('active');
+            fabMain.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!fabMenu.contains(e.target) && fabMenu.classList.contains('active')) {
+                fabMenu.classList.remove('active');
+                fabMain.classList.remove('active');
+            }
+        });
+        
+        // Handle mini button clicks
+        miniButtons.forEach((button, index) => {
+            button.addEventListener('click', () => {
+                // Get button action based on index
+                const actions = [
+                    'Camera clicked!',
+                    'Gallery clicked!',
+                    'Document clicked!',
+                    'Location clicked!',
+                    'Contact clicked!'
+                ];
+                
+                // Show notification
+                showNotification(actions[index]);
+                
+                // Close menu after action
+                fabMenu.classList.remove('active');
+                fabMain.classList.remove('active');
+            });
+        });
+        
+        // Function to show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.bottom = '100px';
+            notification.style.right = '20px';
+            notification.style.backgroundColor = '#333';
+            notification.style.color = 'white';
+            notification.style.padding = '12px 20px';
+            notification.style.borderRadius = '4px';
+            notification.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.2)';
+            notification.style.zIndex = '2000';
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
+            notification.style.transition = 'all 0.3s ease';
+            notification.textContent = message;
+            
+            // Add to DOM
+            document.body.appendChild(notification);
+            
+            // Trigger animation
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add scroll effect to demo cards
+        const demoCards = document.querySelectorAll('.demo-card');
+        
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        demoCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

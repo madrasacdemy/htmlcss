@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Editor UI Component</title>
+    
+    <!-- Prism.js for syntax highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .code-editor {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #2d3748;
+            color: #e2e8f0;
+            padding: 0.75rem 1rem;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .copy-button {
+            background-color: #4a5568;
+            color: #e2e8f0;
+            border: none;
+            border-radius: 4px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: background-color 0.2s;
+        }
+        
+        .copy-button:hover {
+            background-color: #5a6578;
+        }
+        
+        .copy-button.copied {
+            background-color: #48bb78;
+        }
+        
+        .code-container {
+            background-color: #2d3748;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            overflow: auto;
+            max-height: 400px;
+        }
+        
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow: auto;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        /* Custom scrollbar */
+        .code-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        .code-container::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+        
+        .code-container::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border-radius: 4px;
+        }
+        
+        .code-container::-webkit-scrollbar-thumb:hover {
+            background: #718096;
+        }
+        
+        /* Language tabs */
+        .language-tabs {
+            display: flex;
+            background-color: #1a202c;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        
+        .language-tab {
+            padding: 0.75rem 1rem;
+            color: #a0aec0;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .language-tab.active {
+            color: #e2e8f0;
+            border-bottom-color: #63b3ed;
+        }
+        
+        .language-tab:hover {
+            color: #e2e8f0;
+            background-color: #2d3748;
+        }
+        
+        .code-content {
+            display: none;
+        }
+        
+        .code-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Code Editor UI Component</h1>
+        
+        <div class="code-editor">
+            <div class="language-tabs">
+                <div class="language-tab active" data-lang="javascript">JavaScript</div>
+                <div class="language-tab" data-lang="html">HTML</div>
+                <div class="language-tab" data-lang="css">CSS</div>
+            </div>
+            
+            <div class="code-header">
+                <div class="file-name">app.js</div>
+                <button class="copy-button" data-target="javascript-code">
+                    <i class="fas fa-copy"></i>
+                    <span>Copy</span>
+                </button>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-content active" id="javascript-code">
+                    <pre><code class="language-javascript">// Function to calculate factorial
+function factorial(n) {
+    if (n === 0 || n === 1) {
+        return 1;
+    }
+    
+    return n * factorial(n - 1);
+}
+
+// Async function to fetch data
+async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return null;
+    }
+}
+
+// Example usage
+const result = factorial(5);
+console.log(`Factorial of 5 is: ${result}`);
+
+// Fetch example
+fetchData('https://api.example.com/data')
+    .then(data => console.log('Fetched data:', data))
+    .catch(error => console.error('Error:', error));</code></pre>
+                </div>
+                
+                <div class="code-content" id="html-code">
+                    <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Sample Page&lt;/title&gt;
+    &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class="container"&gt;
+        &lt;header&gt;
+            &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+            &lt;nav&gt;
+                &lt;ul&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;About&lt;/a&gt;&lt;/li&gt;
+                    &lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/nav&gt;
+        &lt;/header&gt;
+        
+        &lt;main&gt;
+            &lt;section&gt;
+                &lt;h2&gt;Main Content&lt;/h2&gt;
+                &lt;p&gt;This is a sample paragraph.&lt;/p&gt;
+            &lt;/section&gt;
+        &lt;/main&gt;
+        
+        &lt;footer&gt;
+            &lt;p&gt;&amp;copy; 2023 My Website&lt;/p&gt;
+        &lt;/footer&gt;
+    &lt;/div&gt;
+    
+    &lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                </div>
+                
+                <div class="code-content" id="css-code">
+                    <pre><code class="language-css">/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header styles */
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    margin-bottom: 0.5rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+}
+
+nav ul li {
+    margin-right: 1rem;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+nav ul li a:hover {
+    color: #3498db;
+}
+
+/* Main content styles */
+main {
+    padding: 2rem 0;
+}
+
+section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+}
+
+/* Footer styles */
+footer {
+    background-color: #34495e;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language tab switching
+        const languageTabs = document.querySelectorAll('.language-tab');
+        const codeContents = document.querySelectorAll('.code-content');
+        const fileName = document.querySelector('.file-name');
+        const copyButton = document.querySelector('.copy-button');
+        
+        const fileNames = {
+            'javascript': 'app.js',
+            'html': 'index.html',
+            'css': 'styles.css'
+        };
+        
+        languageTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const lang = tab.getAttribute('data-lang');
+                
+                // Update active tab
+                languageTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update active code content
+                codeContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === `${lang}-code`) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Update file name
+                fileName.textContent = fileNames[lang];
+                
+                // Update copy button target
+                copyButton.setAttribute('data-target', `${lang}-code`);
+                
+                // Reset copy button state
+                copyButton.classList.remove('copied');
+                copyButton.innerHTML = '<i class="fas fa-copy"></i><span>Copy</span>';
+                
+                // Re-highlight syntax for the newly shown code
+                Prism.highlightAll();
+            });
+        });
+        
+        // Copy button functionality
+        copyButton.addEventListener('click', () => {
+            const targetId = copyButton.getAttribute('data-target');
+            const codeElement = document.querySelector(`#${targetId} code`);
+            const textToCopy = codeElement.textContent;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                // Update button to show success
+                copyButton.classList.add('copied');
+                copyButton.innerHTML = '<i class="fas fa-check"></i><span>Copied!</span>';
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    copyButton.classList.remove('copied');
+                    copyButton.innerHTML = '<i class="fas fa-copy"></i><span>Copy</span>';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        });
+    </script>
+</body>
+</html>
