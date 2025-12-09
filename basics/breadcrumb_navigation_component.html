@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breadcrumb Navigation Component</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .breadcrumb li {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb li:not(:last-child)::after {
+            content: '/';
+            margin: 0 0.75rem;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .breadcrumb a {
+            color: #4a90e2;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #2c5aa0;
+            text-decoration: underline;
+        }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .demo-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .demo-section h2 {
+            margin-top: 0;
+            color: #4a90e2;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.75rem 1.25rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #3a7bc8;
+        }
+
+        .instructions {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .instructions ul {
+            padding-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .code-block {
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Breadcrumb Navigation Component</h1>
+    </header>
+
+    <main>
+        <div class="breadcrumb-container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" id="breadcrumb">
+                    <!-- Breadcrumb items will be dynamically generated here -->
+                </ol>
+            </nav>
+        </div>
+
+        <div class="demo-section">
+            <h2>Demo Controls</h2>
+            <p>Click the buttons below to simulate navigation and see the breadcrumbs update automatically:</p>
+            <div class="button-group">
+                <button id="home-btn">Go to Home</button>
+                <button id="products-btn">Go to Products</button>
+                <button id="electronics-btn">Go to Electronics</button>
+                <button id="mobile-btn">Go to Mobile</button>
+                <button id="laptop-btn">Go to Laptop</button>
+                <button id="random-btn">Random Path</button>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <h3>Breadcrumb Navigation Features</h3>
+            <ul>
+                <li>Each breadcrumb item (except the last) is a clickable link</li>
+                <li>The last item represents the current page and is not linked</li>
+                <li>Breadcrumbs automatically update when navigating</li>
+                <li>Separators (/) are automatically added between items</li>
+                <li>Responsive design that wraps on smaller screens</li>
+                <li>Accessible with proper ARIA attributes</li>
+            </ul>
+            
+            <h3>JavaScript Usage</h3>
+            <p>To update breadcrumbs programmatically:</p>
+            <div class="code-block">
+                updateBreadcrumbs([
+                    { text: 'Home', url: '#' },
+                    { text: 'Products', url: '#' },
+                    { text: 'Electronics', url: '#' },
+                    { text: 'Mobile' } // Current page, no URL
+                ]);
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Breadcrumb data structure
+        const breadcrumbData = [
+            { text: 'Home', url: '#' },
+            { text: 'Products', url: '#' },
+            { text: 'Electronics', url: '#' },
+            { text: 'Mobile' } // Current page, no URL
+        ];
+
+        // Initialize breadcrumbs on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBreadcrumbs(breadcrumbData);
+            
+            // Set up demo buttons
+            document.getElementById('home-btn').addEventListener('click', () => {
+                updateBreadcrumbs([{ text: 'Home', url: '#' }]);
+            });
+            
+            document.getElementById('products-btn').addEventListener('click', () => {
+                updateBreadcrumbs([
+                    { text: 'Home', url: '#' },
+                    { text: 'Products', url: '#' }
+                ]);
+            });
+            
+            document.getElementById('electronics-btn').addEventListener('click', () => {
+                updateBreadcrumbs([
+                    { text: 'Home', url: '#' },
+                    { text: 'Products', url: '#' },
+                    { text: 'Electronics', url: '#' }
+                ]);
+            });
+            
+            document.getElementById('mobile-btn').addEventListener('click', () => {
+                updateBreadcrumbs([
+                    { text: 'Home', url: '#' },
+                    { text: 'Products', url: '#' },
+                    { text: 'Electronics', url: '#' },
+                    { text: 'Mobile' }
+                ]);
+            });
+            
+            document.getElementById('laptop-btn').addEventListener('click', () => {
+                updateBreadcrumbs([
+                    { text: 'Home', url: '#' },
+                    { text: 'Products', url: '#' },
+                    { text: 'Electronics', url: '#' },
+                    { text: 'Laptop' }
+                ]);
+            });
+            
+            document.getElementById('random-btn').addEventListener('click', () => {
+                const paths = [
+                    [
+                        { text: 'Home', url: '#' },
+                        { text: 'About', url: '#' },
+                        { text: 'Team' }
+                    ],
+                    [
+                        { text: 'Home', url: '#' },
+                        { text: 'Services', url: '#' },
+                        { text: 'Consulting', url: '#' },
+                        { text: 'Web Development' }
+                    ],
+                    [
+                        { text: 'Home', url: '#' },
+                        { text: 'Blog', url: '#' },
+                        { text: '2023', url: '#' },
+                        { text: 'June', url: '#' },
+                        { text: 'Web Design Trends' }
+                    ],
+                    [
+                        { text: 'Home', url: '#' },
+                        { text: 'Contact' }
+                    ]
+                ];
+                
+                const randomPath = paths[Math.floor(Math.random() * paths.length)];
+                updateBreadcrumbs(randomPath);
+            });
+        });
+
+        // Function to update breadcrumbs
+        function updateBreadcrumbs(items) {
+            const breadcrumbElement = document.getElementById('breadcrumb');
+            
+            // Clear existing breadcrumbs
+            breadcrumbElement.innerHTML = '';
+            
+            // Create breadcrumb items
+            items.forEach((item, index) => {
+                const li = document.createElement('li');
+                
+                if (index === items.length - 1) {
+                    // Last item - current page
+                    const span = document.createElement('span');
+                    span.textContent = item.text;
+                    span.className = 'current';
+                    li.appendChild(span);
+                } else {
+                    // Not last item - clickable link
+                    const a = document.createElement('a');
+                    a.textContent = item.text;
+                    a.href = item.url || '#';
+                    
+                    // Add click event to simulate navigation
+                    a.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // Create a new breadcrumb array up to this item
+                        const newBreadcrumbs = items.slice(0, index + 1);
+                        updateBreadcrumbs(newBreadcrumbs);
+                    });
+                    
+                    li.appendChild(a);
+                }
+                
+                breadcrumbElement.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Date Picker with Year Navigation</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f7fa;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .date-picker-container {
+            position: relative;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+
+        .calendar {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            margin-top: 5px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+        }
+
+        .calendar.active {
+            display: block;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .year-nav, .month-nav {
+            display: flex;
+            align-items: center;
+        }
+
+        .year-nav {
+            margin-right: 15px;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .month-year {
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0 15px;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+        }
+
+        .day-header {
+            padding: 10px 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+            background-color: #f9f9f9;
+        }
+
+        .day-cell {
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            margin: 2px;
+        }
+
+        .day-cell:hover {
+            background-color: #f0f7ff;
+        }
+
+        .day-cell.other-month {
+            color: #ccc;
+        }
+
+        .day-cell.today {
+            background-color: #e6f2ff;
+            font-weight: 600;
+            color: #4a90e2;
+        }
+
+        .day-cell.selected {
+            background-color: #4a90e2;
+            color: white;
+        }
+
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="date-picker-container">
+            <input type="text" class="date-input" placeholder="Select a date" readonly>
+            <div class="calendar">
+                <div class="calendar-header">
+                    <div class="nav-container">
+                        <div class="year-nav">
+                            <button id="prev-year" class="nav-button">&lt;&lt;</button>
+                            <button id="next-year" class="nav-button">&gt;&gt;</button>
+                        </div>
+                        <div class="month-nav">
+                            <button id="prev-month" class="nav-button">&lt;</button>
+                            <div class="month-year" id="month-year"></div>
+                            <button id="next-month" class="nav-button">&gt;</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar will be dynamically generated here -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Calendar Date Picker Features:</h3>
+            <ul>
+                <li>Click the input field to show the calendar</li>
+                <li>Navigate between years using the double arrow buttons</li>
+                <li>Navigate between months using the single arrow buttons</li>
+                <li>Click on a date to select it</li>
+                <li>Today's date is highlighted in blue</li>
+                <li>Selected date appears in the input field</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.querySelector('.date-input');
+            const calendar = document.querySelector('.calendar');
+            const monthYearElement = document.getElementById('month-year');
+            const calendarGrid = document.getElementById('calendar-grid');
+            const prevMonthButton = document.getElementById('prev-month');
+            const nextMonthButton = document.getElementById('next-month');
+            const prevYearButton = document.getElementById('prev-year');
+            const nextYearButton = document.getElementById('next-year');
+            
+            let currentDate = new Date();
+            let selectedDate = null;
+            let currentMonth = currentDate.getMonth();
+            let currentYear = currentDate.getFullYear();
+            
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Toggle calendar visibility
+            dateInput.addEventListener('click', function() {
+                calendar.classList.toggle('active');
+                if (calendar.classList.contains('active')) {
+                    renderCalendar();
+                }
+            });
+            
+            // Close calendar when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!dateInput.contains(event.target) && !calendar.contains(event.target)) {
+                    calendar.classList.remove('active');
+                }
+            });
+            
+            // Navigate to previous month
+            prevMonthButton.addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                renderCalendar();
+            });
+            
+            // Navigate to next month
+            nextMonthButton.addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                renderCalendar();
+            });
+            
+            // Navigate to previous year
+            prevYearButton.addEventListener('click', function() {
+                currentYear--;
+                renderCalendar();
+            });
+            
+            // Navigate to next year
+            nextYearButton.addEventListener('click', function() {
+                currentYear++;
+                renderCalendar();
+            });
+            
+            // Render the calendar
+            function renderCalendar() {
+                // Update month and year display
+                monthYearElement.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+                
+                // Clear calendar grid
+                calendarGrid.innerHTML = '';
+                
+                // Add day headers
+                dayNames.forEach(day => {
+                    const dayHeader = document.createElement('div');
+                    dayHeader.classList.add('day-header');
+                    dayHeader.textContent = day;
+                    calendarGrid.appendChild(dayHeader);
+                });
+                
+                // Get first day of month and number of days
+                const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+                const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+                const daysInPrevMonth = new Date(currentYear, currentMonth, 0).getDate();
+                
+                // Add cells for previous month's trailing days
+                for (let i = firstDay - 1; i >= 0; i--) {
+                    const dayCell = createDayCell(daysInPrevMonth - i, true);
+                    calendarGrid.appendChild(dayCell);
+                }
+                
+                // Add cells for current month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = createDayCell(day, false);
+                    
+                    // Check if this day is today
+                    if (currentYear === currentDate.getFullYear() && 
+                        currentMonth === currentDate.getMonth() && 
+                        day === currentDate.getDate()) {
+                        dayCell.classList.add('today');
+                    }
+                    
+                    // Check if this day is selected
+                    if (selectedDate && 
+                        currentYear === selectedDate.getFullYear() && 
+                        currentMonth === selectedDate.getMonth() && 
+                        day === selectedDate.getDate()) {
+                        dayCell.classList.add('selected');
+                    }
+                    
+                    calendarGrid.appendChild(dayCell);
+                }
+                
+                // Add cells for next month's leading days
+                const totalCells = calendarGrid.children.length - 7; // Subtract header row
+                const remainingCells = 42 - totalCells; // 6 rows * 7 days = 42
+                
+                for (let day = 1; day <= remainingCells; day++) {
+                    const dayCell = createDayCell(day, true);
+                    calendarGrid.appendChild(dayCell);
+                }
+            }
+            
+            // Create a day cell
+            function createDayCell(day, isOtherMonth) {
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('day-cell');
+                dayCell.textContent = day;
+                
+                if (isOtherMonth) {
+                    dayCell.classList.add('other-month');
+                }
+                
+                // Add click event to select date
+                if (!isOtherMonth) {
+                    dayCell.addEventListener('click', function() {
+                        // Remove previous selection
+                        document.querySelectorAll('.day-cell.selected').forEach(cell => {
+                            cell.classList.remove('selected');
+                        });
+                        
+                        // Add selection to clicked cell
+                        this.classList.add('selected');
+                        
+                        // Update selected date
+                        selectedDate = new Date(currentYear, currentMonth, day);
+                        
+                        // Format date for input
+                        const formattedDate = formatDate(selectedDate);
+                        dateInput.value = formattedDate;
+                        
+                        // Close calendar
+                        calendar.classList.remove('active');
+                    });
+                }
+                
+                return dayCell;
+            }
+            
+            // Format date as MM/DD/YYYY
+            function formatDate(date) {
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const day = date.getDate().toString().padStart(2, '0');
+                const year = date.getFullYear();
+                return `${month}/${day}/${year}`;
+            }
+        });
+    </script>
+</body>
+</html>
