@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Star Rating Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .rating-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rating-title {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .rating-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .stars-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .star {
+            font-size: 48px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .star:hover {
+            transform: scale(1.1);
+        }
+
+        .star.filled {
+            color: #ffd700;
+            animation: starPop 0.3s ease;
+        }
+
+        .star.hover {
+            color: #ffed4e;
+        }
+
+        @keyframes starPop {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .rating-display {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+            min-height: 27px;
+            font-weight: 500;
+        }
+
+        .rating-value {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-reset:hover {
+            background: #e8e8e8;
+        }
+
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 20px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .rating-container {
+                padding: 30px 20px;
+            }
+
+            .star {
+                font-size: 36px;
+            }
+
+            .rating-title {
+                font-size: 24px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="rating-container">
+        <h1 class="rating-title">Rate Your Experience</h1>
+        <p class="rating-subtitle">How would you rate our service?</p>
+        
+        <div class="stars-wrapper" id="starsWrapper">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+        </div>
+        
+        <div class="rating-labels">
+            <span>Poor</span>
+            <span>Fair</span>
+            <span>Good</span>
+            <span>Great</span>
+            <span>Excellent</span>
+        </div>
+        
+        <div class="rating-display" id="ratingDisplay">
+            <span class="rating-value">0</span> out of 5 stars
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-submit" id="submitBtn" disabled>Submit Rating</button>
+            <button class="btn btn-reset" id="resetBtn">Reset</button>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            Thank you for your feedback! Your rating has been submitted.
+        </div>
+    </div>
+
+    <script>
+        class StarRating {
+            constructor() {
+                this.stars = document.querySelectorAll('.star');
+                this.submitBtn = document.getElementById('submitBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.ratingDisplay = document.getElementById('ratingDisplay');
+                this.successMessage = document.getElementById('successMessage');
+                this.selectedRating = 0;
+                this.hoverRating = 0;
+                
+                this.init();
+            }
+            
+            init() {
+                // Add event listeners to stars
+                this.stars.forEach((star, index) => {
+                    star.addEventListener('mouseenter', () => this.handleStarHover(index + 1));
+                    star.addEventListener('mouseleave', () => this.handleStarLeave());
+                    star.addEventListener('click', () => this.handleStarClick(index + 1));
+                });
+                
+                // Add event listeners to buttons
+                this.submitBtn.addEventListener('click', () => this.handleSubmit());
+                this.resetBtn.addEventListener('click', () => this.handleReset());
+            }
+            
+            handleStarHover(rating) {
+                this.hoverRating = rating;
+                this.updateStarDisplay();
+            }
+            
+            handleStarLeave() {
+                this.hoverRating = 0;
+                this.updateStarDisplay();
+            }
+            
+            handleStarClick(rating) {
+                this.selectedRating = rating;
+                this.updateStarDisplay();
+                this.updateRatingDisplay();
+                this.submitBtn.disabled = false;
+                
+                // Add a subtle animation to the clicked star
+                this.stars[rating - 1].style.animation = 'starPop 0.3s ease';
+                setTimeout(() => {
+                    this.stars[rating - 1].style.animation = '';
+                }, 300);
+            }
+            
+            updateStarDisplay() {
+                this.stars.forEach((star, index) => {
+                    star.classList.remove('filled', 'hover');
+                    
+                    if (index < this.selectedRating) {
+                        star.classList.add('filled');
+                    } else if (index < this.hoverRating) {
+                        star.classList.add('hover');
+                    }
+                });
+            }
+            
+            updateRatingDisplay() {
+                const ratingText = this.getRatingText(this.selectedRating);
+                this.ratingDisplay.innerHTML = `
+                    <span class="rating-value">${this.selectedRating}</span> out of 5 stars - ${ratingText}
+                `;
+            }
+            
+            getRatingText(rating) {
+                const texts = {
+                    1: 'Poor',
+                    2: 'Fair',
+                    3: 'Good',
+                    4: 'Great',
+                    5: 'Excellent'
+                };
+                return texts[rating] || '';
+            }
+            
+            handleSubmit() {
+                if (this.selectedRating === 0) return;
+                
+                // Simulate submission
+                this.submitBtn.disabled = true;
+                this.submitBtn.textContent = 'Submitting...';
+                
+                setTimeout(() => {
+                    // Show success message
+                    this.successMessage.classList.add('show');
+                    
+                    // Reset button state
+                    this.submitBtn.textContent = 'Submit Rating';
+                    
+                    // Log the rating (in real app, this would be sent to server)
+                    console.log('Rating submitted:', this.selectedRating);
+                    
+                    // Hide success message after 3 seconds
+                    setTimeout(() => {
+                        this.successMessage.classList.remove('show');
+                    }, 3000);
+                }, 1000);
+            }
+            
+            handleReset() {
+                this.selectedRating = 0;
+                this.hoverRating = 0;
+                this.updateStarDisplay();
+                this.ratingDisplay.innerHTML = '<span class="rating-value">0</span> out of 5 stars';
+                this.submitBtn.disabled = true;
+                this.successMessage.classList.remove('show');
+            }
+        }
+        
+        // Initialize the star rating component
+        document.addEventListener('DOMContentLoaded', () => {
+            new StarRating();
+        });
+    </script>
+</body>
+</html>
