@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Pane Resizer Component</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .split-pane-container {
+            display: flex;
+            height: 500px;
+            position: relative;
+            background: #f8f9fa;
+        }
+
+        .pane {
+            overflow: auto;
+            padding: 30px;
+            position: relative;
+        }
+
+        .pane-left {
+            background: white;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .pane-right {
+            background: #fafbfc;
+            flex: 1;
+        }
+
+        .divider {
+            width: 8px;
+            background: linear-gradient(90deg, #e5e7eb, #d1d5db, #e5e7eb);
+            cursor: col-resize;
+            position: relative;
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .divider:hover {
+            background: linear-gradient(90deg, #9ca3af, #6b7280, #9ca3af);
+        }
+
+        .divider.dragging {
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .divider::after {
+            content: '⋮ ⋮';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #6b7280;
+            font-size: 14px;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .divider:hover::after,
+        .divider.dragging::after {
+            opacity: 1;
+            color: white;
+        }
+
+        .pane-content {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pane h2 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pane-icon {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .content-block {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .content-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-block h3 {
+            color: #374151;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .content-block p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .resize-indicator {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #667eea;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .divider.dragging ~ .resize-indicator {
+            opacity: 1;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+        .percentage-display {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .split-pane-container {
+                height: 400px;
+            }
+            
+            .pane {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⭐ Split Pane Resizer Component</h1>
+            <p>Drag the divider to resize panels</p>
+        </div>
+
+        <div class="split-pane-container" id="splitPane">
+            <div class="pane pane-left" id="leftPane">
+                <div class="pane-content">
+                    <h2>
+                        <div class="pane-icon">📋</div>
+                        Panel 1
+                    </h2>
+                    <div class="content-block">
+                        <h3>Resizable Content</h3>
+                        <p>This panel can be resized by dragging the divider. Try it! The content will adjust automatically to the new width.</p>
+                    </div>
+                    <div class="content-block">
+                        <h3>Features</h3>
+                        <p>• Smooth dragging animation<br>
+                           • Visual feedback on hover<br>
+                           • Touch support for mobile<br>
+                           • Percentage display<br>
+                           • Reset functionality</p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="leftWidth">50</div>
+                            <div class="stat-label">Width %</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="leftPixels">600</div>
+                            <div class="stat-label">Width px</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider" id="divider"></div>
+            <div class="resize-indicator"></div>
+
+            <div class="pane pane-right" id="rightPane">
+                <div class="pane-content">
+                    <h2>
+                        <div class="pane-icon">📊</div>
+                        Panel 2
+                    </h2>
+                    <div class="content-block">
+                        <h3>Dynamic Layout</h3>
+                        <p>This panel automatically adjusts its size based on the divider position. The layout remains responsive and functional at any width.</p>
+                    </div>
+                    <div class="content-block">
+                        <h3>Performance</h3>
+                        <p>The resizer uses efficient event handling and CSS transitions for smooth performance. No external libraries required - pure vanilla JavaScript!</p>
+                    </div>
+                    <div class="stats">
+                        <div class="stat-card">
+                            <div class="stat-value" id="rightWidth">50</div>
+                            <div class="stat-label">Width %</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="rightPixels">600</div>
+                            <div class="stat-label">Width px</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="percentage-display">
+                Left: <span id="leftPercent">50</span>% | Right: <span id="rightPercent">50</span>%
+            </div>
+            <div class="control-buttons">
+                <button class="btn btn-secondary" onclick="setSplit(30, 70)">
+                    30/70 Split
+                </button>
+                <button class="btn btn-secondary" onclick="setSplit(50, 50)">
+                    50/50 Split
+                </button>
+                <button class="btn btn-secondary" onclick="setSplit(70, 30)">
+                    70/30 Split
+                </button>
+                <button class="btn btn-primary" onclick="resetSplit()">
+                    ↺ Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const splitPane = document.getElementById('splitPane');
+        const leftPane = document.getElementById('leftPane');
+        const rightPane = document.getElementById('rightPane');
+        const divider = document.getElementById('divider');
+        
+        let isDragging = false;
+        let startX = 0;
+        let startLeftWidth = 0;
+        let containerWidth = 0;
+
+        // Initialize
+        function init() {
+            const containerRect = splitPane.getBoundingClientRect();
+            containerWidth = containerRect.width;
+            
+            // Set initial widths
+            leftPane.style.width = '50%';
+            rightPane.style.flex = '1';
+            
+            updateStats();
+        }
+
+        // Mouse events
+        divider.addEventListener('mousedown', startDragging);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDragging);
+
+        // Touch events
+        divider.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            startDragging({ clientX: touch.clientX });
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                drag({ clientX: touch.clientX });
+            }
+        });
+
+        document.addEventListener('touchend', stopDragging);
+
+        function startDragging(e) {
+            isDragging = true;
+            startX = e.clientX;
+            startLeftWidth = leftPane.offsetWidth;
+            containerWidth = splitPane.offsetWidth;
+            
+            divider.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - startX;
+            const newLeftWidth = startLeftWidth + deltaX;
+            const containerWidth = splitPane.offsetWidth;
+            
+            // Calculate percentage
+            let leftPercentage = (newLeftWidth / containerWidth) * 100;
+            
+            // Constrain between 10% and 90%
+            leftPercentage = Math.max(10, Math.min(90, leftPercentage));
+            
+            // Apply new widths
+            leftPane.style.width = leftPercentage + '%';
+            rightPane.style.flex = '1';
+            
+            updateStats();
+        }
+
+        function stopDragging() {
+            isDragging = false;
+            divider.classList.remove('dragging');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+
+        function updateStats() {
+            const containerWidth = splitPane.offsetWidth;
+            const leftWidth = leftPane.offsetWidth;
+            const rightWidth = rightPane.offsetWidth;
+            
+            const leftPercentage = (leftWidth / containerWidth * 100).toFixed(1);
+            const rightPercentage = (rightWidth / containerWidth * 100).toFixed(1);
+            
+            // Update stat cards
+            document.getElementById('leftWidth').textContent = Math.round(leftPercentage);
+            document.getElementById('leftPixels').textContent = Math.round(leftWidth);
+            document.getElementById('rightWidth').textContent = Math.round(rightPercentage);
+            document.getElementById('rightPixels').textContent = Math.round(rightWidth);
+            
+            // Update percentage display
+            document.getElementById('leftPercent').textContent = leftPercentage;
+            document.getElementById('rightPercent').textContent = rightPercentage;
+        }
+
+        function setSplit(leftPercent, rightPercent) {
+            leftPane.style.width = leftPercent + '%';
+            rightPane.style.flex = '1';
+            updateStats();
+        }
+
+        function resetSplit() {
+            leftPane.style.width = '50%';
+            rightPane.style.flex = '1';
+            updateStats();
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            updateStats();
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
